@@ -189,7 +189,7 @@ function MapBlock({ id }: { id: number }) {
           {mobs.map((m) => (
             <Link
               key={m.id}
-              href={`/minimal/monsters?q=${encodeURIComponent(m.name)}`}
+              href={`/monsters?q=${encodeURIComponent(m.name)}`}
               target="_blank"
               rel="noopener"
               title={`在新分頁查看 ${m.name} 的掉落`}

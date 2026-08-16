@@ -126,7 +126,7 @@ function ItemIcon({ id, alt }: { id: number; alt: string }) {
   );
 }
 
-export default function MinimalFashionPage() {
+export default function FashionPage() {
   const [look, setLook] = useState<CharacterLook>(DEFAULT_LOOK);
   const [charGender, setCharGender] = useState<0 | 1>(0);
   const [slot, setSlot] = useState<FashionSlot>("cap");

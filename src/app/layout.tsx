@@ -6,6 +6,7 @@ import {
   Noto_Sans_TC,
 } from "next/font/google";
 import "./globals.css";
+import SiteShell from "./site-shell";
 
 const notoSansTC = Noto_Sans_TC({
   variable: "--font-noto-tc",
@@ -48,7 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className="min-h-full flex flex-col"
         style={{ fontFamily: "system-ui, 'Microsoft JhengHei', sans-serif" }}
       >
-        {children}
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );

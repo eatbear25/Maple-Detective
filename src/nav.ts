@@ -2,7 +2,7 @@ export interface NavItem {
   key: string;
   label: string;
   icon: string;
-  path: string; // relative segment under theme root, "" = index
+  path: string; // relative segment under site root, "" = index
   enabled: boolean;
 }
 
@@ -33,6 +33,6 @@ export const navItems: NavItem[] = [
   // { key: "party", label: "組隊攻略", icon: "🛡️", path: "party", enabled: true },
 ];
 
-export function themeHref(theme: string, path: string) {
-  return path ? `/${theme}/${path}` : `/${theme}`;
+export function navHref(path: string) {
+  return path ? `/${path}` : "/";
 }

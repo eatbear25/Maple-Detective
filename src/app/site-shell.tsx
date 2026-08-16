@@ -15,7 +15,7 @@ import {
   Map as MapIcon,
   Timer,
 } from "lucide-react";
-import { navItems, themeHref } from "@/nav";
+import { navItems, navHref } from "@/nav";
 import { LIGHT_TOKENS, DARK_TOKENS, useDarkMode, themeVars } from "./theme";
 
 const NAV_ICONS: Record<
@@ -80,7 +80,7 @@ function NavLinks({
     <nav className={className}>
       {navItems.map((item) => {
         const Icon = NAV_ICONS[item.key];
-        const href = themeHref("minimal", item.path);
+        const href = navHref(item.path);
         const isActive = item.enabled && pathname === href;
         return (
           <Link
@@ -110,7 +110,7 @@ function NavLinks({
   );
 }
 
-export default function MinimalLayout({
+export default function SiteShell({
   children,
 }: {
   children: React.ReactNode;
@@ -152,7 +152,7 @@ export default function MinimalLayout({
       <header className="border-b border-[var(--border)] bg-[var(--surface)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3 sm:gap-6">
           <Link
-            href={themeHref("minimal", "")}
+            href={navHref("")}
             className="flex items-center gap-2 font-bold text-[var(--accent)] shrink-0"
           >
             <Logo size={28} />

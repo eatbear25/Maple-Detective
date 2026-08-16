@@ -77,7 +77,7 @@ function MonsterPageSkeleton() {
   );
 }
 
-export default function MinimalMonsterPage() {
+export default function MonsterPage() {
   return (
     <Suspense fallback={<MonsterPageSkeleton />}>
       <MonsterExplorer />

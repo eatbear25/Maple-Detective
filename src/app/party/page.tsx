@@ -4,21 +4,21 @@ const guides = [
   { title: "熾熱沙漠 練功隊組建心法", tag: "Lv.13-30", desc: "分工採集與清怪，效率翻倍的地圖走位建議。" },
 ];
 
-export default function DarkPartyPage() {
+export default function PartyPage() {
   return (
     <div className="max-w-4xl space-y-4">
-      <h1 className="text-xl font-bold text-white tracking-wide">組隊攻略</h1>
-      <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/5 text-cyan-200 text-sm px-4 py-3">
+      <h1 className="text-xl font-semibold text-slate-800">組隊攻略</h1>
+      <div className="bg-indigo-50 text-indigo-700 text-sm rounded-xl px-4 py-3">
         這個版面預留給「組隊攻略」內容，之後會加入職業搭配、王本流程、語音頻道招募等功能。
       </div>
       <div className="space-y-3">
         {guides.map((g) => (
-          <div key={g.title} className="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4">
+          <div key={g.title} className="bg-white border border-slate-200 rounded-xl p-4">
             <div className="flex items-center justify-between">
-              <div className="font-semibold text-slate-100">{g.title}</div>
-              <span className="text-xs bg-white/10 text-slate-300 rounded-full px-2 py-0.5">{g.tag}</span>
+              <div className="font-medium text-slate-800">{g.title}</div>
+              <span className="text-xs bg-slate-100 text-slate-500 rounded-full px-2 py-0.5">{g.tag}</span>
             </div>
-            <p className="text-sm text-slate-400 mt-1">{g.desc}</p>
+            <p className="text-sm text-slate-500 mt-1">{g.desc}</p>
           </div>
         ))}
       </div>

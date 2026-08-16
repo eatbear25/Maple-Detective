@@ -250,7 +250,7 @@ function BossCard({
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
       <a
-        href={`/minimal/monsters?q=${encodeURIComponent(boss.name)}`}
+        href={`/monsters?q=${encodeURIComponent(boss.name)}`}
         target="_blank"
         rel="noopener noreferrer"
         title="在新視窗查看掉落資訊"
@@ -549,7 +549,7 @@ function ShareModal({
   const url = useMemo(() => {
     const share = encodeShare(kills, intervals);
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    return `${origin}/minimal/boss-timer?share=${share}`;
+    return `${origin}/boss-timer?share=${share}`;
   }, [kills, intervals]);
 
   const copy = async () => {
