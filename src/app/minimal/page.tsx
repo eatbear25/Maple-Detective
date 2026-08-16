@@ -1,55 +1,92 @@
 import Link from "next/link";
-import { monsters } from "@/data/monsters";
-import { outfitPresets } from "@/data/outfits";
+import { Search, Map as MapIcon, ArrowRight } from "lucide-react";
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "網站主要用途？",
+    a: "主要是放一些平常自己在遊戲中會使用到的功能，像是查怪物掉落、查地圖位置、查時裝搭配等等，也順便分享給其他玩家。",
+  },
+  {
+    q: "掉落資料來源？",
+    a: "從遊戲用戶端拆包出的圖鑑資料整理而成，涵蓋每隻怪物掉落哪些道具、出沒在哪些地圖，但要特別注意，一定會與實際遊戲情況有出入，僅供參考。",
+  },
+  {
+    q: "網站有問題要去哪裡回報？",
+    a: "若有問題都可以在巴哈討論區直接回報，感謝！",
+  },
+];
 
 export default function MinimalHome() {
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="max-w-2xl space-y-10 m-auto">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">歡迎回來 👋</h1>
-        <p className="text-slate-500 text-sm mt-1">怪物掉落、時裝搭配、組隊攻略，一站整理給你。</p>
+        <h1 className="text-2xl font-bold tracking-tight">
+          楓探 Maple Detective
+        </h1>
+        <p className="mt-1.5 text-sm text-[var(--text-muted)]">
+          新楓之谷經典版工具站，資料來自遊戲用戶端拆包整理，與實際版本一定有差異，本站僅供參考。
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard to="/minimal/monsters" icon="🐌" label="收錄怪物" value={`${monsters.length}`} sub="隻怪物資料" />
-        <StatCard to="/minimal/fashion" icon="👗" label="穿搭方案" value={`${outfitPresets.length}`} sub="組玩家精選" />
-        <StatCard to="/minimal/party" icon="🛡️" label="組隊攻略" value="3" sub="篇文章" />
-      </div>
-
-      <div className="bg-white border border-slate-200 rounded-xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-slate-800">熱門怪物</h2>
-          <Link href="/minimal/monsters" className="text-xs text-indigo-600 hover:underline">
-            查看全部 →
-          </Link>
+      <form action="/minimal/monsters" method="get" className="flex gap-2">
+        <div className="relative flex-1">
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+          />
+          <label htmlFor="home-search" className="sr-only">
+            搜尋怪物 / 道具 / 地圖
+          </label>
+          <input
+            id="home-search"
+            name="q"
+            placeholder="搜尋怪物 / 道具 / 地圖"
+            className="w-full rounded-full border border-[var(--border)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
+          />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {monsters.slice(0, 4).map((m) => (
-            <Link
-              key={m.id}
-              href="/minimal/monsters"
-              className="border border-slate-200 rounded-lg p-3 text-center hover:border-indigo-300 hover:shadow-sm transition"
-            >
-              <div className="text-2xl">{m.icon}</div>
-              <div className="text-sm font-medium text-slate-700 mt-1">{m.name}</div>
-              <div className="text-xs text-slate-400">Lv.{m.level}</div>
-            </Link>
+        <button
+          type="submit"
+          className="cursor-pointer shrink-0 rounded-full px-5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+          style={{ background: "var(--accent)" }}
+        >
+          查詢
+        </button>
+      </form>
+
+      {/* <Link
+        href="/minimal/map"
+        className="group flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:border-[var(--accent)]"
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-soft)]">
+          <MapIcon size={18} style={{ color: "var(--accent)" }} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold">地圖導覽</div>
+          <div className="text-xs text-[var(--text-muted)]">
+            找地圖位置、看出沒怪物
+          </div>
+        </div>
+        <ArrowRight
+          size={16}
+          className="shrink-0 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5"
+        />
+      </Link> */}
+
+      <div>
+        <h2 className="text-sm font-semibold text-[var(--text-muted)]">
+          常見問題
+        </h2>
+        <div className="mt-3 divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+          {FAQ.map(({ q, a }) => (
+            <div key={q} className="px-4 py-3.5">
+              <div className="text-sm font-medium">{q}</div>
+              <div className="mt-1 text-xs leading-relaxed text-[var(--text-muted)]">
+                {a}
+              </div>
+            </div>
           ))}
         </div>
       </div>
     </div>
-  );
-}
-
-function StatCard({ to, icon, label, value, sub }: { to: string; icon: string; label: string; value: string; sub: string }) {
-  return (
-    <Link href={to} className="bg-white border border-slate-200 rounded-xl p-5 hover:border-indigo-300 hover:shadow-sm transition block">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-slate-500">{label}</span>
-        <span className="text-xl">{icon}</span>
-      </div>
-      <div className="text-2xl font-semibold text-slate-800 mt-1">{value}</div>
-      <div className="text-xs text-slate-400">{sub}</div>
-    </Link>
   );
 }

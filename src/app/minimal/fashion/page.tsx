@@ -279,10 +279,7 @@ export default function MinimalFashionPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">時裝搭配</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          用戶端裡的 {fashionItems.length}{" "}
-          件點裝，試穿看看（髮型、臉型同造型不同顏色已合併，
-          用色票切換）。圖與動作由 maplestory.io
-          提供，極少數道具素材庫查不到、無法預覽。
+          圖與動作由 maplestory.io 提供，少數道具素材庫查不到、無法預覽。
         </p>
       </div>
 
@@ -305,7 +302,9 @@ export default function MinimalFashionPage() {
               {status === "loading" && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/80">
                   <div className="maple-loader" />
-                  <span className="text-sm text-[var(--text-muted)]">合成中…</span>
+                  <span className="text-sm text-[var(--text-muted)]">
+                    合成中…
+                  </span>
                 </div>
               )}
               {status === "error" && (

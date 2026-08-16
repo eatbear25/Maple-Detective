@@ -78,7 +78,7 @@ export default function MapNavPage() {
                 : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
             }`}
           >
-            {s === WM_ROOT ? "🍁 世界總圖" : wmSheets[s].title}
+            {s === WM_ROOT ? "🍁 世界總覽" : wmSheets[s].title}
           </button>
         ))}
       </div>
