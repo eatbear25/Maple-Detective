@@ -129,3 +129,19 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 - `src/nav.ts`：toolbox 選單設定，`裝備模擬器`／`楓幣計算機`／`地圖導覽` 目前是 `enabled: false` 佔位，之後開新工具就是加一筆 + 建對應 `page.tsx`。
 - `/minimal/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名，UI 已無掉落機率欄位（拿不到真值）。掉落內容已對齊遊戲內圖鑑：未實裝道具/活動怪在 build 階段就被過濾，前端不用再管 fallback 名稱。
 - `src/data/monsters.ts`、`src/data/outfits.ts`：**仍是假資料**，只剩 `/retro`、`/dark` 風格畫廊在用；砍畫廊時可一併刪 `monsters.ts`。`outfits.ts`（時裝）要接真資料得另外解 `Character/` 那包。
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as local markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout — `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
