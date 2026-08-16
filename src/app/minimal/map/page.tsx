@@ -63,7 +63,7 @@ export default function MapNavPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">地圖導覽</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          遊戲內建世界地圖搬上網頁：點黃色點點看那裡有哪些地圖、出沒哪些怪物。
+          遊戲世界地圖，透過點擊地圖上黃點看哪裡有出沒哪些怪物，包含了未來視的地圖，僅供參考。
         </p>
       </div>
 
