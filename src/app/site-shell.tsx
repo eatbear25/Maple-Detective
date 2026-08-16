@@ -200,22 +200,13 @@ export default function SiteShell({
         <div
           className={`absolute inset-y-0 right-0 w-72 max-w-[85vw] bg-[var(--surface)] shadow-xl transition-transform duration-200 ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
         >
-          <div className="flex h-14 items-center gap-2 border-b border-[var(--border)] px-4">
+          <div className="flex h-14 items-center justify-end border-b border-[var(--border)] px-4">
             <button
               onClick={() => setMenuOpen(false)}
               aria-label="關閉選單"
-              className="cursor-pointer -ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors"
+              className="cursor-pointer -mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors"
             >
               <X size={19} />
-            </button>
-            <Logo size={24} />
-            <span className="text-lg font-bold text-[var(--accent)]">楓探</span>
-            <button
-              onClick={toggle}
-              aria-label="切換深色模式"
-              className="cursor-pointer ml-auto w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors"
-            >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
           <NavLinks

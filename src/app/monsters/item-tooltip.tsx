@@ -126,8 +126,9 @@ export function useItemTooltip() {
   }, []);
 
   useLayoutEffect(() => {
-    if (id != null) place();
-  }, [id, place]);
+    // 觸控裝置(!hasHover)固定置中顯示,不需要錨定定位
+    if (id != null && hasHover) place();
+  }, [id, hasHover, place]);
 
   const close = useCallback(() => setId(null), []);
 
@@ -264,22 +265,22 @@ export function ItemTooltip({
   onSearch?: () => void;
 }) {
   const info = itemInfo(id);
-  // portal 到 body：fixed 定位不受版面 transform/overflow 影響，也絕不會撐高頁面
-  return createPortal(
-    <>
-      {modal && (
-        <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
-      )}
+  const panelStyle: React.CSSProperties = {
+    background: "var(--surface)",
+    borderColor: "var(--border)",
+    color: "var(--text)",
+    boxShadow: "0 12px 32px -8px rgb(0 0 0 / 0.18)",
+  };
+  const panel = (
       <div
         ref={panelRef}
         onClick={(e) => modal && e.stopPropagation()}
-        className={`fixed left-0 top-0 z-50 w-max max-w-[280px] rounded-xl border px-3.5 py-3 shadow-xl ${modal ? "" : "pointer-events-none"}`}
-        style={{
-          background: "var(--surface)",
-          borderColor: "var(--border)",
-          color: "var(--text)",
-          boxShadow: "0 12px 32px -8px rgb(0 0 0 / 0.18)",
-        }}
+        className={
+          modal
+            ? "relative w-max max-w-[280px] rounded-xl border px-3.5 py-3 shadow-xl"
+            : "fixed left-0 top-0 z-50 w-max max-w-[280px] rounded-xl border px-3.5 py-3 shadow-xl pointer-events-none"
+        }
+        style={panelStyle}
       >
       {modal && (
         <button
@@ -325,7 +326,20 @@ export function ItemTooltip({
         </button>
       )}
       </div>
-    </>,
+  );
+  // portal 到 body：fixed 定位不受版面 transform/overflow 影響，也絕不會撐高頁面
+  // 觸控裝置(modal)固定用 flex 置中顯示,不用錨定座標,避免不同螢幕位置跑版
+  return createPortal(
+    modal ? (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4"
+        onClick={onClose}
+      >
+        {panel}
+      </div>
+    ) : (
+      panel
+    ),
     document.body
   );
 }
