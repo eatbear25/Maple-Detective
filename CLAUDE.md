@@ -103,20 +103,29 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 
 ---
 
-## 資料管線（已完成，2026-08-13）
+## 資料管線（2026-08-16 更新：加入怪物數值 + 未來視）
 
-`/minimal/monsters` 已改吃真資料。遊戲更新後依序重跑三支腳本即可（都可重複執行）：
+`/minimal/monsters` 吃真資料。**遊戲版本更新後的手動更新流程**（不用重跑 Il2CppDumper 那套，腳本都用 container path 掃描定位、不依賴 bundle 檔名，直接依序重跑即可，全部可重複執行）：
 
 1. `python tools/extract-monster-book.py` → `reference-data/monster-book.json`（從客戶端抽掉落+地圖）
-2. `python tools/fetch-missing-names.py` → `reference-data/name-supplement.json`（用 maplestory.io 的 TMS 資料補名稱表缺的 mob/item 中文名，目前補了 287 道具 + 5 怪物。**2026-08-14 起網站改為直接隱藏未實裝內容，這步變成純參考用，跳過不影響建置**）
-3. `python tools/build-site-data.py` → `src/data/generated/monster-drops.json`（160KB，join 好的網站用資料；會過濾未實裝怪物/道具以對齊遊戲內圖鑑，規則見腳本 docstring）
+2. `python tools/extract-mob-stats.py` → `reference-data/mob-stats.json`（從客戶端 `Mob/` 包抽全部 1232 隻的 level/maxHP/exp/攻防/命中/迴避等數值）
+3. （名稱表 `reference-data/name-tables/` 若遊戲有新增內容也要重抽——目前還沒有獨立腳本，是當初手動從 `json_a2909ccd...` 包抽的，見「已經拿到的東西」）
+4. `python tools/fetch-missing-names.py` → `reference-data/name-supplement.json`（maplestory.io 補未實裝 mob/item 中文名；**未來視分頁的名稱靠這份**，缺了會顯示 `#id`）
+5. `python tools/fetch-map-names.py` → `reference-data/map-supplement.json`（maplestory.io 補客戶端 Map.json 沒有的地圖名；**未實裝判斷與未來視地圖名靠這份**；已查過的會跳過）
+6. `python tools/extract-worldmap.py` → `reference-data/worldmap.json` + `public/worldmap/*.png`（從客戶端抽 16 張世界地圖底圖與各地圖在圖上的點位座標；`Etc/WorldMap.json` 是純 JSON TextAsset，底圖藏在 spriteset 包的 `BaseImg.asset`，混淆 MonoBehaviour 的解法見腳本 docstring）
+7. `python tools/build-site-data.py` → `src/data/generated/monster-drops.json` + `item-info.json` + `worldmap-nav.json`（join 好的網站用資料，含 released 旗標/futureDrops/世界地圖點位 wm/數值/屬性抗性；worldmap-nav 是地圖導覽頁用的全點位+出沒怪反查，規則見腳本 docstring）
+8. `python tools/download-icons.py` 補抓新圖示到 `public/icons/{item,mob}/`（TMS/209 優先、GMS/62 備援；已存在會跳過）
 
-另有 `python tools/download-icons.py` 抓圖示到 `public/icons/{item,mob}/`（TMS/209 優先、GMS/62 備援，已抓 2582 個；9 隻怪在 maplestory.io 沒圖，UI 用 emoji fallback）。前端入口是 `src/data/drops.ts`（型別 + 查名 helper）。
+**實裝判斷（2026-08-16 修正）**：怪物在 Mob.json ≠ 實裝——客戶端名稱表涵蓋全部舊 wz 怪。正確判斷是「≥1 張出沒地圖在客戶端 Map.json 有名字」，據此現行版本 70 隻、未來視 273 隻。
+
+**後台檢視器**：`../maple-detective-admin/`（獨立資料夾，**不部署、不進公開 repo**）。雙擊 `start.bat` 可查完整未過濾拆包資料（mobId/itemId/名稱搜尋、完整數值、未過濾掉落、道具反查）。遊戲更新後重跑主專案管線，再跑它的 `refresh-data.py` 即同步。
+
+另有 `reference-data/drop-supplement.json`：**人工補充掉落表**（客戶端圖鑑沒記錄、但實際遊戲確認會掉的，例：超級綠水靈掉黏稠稠鞋子 1072369）。玩家回報新缺漏就往這裡加 `{ mobId: [itemId...] }`，重跑 build-site-data + download-icons。前端入口是 `src/data/drops.ts`（型別 + 查名 helper）。
 
 ## 接下來可以做的事
 
-1. **等級/HP/EXP 等數值**：在 `Assets/WzAssets/Json/Mob/*.wzjson`（5MB 那包，1232 檔），同一套 WZJS 格式。把 `tools/extract-monster-book.py` 的 decoder 一般化（處理字串葉、多檔批次）即可。目前等級是從圖鑑描述文字 regex 出來的（335/343 隻有），HP/EXP 沒有。
-2. **地圖名稱不全**：`Map.json` 名稱表只涵蓋掉落資料用到的 596 張地圖裡的 204 張。MapleMemory 是用 worldmap 資料做區域推斷，可參考他的做法補。
+1. ~~等級/HP/EXP 等數值~~：**已完成（2026-08-16）**，`tools/extract-mob-stats.py` 抽出全部 1232 隻的 info 數值，網站已顯示。注意 5 隻未實裝活動怪不在 `Mob/` 包裡（沒數值，等級 fallback 用圖鑑描述 regex）。
+2. **地圖名稱不全**：`Map.json` 名稱表只涵蓋掉落資料用到的 596 張地圖裡的 204 張（缺的靠 map-supplement 補名）。世界地圖資料已自己抽出來了（`tools/extract-worldmap.py`），位置問題已解。
 3. **同類參考站**：「楓憶 MapleMemory」 <https://morrisrrrrrrr-svg.github.io/>（repo 公開）。資料來源跟我們一樣是客戶端的 `MonsterBook.wzjson`（他的 data.js 開頭有寫），掉落筆數 9946 vs 我們 9859，差額是他另外加的任務掉落/補充列。可拿來對數，但別直接抄他整理好的檔案。
 4. 機率仍然拿不到（不在客戶端，伺服器端才有）。真要有機率就是走玩家回報/共筆，20 年來的楓谷 wiki 都是這樣做的。
 
@@ -126,8 +135,9 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 
 - Next.js 16（App Router）+ TypeScript + Tailwind v4，位置就是這個資料夾。
 - UI 風格暫定「現代簡約風」（`/minimal` 路徑，根目錄 `/` 會直接 redirect 過去）。另外兩個風格（`/retro` 復古像素風、`/dark` 深色電競儀表板）保留在 `/styles` 畫廊當參考，之後可能砍掉。
-- `src/nav.ts`：toolbox 選單設定，`裝備模擬器`／`楓幣計算機`／`地圖導覽` 目前是 `enabled: false` 佔位，之後開新工具就是加一筆 + 建對應 `page.tsx`。
-- `/minimal/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名，UI 已無掉落機率欄位（拿不到真值）。掉落內容已對齊遊戲內圖鑑：未實裝道具/活動怪在 build 階段就被過濾，前端不用再管 fallback 名稱。
+- `src/nav.ts`：toolbox 選單設定，`裝備模擬器`／`楓幣計算機` 目前是 `enabled: false` 佔位，之後開新工具就是加一筆 + 建對應 `page.tsx`。
+- `/minimal/map` **地圖導覽**（2026-08-16 上線）：拆包的遊戲世界地圖瀏覽器。上方 chips 切大陸（總圖/楓之島/維多利亞島/…，順序＝總圖 links），大陸圖再有「內部區域」子圖（奇幻村/鯨魚號/廢礦/鐘塔最下層）。地圖上畫**全部**點位（遊戲風黃點，資料 `src/data/worldmap.ts` → `generated/worldmap-nav.json`），點了右欄列出該點的地圖清單＋出沒怪物（依等級排序，點怪物 → `/minimal/monsters?q=怪名` 跳掉落查詢）；隱藏地圖/迷你地城掛在借用點的「這附近的隱藏地圖」區。點位共用元件 `src/app/minimal/worldmap-view.tsx`（黃點＝一般、橘紅大點＋脈動＝選中、虛線邊＝約略位置），怪物頁的世界地圖彈窗也用它。
+- `/minimal/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名；放大鏡旁的漏斗按鈕開進階篩選（屬性弱點多選、等級範圍）。分「現行版本／未來視」分頁：現行 70 隻（有實裝地圖的怪）＋人工補充掉落；未來視 273 隻（未實裝怪與帶未實裝掉落的怪）。**出沒地圖 chip 點了會開世界地圖彈窗**，在拆包出的遊戲世界地圖上標出該地圖位置（同張圖上這隻怪的其他出沒點也會標小點，可點切換）；不在遊戲世界地圖上的隱藏圖/迷你地城借「ID 最接近的鄰居」標約略位置（顯示「約略位置」徽章）。原本的「地區分類」已移除（2026-08-16）——ID 前綴推地區在維多利亞整個對不上（101030xxx 遺跡發掘地其實在勇士之村、100040xxx 其實是魔法森林南部），改用世界地圖標點一勞永逸。詳情面板有怪物數值（HP/攻防/命中/迴避）與屬性抗性（elemAttr：F火 I冰 L雷 S毒 H聖 D暗；1=免疫 2=抗性 3=弱點）。UI 無掉落機率欄位（拿不到真值）。
 - `src/data/monsters.ts`、`src/data/outfits.ts`：**仍是假資料**，只剩 `/retro`、`/dark` 風格畫廊在用；砍畫廊時可一併刪 `monsters.ts`。`outfits.ts`（時裝）要接真資料得另外解 `Character/` 那包。
 
 ---

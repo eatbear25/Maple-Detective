@@ -5,6 +5,8 @@
 // 裝備   → 名稱 + 需求值 + 可用職業 + 分類/攻速/能力加成/捲軸次數。
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Search, X } from "lucide-react";
 import { itemName, itemInfo, itemIconSrc, type EquipStats } from "@/data/drops";
 import { GameIcon } from "./game-icon";
 
@@ -88,9 +90,20 @@ const STAT_ROWS: [string, string][] = [
  * 錨定在被 hover 的格子本身（進入時量一次 rect），不跟著游標跑——
  * 游標貼著視窗邊緣時跟隨式定位會在「翻到另一側」的臨界點來回跳動，
  * 導致彈窗瘋狂開關；改成只在滑入當下算一次位置就不會再觸發。
+ *
+ * 觸控裝置沒有 hover，改用 tap 開關（hasHover 用 matchMedia 偵測）：
+ * 有 hover 的裝置維持「hover 顯示 + click 觸發搜尋」；沒有 hover 的裝置
+ * 「tap 開/關彈窗」，原本的搜尋功能移到彈窗內的按鈕。
  */
 export function useItemTooltip() {
   const [id, setId] = useState<number | null>(null);
+  // 惰性初始化直接讀 matchMedia(SSR 時 window 不存在,先假設有 hover;
+  // client 端第一次 render 就會讀到真實值,不需要額外的 effect)
+  const [hasHover] = useState(() =>
+    typeof window === "undefined"
+      ? true
+      : window.matchMedia("(hover: hover) and (pointer: fine)").matches,
+  );
   const panelRef = useRef<HTMLDivElement | null>(null);
   const anchorRef = useRef<DOMRect | null>(null);
 
@@ -116,16 +129,36 @@ export function useItemTooltip() {
     if (id != null) place();
   }, [id, place]);
 
+  const close = useCallback(() => setId(null), []);
+
   return {
     id,
+    hasHover,
     panelRef,
-    /** 綁在每個道具格子上 */
-    handlers: (iid: number) => ({
+    close,
+    /** 綁在每個道具格子上；onSearch 是有 hover 時 click 要做的「查誰掉這個道具」 */
+    handlers: (iid: number, onSearch?: () => void) => ({
       onMouseEnter: (e: React.MouseEvent) => {
+        if (!hasHover) return;
         anchorRef.current = e.currentTarget.getBoundingClientRect();
         setId(iid);
       },
-      onMouseLeave: () => setId(null),
+      onMouseLeave: () => {
+        if (!hasHover) return;
+        setId(null);
+      },
+      onClick: (e: React.MouseEvent) => {
+        if (hasHover) {
+          onSearch?.();
+          return;
+        }
+        if (id === iid) {
+          setId(null);
+          return;
+        }
+        anchorRef.current = e.currentTarget.getBoundingClientRect();
+        setId(iid);
+      },
     }),
   };
 }
@@ -186,7 +219,7 @@ function EquipBody({ id, eq }: { id: number; eq: EquipStats }) {
         {CLASSES.map(([label, bit]) => {
           const usable = reqJob === 0 || (bit !== 0 && (reqJob & bit) !== 0);
           return (
-            <span key={label} className={usable ? "text-[var(--text)]" : "text-red-500/80 line-through"}>
+            <span key={label} className={usable ? "text-[var(--text)]" : "text-[var(--text-muted)] opacity-50"}>
               {label}
             </span>
           );
@@ -211,26 +244,52 @@ function EquipBody({ id, eq }: { id: number; eq: EquipStats }) {
   );
 }
 
-/** 浮動彈窗本體：由 useItemTooltip 定位，pointer-events 關閉避免搶滑鼠 */
+/**
+ * 浮動彈窗本體：由 useItemTooltip 定位。
+ * hover 裝置(modal=false)：pointer-events 關閉避免搶滑鼠。
+ * 觸控裝置(modal=true)：改成可互動的小彈窗,加半透明背景(點背景關閉)與關閉鈕、
+ * 「查看誰掉這個」按鈕(取代原本 hover 裝置上用 click 觸發的搜尋)。
+ */
 export function ItemTooltip({
   id,
   panelRef,
+  modal = false,
+  onClose,
+  onSearch,
 }: {
   id: number;
   panelRef: React.RefObject<HTMLDivElement | null>;
+  modal?: boolean;
+  onClose?: () => void;
+  onSearch?: () => void;
 }) {
   const info = itemInfo(id);
-  return (
-    <div
-      ref={panelRef}
-      className="pointer-events-none fixed left-0 top-0 z-50 w-max max-w-[280px] rounded-xl border px-3.5 py-3 shadow-xl"
-      style={{
-        background: "var(--surface)",
-        borderColor: "var(--border)",
-        color: "var(--text)",
-        boxShadow: "0 12px 32px -8px rgb(0 0 0 / 0.18)",
-      }}
-    >
+  // portal 到 body：fixed 定位不受版面 transform/overflow 影響，也絕不會撐高頁面
+  return createPortal(
+    <>
+      {modal && (
+        <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
+      )}
+      <div
+        ref={panelRef}
+        onClick={(e) => modal && e.stopPropagation()}
+        className={`fixed left-0 top-0 z-50 w-max max-w-[280px] rounded-xl border px-3.5 py-3 shadow-xl ${modal ? "" : "pointer-events-none"}`}
+        style={{
+          background: "var(--surface)",
+          borderColor: "var(--border)",
+          color: "var(--text)",
+          boxShadow: "0 12px 32px -8px rgb(0 0 0 / 0.18)",
+        }}
+      >
+      {modal && (
+        <button
+          onClick={onClose}
+          aria-label="關閉"
+          className="cursor-pointer absolute right-2 top-2 text-[var(--text-muted)] hover:text-[var(--text)]"
+        >
+          <X size={15} />
+        </button>
+      )}
       <div className="text-center text-[13px] font-semibold leading-tight">{itemName(id)}</div>
       {info?.eq ? (
         <EquipBody id={id} eq={info.eq} />
@@ -256,6 +315,17 @@ export function ItemTooltip({
           <Desc text={info.desc} />
         </div>
       )}
-    </div>
+      {modal && onSearch && (
+        <button
+          onClick={onSearch}
+          className="cursor-pointer mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] py-1.5 text-[11px] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
+        >
+          <Search size={12} />
+          查看誰掉這個道具
+        </button>
+      )}
+      </div>
+    </>,
+    document.body
   );
 }

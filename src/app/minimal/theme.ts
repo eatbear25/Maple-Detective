@@ -49,6 +49,17 @@ export function useDarkMode() {
     }
   }, []);
 
+  // 同步寫到 documentElement：portal 到 document.body 的元件（例如道具 tooltip）
+  // 在 DOM 樹上不是 layout.tsx 那個 themed div 的後代，讀不到只掛在該 div 上的
+  // CSS 變數，背景色會直接掉成透明、露出背後內容。掛在 root 上讓全站都能繼承。
+  useEffect(() => {
+    const tokens = isDark ? DARK_TOKENS : LIGHT_TOKENS;
+    const vars = themeVars(tokens);
+    for (const [key, value] of Object.entries(vars)) {
+      document.documentElement.style.setProperty(key, value as string);
+    }
+  }, [isDark]);
+
   const toggle = () => {
     setIsDark((prev) => {
       const next = !prev;

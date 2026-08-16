@@ -41,6 +41,11 @@ def download(kind, oid, path_tpl, dest):
 def main():
     with open(os.path.join(PROJECT, "reference-data", "monster-book.json"), encoding="utf-8") as f:
         mobs = json.load(f)["mobs"]
+    sup_path = os.path.join(PROJECT, "reference-data", "drop-supplement.json")
+    sup_items = set()
+    if os.path.exists(sup_path):
+        with open(sup_path, encoding="utf-8") as f:
+            sup_items = {i for k, v in json.load(f).items() if not k.startswith("_") for i in v}
 
     os.makedirs(os.path.join(PUB, "item"), exist_ok=True)
     os.makedirs(os.path.join(PUB, "mob"), exist_ok=True)
@@ -48,7 +53,7 @@ def main():
     jobs = []
     for mob_id in mobs:
         jobs.append(("mob", mob_id, "mob/{id}/render/stand", os.path.join(PUB, "mob", f"{mob_id}.gif")))
-    for item_id in sorted({i for v in mobs.values() for i in v["rewards"]}):
+    for item_id in sorted({i for v in mobs.values() for i in v["rewards"]} | sup_items):
         jobs.append(("item", item_id, "item/{id}/icon", os.path.join(PUB, "item", f"{item_id}.png")))
 
     print(f"{len(jobs)} 個圖示要抓")
