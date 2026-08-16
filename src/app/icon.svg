@@ -1,0 +1,23 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="楓探偵探帽 logo">
+  <style>
+    .badge { fill: #F6EDDC; }
+    .ink { fill: #211F1B; }
+    .amber { fill: #B8791F; }
+    .amberStroke { stroke: #B8791F; }
+    @media (prefers-color-scheme: dark) {
+      .badge { fill: #3A2F1E; }
+      .ink { fill: #171614; }
+      .amber { fill: #D9A45C; }
+      .amberStroke { stroke: #D9A45C; }
+    }
+  </style>
+
+  <rect class="badge" x="6" y="6" width="88" height="88" rx="20"/>
+
+  <ellipse class="ink" cx="50" cy="62" rx="34" ry="8"/>
+  <path class="ink" d="M33 61 L33 36 Q33 20 50 20 Q67 20 67 36 L67 61 Z"/>
+  <path class="amber" d="M33 46 Q50 43 67 46 L67 52 Q50 49 33 52 Z"/>
+
+  <circle cx="68" cy="69" r="9.5" fill="none" class="amberStroke" stroke-width="3.4"/>
+  <line x1="74.7" y1="75.7" x2="82" y2="83" class="amberStroke" stroke-width="3.8" stroke-linecap="round"/>
+</svg>

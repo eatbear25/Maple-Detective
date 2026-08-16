@@ -15,6 +15,20 @@ const NAV_ICONS: Record<string, React.ComponentType<{ size?: number; className?:
   map: MapIcon,
 };
 
+// 偵探帽 + 放大鏡標誌。用 CSS var 上色（不是 media query），
+// 這樣才會跟著網站自己的深色模式開關即時換色，而不是只認系統設定。
+function Logo({ size }: { size: number }) {
+  return (
+    <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden="true">
+      <ellipse cx="50" cy="62" rx="34" ry="8" fill="var(--text)" />
+      <path d="M33 61 L33 36 Q33 20 50 20 Q67 20 67 36 L67 61 Z" fill="var(--text)" />
+      <path d="M33 46 Q50 43 67 46 L67 52 Q50 49 33 52 Z" fill="var(--accent)" />
+      <circle cx="68" cy="69" r="9.5" fill="none" stroke="var(--accent)" strokeWidth="3.4" />
+      <line x1="74.7" y1="75.7" x2="82" y2="83" stroke="var(--accent)" strokeWidth="3.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function NavLinks({
   pathname,
   className,
@@ -91,10 +105,11 @@ export default function MinimalLayout({ children }: { children: React.ReactNode 
     >
       <header className="border-b border-[var(--border)] bg-[var(--surface)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3 sm:gap-6">
-          <div className="flex items-center gap-2 font-bold text-[var(--accent)] shrink-0">
+          <Link href={themeHref("minimal", "")} className="flex items-center gap-2 font-bold text-[var(--accent)] shrink-0">
+            <Logo size={28} />
             <span className="text-lg">楓探</span>
             <span className="text-xs font-normal text-[var(--text-muted)] hidden sm:inline">Maple Detective</span>
-          </div>
+          </Link>
 
           <NavLinks
             pathname={pathname}
@@ -142,6 +157,7 @@ export default function MinimalLayout({ children }: { children: React.ReactNode 
             >
               <X size={19} />
             </button>
+            <Logo size={24} />
             <span className="text-lg font-bold text-[var(--accent)]">楓探</span>
             <button
               onClick={toggle}

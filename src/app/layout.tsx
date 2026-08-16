@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Baloo_2, Press_Start_2P, Rajdhani, Noto_Sans_TC } from "next/font/google";
+import {
+  Baloo_2,
+  Press_Start_2P,
+  Rajdhani,
+  Noto_Sans_TC,
+} from "next/font/google";
 import "./globals.css";
 
 const notoSansTC = Noto_Sans_TC({
@@ -27,7 +32,7 @@ const rajdhani = Rajdhani({
 });
 
 export const metadata: Metadata = {
-  title: "楓谷工具箱",
+  title: "楓探 | 新楓之谷：經典版工具箱",
   description: "楓之谷攻略工具箱：怪物掉落查詢、時裝搭配、組隊攻略",
 };
 
@@ -39,7 +44,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // 瀏覽器擴充功能會在 hydrate 前往 <html> 塞自訂屬性（speedupyoutubeads 等），只抑制此元素的屬性比對
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" style={{ fontFamily: "system-ui, 'Microsoft JhengHei', sans-serif" }}>
+      <body
+        className="min-h-full flex flex-col"
+        style={{ fontFamily: "system-ui, 'Microsoft JhengHei', sans-serif" }}
+      >
         {children}
       </body>
     </html>

@@ -130,8 +130,8 @@ export default function MinimalMonsterPage() {
         <h1 className="text-3xl font-bold tracking-tight">怪物掉落查詢</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
           {tab === "current"
-            ? `從遊戲用戶端圖鑑整理，共 ${baseList.length} 隻怪物的掉落記錄`
-            : "客戶端資料裡存在、但目前版本尚未開放的怪物與掉落（不保證未來會實裝）"}
+            ? `從遊戲用戶端圖鑑整理的掉落資訊，與實際情況可能存在出入，僅供參考`
+            : "資料裡存在，但目前版本尚未開放的怪物與掉落（不確定未來是否實裝，僅供參考）"}
         </p>
 
         <div className="mt-4 inline-flex rounded-full border border-[var(--border)] p-0.5 text-sm">
