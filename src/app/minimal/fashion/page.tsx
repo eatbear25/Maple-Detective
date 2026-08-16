@@ -27,9 +27,17 @@ import {
   type FashionSlot,
   type Gender,
 } from "@/data/fashion";
-import { ACTIONS, EXPRESSIONS, SKINS, DEFAULT_LOOK, type CharacterLook } from "@/lib/fashion/config";
+import {
+  ACTIONS,
+  EXPRESSIONS,
+  SKINS,
+  DEFAULT_LOOK,
+  type CharacterLook,
+} from "@/lib/fashion/config";
 import { itemIconUrls } from "@/lib/fashion/msio";
-import CharacterCanvas, { type CharacterCanvasHandle } from "./character-canvas";
+import CharacterCanvas, {
+  type CharacterCanvasHandle,
+} from "./character-canvas";
 
 const PAGE_SIZE = 60;
 
@@ -97,7 +105,12 @@ function ItemIcon({ id, alt }: { id: number; alt: string }) {
   const [srcIndex, setSrcIndex] = useState(0);
   const urls = itemIconUrls(id);
   if (srcIndex >= urls.length) {
-    return <div className="h-8 w-8 shrink-0 rounded bg-[var(--accent-soft)]" aria-hidden />;
+    return (
+      <div
+        className="h-8 w-8 shrink-0 rounded bg-[var(--accent-soft)]"
+        aria-hidden
+      />
+    );
   }
   return (
     // 素材來自 maplestory.io（尺寸不定），用原生 img 免去 next/image 的網域設定
@@ -129,15 +142,20 @@ export default function MinimalFashionPage() {
   const [animated, setAnimated] = useState(true);
   const [flipX, setFlipX] = useState(false);
 
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [error, setError] = useState<unknown>(null);
   const [missing, setMissing] = useState<number[]>([]);
   const canvasRef = useRef<CharacterCanvasHandle>(null);
 
-  const onStatusChange = useCallback((s: "loading" | "ready" | "error", err?: unknown) => {
-    setStatus(s);
-    setError(err ?? null);
-  }, []);
+  const onStatusChange = useCallback(
+    (s: "loading" | "ready" | "error", err?: unknown) => {
+      setStatus(s);
+      setError(err ?? null);
+    },
+    [],
+  );
   const onMissing = useCallback((ids: number[]) => setMissing(ids), []);
 
   const grouped = GROUPED_SLOTS.has(slot);
@@ -154,11 +172,14 @@ export default function MinimalFashionPage() {
         if (
           q &&
           !g.name.includes(q) &&
-          !g.variants.some((v) => v.item.name.includes(q) || String(v.item.id) === q)
+          !g.variants.some(
+            (v) => v.item.name.includes(q) || String(v.item.id) === q,
+          )
         ) {
           continue;
         }
-        const variant = g.variants.find((v) => v.color === selectedColor) ?? g.variants[0];
+        const variant =
+          g.variants.find((v) => v.color === selectedColor) ?? g.variants[0];
         entries.push({
           key: g.key,
           name: g.name,
@@ -173,7 +194,12 @@ export default function MinimalFashionPage() {
     return all
       .filter((it) => genderFilter === "all" || it.gender === genderFilter)
       .filter((it) => !q || it.name.includes(q) || String(it.id) === q)
-      .map((it) => ({ key: it.id, name: it.name, gender: it.gender, item: it }));
+      .map((it) => ({
+        key: it.id,
+        name: it.name,
+        gender: it.gender,
+        item: it,
+      }));
   }, [slot, q, grouped, selectedColor, genderFilter]);
 
   const pageCount = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
@@ -192,7 +218,9 @@ export default function MinimalFashionPage() {
     setLook((prev) => {
       const current = prev.equips[slot];
       if (!current) return prev;
-      const variant = styleGroupOf(slot, current.id)?.variants.find((v) => v.color === digit);
+      const variant = styleGroupOf(slot, current.id)?.variants.find(
+        (v) => v.color === digit,
+      );
       if (!variant || variant.item.id === current.id) return prev;
       return {
         ...prev,
@@ -215,8 +243,13 @@ export default function MinimalFashionPage() {
         delete equips[item.slot];
         return { ...prev, equips };
       }
-      for (const conflict of SLOT_CONFLICTS[item.slot] ?? []) delete equips[conflict];
-      equips[item.slot] = { id: item.id, name: item.name, path: itemImgPath(item) };
+      for (const conflict of SLOT_CONFLICTS[item.slot] ?? [])
+        delete equips[conflict];
+      equips[item.slot] = {
+        id: item.id,
+        name: item.name,
+        path: itemImgPath(item),
+      };
       return { ...prev, equips };
     });
   };
@@ -246,8 +279,10 @@ export default function MinimalFashionPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">時裝搭配</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          用戶端裡的 {fashionItems.length} 件點裝，試穿看看（髮型、臉型同造型不同顏色已合併，
-          用色票切換）。圖與動作由 maplestory.io 提供，極少數道具素材庫查不到、無法預覽。
+          用戶端裡的 {fashionItems.length}{" "}
+          件點裝，試穿看看（髮型、臉型同造型不同顏色已合併，
+          用色票切換）。圖與動作由 maplestory.io
+          提供，極少數道具素材庫查不到、無法預覽。
         </p>
       </div>
 
@@ -268,8 +303,9 @@ export default function MinimalFashionPage() {
                 onMissing={onMissing}
               />
               {status === "loading" && (
-                <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg)]/80 text-sm text-[var(--text-muted)]">
-                  合成中…
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/80">
+                  <div className="maple-loader" />
+                  <span className="text-sm text-[var(--text-muted)]">合成中…</span>
                 </div>
               )}
               {status === "error" && (
@@ -345,7 +381,9 @@ export default function MinimalFashionPage() {
                 <span className="text-[var(--text-muted)]">膚色</span>
                 <select
                   value={look.skinId}
-                  onChange={(e) => setLook((p) => ({ ...p, skinId: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setLook((p) => ({ ...p, skinId: Number(e.target.value) }))
+                  }
                   className="w-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 outline-none focus:border-[var(--accent)]"
                 >
                   {SKINS.map((s) => (
@@ -359,7 +397,9 @@ export default function MinimalFashionPage() {
                 <span className="text-[var(--text-muted)]">角色性別</span>
                 <select
                   value={charGender}
-                  onChange={(e) => setCharGender(Number(e.target.value) as 0 | 1)}
+                  onChange={(e) =>
+                    setCharGender(Number(e.target.value) as 0 | 1)
+                  }
                   className="w-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 outline-none focus:border-[var(--accent)]"
                 >
                   <option value={0}>男</option>
@@ -371,11 +411,16 @@ export default function MinimalFashionPage() {
 
           {missing.length > 0 && (
             <div className="flex gap-2 rounded-xl border border-[var(--border)] bg-[var(--accent-soft)] p-3 text-xs">
-              <AlertTriangle size={14} className="mt-0.5 shrink-0 text-[var(--accent)]" />
+              <AlertTriangle
+                size={14}
+                className="mt-0.5 shrink-0 text-[var(--accent)]"
+              />
               <div>
                 <div className="font-medium">這幾件無法預覽</div>
                 <div className="mt-0.5 text-[var(--text-muted)]">
-                  {missing.map((id) => fashionItem(id)?.name ?? `#${id}`).join("、")}
+                  {missing
+                    .map((id) => fashionItem(id)?.name ?? `#${id}`)
+                    .join("、")}
                   —— 素材庫沒有它們的動作資料，仍然穿在身上，只是畫不出來。
                 </div>
               </div>
@@ -383,13 +428,20 @@ export default function MinimalFashionPage() {
           )}
 
           <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <div className="mb-2 text-xs font-semibold text-[var(--text-muted)]">目前穿著</div>
+            <div className="mb-2 text-xs font-semibold text-[var(--text-muted)]">
+              目前穿著
+            </div>
             {equippedRows.length === 0 ? (
-              <div className="text-xs text-[var(--text-muted)]">還沒穿任何東西</div>
+              <div className="text-xs text-[var(--text-muted)]">
+                還沒穿任何東西
+              </div>
             ) : (
               <div className="space-y-1.5">
                 {equippedRows.map(({ slot: s, label }) => (
-                  <div key={s} className="flex items-center justify-between gap-2 text-xs">
+                  <div
+                    key={s}
+                    className="flex items-center justify-between gap-2 text-xs"
+                  >
                     <span className="text-[var(--text-muted)]">{label}</span>
                     <span className="flex min-w-0 items-center gap-1">
                       <span className="truncate">{look.equips[s]!.name}</span>
@@ -503,17 +555,17 @@ export default function MinimalFashionPage() {
             </div>
           )}
 
-          <div className="text-xs text-[var(--text-muted)]">
+          {/* <div className="text-xs text-[var(--text-muted)]">
             {list.length} {grouped ? "款造型" : "件"}
-            {pageCount > 1 && `，第 ${safePage + 1} / ${pageCount} 頁`}
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
             {shown.map((entry) => {
               const equipped = look.equips[slot];
               // 髮型／臉型：身上那件是同組任一顏色就算選中（換色前後都亮）
               const active = grouped
-                ? equipped !== undefined && styleBaseId(slot, equipped.id) === entry.key
+                ? equipped !== undefined &&
+                  styleBaseId(slot, equipped.id) === entry.key
                 : equipped?.id === entry.item.id;
               const fits = genderFits(entry.gender, charGender);
               return (
@@ -531,7 +583,11 @@ export default function MinimalFashionPage() {
                       : "border-[var(--border)] hover:border-[var(--accent)]"
                   } ${fits ? "" : "opacity-45"}`}
                 >
-                  <ItemIcon key={entry.item.id} id={entry.item.id} alt={entry.name} />
+                  <ItemIcon
+                    key={entry.item.id}
+                    id={entry.item.id}
+                    alt={entry.name}
+                  />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs">{entry.name}</span>
                     {(entry.colorMissing || !fits) && (
@@ -571,7 +627,10 @@ export default function MinimalFashionPage() {
               </button>
               {pageNumbers(safePage, pageCount).map((n, i) =>
                 n === "…" ? (
-                  <span key={`dots-${i}`} className="px-1 text-[var(--text-muted)]">
+                  <span
+                    key={`dots-${i}`}
+                    className="px-1 text-[var(--text-muted)]"
+                  >
                     …
                   </span>
                 ) : (

@@ -257,12 +257,14 @@ def main():
     for sname, sheet in wm_sheets.items():
         spots_out = []
         for spot in sheet["spots"]:
-            s_out = {"x": spot["x"], "y": spot["y"], "maps": spot["maps"]}
+            # 客戶端來源資料本身在少數點位重複列了同一 mapId（例：211000100），這裡去重避免前端渲染出重複 key
+            spot_maps = list(dict.fromkeys(spot["maps"]))
+            s_out = {"x": spot["x"], "y": spot["y"], "maps": spot_maps}
             near = near_by_spot.get((sname, spot["x"], spot["y"]))
             if near:
                 s_out["near"] = near
             spots_out.append(s_out)
-            for mp in [*spot["maps"], *(near or [])]:
+            for mp in [*spot_maps, *(near or [])]:
                 map_names.setdefault(str(mp), map_name_entry(mp))
         nav_sheets[sname] = {
             "title": sheet["title"],

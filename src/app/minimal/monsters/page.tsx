@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   ChevronDown,
   Search,
@@ -66,23 +67,44 @@ function placeLabel(m: DropMonster) {
   return "出沒地不明";
 }
 
+/** 進站瞬間的骨架畫面：避免帶 ?q= 進來時先閃過未篩選的全部清單 */
+function MonsterPageSkeleton() {
+  return (
+    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3">
+      <div className="maple-loader" />
+      <p className="text-sm text-[var(--text-muted)]">載入中…</p>
+    </div>
+  );
+}
+
 export default function MinimalMonsterPage() {
-  const [tab, setTab] = useState<Tab>("current");
-  const [query, setQuery] = useState("");
+  return (
+    <Suspense fallback={<MonsterPageSkeleton />}>
+      <MonsterExplorer />
+    </Suspense>
+  );
+}
+
+function MonsterExplorer() {
+  // 地圖導覽頁的「查看怪物」連結會帶 ?q=怪物名 進來。用 useSearchParams 而不是
+  // window.location.search + useEffect，是因為這個 hook 在動態渲染時，
+  // 伺服器端第一次渲染就讀得到網址參數——結果會直接是篩選好的清單，
+  // 不會像 effect 那樣先出全部結果、下一拍才收斂成篩選結果（那個閃爍就是使用者回報的問題）。
+  const searchParams = useSearchParams();
+  const q0 = searchParams.get("q");
+
+  const [tab, setTab] = useState<Tab>(() =>
+    q0 && !monsters.some((m) => m.released && matches(m, q0))
+      ? "future"
+      : "current",
+  );
+  const [query, setQuery] = useState(q0 ?? "");
   const [filterOpen, setFilterOpen] = useState(false);
   const [weakSel, setWeakSel] = useState<string[]>([]);
   const [lvMin, setLvMin] = useState("");
   const [lvMax, setLvMax] = useState("");
   const [selectedId, setSelectedId] = useState(monsters[0].id);
   const tooltip = useItemTooltip();
-
-  // 地圖導覽頁的「查看怪物」連結會帶 ?q=怪物名 進來
-  useEffect(() => {
-    const q0 = new URLSearchParams(window.location.search).get("q");
-    if (!q0) return;
-    setQuery(q0);
-    if (!monsters.some((m) => m.released && matches(m, q0))) setTab("future");
-  }, []);
 
   // 現行版本＝目前客戶端地圖上真的遇得到的怪；未來視＝未實裝怪 + 帶未實裝掉落的怪
   const baseList = useMemo(
