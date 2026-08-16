@@ -17,6 +17,13 @@ export const navItems: NavItem[] = [
   },
   { key: "map", label: "地圖", icon: "🗺️", path: "map", enabled: true },
   {
+    key: "boss-timer",
+    label: "BOSS 計時器",
+    icon: "👑",
+    path: "boss-timer",
+    enabled: true,
+  },
+  {
     key: "fashion",
     label: "時裝搭配",
     icon: "👗",

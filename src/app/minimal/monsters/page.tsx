@@ -434,7 +434,7 @@ function MonsterExplorer() {
                   未實裝掉落
                 </div>
                 <p className="text-xs text-[var(--text-muted)] mb-3">
-                  存在於客戶端資料、但目前版本拿不到的道具。
+                  存在於客戶端資料，但目前版本拿不到的道具。
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {selected.futureDrops.map((iid) => {

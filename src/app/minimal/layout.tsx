@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Map as MapIcon,
+  Timer,
 } from "lucide-react";
 import { navItems, themeHref } from "@/nav";
 import { LIGHT_TOKENS, DARK_TOKENS, useDarkMode, themeVars } from "./theme";
@@ -26,6 +27,7 @@ const NAV_ICONS: Record<
   fashion: Shirt,
   party: Users,
   map: MapIcon,
+  "boss-timer": Timer,
 };
 
 // 偵探帽 + 放大鏡標誌。用 CSS var 上色（不是 media query），
@@ -231,7 +233,7 @@ export default function MinimalLayout({
 
       <footer className="border-t border-[var(--border)] px-6 py-4 text-center text-[11px] text-[var(--text-muted)]">
         © 2026 楓探 Maple Detective
-        <p className="mt-1">資料與實際版本一定有差異，本站僅供參考</p>
+        <p className="mt-1">本站資料僅供參考</p>
       </footer>
     </div>
   );
