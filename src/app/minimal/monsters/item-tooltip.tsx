@@ -1,7 +1,7 @@
 "use client";
 
-// 遊戲風格的道具 hover 彈窗：模仿楓之谷道具提示視窗（深藍底、白字）。
-// 非裝備 → 名稱 + 說明文字（含 #c...# 橘色強調）；
+// 道具 hover 彈窗，套用楓探主題色（跟著 layout.tsx 設的 CSS var 走）。
+// 非裝備 → 名稱 + 說明文字（含 #c...# 強調色）；
 // 裝備   → 名稱 + 需求值 + 可用職業 + 分類/攻速/能力加成/捲軸次數。
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -83,22 +83,31 @@ const STAT_ROWS: [string, string][] = [
   ["incJump", "跳躍力"],
 ];
 
-/** hover 狀態 + 跟隨滑鼠定位（不觸發 re-render，直接改 style） */
+/**
+ * hover 狀態 + 定位（不觸發 re-render，直接改 style）。
+ * 錨定在被 hover 的格子本身（進入時量一次 rect），不跟著游標跑——
+ * 游標貼著視窗邊緣時跟隨式定位會在「翻到另一側」的臨界點來回跳動，
+ * 導致彈窗瘋狂開關；改成只在滑入當下算一次位置就不會再觸發。
+ */
 export function useItemTooltip() {
   const [id, setId] = useState<number | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const pos = useRef({ x: 0, y: 0 });
+  const anchorRef = useRef<DOMRect | null>(null);
 
   const place = useCallback(() => {
     const el = panelRef.current;
-    if (!el) return;
+    const anchor = anchorRef.current;
+    if (!el || !anchor) return;
+    const gap = 10;
     const pad = 8;
     const { innerWidth: vw, innerHeight: vh } = window;
-    let x = pos.current.x + 14;
-    let y = pos.current.y + 18;
-    if (x + el.offsetWidth + pad > vw) x = Math.max(pad, vw - el.offsetWidth - pad);
-    if (y + el.offsetHeight + pad > vh) y = pos.current.y - el.offsetHeight - 10;
-    if (y < pad) y = pad;
+
+    let x = anchor.right + gap;
+    if (x + el.offsetWidth + pad > vw) x = Math.max(pad, anchor.left - el.offsetWidth - gap);
+
+    let y = anchor.top;
+    if (y + el.offsetHeight + pad > vh) y = Math.max(pad, vh - el.offsetHeight - pad);
+
     el.style.left = `${x}px`;
     el.style.top = `${y}px`;
   }, []);
@@ -113,24 +122,28 @@ export function useItemTooltip() {
     /** 綁在每個道具格子上 */
     handlers: (iid: number) => ({
       onMouseEnter: (e: React.MouseEvent) => {
-        pos.current = { x: e.clientX, y: e.clientY };
+        anchorRef.current = e.currentTarget.getBoundingClientRect();
         setId(iid);
-      },
-      onMouseMove: (e: React.MouseEvent) => {
-        pos.current = { x: e.clientX, y: e.clientY };
-        place();
       },
       onMouseLeave: () => setId(null),
     }),
   };
 }
 
-/** 說明文字：#c...# → 橘色強調，\n → 換行 */
+/** 說明文字：#c...# → 強調色，\n → 換行 */
 function Desc({ text }: { text: string }) {
   const parts = text.split(/#c([^#]*)#/g);
   return (
     <span className="whitespace-pre-line">
-      {parts.map((p, i) => (i % 2 ? <span key={i} className="text-[#ffb648]">{p}</span> : p))}
+      {parts.map((p, i) =>
+        i % 2 ? (
+          <span key={i} style={{ color: "var(--accent)" }}>
+            {p}
+          </span>
+        ) : (
+          p
+        )
+      )}
     </span>
   );
 }
@@ -138,7 +151,7 @@ function Desc({ text }: { text: string }) {
 function Row({ label, value }: { label: string; value: string | number }) {
   return (
     <li>
-      <span className="text-[#a8b8e8]">・{label} : </span>
+      <span className="text-[var(--text-muted)]">・{label} : </span>
       {value}
     </li>
   );
@@ -152,7 +165,7 @@ function EquipBody({ id, eq }: { id: number; eq: EquipStats }) {
   return (
     <>
       <div className="mt-2 flex gap-3">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded bg-white/10 p-1.5">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded bg-[var(--accent-soft)] p-1.5">
           <GameIcon
             src={itemIconSrc(id)}
             alt=""
@@ -160,12 +173,12 @@ function EquipBody({ id, eq }: { id: number; eq: EquipStats }) {
             className="h-11 w-11 [image-rendering:pixelated]"
           />
         </div>
-        <div className="text-[11px] leading-[1.6] text-[#a8b8e8]">
-          <div>裝備等級 : <span className="text-white">{eq.reqLevel ?? 0}</span></div>
-          <div>需要力量 : <span className="text-white">{eq.reqSTR ?? 0}</span></div>
-          <div>需要敏捷 : <span className="text-white">{eq.reqDEX ?? 0}</span></div>
-          <div>需要智力 : <span className="text-white">{eq.reqINT ?? 0}</span></div>
-          <div>需要幸運 : <span className="text-white">{eq.reqLUK ?? 0}</span></div>
+        <div className="text-[11px] leading-[1.6] text-[var(--text-muted)]">
+          <div>裝備等級 : <span className="text-[var(--text)]">{eq.reqLevel ?? 0}</span></div>
+          <div>需要力量 : <span className="text-[var(--text)]">{eq.reqSTR ?? 0}</span></div>
+          <div>需要敏捷 : <span className="text-[var(--text)]">{eq.reqDEX ?? 0}</span></div>
+          <div>需要智力 : <span className="text-[var(--text)]">{eq.reqINT ?? 0}</span></div>
+          <div>需要幸運 : <span className="text-[var(--text)]">{eq.reqLUK ?? 0}</span></div>
         </div>
       </div>
 
@@ -173,14 +186,14 @@ function EquipBody({ id, eq }: { id: number; eq: EquipStats }) {
         {CLASSES.map(([label, bit]) => {
           const usable = reqJob === 0 || (bit !== 0 && (reqJob & bit) !== 0);
           return (
-            <span key={label} className={usable ? "text-white" : "text-[#e05d6f]"}>
+            <span key={label} className={usable ? "text-[var(--text)]" : "text-red-500/80 line-through"}>
               {label}
             </span>
           );
         })}
       </div>
 
-      <div className="my-2 border-t border-dashed border-white/25" />
+      <div className="my-2 border-t border-dashed border-[var(--border)]" />
 
       <ul className="space-y-0.5 text-[12px]">
         {weaponCat && <Row label="武器分類" value={weaponCat} />}
@@ -210,14 +223,20 @@ export function ItemTooltip({
   return (
     <div
       ref={panelRef}
-      className="pointer-events-none fixed left-0 top-0 z-50 w-max max-w-[280px] rounded-lg border border-[#8fa3d9]/60 bg-[#131c43]/95 px-3.5 py-3 text-white shadow-xl shadow-slate-900/40"
+      className="pointer-events-none fixed left-0 top-0 z-50 w-max max-w-[280px] rounded-xl border px-3.5 py-3 shadow-xl"
+      style={{
+        background: "var(--surface)",
+        borderColor: "var(--border)",
+        color: "var(--text)",
+        boxShadow: "0 12px 32px -8px rgb(0 0 0 / 0.18)",
+      }}
     >
       <div className="text-center text-[13px] font-semibold leading-tight">{itemName(id)}</div>
       {info?.eq ? (
         <EquipBody id={id} eq={info.eq} />
       ) : (
         <div className="mt-2 flex gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-white/10 p-1.5">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-[var(--accent-soft)] p-1.5">
             <GameIcon
               src={itemIconSrc(id)}
               alt=""
@@ -226,14 +245,14 @@ export function ItemTooltip({
             />
           </div>
           {info?.desc && (
-            <div className="text-[12px] leading-relaxed text-slate-200">
+            <div className="text-[12px] leading-relaxed text-[var(--text-muted)]">
               <Desc text={info.desc} />
             </div>
           )}
         </div>
       )}
       {info?.eq && info.desc && (
-        <div className="mt-2 text-[11px] leading-relaxed text-slate-300">
+        <div className="mt-2 text-[11px] leading-relaxed text-[var(--text-muted)]">
           <Desc text={info.desc} />
         </div>
       )}

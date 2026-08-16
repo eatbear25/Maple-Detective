@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Baloo_2, Press_Start_2P, Rajdhani } from "next/font/google";
+import { Baloo_2, Press_Start_2P, Rajdhani, Noto_Sans_TC } from "next/font/google";
 import "./globals.css";
+
+const notoSansTC = Noto_Sans_TC({
+  variable: "--font-noto-tc",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
 
 const baloo2 = Baloo_2({
   variable: "--font-baloo",
@@ -29,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="zh-Hant"
-      className={`${baloo2.variable} ${pressStart2P.variable} ${rajdhani.variable} h-full antialiased`}
+      className={`${baloo2.variable} ${pressStart2P.variable} ${rajdhani.variable} ${notoSansTC.variable} h-full antialiased`}
       // 瀏覽器擴充功能會在 hydrate 前往 <html> 塞自訂屬性（speedupyoutubeads 等），只抑制此元素的屬性比對
       suppressHydrationWarning
     >
