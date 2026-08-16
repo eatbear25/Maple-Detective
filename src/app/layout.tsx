@@ -5,6 +5,7 @@ import {
   Rajdhani,
   Noto_Sans_TC,
 } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import SiteShell from "./site-shell";
 
@@ -34,7 +35,7 @@ const rajdhani = Rajdhani({
 
 export const metadata: Metadata = {
   title: "楓探 | 新楓之谷：經典版工具箱",
-  description: "楓之谷攻略工具箱：怪物掉落查詢、時裝搭配、組隊攻略",
+  description: "楓之谷攻略工具箱：怪物掉落查詢、時裝搭配等",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -51,6 +52,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       >
         <SiteShell>{children}</SiteShell>
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }
