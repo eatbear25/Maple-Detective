@@ -1,0 +1,64 @@
+"""從 maplestory.io 下載掉落查詢會用到的圖示到 public/icons/。
+
+用法：python tools/download-icons.py
+已存在的檔案會跳過，可重複執行。來源優先 TMS/209，404 時退回 GMS/62。
+- 道具：public/icons/item/{itemId}.png
+- 怪物：public/icons/mob/{mobId}.gif（站立動圖）
+"""
+
+import json
+import os
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+
+PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PUB = os.path.join(PROJECT, "public", "icons")
+SOURCES = ["TMS/209", "GMS/62"]
+HEADERS = {"User-Agent": "maple-detective/1.0 (fan site asset fetch)"}
+
+
+def fetch(url):
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()
+
+
+def download(kind, oid, path_tpl, dest):
+    if os.path.exists(dest) and os.path.getsize(dest) > 0:
+        return None
+    for src in SOURCES:
+        try:
+            data = fetch(f"https://maplestory.io/api/{src}/{path_tpl.format(id=oid)}")
+            if data:
+                with open(dest, "wb") as f:
+                    f.write(data)
+                return None
+        except Exception:
+            continue
+    return (kind, oid)
+
+
+def main():
+    with open(os.path.join(PROJECT, "reference-data", "monster-book.json"), encoding="utf-8") as f:
+        mobs = json.load(f)["mobs"]
+
+    os.makedirs(os.path.join(PUB, "item"), exist_ok=True)
+    os.makedirs(os.path.join(PUB, "mob"), exist_ok=True)
+
+    jobs = []
+    for mob_id in mobs:
+        jobs.append(("mob", mob_id, "mob/{id}/render/stand", os.path.join(PUB, "mob", f"{mob_id}.gif")))
+    for item_id in sorted({i for v in mobs.values() for i in v["rewards"]}):
+        jobs.append(("item", item_id, "item/{id}/icon", os.path.join(PUB, "item", f"{item_id}.png")))
+
+    print(f"{len(jobs)} 個圖示要抓")
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        misses = [m for m in ex.map(lambda j: download(*j), jobs) if m]
+
+    print(f"完成，失敗 {len(misses)} 個")
+    for kind, oid in misses:
+        print(f"  MISS {kind} {oid}")
+
+
+if __name__ == "__main__":
+    main()
