@@ -3,10 +3,12 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
+  Check,
   ChevronDown,
   Search,
   Filter,
   MapPin,
+  Share2,
   Telescope,
   X,
 } from "lucide-react";
@@ -67,6 +69,22 @@ function placeLabel(m: DropMonster) {
   return "出沒地不明";
 }
 
+/** 複製分享連結：優先用 Clipboard API，非安全環境（如區網 http）退回 execCommand */
+async function copyText(text: string) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const el = document.createElement("textarea");
+  el.value = text;
+  el.style.position = "fixed";
+  el.style.opacity = "0";
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+}
+
 /** 進站瞬間的骨架畫面：避免帶 ?q= 進來時先閃過未篩選的全部清單 */
 function MonsterPageSkeleton() {
   return (
@@ -92,19 +110,35 @@ function MonsterExplorer() {
   // 不會像 effect 那樣先出全部結果、下一拍才收斂成篩選結果（那個閃爍就是使用者回報的問題）。
   const searchParams = useSearchParams();
   const q0 = searchParams.get("q");
+  // 分享連結帶 ?id=怪物ID 進來：直接選到那隻怪、分頁也跟著牠是否實裝切換，
+  // 不吃搜尋字串（避免打開連結時篩選清單反而找不到牠）。
+  const id0 = searchParams.get("id");
+  const idMonster = id0 ? monsters.find((m) => m.id === id0) : undefined;
 
-  const [tab, setTab] = useState<Tab>(() =>
-    q0 && !monsters.some((m) => m.released && matches(m, q0))
+  const [tab, setTab] = useState<Tab>(() => {
+    if (idMonster) return idMonster.released ? "current" : "future";
+    return q0 && !monsters.some((m) => m.released && matches(m, q0))
       ? "future"
-      : "current",
-  );
-  const [query, setQuery] = useState(q0 ?? "");
+      : "current";
+  });
+  const [query, setQuery] = useState(idMonster ? "" : (q0 ?? ""));
   const [filterOpen, setFilterOpen] = useState(false);
   const [weakSel, setWeakSel] = useState<string[]>([]);
   const [lvMin, setLvMin] = useState("");
   const [lvMax, setLvMax] = useState("");
-  const [selectedId, setSelectedId] = useState(monsters[0].id);
+  const [selectedId, setSelectedId] = useState(
+    idMonster ? idMonster.id : monsters[0].id,
+  );
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const tooltip = useItemTooltip();
+
+  const shareSelected = (id: string) => {
+    const url = `${window.location.origin}${window.location.pathname}?id=${id}`;
+    copyText(url).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId((cur) => (cur === id ? null : cur)), 1500);
+    });
+  };
 
   // 現行版本＝目前客戶端地圖上真的遇得到的怪；未來視＝未實裝怪 + 帶未實裝掉落的怪
   const baseList = useMemo(
@@ -361,8 +395,24 @@ function MonsterExplorer() {
                     </span>
                   )}
                 </div>
-                <div className="text-sm text-[var(--text-muted)]">
-                  #{selected.id}
+                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                  <span>#{selected.id}</span>
+                  <button
+                    onClick={() => shareSelected(selected.id)}
+                    title="複製這隻怪物的分享連結"
+                    className={`cursor-pointer inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors ${
+                      copiedId === selected.id
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                        : "border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)]"
+                    }`}
+                  >
+                    {copiedId === selected.id ? (
+                      <Check size={12} />
+                    ) : (
+                      <Share2 size={12} />
+                    )}
+                    {copiedId === selected.id ? "已複製連結" : "分享"}
+                  </button>
                 </div>
               </div>
               <div className="flex gap-4 text-sm sm:ml-auto sm:gap-6">
