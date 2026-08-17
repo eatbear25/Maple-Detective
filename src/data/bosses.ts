@@ -32,6 +32,7 @@ export const bossList: BossDef[] = [
   { id: "6300005", name: "殭屍蘑菇王" },
   { id: "8130100", name: "巴洛古" },
   { id: "5220000", name: "巨居蟹" },
+  { id: "6220000", name: "沼澤巨鱷" },
   {
     id: "5220002",
     name: "殭屍猴王",
