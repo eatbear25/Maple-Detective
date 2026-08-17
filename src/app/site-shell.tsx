@@ -221,7 +221,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-[var(--border)] px-6 py-4 text-center text-[11px] text-[var(--text-muted)]">
         © 2026 楓探 Maple Detective
         <p className="mt-1">
-          本站資料僅供參考，若有誤可至
+          本站資料僅供參考，若有任何問題可至
           <a
             href="https://forum.gamer.com.tw/Co.php?bsn=85994&sn=5193"
             target="_blank"
