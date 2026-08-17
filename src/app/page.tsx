@@ -1,7 +1,7 @@
-import Link from "next/link";
+import { ReactNode } from "react";
 import { Search, Map as MapIcon, ArrowRight } from "lucide-react";
 
-const FAQ: { q: string; a: string }[] = [
+const FAQ: { q: string; a: ReactNode }[] = [
   {
     q: "網站主要用途？",
     a: "目的是想將自己平常在遊戲中會使用到的功能整合在一起，也順便分享給其他玩家。",
@@ -16,7 +16,20 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "網站有問題要去哪裡回報？",
-    a: "若有問題都可以在巴哈討論區直接回報，謝謝！",
+    a: (
+      <>
+        若有問題都可以在
+        <a
+          href="https://forum.gamer.com.tw/Co.php?bsn=85994&sn=5193"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[var(--accent)] hover:underline"
+        >
+          巴哈討論區
+        </a>
+        直接回報，謝謝！
+      </>
+    ),
   },
 ];
 
