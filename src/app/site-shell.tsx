@@ -110,11 +110,7 @@ function NavLinks({
   );
 }
 
-export default function SiteShell({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { isDark, toggle } = useDarkMode();
   const tokens = isDark ? DARK_TOKENS : LIGHT_TOKENS;
@@ -224,7 +220,18 @@ export default function SiteShell({
 
       <footer className="border-t border-[var(--border)] px-6 py-4 text-center text-[11px] text-[var(--text-muted)]">
         © 2026 楓探 Maple Detective
-        <p className="mt-1">本站資料僅供參考</p>
+        <p className="mt-1">
+          本站資料僅供參考，若有誤可至
+          <a
+            href="https://forum.gamer.com.tw/Co.php?bsn=85994&sn=5193"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[var(--accent)] hover:underline"
+          >
+            巴哈討論區
+          </a>
+          回報
+        </p>
       </footer>
     </div>
   );

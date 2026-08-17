@@ -41,7 +41,7 @@ export default function Home() {
           楓探 Maple Detective
         </h1>
         <p className="mt-1.5 text-sm text-[var(--text-muted)]">
-          新楓之谷經典版工具站，資料來自遊戲用戶端拆包整理，與實際版本一定有差異，本站僅供參考。
+          新楓之谷經典版工具站，資料來自遊戲用戶端拆包整理，與實際版本有差異，本站僅供參考。
         </p>
       </div>
 
