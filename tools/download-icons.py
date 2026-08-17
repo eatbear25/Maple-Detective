@@ -23,18 +23,24 @@ def fetch(url):
         return r.read()
 
 
+MOB_STANCES = ["stand", "fly", "move"]  # 部分怪物（如純飛行怪）沒有 stand 動畫，依序退回
+
+
 def download(kind, oid, path_tpl, dest):
     if os.path.exists(dest) and os.path.getsize(dest) > 0:
         return None
+    stances = MOB_STANCES if kind == "mob" else [None]
     for src in SOURCES:
-        try:
-            data = fetch(f"https://maplestory.io/api/{src}/{path_tpl.format(id=oid)}")
-            if data:
-                with open(dest, "wb") as f:
-                    f.write(data)
-                return None
-        except Exception:
-            continue
+        for stance in stances:
+            tpl = path_tpl.format(id=oid, stance=stance) if stance else path_tpl.format(id=oid)
+            try:
+                data = fetch(f"https://maplestory.io/api/{src}/{tpl}")
+                if data:
+                    with open(dest, "wb") as f:
+                        f.write(data)
+                    return None
+            except Exception:
+                continue
     return (kind, oid)
 
 
@@ -52,7 +58,7 @@ def main():
 
     jobs = []
     for mob_id in mobs:
-        jobs.append(("mob", mob_id, "mob/{id}/render/stand", os.path.join(PUB, "mob", f"{mob_id}.gif")))
+        jobs.append(("mob", mob_id, "mob/{id}/render/{stance}", os.path.join(PUB, "mob", f"{mob_id}.gif")))
     for item_id in sorted({i for v in mobs.values() for i in v["rewards"]} | sup_items):
         jobs.append(("item", item_id, "item/{id}/icon", os.path.join(PUB, "item", f"{item_id}.png")))
 
