@@ -12,6 +12,7 @@ import {
   Sun,
   Menu,
   X,
+  ChevronDown,
   Map as MapIcon,
   Timer,
 } from "lucide-react";
@@ -70,40 +71,107 @@ function NavLinks({
   className,
   linkClassName,
   onNavigate,
+  mobile,
 }: {
   pathname: string;
   className: string;
   linkClassName: (isActive: boolean, enabled: boolean) => string;
   onNavigate?: () => void;
+  /** 手機抽屜：子項直接縮排列出（沒有 hover 可用） */
+  mobile?: boolean;
 }) {
+  const renderLink = (
+    key: string,
+    label: string,
+    path: string,
+    enabled: boolean,
+    isActive: boolean,
+    extraClass = "",
+    children?: React.ReactNode,
+  ) => (
+    <Link
+      key={key}
+      href={enabled ? navHref(path) : "#"}
+      aria-disabled={!enabled}
+      onClick={(e) => {
+        if (!enabled) {
+          e.preventDefault();
+          return;
+        }
+        onNavigate?.();
+      }}
+      className={`${linkClassName(isActive, enabled)} ${extraClass}`}
+    >
+      {children}
+      {label}
+      {!enabled && (
+        <span className="text-[10px] bg-[var(--accent-soft)] text-[var(--text-muted)] rounded-full px-1.5 py-0.5">
+          籌備中
+        </span>
+      )}
+    </Link>
+  );
+
   return (
     <nav className={className}>
       {navItems.map((item) => {
         const Icon = NAV_ICONS[item.key];
         const href = navHref(item.path);
-        const isActive = item.enabled && pathname === href;
-        return (
-          <Link
-            key={item.key}
-            href={item.enabled ? href : "#"}
-            aria-disabled={!item.enabled}
-            onClick={(e) => {
-              if (!item.enabled) {
-                e.preventDefault();
-                return;
-              }
-              onNavigate?.();
-            }}
-            className={linkClassName(isActive, item.enabled)}
-          >
+        const hasChildren = !!item.children?.length;
+        // 有子項時，停在任一子頁也算父層 active
+        const isActive =
+          item.enabled &&
+          (pathname === href ||
+            (hasChildren && pathname.startsWith(`${href}/`)));
+
+        const parent = renderLink(
+          item.key,
+          item.label,
+          item.path,
+          item.enabled,
+          isActive,
+          "",
+          <>
             {Icon && <Icon size={15} />}
-            {item.label}
-            {!item.enabled && (
-              <span className="text-[10px] bg-[var(--accent-soft)] text-[var(--text-muted)] rounded-full px-1.5 py-0.5">
-                籌備中
-              </span>
+            {hasChildren && !mobile && (
+              <ChevronDown size={13} className="-mr-1 opacity-60" />
             )}
-          </Link>
+          </>,
+        );
+
+        if (!hasChildren) return parent;
+
+        const childLinks = item.children!.map((c) =>
+          renderLink(
+            c.key,
+            c.label,
+            c.path,
+            c.enabled,
+            c.enabled && pathname === navHref(c.path),
+            mobile ? "" : "w-full",
+          ),
+        );
+
+        if (mobile) {
+          return (
+            <div key={item.key}>
+              {parent}
+              <div className="ml-4 flex flex-col gap-0.5 border-l border-[var(--border)] pl-2">
+                {childLinks}
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div key={item.key} className="group relative">
+            {parent}
+            <div className="invisible absolute left-0 top-full z-40 pt-1.5 opacity-0 transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+              <div className="min-w-40 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg">
+                {childLinks}
+              </div>
+            </div>
+          </div>
         );
       })}
     </nav>
@@ -126,7 +194,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
 
   const linkClassName = (isActive: boolean, enabled: boolean) =>
     [
-      "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors md:py-1.5 md:whitespace-nowrap",
+      "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors md:px-2.5 md:py-1.5 md:whitespace-nowrap",
       enabled ? "cursor-pointer" : "cursor-not-allowed opacity-50",
       enabled && isActive && "bg-[var(--accent-soft)] text-[var(--accent)]",
       enabled &&
@@ -160,7 +228,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
 
           <NavLinks
             pathname={pathname}
-            className="hidden md:flex items-center gap-1 flex-1 overflow-x-auto"
+            className="hidden md:flex items-center gap-0.5 flex-1"
             linkClassName={linkClassName}
           />
 
@@ -210,6 +278,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             className="flex flex-col gap-0.5 px-3 py-3"
             linkClassName={linkClassName}
             onNavigate={() => setMenuOpen(false)}
+            mobile
           />
         </div>
       </div>
