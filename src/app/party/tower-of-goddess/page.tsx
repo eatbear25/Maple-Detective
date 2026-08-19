@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Suspense,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -8,6 +9,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, Copy, Disc3, Lock, RotateCcw, Warehouse } from "lucide-react";
 import { loungeRecords } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
@@ -38,6 +40,10 @@ const TABS: [Tab, string, typeof Disc3][] = [
   ["storage", "倉庫", Warehouse],
 ];
 
+const DEFAULT_TAB: Tab = "lounge";
+const TAB_KEYS = new Set<string>(TABS.map(([k]) => k));
+const isTab = (v: string | null): v is Tab => !!v && TAB_KEYS.has(v);
+
 const PANELS: Record<Tab, () => React.JSX.Element> = {
   lounge: LoungeTab,
   sealed: SealedRoomTab,
@@ -45,10 +51,30 @@ const PANELS: Record<Tab, () => React.JSX.Element> = {
 };
 
 export default function TowerOfGoddessPage() {
-  const [tab, setTab] = useState<Tab>("lounge");
+  return (
+    <Suspense fallback={null}>
+      <TowerOfGoddessApp />
+    </Suspense>
+  );
+}
+
+function TowerOfGoddessApp() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const urlTab = searchParams.get("tab");
+  const [tab, setTab] = useState<Tab>(isTab(urlTab) ? urlTab : DEFAULT_TAB);
   // 切換方向：往右的分頁從右邊滑進來，往左的從左邊
   const [dir, setDir] = useState(1);
   const tabIndex = TABS.findIndex(([k]) => k === tab);
+
+  // 網址上的 ?tab= 是分享連結用的來源之一：直接改網址列（含瀏覽器上一頁）
+  // 也要能切分頁，所以跟著同步過來。
+  useEffect(() => {
+    if (isTab(urlTab) && urlTab !== tab) setTab(urlTab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 只跟著網址走，不要讓 tab 自己觸發它
+  }, [urlTab]);
 
   // 滑動指示器：量出目前分頁按鈕的位置寬度，讓底色滑過去而不是直接跳
   const barRef = useRef<HTMLDivElement>(null);
@@ -72,6 +98,7 @@ export default function TowerOfGoddessPage() {
     if (key === tab) return;
     setDir(index > tabIndex ? 1 : -1);
     setTab(key);
+    router.replace(`${pathname}?tab=${key}`, { scroll: false });
   };
 
   const Panel = PANELS[tab];
