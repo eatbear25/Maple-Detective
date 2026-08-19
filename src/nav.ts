@@ -61,7 +61,7 @@ export const navItems: NavItem[] = [
       },
       {
         key: "tower-of-goddess",
-        label: "女神之塔小工具",
+        label: "女神速查",
         path: "party/tower-of-goddess",
         enabled: true,
       },

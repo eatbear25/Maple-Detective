@@ -9,11 +9,13 @@ export const metadata = {
 
 const { image, bushes, flowers } = moonBunnyMap;
 
+const ICON_RATIO = 28 / 26; // 種子圖示原始比例，別把它拉扁
+
 /**
- * 種子標記：白底框 + 種子圖示，框底貼著地面／平台，顏色簡稱寫在框的正上方
- * ——跟遊戲裡掉落物的畫法一致，框浮在半空會看不出種子是站在哪一階地形上。
- * 座標單位是底圖像素（SVG 疊在圖上、共用同一個 viewBox），顏色一律寫死不吃主題
- * ——它們貼在夜色底圖上，跟著頁面明暗換色反而會看不見。
+ * 種子標記：就是那顆種子本身站在地上，顏色簡稱寫在正上方——跟遊戲裡掉落物的
+ * 畫法一致。不加底色框：底圖是夜色土地，框反而搶戲；改用一層深色投影把圖示從
+ * 土紋裡拉出來。座標單位是底圖像素（SVG 疊在圖上、共用同一個 viewBox），顏色
+ * 一律寫死不吃主題——它們貼在夜色底圖上，跟著頁面明暗換色反而會看不見。
  */
 function Seed({
   x,
@@ -27,39 +29,31 @@ function Seed({
   size: number;
 }) {
   const seed = moonBunnySeeds[itemId];
-  const half = size / 2;
+  const w = size;
+  const h = size * ICON_RATIO;
   const cx = x + image.originX;
-  // +12：reactor 座標是碰撞線，草皮畫在它下方約 12px，框底要壓到草土交界才像
-  // 「放在地上」，貼齊碰撞線會看起來浮在草上面。
-  const cy = y + image.originY - half + 12;
+  // +12：reactor 座標是碰撞線，草皮畫在它下方約 12px，圖示底部要壓到草土交界
+  // 才像「放在地上」，貼齊碰撞線會看起來浮在草上面。
+  const base = y + image.originY + 12;
   return (
     <g>
-      <rect
-        x={cx - half}
-        y={cy - half}
-        width={size}
-        height={size}
-        rx={size * 0.2}
-        fill="#FFFFFF"
-        stroke={seed.color}
-        strokeWidth={size * 0.09}
-      />
       <image
         href={itemIconSrc(itemId)}
-        x={cx - size * 0.34}
-        y={cy - size * 0.34}
-        width={size * 0.68}
-        height={size * 0.68}
+        x={cx - w / 2}
+        y={base - h}
+        width={w}
+        height={h}
+        filter="url(#seed-shadow)"
       />
       <text
         x={cx}
-        y={cy - half - size * 0.14}
+        y={base - h - size * 0.16}
         textAnchor="middle"
-        fontSize={size * 0.56}
+        fontSize={size * 0.7}
         fontWeight={700}
         fill="#FFFFFF"
         stroke="#11131F"
-        strokeWidth={size * 0.1}
+        strokeWidth={size * 0.13}
         paintOrder="stroke"
       >
         {seed.label}
@@ -74,13 +68,15 @@ export default function MoonBunnyPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">月妙的年糕</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          第一階段「{moonBunnyMap.mapName}」：打草撿種子，放到<b>同色</b>的迎月花上
+          第一階段「{moonBunnyMap.mapName}」：打草撿種子，放到<b>同色</b>
+          的迎月花上
         </p>
       </div>
 
       <div className="themed-scroll overflow-x-auto">
+        {/* 固定 900px：底圖本身有 1829px 寬，鋪滿版面反而看不出哪顆種子在哪一階 */}
         <div
-          className="relative min-w-[900px]"
+          className="relative mx-auto w-[900px]"
           style={{ aspectRatio: `${image.width} / ${image.height}` }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- 拆包底圖，尺寸固定不需要 next/image */}
@@ -94,8 +90,25 @@ export default function MoonBunnyPage() {
             aria-hidden
             className="absolute inset-0 h-full w-full"
           >
+            <defs>
+              <filter
+                id="seed-shadow"
+                x="-40%"
+                y="-40%"
+                width="180%"
+                height="180%"
+              >
+                <feDropShadow
+                  dx="0"
+                  dy="2"
+                  stdDeviation="3"
+                  floodColor="#05070F"
+                  floodOpacity="0.9"
+                />
+              </filter>
+            </defs>
             {bushes.map((b, i) => (
-              <Seed key={`b${i}`} x={b.x} y={b.y} itemId={b.itemId} size={58} />
+              <Seed key={`b${i}`} x={b.x} y={b.y} itemId={b.itemId} size={46} />
             ))}
             {flowers.map((f) => (
               <Seed
@@ -103,16 +116,12 @@ export default function MoonBunnyPage() {
                 x={f.x}
                 y={f.y}
                 itemId={f.itemId}
-                size={86}
+                size={72}
               />
             ))}
           </svg>
         </div>
       </div>
-
-      <p className="text-xs text-[var(--text-muted)]">
-        大框＝迎月花（放種子的地方），小框＝草叢（打了掉那個顏色的種子）。
-      </p>
     </div>
   );
 }
