@@ -42,14 +42,26 @@ export const navItems: NavItem[] = [
   },
   {
     key: "party",
-    label: "組隊工具",
+    label: "組隊任務",
     icon: "🛡️",
     path: "party",
     enabled: true,
     children: [
       {
+        key: "moon-bunny",
+        label: "月妙的年糕",
+        path: "party/moon-bunny",
+        enabled: true,
+      },
+      {
+        key: "first-time-together",
+        label: "超綠題庫",
+        path: "party/first-time-together",
+        enabled: true,
+      },
+      {
         key: "tower-of-goddess",
-        label: "女神之塔",
+        label: "女神之塔小工具",
         path: "party/tower-of-goddess",
         enabled: true,
       },

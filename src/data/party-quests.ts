@@ -75,3 +75,50 @@ export const loungeRecords: RecordEntry[] = [
     color: "#00BB00",
   },
 ];
+
+// 第一次同行（超級綠水靈）．第一階段：克魯特會 1 對 1 出題，隊員要打鱷魚
+// 收集「剛好」等於答案數量的優惠券。題目原文出自客戶端腳本
+// String/TW/ScriptString/party.wzjson（$SCRIPTSTRING_PARTY_9$ ~ _17$，共 9 題）。
+// 答案不在客戶端（伺服器驗證），是另外交叉比對出來的：轉職等級來自轉職 NPC
+// 腳本 job/job2.wzjson、新手 SP 總和來自 Skill/000.wzjson（三個新手技能上限各 3），
+// 其餘為楓谷通用常數。順序照題型分組排（四題轉職等級擺一起，避免看錯）。
+
+export interface QuizEntry {
+  /** 題目的關鍵字，即遊戲內用紅字標出來的那段 */
+  question: string;
+  answer: number;
+  /** 為什麼是這個數字，給玩家安心用 */
+  note: string;
+}
+
+export const firstTimeTogetherQuiz: QuizEntry[] = [
+  {
+    question: "從等級 1 升到等級 2 所需經驗值",
+    answer: 15,
+    note: "新手最初的那 15 點經驗",
+  },
+  {
+    question: "魔法師 1 轉所需最低等級",
+    answer: 8,
+    note: "只有魔法師是 8，其他職業都是 10",
+  },
+  { question: "劍士 1 轉所需最低等級", answer: 10, note: "" },
+  { question: "弓箭手 1 轉所需最低等級", answer: 10, note: "" },
+  { question: "盜賊 1 轉所需最低等級", answer: 10, note: "" },
+  {
+    question: "升級時獲得的 AP 數值",
+    answer: 5,
+    note: "每升一級加 5 點能力值",
+  },
+  {
+    question: "升級時獲得的 SP 數值",
+    answer: 3,
+    note: "每升一級加 3 點技能點",
+  },
+  { question: "隊伍人數上限", answer: 6, note: "一隊最多 6 人" },
+  {
+    question: "新手可獲得的 SP 總和",
+    answer: 6,
+    note: "嫩寶丟擲術、團隊治癒、疾風之步，上限各 3 級",
+  },
+];

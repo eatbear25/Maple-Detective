@@ -8,7 +8,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { Boxes, Check, Copy, Disc3, Grid2x2, RotateCcw } from "lucide-react";
+import { Check, Copy, Disc3, Lock, RotateCcw, Warehouse } from "lucide-react";
 import { loungeRecords } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
 import { GameIcon } from "../../monsters/game-icon";
@@ -34,8 +34,8 @@ type Tab = "lounge" | "sealed" | "storage";
 
 const TABS: [Tab, string, typeof Disc3][] = [
   ["lounge", "休息室", Disc3],
-  ["sealed", "封印房", Grid2x2],
-  ["storage", "倉庫", Boxes],
+  ["sealed", "封印房", Lock],
+  ["storage", "倉庫", Warehouse],
 ];
 
 const PANELS: Record<Tab, () => React.JSX.Element> = {

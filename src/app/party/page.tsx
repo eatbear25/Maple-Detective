@@ -4,6 +4,8 @@ import { navItems, navHref } from "@/nav";
 
 /** 每個組隊任務的一句話說明，key 對應 nav.ts 的 children key */
 const QUEST_BLURB: Record<string, string> = {
+  "first-time-together": "第一階段題庫參考",
+  "moon-bunny": "第一階段種子放置位置",
   "tower-of-goddess": "休息室唱盤對照、封印房站位解答、倉庫擊殺順序",
 };
 

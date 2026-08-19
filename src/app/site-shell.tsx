@@ -12,7 +12,6 @@ import {
   Sun,
   Menu,
   X,
-  ChevronDown,
   Map as MapIcon,
   Timer,
 } from "lucide-react";
@@ -118,11 +117,13 @@ function NavLinks({
         const Icon = NAV_ICONS[item.key];
         const href = navHref(item.path);
         const hasChildren = !!item.children?.length;
-        // 有子項時，停在任一子頁也算父層 active
+        // 有子項時，桌機版停在任一子頁也算父層 active（下拉選單另外浮出，不會疊到）。
+        // 手機版子項直接縮排列在父層下面，若父層也套用同一顆 active 底色，
+        // 會跟子項自己的 active 底色零間距疊在一起變成一塊不規則色塊，所以手機版只在完全停在父頁時才點亮父層。
         const isActive =
           item.enabled &&
           (pathname === href ||
-            (hasChildren && pathname.startsWith(`${href}/`)));
+            (!mobile && hasChildren && pathname.startsWith(`${href}/`)));
 
         const parent = renderLink(
           item.key,
@@ -131,12 +132,7 @@ function NavLinks({
           item.enabled,
           isActive,
           "",
-          <>
-            {Icon && <Icon size={15} />}
-            {hasChildren && !mobile && (
-              <ChevronDown size={13} className="-mr-1 opacity-60" />
-            )}
-          </>,
+          <>{Icon && <Icon size={15} />}</>,
         );
 
         if (!hasChildren) return parent;
@@ -154,9 +150,9 @@ function NavLinks({
 
         if (mobile) {
           return (
-            <div key={item.key}>
+            <div key={item.key} className="flex flex-col gap-0.5">
               {parent}
-              <div className="ml-4 flex flex-col gap-0.5 border-l border-[var(--border)] pl-2">
+              <div className="ml-4 mt-0.5 flex flex-col gap-0.5 border-l border-[var(--border)] pl-2">
                 {childLinks}
               </div>
             </div>
