@@ -15,6 +15,13 @@ export const navItems: NavItem[] = [
     path: "monsters",
     enabled: true,
   },
+  {
+    key: "gacha",
+    label: "轉蛋模擬",
+    icon: "🎰",
+    path: "gacha",
+    enabled: true,
+  },
   { key: "map", label: "地圖", icon: "🗺️", path: "map", enabled: true },
   {
     key: "boss-timer",

@@ -11,12 +11,17 @@
                   type, nameIdx, valIdx, firstChild, childCount, parent, 前序, 保留）
       h[8]/h[9]   long 值池（8B/筆，type 5）
       h[10]/h[11] int 值池（4B/筆，type 6；結尾可能有對齊 padding，用 count 讀）
-      h[16]/h[17] vector 值池（2×i32/筆，type 14）
+      h[16]/h[17] vector 值池（2×**float32**/筆，type 14；origin/map 等座標都在這，
+                  各包實測皆為 float，值都是整數，回傳時轉成 int）
       h[26]/h[27] 名稱字串池（h[28] 是名稱 offset 表 = count+1 個前綴和）
       h[32]/h[33] 字串值池（h[34] 是 offset 表；valIdx 為 0-based 直接索引）
       其餘配對在已掃描的檔案中皆為空池，語意未確認。
     節點 type：2=目錄、5=long、6=int、11=字串、12=canvas（圖在 spritesheet
     bundle，這裡無資料）、14=vector、18=null。
+
+**canvas 節點是有子節點的**（origin / delay / z 這些屬性掛在它底下），只是型別不是 2。
+預設仍照舊只展開目錄（維持既有腳本的輸出不變）；要讀圖的 origin/delay 就傳
+`expand_canvas=True`，任何 childCount>0 的節點都會展成 dict。
 """
 
 import struct
@@ -29,9 +34,9 @@ def _strings(raw: bytes, count: int, pool: int, tab: int) -> list[str]:
     return [raw[pool + offs[i] : pool + offs[i + 1]].decode("utf-8") for i in range(count)]
 
 
-def decode(raw: bytes):
+def decode(raw: bytes, expand_canvas: bool = False):
     """解出 (根節點名稱, 樹)。目錄→dict、int/long→int、字串→str、vector→[x,y]、
-    canvas/null/未知型別→None。"""
+    canvas/null/未知型別→None（expand_canvas=True 時，有子節點的一律展成 dict）。"""
     wz = raw.find(b"WZJS")
     if wz == -1:
         raise ValueError("找不到 WZJS magic")
@@ -44,7 +49,7 @@ def decode(raw: bytes):
 
     ints = struct.unpack_from(f"<{h[10]}i", raw, a(h[11])) if h[10] else ()
     longs = struct.unpack_from(f"<{h[8]}q", raw, a(h[9])) if h[8] else ()
-    vecs = struct.unpack_from(f"<{h[16] * 2}i", raw, a(h[17])) if h[16] else ()
+    vecs = struct.unpack_from(f"<{h[16] * 2}f", raw, a(h[17])) if h[16] else ()
     names = _strings(raw, h[26], a(h[27]), a(h[28]))
     svals = _strings(raw, h[32], a(h[33]), a(h[34]))
 
@@ -53,7 +58,7 @@ def decode(raw: bytes):
 
     def build(i: int):
         t, name_idx, val_idx, first, cnt, *_ = nodes[i]
-        if t == _DIR:
+        if t == _DIR or (expand_canvas and cnt):
             return names[name_idx], dict(build(c) for c in range(first, first + cnt))
         if t == 6:
             value = ints[val_idx]
@@ -61,8 +66,8 @@ def decode(raw: bytes):
             value = svals[val_idx]
         elif t == 5:
             value = longs[val_idx]
-        elif t == 14:
-            value = [vecs[val_idx * 2], vecs[val_idx * 2 + 1]]
+        elif t == 14:  # 座標，float 但值都是整數
+            value = [int(vecs[val_idx * 2]), int(vecs[val_idx * 2 + 1])]
         else:  # 12=canvas、18=null、其他未見過的型別
             value = None
         return names[name_idx], value

@@ -50,3 +50,34 @@ body {
     background-size: calc(100% / 3) 100%, calc(100% / 3) 100%, calc(100% / 3) 0%;
   }
 }
+
+/* 轉蛋模擬器（/gacha）：自動模式快轉時的放射光旋轉與機台晃動 */
+.animate-spin-slow {
+  animation: gacha-spin 6s linear infinite;
+}
+@keyframes gacha-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-machine-shake {
+  animation: gacha-shake 0.28s ease-in-out infinite;
+}
+@keyframes gacha-shake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-2px) rotate(-1.2deg);
+  }
+  75% {
+    transform: translateX(2px) rotate(1.2deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-machine-shake {
+    animation: none;
+  }
+}

@@ -1,0 +1,921 @@
+{
+ "meta": {
+  "source": "json_4f0192b4db49dca312b7c5d0d6d30555.bundle -> Assets/WzAssets/Json/Item/Cash/0501.wzjson",
+  "extractedAt": "2026-08-20T20:10:20+08:00",
+  "effects": 45
+ },
+ "effects": {
+  "5010000": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 6
+  },
+  "5010001": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 6
+  },
+  "5010002": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 10
+  },
+  "5010003": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 6
+  },
+  "5010004": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 6
+  },
+  "5010005": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 4,
+   "fixed": 1
+  },
+  "5010006": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 6
+  },
+  "5010007": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 1,
+   "fixed": 1
+  },
+  "5010010": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 8
+  },
+  "5010011": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 4
+  },
+  "5010012": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 15
+  },
+  "5010013": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 22
+  },
+  "5010014": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 40
+  },
+  "5010016": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 2
+  },
+  "5010017": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 4
+  },
+  "5010018": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 4
+  },
+  "5010019": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 4
+  },
+  "5010022": {
+   "kind": "follow",
+   "z": -1,
+   "trail": [
+    10,
+    24,
+    41,
+    54,
+    69
+   ],
+   "books": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "frames": 8
+  },
+  "5010023": {
+   "kind": "follow",
+   "z": -1,
+   "trail": [
+    10,
+    25,
+    45,
+    66,
+    87
+   ],
+   "books": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "frames": 8
+  },
+  "5010024": {
+   "kind": "follow",
+   "z": -1,
+   "trail": [
+    10,
+    27,
+    45,
+    66,
+    87
+   ],
+   "books": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "frames": 8
+  },
+  "5010027": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 16
+  },
+  "5010028": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 5
+  },
+  "5010029": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 5
+  },
+  "5010030": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 5
+  },
+  "5010031": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 6,
+   "fixed": 1
+  },
+  "5010032": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 6,
+   "fixed": 1
+  },
+  "5010033": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 12
+  },
+  "5010034": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 5
+  },
+  "5010035": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 1
+  },
+  "5010038": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 16
+  },
+  "5010039": {
+   "kind": "action",
+   "z": 3,
+   "books": [
+    "alert",
+    "fly",
+    "heal",
+    "jump",
+    "ladder",
+    "prone",
+    "proneStab",
+    "rope",
+    "shoot1",
+    "shoot2",
+    "shootF",
+    "sit",
+    "stabO1",
+    "stabO2",
+    "stabOF",
+    "stabT1",
+    "stabT2",
+    "stabTF",
+    "stand1",
+    "stand2",
+    "swingO1",
+    "swingO2",
+    "swingO3",
+    "swingOF",
+    "swingP1",
+    "swingP2",
+    "swingPF",
+    "swingT1",
+    "swingT2",
+    "swingT3",
+    "swingTF",
+    "walk1",
+    "walk2"
+   ],
+   "frames": 24
+  },
+  "5010041": {
+   "kind": "follow",
+   "z": -1,
+   "trail": [
+    10,
+    25,
+    45,
+    66,
+    87
+   ],
+   "books": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "frames": 8
+  },
+  "5010043": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "alert",
+    "dead",
+    "fly",
+    "heal",
+    "jump",
+    "prone",
+    "proneStab",
+    "shoot1",
+    "shoot2",
+    "shootF",
+    "sit",
+    "stabO1",
+    "stabO2",
+    "stabOF",
+    "stabT1",
+    "stabT2",
+    "stabTF",
+    "stand1",
+    "stand2",
+    "swingO1",
+    "swingO2",
+    "swingO3",
+    "swingOF",
+    "swingP1",
+    "swingP2",
+    "swingPF",
+    "swingT1",
+    "swingT2",
+    "swingT3",
+    "swingTF",
+    "walk1",
+    "walk2"
+   ],
+   "frames": 12
+  },
+  "5010045": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 19
+  },
+  "5010051": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 34
+  },
+  "5010052": {
+   "kind": "follow",
+   "z": -1,
+   "trail": [
+    10,
+    15,
+    20,
+    25,
+    30
+   ],
+   "books": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "frames": 8
+  },
+  "5010053": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 6
+  },
+  "5010054": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 8,
+   "fixed": 1
+  },
+  "5010057": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "alert",
+    "dead",
+    "fly",
+    "heal",
+    "jump",
+    "ladder",
+    "prone",
+    "proneStab",
+    "rope",
+    "shoot1",
+    "shoot2",
+    "shootF",
+    "sit",
+    "stabO1",
+    "stabO2",
+    "stabOF",
+    "stabT1",
+    "stabT2",
+    "stabTF",
+    "stand1",
+    "stand2",
+    "swingO1",
+    "swingO2",
+    "swingO3",
+    "swingOF",
+    "swingP1",
+    "swingP2",
+    "swingPF",
+    "swingT1",
+    "swingT2",
+    "swingT3",
+    "swingTF",
+    "walk1",
+    "walk2"
+   ],
+   "frames": 6
+  },
+  "5010068": {
+   "kind": "action",
+   "z": -1,
+   "books": [
+    "airstrike",
+    "alert",
+    "alert2",
+    "alert3",
+    "alert4",
+    "alert5",
+    "alert6",
+    "assassination",
+    "assassinationS",
+    "assaulter",
+    "avenger",
+    "backspin",
+    "backstep",
+    "bamboo",
+    "blade",
+    "blizzard",
+    "brandish1",
+    "brandish2",
+    "burster1",
+    "burster2",
+    "cannon",
+    "chainlightning",
+    "combatStep",
+    "coolingeffect",
+    "darksight",
+    "dead",
+    "demolition",
+    "doubleAttack",
+    "doublefire",
+    "doubleupper",
+    "dragonstrike",
+    "eburster",
+    "edrain",
+    "eorb",
+    "fake",
+    "fireburner",
+    "firestrike",
+    "fist",
+    "flamegear",
+    "float",
+    "fly",
+    "fullSwingDouble",
+    "genesis",
+    "handgun",
+    "heal",
+    "holyshield",
+    "homing",
+    "icestorm",
+    "jump",
+    "ladder",
+    "ladder2",
+    "magic1",
+    "magic2",
+    "magic3",
+    "magic4",
+    "magic5",
+    "meteor",
+    "ninjastorm",
+    "overSwingDouble",
+    "overSwingTriple",
+    "paralyze",
+    "phantom",
+    "poleArmFinish",
+    "poleArmPush",
+    "poleArmSmash",
+    "poleArmToss",
+    "prone",
+    "prone2",
+    "proneStab",
+    "rapidfire",
+    "recovery",
+    "resurrection",
+    "rope",
+    "rope2",
+    "rush",
+    "rush2",
+    "sanctuary",
+    "savage",
+    "screw",
+    "shockwave",
+    "shoot1",
+    "shoot2",
+    "shoot6",
+    "shootF",
+    "shot",
+    "showdown",
+    "sit",
+    "smokeshell",
+    "snatch",
+    "souldriver",
+    "stabO1",
+    "stabO2",
+    "stabOF",
+    "stabT1",
+    "stabT2",
+    "stabTF",
+    "stand1",
+    "stand2",
+    "stormbreak",
+    "straight",
+    "swingO1",
+    "swingO2",
+    "swingO3",
+    "swingOF",
+    "swingP1",
+    "swingP1PoleArm",
+    "swingP2",
+    "swingP2PoleArm",
+    "swingPF",
+    "swingT1",
+    "swingT2",
+    "swingT2PoleArm",
+    "swingT3",
+    "swingTF",
+    "timeleap",
+    "torpedo",
+    "triplefire",
+    "vampire",
+    "walk1",
+    "walk2",
+    "wave",
+    "whirlwind",
+    "windshot"
+   ],
+   "frames": 12,
+   "zOverride": {
+    "ladder": 2,
+    "ladder2": 2,
+    "prone": 2,
+    "proneStab": 2,
+    "rope": 2,
+    "rope2": 2
+   }
+  },
+  "5010069": {
+   "kind": "action",
+   "z": -1,
+   "books": [
+    "airstrike",
+    "alert",
+    "alert2",
+    "alert3",
+    "alert4",
+    "alert5",
+    "alert6",
+    "assassination",
+    "assassinationS",
+    "assaulter",
+    "avenger",
+    "backspin",
+    "backstep",
+    "bamboo",
+    "blade",
+    "blizzard",
+    "brandish1",
+    "brandish2",
+    "burster1",
+    "burster2",
+    "cannon",
+    "chainlightning",
+    "combatStep",
+    "coolingeffect",
+    "darksight",
+    "dead",
+    "demolition",
+    "doubleAttack",
+    "doublefire",
+    "doubleupper",
+    "dragonstrike",
+    "eburster",
+    "edrain",
+    "eorb",
+    "fake",
+    "fireburner",
+    "firestrike",
+    "fist",
+    "flamegear",
+    "float",
+    "fly",
+    "fullSwingDouble",
+    "genesis",
+    "handgun",
+    "heal",
+    "holyshield",
+    "homing",
+    "icestorm",
+    "jump",
+    "ladder",
+    "ladder2",
+    "magic1",
+    "magic2",
+    "magic3",
+    "magic4",
+    "magic5",
+    "meteor",
+    "ninjastorm",
+    "overSwingDouble",
+    "overSwingTriple",
+    "paralyze",
+    "phantom",
+    "poleArmFinish",
+    "poleArmPush",
+    "poleArmSmash",
+    "poleArmToss",
+    "prone",
+    "prone2",
+    "proneStab",
+    "rapidfire",
+    "recovery",
+    "resurrection",
+    "rope",
+    "rope2",
+    "rush",
+    "rush2",
+    "sanctuary",
+    "savage",
+    "screw",
+    "shockwave",
+    "shoot1",
+    "shoot2",
+    "shoot6",
+    "shootF",
+    "shot",
+    "showdown",
+    "sit",
+    "smokeshell",
+    "snatch",
+    "souldriver",
+    "stabO1",
+    "stabO2",
+    "stabOF",
+    "stabT1",
+    "stabT2",
+    "stabTF",
+    "stand1",
+    "stand2",
+    "stormbreak",
+    "straight",
+    "swingO1",
+    "swingO2",
+    "swingO3",
+    "swingOF",
+    "swingP1",
+    "swingP1PoleArm",
+    "swingP2",
+    "swingP2PoleArm",
+    "swingPF",
+    "swingT1",
+    "swingT2",
+    "swingT2PoleArm",
+    "swingT3",
+    "swingTF",
+    "timeleap",
+    "torpedo",
+    "triplefire",
+    "vampire",
+    "walk1",
+    "walk2",
+    "wave",
+    "whirlwind",
+    "windshot"
+   ],
+   "frames": 12,
+   "zOverride": {
+    "ladder": 2,
+    "ladder2": 2,
+    "prone": 2,
+    "proneStab": 2,
+    "rope": 2,
+    "rope2": 2
+   }
+  },
+  "5010070": {
+   "kind": "action",
+   "z": -1,
+   "books": [
+    "airstrike",
+    "alert",
+    "alert2",
+    "alert3",
+    "alert4",
+    "alert5",
+    "alert6",
+    "assassination",
+    "assassinationS",
+    "assaulter",
+    "avenger",
+    "backspin",
+    "backstep",
+    "bamboo",
+    "blade",
+    "blizzard",
+    "brandish1",
+    "brandish2",
+    "burster1",
+    "burster2",
+    "cannon",
+    "chainlightning",
+    "combatStep",
+    "coolingeffect",
+    "darksight",
+    "dead",
+    "demolition",
+    "doubleAttack",
+    "doublefire",
+    "doubleupper",
+    "dragonstrike",
+    "eburster",
+    "edrain",
+    "eorb",
+    "fake",
+    "fireburner",
+    "firestrike",
+    "fist",
+    "flamegear",
+    "float",
+    "fly",
+    "fullSwingDouble",
+    "genesis",
+    "handgun",
+    "heal",
+    "holyshield",
+    "homing",
+    "icestorm",
+    "jump",
+    "ladder",
+    "ladder2",
+    "magic1",
+    "magic2",
+    "magic3",
+    "magic4",
+    "magic5",
+    "meteor",
+    "ninjastorm",
+    "overSwingDouble",
+    "overSwingTriple",
+    "paralyze",
+    "phantom",
+    "poleArmFinish",
+    "poleArmPush",
+    "poleArmSmash",
+    "poleArmToss",
+    "prone",
+    "prone2",
+    "proneStab",
+    "rapidfire",
+    "recovery",
+    "resurrection",
+    "rope",
+    "rope2",
+    "rush",
+    "rush2",
+    "sanctuary",
+    "savage",
+    "screw",
+    "shockwave",
+    "shoot1",
+    "shoot2",
+    "shoot6",
+    "shootF",
+    "shot",
+    "showdown",
+    "sit",
+    "smokeshell",
+    "snatch",
+    "souldriver",
+    "stabO1",
+    "stabO2",
+    "stabOF",
+    "stabT1",
+    "stabT2",
+    "stabTF",
+    "stand1",
+    "stand2",
+    "stormbreak",
+    "straight",
+    "swingO1",
+    "swingO2",
+    "swingO3",
+    "swingOF",
+    "swingP1",
+    "swingP1PoleArm",
+    "swingP2",
+    "swingP2PoleArm",
+    "swingPF",
+    "swingT1",
+    "swingT2",
+    "swingT2PoleArm",
+    "swingT3",
+    "swingTF",
+    "timeleap",
+    "torpedo",
+    "triplefire",
+    "vampire",
+    "walk1",
+    "walk2",
+    "wave",
+    "whirlwind",
+    "windshot"
+   ],
+   "frames": 12,
+   "zOverride": {
+    "ladder": 2,
+    "ladder2": 2,
+    "rope": 2,
+    "rope2": 2
+   }
+  },
+  "5010073": {
+   "kind": "action",
+   "z": -1,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 3
+  },
+  "5010074": {
+   "kind": "action",
+   "z": -1,
+   "books": [
+    "stand1",
+    "stand2"
+   ],
+   "frames": 3
+  },
+  "5010999": {
+   "kind": "simple",
+   "z": -1,
+   "books": [
+    "default"
+   ],
+   "frames": 6
+  }
+ }
+}

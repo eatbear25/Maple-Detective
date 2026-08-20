@@ -8,10 +8,28 @@ export interface EquippedItem {
   path: string;
 }
 
+/**
+ * 開著的特效。不佔部位、沒有性別限制，所以跟 equips 分開放。
+ * z / trail / zOverride 只有客戶端知道，來自 data/fashion.ts 的 catalog。
+ */
+export interface EffectSpec {
+  id: number;
+  name: string;
+  /** follow=跟在身後的隊列（錨點與其他型不同，見 renderer 的 buildEffectTrack） */
+  kind: "follow" | "action" | "simple";
+  /** 負數＝畫在角色後方，正數＝畫在前方 */
+  z: number;
+  /** 跟隨隊列：每一隻落後角色幾 px */
+  trail?: number[];
+  /** 少數 book 的 z 不同（例：翅膀爬梯時改畫在身前） */
+  zOverride?: Record<string, number>;
+}
+
 export interface CharacterLook {
   /** 身體 id（2000 系列），頭部 id = 身體 + 10000 */
   skinId: number;
   equips: Partial<Record<FashionSlot, EquippedItem>>;
+  effect?: EffectSpec;
 }
 
 /**

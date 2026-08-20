@@ -1,0 +1,79 @@
+{
+  "effect": {
+    "framebooks": {
+      "default": [
+        {
+          "frames": [
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAXCAYAAAC74kmRAAAACXBIWXMAAA7EAAAOxAGVKw4bAAADeUlEQVR4nNVYjXUbIQzWvXcLkBGuI3gFd4RmhHiEeIR0BGeEeIR4hDJCGSEa4So4OCQQF1zXr63eOx8I0M8nIfCNwGiewEBBgwOE/5g\u002B8ykAMO/qSauAcox6w\u002BXfBGXek3UdliWfBgu4ZICJj1zcBmUvZ/8tQKIdiQz71SjbyKwf529sidbSRKLgY5QRuMP5vmAwe01hR8t5ZKMCBC9rVBaZZhsVLgMiGoiRE97D99sAmZ\u002BZo9Jh04x20p97Ogjga0A7ZVrUwjkDgUFJUBYc8LyJwDj0gTGfaI2LulDITpt1O9Wv8GlUeMl4Tm2lqIzlHEhQIFgPxkRRIySMgYfD\u002BWdSlmh\u002BgYfAsNFR6bhuRbvs1VWt7sPoU5QUb\u002B95bax0nO8uw\u002BaYAAK9Dfqhx1f77rsfhIVDiAgty78c4YOwgR97\u002BLrKwUaqlztfbtAuUIZjOgUkyQyoHdT52rzkQOwdL\u002B70Nk2U3cYnBBgMCIS3pQkvNJNwgccLvL/t4VA4Cl39bbvrDFAXtjdBLUoHwqyBjeNHi6cXSn80PhmWDHeUAhNaOBdinqlzsHA6JRByVsmjbMu\u002Bkr9WJTk8qpM/LyKmEpajXXO50LWMGR96McXoemtXy32fN2O7yHLf2KyxmnAN6Sorcw4XiiY5GzIeM0q\u002BfV5TBfxBEYq/H38ycd0ejpsn/Y1255vg79AVJ3xw3oPgXAi1jWD4RzWhV7a2XXsorhnbQ5tKW2ozX9ut6CO8FD6M7RR5T66tr5CijPed/8pFSFfSNqSHj6Jd1WHHmFylPxanlg3cPv1G2uZvyBrFws4/Q5VCyau4Idqx5vlo28h/osefAHt6LkwmSs0oWkYZaQGRqa5Wogb0kJ54ZmNs/XWxjZG1i5NcXOcd3gELcOTHdSiKYHnGpDklddYFmQG1EzW2qMZA9vOs8PaOWp/bKJFJFd\u002BiFJbesSZYSI7nO2ELeH4Dqe1SSANAd3wb71TKxZv/NbaEwo6q/\u002BQxMUuUJ8OyAOQdzMWHZLj5aXWdwcr6wHpyw\u002Bh2MtrKAG5XOUttD699h9f2jaUmJje8xTcM7f\u002BJpE1V8hSoF5W2isPt3h8/WlToXT7IyMTvK4sQAfACi89LYuGf\u002BOR1pry/xP8Au91SBq21wtR0KWKMLtlKIJZM0X0Sa9YMuPN3vYGcm5ODzjnopOEmpR0\u002B/QJbYIsrrpxfYQAAAABJRU5ErkJggg==",
+              "delay": 150,
+              "origin": {
+                "x": 29,
+                "y": 48,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 29,
+                "y": 48,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "0"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAACsElEQVR4nK2XgXHrIAyG1TsvoBXoCOkIb4aO0I6QjpCOkDdCs0JHaEZ4rKAR/AxGSMiC2Hf1XYxtjP6PX2DIBAePGQBH9U8AdCTeLoBHot67e0GGAK4wOldajI6B7EuBL9p7gyzICGIDMLfBrPSj/su91NNMfTf6DmBTjuQbMaCKTUUOsysdDxqA2cq1pb3uYXMKtHC\u002BTk5YFyrA7Pf1GARbv5biBkmNHRNTVxwBNuIINhUjCHEAm\u002BfNwPTHgEaQMzhubIX1E4HojoNpmHcW35b4eYNzjVcuLn/gPYt5/aYambQL2gEv740oIOLfO5zTs3MoqS0StJQf33BN5fW0gKAaCe1MkIEKnALPUjvoECGJvwXpBpGMsAwFK8j7AnJNbsBGXGKTBvBE\u002BVwc\u002BLzT5Rwwg\u002BTGhPWjx1mIyy8UkALxWisdkJQGOwgfLjqc1CweSrQoPYrjII396ZhUhY\u002BAObeXSygtibLNmMRPaz0m1ZuGA3hbTq/f8PV1Ki50QI7tB6jMKCIJoz/ZZprtWcMZQGaxnc\u002B0/qiOdvEa2W\u002BVAt18sA6bWdBWbMBJ1YSil\u002B9vUHvOEcNOYR/A\u002BkDyPM04ZAgqEFxHko2o2tQfPzHy8iHy\u002Bq1hOA1cxzAgUy9VRr/r20\u002Bwup/MY/lsqi8XQSe4gmAnSIGSfnOzadsCtBjmSAABxOoqYt0BJxWDY3oqa7TKert46NXcC\u002BgJkXlDdonViWY53kBQO6vFVmeyGwfIttGyRrwCuBDKiXRzX9aAiGsCQljtiDGuawOyKFXx1IqaPq9ld0vWdWIpfwK8vET64bYx6lbyBbJZ\u002BIfwXG/p6K5YPMh3C8Qz9NaMduDaadfdEbsA1QUJvcrpLLYrcV9YR9gLwBCpnPU2ikE8KQtihA/9MxqCPOzPPtHdAF6w3/57/h8voW2jMPF\u002B9gAAAABJRU5ErkJggg==",
+              "delay": 150,
+              "origin": {
+                "x": 13,
+                "y": 52,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 13,
+                "y": 52,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "-1"
+            }
+          ]
+        }
+      ]
+    },
+    "isFollow": false
+  },
+  "id": 5010016,
+  "description": {
+    "id": 5010016,
+    "name": "\u8B66\u9234",
+    "description": "\u5728\u5371\u6025\u60C5\u6CC1\u767C\u751F\u6642\u6240\u4F7F\u7528\u7684\u8B66\u9234\u7279\u6548\u3002\u8A2D\u5B9A\u5728\u7279\u5B9A\u6309\u9375\u5F8C\uFF0C\u4FBF\u53EF\u4F7F\u7528\u5FEB\u901F\u9375\u4F86\u958B\u555F\u6216\u95DC\u9589\u3002"
+  },
+  "metaInfo": {
+    "only": false,
+    "cash": true,
+    "mob": 0,
+    "iconRaw": "iVBORw0KGgoAAAANSUhEUgAAACIAAAAhCAYAAAC803lsAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAC90lEQVR4nL2XgXHrIAxAyV0X0B\u002BBP4IzQjJCs0JHaEZoRugfIRkhHiEeIYxQjeAPQgKZQBKnbXSHzYGxHpIA8WJ\u002BSEZjYGEMPjq\u002BBjI\u002B8qPFN4eUIOPxdDbPkPXy76hhNAhBrDr7FJCP/clsN8sEIyATiM3b7lch9p/v5v2185UMcxEjBPFvS3XgNguxDhCLdDic9qdI9RWUor7jLrNhGC3NVQPF29oMAdyIrEAAAXM7MIjD3K5hSqmCJIjCEmAViC/WZciJFikuvkFbDOeCVNxxAQJsFWnjuoAgQ6TvruwyVRCr4qBmiVAW6/oPx2P8Dh3Ddso6\u002BXUfSBsGzPItvMCMHAROTTS8BfBrH8eQgZSFWlJ3jYoJGstQ6y2Yk1U\u002B8H8OfIOC\u002BQyT8OXPJlpHTICQPTcLRJRbhgkQZ1mnZG9fcV5L3/OguEIkFI5sHYIZ1IQaVqm7BpRV1HIl2waIbhUbB69h6NNegWyNUiQuKHYaJqmCJF/yIJpZmmvHm0qc6eAryAO4l1wVgPY89vzBADjTNTLDTsGkDm8Bs0OCQe8W5yFurMxkYVQLQEtIIZqrhmAcrx6lCD2hdT3NOpg8REin\u002BnvzmNxMjMolJ8qlnr4zcbKhzZrCQnoDnBMjNREFEgNBwrG15fqrL4escwIpAC3XzAIRGMMwhoFA9a3M4/LCueZEOr1s5chX/WJ2sUytT7eFWMOB3xXikOs2V006gfnPPY/Xhxi5AC/HyX4iMBQzHDiu5Zpq5i0nZ\u002BPIJmUq/7gl\u002BuSdt48IhOPD7pJznvC/rh189WDVA9i\u002BB\u002B\u002BTnvf6rovhOoQtno4c5/c3y5Mo0zEkCEkdZ501mB5RTn5tLg\u002BYlATFpdTaZGzKX7FtzetnDXIs\u002BHJc5cxtIpC/LWdDBnAqHzEzXZNyS8hJMIA6yu8RlUhP/tn4vAlCS5EHAkytNFcmMPeChPvG5nGdd0l5p9Egi3AXldte7cOflt1hCLc80q1BEky4kz5DNEQJQh18F32GTI64/6FBZoYfMlQJAAAAAElFTkSuQmCC",
+    "icon": "iVBORw0KGgoAAAANSUhEUgAAACIAAAAhCAYAAAC803lsAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAC90lEQVR4nL2XgXHrIAxAyV0X0B\u002BBP4IzQjJCs0JHaEZoRugfIRkhHiEeIYxQjeAPQgKZQBKnbXSHzYGxHpIA8WJ\u002BSEZjYGEMPjq\u002BBjI\u002B8qPFN4eUIOPxdDbPkPXy76hhNAhBrDr7FJCP/clsN8sEIyATiM3b7lch9p/v5v2185UMcxEjBPFvS3XgNguxDhCLdDic9qdI9RWUor7jLrNhGC3NVQPF29oMAdyIrEAAAXM7MIjD3K5hSqmCJIjCEmAViC/WZciJFikuvkFbDOeCVNxxAQJsFWnjuoAgQ6TvruwyVRCr4qBmiVAW6/oPx2P8Dh3Ddso6\u002BXUfSBsGzPItvMCMHAROTTS8BfBrH8eQgZSFWlJ3jYoJGstQ6y2Yk1U\u002B8H8OfIOC\u002BQyT8OXPJlpHTICQPTcLRJRbhgkQZ1mnZG9fcV5L3/OguEIkFI5sHYIZ1IQaVqm7BpRV1HIl2waIbhUbB69h6NNegWyNUiQuKHYaJqmCJF/yIJpZmmvHm0qc6eAryAO4l1wVgPY89vzBADjTNTLDTsGkDm8Bs0OCQe8W5yFurMxkYVQLQEtIIZqrhmAcrx6lCD2hdT3NOpg8REin\u002BnvzmNxMjMolJ8qlnr4zcbKhzZrCQnoDnBMjNREFEgNBwrG15fqrL4escwIpAC3XzAIRGMMwhoFA9a3M4/LCueZEOr1s5chX/WJ2sUytT7eFWMOB3xXikOs2V006gfnPPY/Xhxi5AC/HyX4iMBQzHDiu5Zpq5i0nZ\u002BPIJmUq/7gl\u002BuSdt48IhOPD7pJznvC/rh189WDVA9i\u002BB\u002B\u002BTnvf6rovhOoQtno4c5/c3y5Mo0zEkCEkdZ501mB5RTn5tLg\u002BYlATFpdTaZGzKX7FtzetnDXIs\u002BHJc5cxtIpC/LWdDBnAqHzEzXZNyS8hJMIA6yu8RlUhP/tn4vAlCS5EHAkytNFcmMPeChPvG5nGdd0l5p9Egi3AXldte7cOflt1hCLc80q1BEky4kz5DNEQJQh18F32GTI64/6FBZoYfMlQJAAAAAElFTkSuQmCC",
+    "iconOrigin": {
+      "x": 1,
+      "y": 32,
+      "isEmpty": false
+    },
+    "iconRawOrigin": {
+      "x": 1,
+      "y": 32,
+      "isEmpty": false
+    },
+    "slotMax": 0,
+    "vslots": [],
+    "islots": [],
+    "setCompleteCount": 0
+  },
+  "typeInfo": {
+    "overallCategory": "Cash",
+    "category": "Appearance",
+    "subCategory": "Effect",
+    "lowItemId": 5010000,
+    "highItemId": 5020000
+  }
+}

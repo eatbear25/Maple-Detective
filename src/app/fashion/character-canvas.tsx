@@ -34,6 +34,8 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [prepared, setPrepared] = useState<PreparedAnimation | null>(null);
     const frameIndexRef = useRef(0);
+    // 特效的動畫跟角色動作各跑各的（遊戲裡也是），所以另外記一個索引
+    const effectIndexRef = useRef(0);
 
     useImperativeHandle(ref, () => ({
       toBlob: () =>
@@ -53,6 +55,7 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
         .then((result) => {
           if (cancelled) return;
           frameIndexRef.current = 0;
+          effectIndexRef.current = 0;
           setPrepared(result);
           onMissing?.(result.missing);
           onStatusChange?.("ready");
@@ -80,28 +83,47 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      let timer: ReturnType<typeof setTimeout> | null = null;
       let stopped = false;
 
-      const render = () => {
-        if (stopped) return;
+      const paint = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawFrame(ctx, prepared, frameIndexRef.current, flipX);
-
-        if (animated && prepared.frames.length > 1) {
-          const delay = prepared.frames[frameIndexRef.current % prepared.frames.length].delay;
-          timer = setTimeout(() => {
-            frameIndexRef.current = (frameIndexRef.current + 1) % prepared.frames.length;
-            render();
-          }, delay);
-        }
+        drawFrame(ctx, prepared, frameIndexRef.current, flipX, effectIndexRef.current);
       };
-      if (!animated) frameIndexRef.current = 0;
-      render();
+
+      /**
+       * 角色與特效各跑一條時間軸：推進自己的索引後重畫整張
+       * （兩者疊在同一個 canvas，所以任一條動了都要整張重畫）。
+       */
+      const runTrack = (frames: { delay: number }[], indexRef: { current: number }) => {
+        let timer: ReturnType<typeof setTimeout> | null = null;
+        const step = () => {
+          if (stopped) return;
+          paint();
+          if (!animated || frames.length < 2) return;
+          const delay = frames[indexRef.current % frames.length].delay;
+          timer = setTimeout(() => {
+            indexRef.current = (indexRef.current + 1) % frames.length;
+            step();
+          }, delay);
+        };
+        step();
+        return () => {
+          if (timer) clearTimeout(timer);
+        };
+      };
+
+      if (!animated) {
+        frameIndexRef.current = 0;
+        effectIndexRef.current = 0;
+      }
+      const stops = [runTrack(prepared.frames, frameIndexRef)];
+      if (prepared.effectFrames.length > 0) {
+        stops.push(runTrack(prepared.effectFrames, effectIndexRef));
+      }
 
       return () => {
         stopped = true;
-        if (timer) clearTimeout(timer);
+        for (const stop of stops) stop();
       };
     }, [prepared, animated, flipX]);
 
@@ -114,8 +136,11 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
       <canvas
         ref={canvasRef}
         style={{
+          // 大張的特效（翅膀類寬到 183px）放大兩倍會超出預覽欄，
+          // maxWidth + height:auto 讓瀏覽器等比縮回來，像素風不受影響
           width: prepared.width * scale,
-          height: prepared.height * scale,
+          height: "auto",
+          maxWidth: "100%",
           imageRendering: "pixelated",
         }}
         aria-label="角色預覽"

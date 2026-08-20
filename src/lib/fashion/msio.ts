@@ -46,12 +46,18 @@ interface MsioFrame {
 
 interface MsioItem {
   frameBooks?: Record<string, { frames?: (MsioFrame | null)[] }>;
+  /** 特效道具（0501）的圖在這裡，欄位名是小寫 b，跟裝備的 frameBooks 不同 */
+  effect?: { framebooks?: Record<string, MsioEffectSub[]> };
   metaInfo?: {
     islots?: string[];
     vslots?: string[];
     cash?: boolean | number;
     invisibleFace?: number;
   };
+}
+
+interface MsioEffectSub {
+  frames?: { image?: string; delay?: number; origin?: { x: number; y: number } }[];
 }
 
 /** 抓單件；回傳 null 代表這個版本沒有（而不是壞掉） */
@@ -112,6 +118,58 @@ export async function fetchItemWz(imgPath: string): Promise<unknown> {
     if (Object.keys(actionNode).length > 0) wz[action] = actionNode;
   }
   return wz;
+}
+
+/** 特效的一格：圖、原點、停留時間 */
+export interface EffectFrame {
+  url: string;
+  origin: { x: number; y: number };
+  delay: number;
+}
+
+/** book（動作名或 default）→ 隊列裡的每一隻 → 逐格 */
+export type EffectBooks = Record<string, EffectFrame[][]>;
+
+const hasFrames = (books: Record<string, MsioEffectSub[]> | undefined) =>
+  !!books && Object.values(books).some((subs) => subs.some((s) => s.frames?.length));
+
+/**
+ * 抓特效道具（0501 段）的圖。跟裝備走不同欄位：`effect.framebooks`，
+ * 而且結構多一層——每個 book 底下是「隊列陣列」，玩具小鴨家族那類
+ * 一個 book 有 5 隻，一般特效只有 1 隻。
+ *
+ * 客戶端的 129 個動作 book 在這裡只剩 default 加上爬梯／爬繩／趴下幾個，
+ * 因為原本就是 UOL 連結到同一份圖；取不到動作 book 時退回 default 是對的。
+ */
+export async function fetchEffectBooks(id: number): Promise<EffectBooks> {
+  let books: Record<string, MsioEffectSub[]> | undefined;
+  for (const region of REGIONS) {
+    const res = await fetch(`${BASE(region)}/item/${id}`);
+    if (!res.ok) continue;
+    const json = (await res.json()) as MsioItem | null;
+    if (hasFrames(json?.effect?.framebooks)) {
+      books = json!.effect!.framebooks;
+      break;
+    }
+  }
+  if (!books) throw new ItemNotAvailableError(id);
+
+  const out: EffectBooks = {};
+  for (const [book, subs] of Object.entries(books)) {
+    const converted = subs
+      .map((sub) =>
+        (sub.frames ?? [])
+          .filter((frame) => frame.image)
+          .map((frame) => ({
+            url: `data:image/png;base64,${frame.image}`,
+            origin: frame.origin ?? { x: 0, y: 0 },
+            delay: frame.delay && frame.delay > 0 ? frame.delay : 100,
+          })),
+      )
+      .filter((frames) => frames.length > 0);
+    if (converted.length > 0) out[book] = converted;
+  }
+  return out;
 }
 
 /**

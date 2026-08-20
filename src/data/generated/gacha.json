@@ -1,0 +1,1085 @@
+{
+ "meta": {
+  "builtAt": "2026-08-20",
+  "poolCount": 1
+ },
+ "pools": [
+  {
+   "eventAdId": 19046,
+   "title": "轉蛋機",
+   "startDate": "2026-08-20T09:00:00",
+   "endDate": "2026-09-10T00:00:00",
+   "capturedAt": "2026-08-20",
+   "ticket": {
+    "itemId": 5222222,
+    "single": 20,
+    "bundle10": 180,
+    "source": "2026-08-20.json"
+   },
+   "prizes": [
+    {
+     "itemId": 3010423,
+     "name": "蘑菇友情椅子",
+     "rate": 1.0,
+     "tier": "chair",
+     "icon": {
+      "kind": "item",
+      "id": 3010423
+     }
+    },
+    {
+     "itemId": 3010130,
+     "name": "玫瑰椅",
+     "rate": 1.0,
+     "tier": "chair",
+     "icon": {
+      "kind": "item",
+      "id": 3010130
+     }
+    },
+    {
+     "itemId": 3010067,
+     "name": "紅色設計師椅",
+     "rate": 1.0,
+     "tier": "chair",
+     "icon": {
+      "kind": "item",
+      "id": 3010067
+     }
+    },
+    {
+     "itemId": 3010002,
+     "name": "綠色設計師椅",
+     "rate": 1.0,
+     "tier": "chair",
+     "icon": {
+      "kind": "item",
+      "id": 3010002
+     }
+    },
+    {
+     "itemId": 4001009,
+     "name": "木妖橡皮擦",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001009
+     }
+    },
+    {
+     "itemId": 4001010,
+     "name": "蘑菇王橡皮擦",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001010
+     }
+    },
+    {
+     "itemId": 4001011,
+     "name": "猴子橡皮擦",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001011
+     }
+    },
+    {
+     "itemId": 4001012,
+     "name": "大幽靈橡皮擦",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001012
+     }
+    },
+    {
+     "itemId": 4001013,
+     "name": "綠水靈橡皮擦",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001013
+     }
+    },
+    {
+     "itemId": 4001014,
+     "name": "三眼章魚橡皮擦",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001014
+     }
+    },
+    {
+     "itemId": 4001116,
+     "name": "六角水晶項鍊",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001116
+     }
+    },
+    {
+     "itemId": 4001115,
+     "name": "水女神的衣料",
+     "rate": 0.35,
+     "tier": "rare",
+     "icon": {
+      "kind": "item",
+      "id": 4001115
+     }
+    },
+    {
+     "itemId": 2100000,
+     "name": "黑之包",
+     "rate": 0.94,
+     "tier": "bag",
+     "icon": {
+      "kind": "item",
+      "id": 2100000
+     }
+    },
+    {
+     "itemId": 2832885,
+     "name": "10個能力點數重配卷軸交換券",
+     "rate": 0.67,
+     "tier": "reset",
+     "icon": {
+      "kind": "item",
+      "id": 5050000
+     }
+    },
+    {
+     "itemId": 2832886,
+     "name": "10個一轉技能點數重配卷軸交換券",
+     "rate": 0.67,
+     "tier": "reset",
+     "icon": {
+      "kind": "item",
+      "id": 5050001
+     }
+    },
+    {
+     "itemId": 2832951,
+     "name": "二轉技能點數重配卷軸5個交換券",
+     "rate": 0.67,
+     "tier": "reset",
+     "icon": {
+      "kind": "item",
+      "id": 5050002
+     }
+    },
+    {
+     "itemId": 2832887,
+     "name": "瞬移之石交換券",
+     "rate": 0.5,
+     "tier": "slot",
+     "icon": {
+      "kind": "item",
+      "id": 2320000
+     }
+    },
+    {
+     "itemId": 2832888,
+     "name": "裝備欄8格擴充券",
+     "rate": 0.5,
+     "tier": "slot",
+     "icon": {
+      "kind": "item",
+      "id": 2430768
+     }
+    },
+    {
+     "itemId": 2832889,
+     "name": "消耗欄8格擴充券",
+     "rate": 0.5,
+     "tier": "slot",
+     "icon": {
+      "kind": "item",
+      "id": 2430769
+     }
+    },
+    {
+     "itemId": 2832890,
+     "name": "裝飾欄8格擴充券",
+     "rate": 0.5,
+     "tier": "slot",
+     "icon": {
+      "kind": "item",
+      "id": 2430770
+     }
+    },
+    {
+     "itemId": 2832891,
+     "name": "其他欄8格擴充券",
+     "rate": 0.5,
+     "tier": "slot",
+     "icon": {
+      "kind": "item",
+      "id": 2430771
+     }
+    },
+    {
+     "itemId": 2048000,
+     "name": "寵物速度卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2048000
+     }
+    },
+    {
+     "itemId": 2040503,
+     "name": "套服防禦卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2040503
+     }
+    },
+    {
+     "itemId": 2040600,
+     "name": "褲、裙防禦卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2040600
+     }
+    },
+    {
+     "itemId": 2040700,
+     "name": "鞋子敏捷卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2040700
+     }
+    },
+    {
+     "itemId": 2040800,
+     "name": "手套敏捷卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2040800
+     }
+    },
+    {
+     "itemId": 2040900,
+     "name": "盾牌防禦卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2040900
+     }
+    },
+    {
+     "itemId": 2041000,
+     "name": "披風魔防卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2041000
+     }
+    },
+    {
+     "itemId": 2041003,
+     "name": "披風防禦卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2041003
+     }
+    },
+    {
+     "itemId": 2041006,
+     "name": "披風生命卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2041006
+     }
+    },
+    {
+     "itemId": 2041009,
+     "name": "披風魔力卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2041009
+     }
+    },
+    {
+     "itemId": 2043000,
+     "name": "單手劍攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2043000
+     }
+    },
+    {
+     "itemId": 2043100,
+     "name": "單手斧攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2043100
+     }
+    },
+    {
+     "itemId": 2043200,
+     "name": "單手棍攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2043200
+     }
+    },
+    {
+     "itemId": 2043300,
+     "name": "短劍攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2043300
+     }
+    },
+    {
+     "itemId": 2043700,
+     "name": "短杖魔力卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2043700
+     }
+    },
+    {
+     "itemId": 2043800,
+     "name": "長杖魔力卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2043800
+     }
+    },
+    {
+     "itemId": 2044000,
+     "name": "雙手劍攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044000
+     }
+    },
+    {
+     "itemId": 2044100,
+     "name": "雙手斧攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044100
+     }
+    },
+    {
+     "itemId": 2044200,
+     "name": "雙手棍攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044200
+     }
+    },
+    {
+     "itemId": 2044300,
+     "name": "槍攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044300
+     }
+    },
+    {
+     "itemId": 2044400,
+     "name": "矛攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044400
+     }
+    },
+    {
+     "itemId": 2044500,
+     "name": "弓攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044500
+     }
+    },
+    {
+     "itemId": 2044600,
+     "name": "弩攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044600
+     }
+    },
+    {
+     "itemId": 2044700,
+     "name": "拳套攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044700
+     }
+    },
+    {
+     "itemId": 2044800,
+     "name": "指虎攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044800
+     }
+    },
+    {
+     "itemId": 2044900,
+     "name": "火槍攻擊卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2044900
+     }
+    },
+    {
+     "itemId": 2048003,
+     "name": "寵物跳躍力卷軸100%",
+     "rate": 0.58,
+     "tier": "scroll",
+     "icon": {
+      "kind": "item",
+      "id": 2048003
+     }
+    },
+    {
+     "itemId": 2210283,
+     "name": "雪人變身藥水",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 9500321
+     }
+    },
+    {
+     "itemId": 2210284,
+     "name": "蘑菇王變身藥水",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 6130101
+     }
+    },
+    {
+     "itemId": 2210285,
+     "name": "超級綠水靈變身藥水",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 9100000
+     }
+    },
+    {
+     "itemId": 2210286,
+     "name": "巴洛古變身藥水",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 8130100
+     }
+    },
+    {
+     "itemId": 2210287,
+     "name": "菇菇寶貝的雕像",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "item",
+      "id": 2210000
+     }
+    },
+    {
+     "itemId": 2210288,
+     "name": "緞帶肥肥的雕像",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "item",
+      "id": 2210001
+     }
+    },
+    {
+     "itemId": 2210289,
+     "name": "斧木妖變身藥水",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 1130100
+     }
+    },
+    {
+     "itemId": 2210290,
+     "name": "綠水靈變身藥水",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 210100
+     }
+    },
+    {
+     "itemId": 2210291,
+     "name": "殭屍菇菇變身！",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 2230101
+     }
+    },
+    {
+     "itemId": 2210292,
+     "name": "天使猴變身！",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 4230101
+     }
+    },
+    {
+     "itemId": 2210293,
+     "name": "大幽靈變身！",
+     "rate": 0.9,
+     "tier": "morph",
+     "icon": {
+      "kind": "mob",
+      "id": 4230102
+     }
+    },
+    {
+     "itemId": 2832892,
+     "name": "頭暈目眩交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160000
+     }
+    },
+    {
+     "itemId": 2832893,
+     "name": "氣喘吁吁交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160001
+     }
+    },
+    {
+     "itemId": 2832894,
+     "name": "嘎嗚交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160002
+     }
+    },
+    {
+     "itemId": 2832895,
+     "name": "親親交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160003
+     }
+    },
+    {
+     "itemId": 2832896,
+     "name": "眨眼交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160004
+     }
+    },
+    {
+     "itemId": 2832897,
+     "name": "淚痕交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160005
+     }
+    },
+    {
+     "itemId": 2832898,
+     "name": "閃閃發光交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160006
+     }
+    },
+    {
+     "itemId": 2832899,
+     "name": "嘩嘩交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160007
+     }
+    },
+    {
+     "itemId": 2832900,
+     "name": "閃閃發亮交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160008
+     }
+    },
+    {
+     "itemId": 2832901,
+     "name": "噗交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160009
+     }
+    },
+    {
+     "itemId": 2832902,
+     "name": "呵哈呵哈交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160010
+     }
+    },
+    {
+     "itemId": 2832903,
+     "name": "哼嗯交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160011
+     }
+    },
+    {
+     "itemId": 2832904,
+     "name": "點頭瞌睡交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160012
+     }
+    },
+    {
+     "itemId": 2832905,
+     "name": "啊好燙交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160013
+     }
+    },
+    {
+     "itemId": 2832906,
+     "name": "吐舌頭交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5160014
+     }
+    },
+    {
+     "itemId": 2832907,
+     "name": "微笑太陽交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010000
+     }
+    },
+    {
+     "itemId": 2832908,
+     "name": "閃閃星月交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010001
+     }
+    },
+    {
+     "itemId": 2832909,
+     "name": "七色彩虹交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010002
+     }
+    },
+    {
+     "itemId": 2832910,
+     "name": "魔女莉莉交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010003
+     }
+    },
+    {
+     "itemId": 2832911,
+     "name": "潛水中交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010004
+     }
+    },
+    {
+     "itemId": 2832912,
+     "name": "戀愛心願交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010005
+     }
+    },
+    {
+     "itemId": 2832913,
+     "name": "守護天使交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010006
+     }
+    },
+    {
+     "itemId": 2832914,
+     "name": "懸賞海報交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010007
+     }
+    },
+    {
+     "itemId": 2832915,
+     "name": "一起玩吧交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010010
+     }
+    },
+    {
+     "itemId": 2832916,
+     "name": "我要自己玩交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010011
+     }
+    },
+    {
+     "itemId": 2832917,
+     "name": "烏雲交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010014
+     }
+    },
+    {
+     "itemId": 2832918,
+     "name": "星星交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010017
+     }
+    },
+    {
+     "itemId": 2832919,
+     "name": "微笑交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010018
+     }
+    },
+    {
+     "itemId": 2832920,
+     "name": "愛心交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010019
+     }
+    },
+    {
+     "itemId": 2832921,
+     "name": "閃耀之星特效交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010022
+     }
+    },
+    {
+     "itemId": 2832922,
+     "name": "對你心動特效交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010023
+     }
+    },
+    {
+     "itemId": 2832923,
+     "name": "玩具小鴨家族交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010024
+     }
+    },
+    {
+     "itemId": 2832924,
+     "name": "火冒三丈交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010027
+     }
+    },
+    {
+     "itemId": 2832925,
+     "name": "我的男友交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010031
+     }
+    },
+    {
+     "itemId": 2832926,
+     "name": "我的女友交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010032
+     }
+    },
+    {
+     "itemId": 2832927,
+     "name": "抖抖抖交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010033
+     }
+    },
+    {
+     "itemId": 2832928,
+     "name": "撥水柱特效交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010038
+     }
+    },
+    {
+     "itemId": 2832929,
+     "name": "聚光燈交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010039
+     }
+    },
+    {
+     "itemId": 2832930,
+     "name": "啦啦啦音符交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010041
+     }
+    },
+    {
+     "itemId": 2832931,
+     "name": "眼光交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010043
+     }
+    },
+    {
+     "itemId": 2832932,
+     "name": "天打雷劈交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010045
+     }
+    },
+    {
+     "itemId": 2832933,
+     "name": "花精靈交換券",
+     "rate": 1.48,
+     "tier": "emote",
+     "icon": {
+      "kind": "item",
+      "id": 5010057
+     }
+    }
+   ],
+   "goals": [
+    {
+     "id": "mystery",
+     "label": "神秘任務",
+     "reward": null,
+     "groups": [
+      {
+       "any": [
+        4001009
+       ],
+       "count": 1
+      },
+      {
+       "any": [
+        4001010
+       ],
+       "count": 1
+      },
+      {
+       "any": [
+        4001011
+       ],
+       "count": 1
+      },
+      {
+       "any": [
+        4001012
+       ],
+       "count": 1
+      },
+      {
+       "any": [
+        4001013
+       ],
+       "count": 1
+      },
+      {
+       "any": [
+        4001014
+       ],
+       "count": 1
+      },
+      {
+       "any": [
+        4001116,
+        4001115
+       ],
+       "count": 1
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,705 @@
+[
+ {
+  "id": 5010000,
+  "name": "微笑太陽",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 36,
+  "onSale": true
+ },
+ {
+  "id": 5010001,
+  "name": "閃閃星月",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 37,
+  "onSale": true
+ },
+ {
+  "id": 5010002,
+  "name": "七色彩虹",
+  "frames": 10,
+  "books": {
+   "default": [
+    10
+   ]
+  },
+  "kb": 44,
+  "onSale": true
+ },
+ {
+  "id": 5010003,
+  "name": "魔女莉莉",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 14,
+  "onSale": true
+ },
+ {
+  "id": 5010004,
+  "name": "潛水中",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 20,
+  "onSale": true
+ },
+ {
+  "id": 5010005,
+  "name": "戀愛心願",
+  "frames": 4,
+  "books": {
+   "default": [
+    4
+   ]
+  },
+  "kb": 12,
+  "onSale": true
+ },
+ {
+  "id": 5010006,
+  "name": "守護天使",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 15,
+  "onSale": true
+ },
+ {
+  "id": 5010007,
+  "name": "懸賞海報",
+  "frames": 1,
+  "books": {
+   "stand1": [
+    1
+   ]
+  },
+  "kb": 11,
+  "onSale": true
+ },
+ {
+  "id": 5010010,
+  "name": "一起玩吧",
+  "frames": 8,
+  "books": {
+   "default": [
+    8
+   ]
+  },
+  "kb": 25,
+  "onSale": true
+ },
+ {
+  "id": 5010011,
+  "name": "我要自己玩",
+  "frames": 4,
+  "books": {
+   "default": [
+    4
+   ]
+  },
+  "kb": 14,
+  "onSale": true
+ },
+ {
+  "id": 5010012,
+  "name": "平衡器",
+  "frames": 15,
+  "books": {
+   "default": [
+    15
+   ]
+  },
+  "kb": 28,
+  "onSale": true
+ },
+ {
+  "id": 5010013,
+  "name": "煙火",
+  "frames": 22,
+  "books": {
+   "default": [
+    22
+   ]
+  },
+  "kb": 76,
+  "onSale": true
+ },
+ {
+  "id": 5010014,
+  "name": "烏雲",
+  "frames": 40,
+  "books": {
+   "default": [
+    40
+   ]
+  },
+  "kb": 74,
+  "onSale": true
+ },
+ {
+  "id": 5010016,
+  "name": "警鈴",
+  "frames": 2,
+  "books": {
+   "default": [
+    2
+   ]
+  },
+  "kb": 6,
+  "onSale": true
+ },
+ {
+  "id": 5010017,
+  "name": "星星",
+  "frames": 4,
+  "books": {
+   "default": [
+    4
+   ]
+  },
+  "kb": 9,
+  "onSale": true
+ },
+ {
+  "id": 5010018,
+  "name": "微笑",
+  "frames": 4,
+  "books": {
+   "default": [
+    4
+   ]
+  },
+  "kb": 8,
+  "onSale": true
+ },
+ {
+  "id": 5010019,
+  "name": "愛心",
+  "frames": 4,
+  "books": {
+   "default": [
+    4
+   ]
+  },
+  "kb": 9,
+  "onSale": true
+ },
+ {
+  "id": 5010022,
+  "name": "閃耀之星特效",
+  "frames": 40,
+  "books": {
+   "default": [
+    8,
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "kb": 49,
+  "onSale": true
+ },
+ {
+  "id": 5010023,
+  "name": "對你心動特效",
+  "frames": 40,
+  "books": {
+   "default": [
+    8,
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "kb": 49,
+  "onSale": true
+ },
+ {
+  "id": 5010024,
+  "name": "玩具小鴨家族",
+  "frames": 40,
+  "books": {
+   "default": [
+    8,
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "kb": 36,
+  "onSale": true
+ },
+ {
+  "id": 5010027,
+  "name": "火冒三丈",
+  "frames": 16,
+  "books": {
+   "default": [
+    16
+   ]
+  },
+  "kb": 28,
+  "onSale": true
+ },
+ {
+  "id": 5010028,
+  "name": "寒冰鬥魂",
+  "frames": 5,
+  "books": {
+   "default": [
+    5
+   ]
+  },
+  "kb": 47,
+  "onSale": true
+ },
+ {
+  "id": 5010029,
+  "name": "紅焰鬥魂",
+  "frames": 5,
+  "books": {
+   "default": [
+    5
+   ]
+  },
+  "kb": 48,
+  "onSale": true
+ },
+ {
+  "id": 5010030,
+  "name": "雷電鬥魂",
+  "frames": 5,
+  "books": {
+   "default": [
+    5
+   ]
+  },
+  "kb": 44,
+  "onSale": true
+ },
+ {
+  "id": 5010031,
+  "name": "我的男友",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 41,
+  "onSale": true
+ },
+ {
+  "id": 5010032,
+  "name": "我的女友",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 37,
+  "onSale": true
+ },
+ {
+  "id": 5010033,
+  "name": "好緊張",
+  "frames": 12,
+  "books": {
+   "default": [
+    12
+   ]
+  },
+  "kb": 12,
+  "onSale": true
+ },
+ {
+  "id": 5010034,
+  "name": "聖誕樹人型立牌",
+  "frames": 5,
+  "books": {
+   "stand1": [
+    5
+   ]
+  },
+  "kb": 37,
+  "onSale": false
+ },
+ {
+  "id": 5010035,
+  "name": "寒冬雪人人型立牌",
+  "frames": 1,
+  "books": {
+   "stand1": [
+    1
+   ]
+  },
+  "kb": 8,
+  "onSale": false
+ },
+ {
+  "id": 5010038,
+  "name": "撥水柱特效",
+  "frames": 16,
+  "books": {
+   "stand1": [
+    16
+   ]
+  },
+  "kb": 50,
+  "onSale": true
+ },
+ {
+  "id": 5010039,
+  "name": "聚光燈",
+  "frames": 120,
+  "books": {
+   "proneStab": [
+    24
+   ],
+   "stand1": [
+    24
+   ],
+   "stand2": [
+    24
+   ],
+   "walk1": [
+    24
+   ],
+   "walk2": [
+    24
+   ]
+  },
+  "kb": 667,
+  "onSale": true
+ },
+ {
+  "id": 5010041,
+  "name": "啦啦啦音符",
+  "frames": 40,
+  "books": {
+   "default": [
+    8,
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "kb": 50,
+  "onSale": true
+ },
+ {
+  "id": 5010043,
+  "name": "眼光",
+  "frames": 384,
+  "books": {
+   "alert": [
+    12
+   ],
+   "dead": [
+    12
+   ],
+   "fly": [
+    12
+   ],
+   "heal": [
+    12
+   ],
+   "jump": [
+    12
+   ],
+   "prone": [
+    12
+   ],
+   "proneStab": [
+    12
+   ],
+   "shoot1": [
+    12
+   ],
+   "shoot2": [
+    12
+   ],
+   "shootF": [
+    12
+   ],
+   "sit": [
+    12
+   ],
+   "stabO1": [
+    12
+   ],
+   "stabO2": [
+    12
+   ],
+   "stabOF": [
+    12
+   ],
+   "stabT1": [
+    12
+   ],
+   "stabT2": [
+    12
+   ],
+   "stabTF": [
+    12
+   ],
+   "stand1": [
+    12
+   ],
+   "stand2": [
+    12
+   ],
+   "swingO1": [
+    12
+   ],
+   "swingO2": [
+    12
+   ],
+   "swingO3": [
+    12
+   ],
+   "swingOF": [
+    12
+   ],
+   "swingP1": [
+    12
+   ],
+   "swingP2": [
+    12
+   ],
+   "swingPF": [
+    12
+   ],
+   "swingT1": [
+    12
+   ],
+   "swingT2": [
+    12
+   ],
+   "swingT3": [
+    12
+   ],
+   "swingTF": [
+    12
+   ],
+   "walk1": [
+    12
+   ],
+   "walk2": [
+    12
+   ]
+  },
+  "kb": 919,
+  "onSale": true
+ },
+ {
+  "id": 5010044,
+  "name": "殘像效果",
+  "frames": 0,
+  "books": {},
+  "kb": 3,
+  "onSale": false
+ },
+ {
+  "id": 5010045,
+  "name": "天打雷劈",
+  "frames": 19,
+  "books": {
+   "stand1": [
+    19
+   ]
+  },
+  "kb": 92,
+  "onSale": true
+ },
+ {
+  "id": 5010051,
+  "name": "霓虹聖誕樹",
+  "frames": 68,
+  "books": {
+   "stand1": [
+    34
+   ],
+   "stand2": [
+    34
+   ]
+  },
+  "kb": 653,
+  "onSale": false
+ },
+ {
+  "id": 5010052,
+  "name": "聖誕禮物雪橇",
+  "frames": 24,
+  "books": {
+   "default": [
+    4,
+    4,
+    4,
+    4,
+    8
+   ]
+  },
+  "kb": 46,
+  "onSale": false
+ },
+ {
+  "id": 5010053,
+  "name": "聖誕檞寄生",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 40,
+  "onSale": false
+ },
+ {
+  "id": 5010054,
+  "name": "搖搖聖誕老人",
+  "frames": 8,
+  "books": {
+   "default": [
+    8
+   ]
+  },
+  "kb": 60,
+  "onSale": false
+ },
+ {
+  "id": 5010057,
+  "name": "花之精靈",
+  "frames": 24,
+  "books": {
+   "alert": [
+    6
+   ],
+   "stand1": [
+    18
+   ]
+  },
+  "kb": 86,
+  "onSale": true
+ },
+ {
+  "id": 5010068,
+  "name": "天使羽翼特效",
+  "frames": 19,
+  "books": {
+   "default": [
+    12
+   ],
+   "ladder": [
+    6
+   ],
+   "proneStab": [
+    1
+   ]
+  },
+  "kb": 186,
+  "onSale": false
+ },
+ {
+  "id": 5010069,
+  "name": "墮落天使特效",
+  "frames": 31,
+  "books": {
+   "default": [
+    12
+   ],
+   "ladder": [
+    6
+   ],
+   "proneStab": [
+    1
+   ],
+   "savage": [
+    12
+   ]
+  },
+  "kb": 395,
+  "onSale": false
+ },
+ {
+  "id": 5010070,
+  "name": "精靈翅膀特效",
+  "frames": 48,
+  "books": {
+   "default": [
+    12
+   ],
+   "ladder": [
+    12
+   ],
+   "proneStab": [
+    12
+   ],
+   "walk1": [
+    12
+   ]
+  },
+  "kb": 392,
+  "onSale": false
+ },
+ {
+  "id": 5010073,
+  "name": "人氣美女",
+  "frames": 3,
+  "books": {
+   "stand1": [
+    3
+   ]
+  },
+  "kb": 64,
+  "onSale": false
+ },
+ {
+  "id": 5010074,
+  "name": "人氣帥哥",
+  "frames": 3,
+  "books": {
+   "stand1": [
+    3
+   ]
+  },
+  "kb": 66,
+  "onSale": false
+ },
+ {
+  "id": 5010999,
+  "name": "怪物變身中特效",
+  "frames": 6,
+  "books": {
+   "default": [
+    6
+   ]
+  },
+  "kb": 19,
+  "onSale": false
+ }
+]

@@ -13,6 +13,8 @@ import {
 import {
   fashionItems,
   fashionItem,
+  fashionEffects,
+  fashionEffect,
   itemImgPath,
   SLOT_LABELS,
   SLOT_CONFLICTS,
@@ -24,6 +26,7 @@ import {
   styleGroupOf,
   styleBaseId,
   type FashionItem,
+  type FashionEffect,
   type FashionSlot,
   type Gender,
 } from "@/data/fashion";
@@ -40,6 +43,16 @@ import CharacterCanvas, {
 } from "./character-canvas";
 
 const PAGE_SIZE = 60;
+
+/** 右欄分頁：12 個部位，外加不佔部位的「特效」 */
+type Tab = FashionSlot | "effect";
+
+/** 特效分頁卡片上的一行說明 */
+const EFFECT_KIND_LABELS: Record<FashionEffect["kind"], string> = {
+  follow: "跟在身後",
+  action: "隨動作變化",
+  simple: "循環播放",
+};
 
 const GENDER_FILTERS: { value: Gender | "all"; label: string }[] = [
   { value: "all", label: "全部性別" },
@@ -129,7 +142,7 @@ function ItemIcon({ id, alt }: { id: number; alt: string }) {
 export default function FashionPage() {
   const [look, setLook] = useState<CharacterLook>(DEFAULT_LOOK);
   const [charGender, setCharGender] = useState<0 | 1>(0);
-  const [slot, setSlot] = useState<FashionSlot>("cap");
+  const [tab, setTab] = useState<Tab>("hair");
   const [query, setQuery] = useState("");
   const [genderFilter, setGenderFilter] = useState<Gender | "all">("all");
   // 髮色／瞳色各自記住（DEFAULT_LOOK 是黑髮黑眼，跟 0 對齊）
@@ -158,12 +171,15 @@ export default function FashionPage() {
   );
   const onMissing = useCallback((ids: number[]) => setMissing(ids), []);
 
-  const grouped = GROUPED_SLOTS.has(slot);
+  /** 在特效分頁時沒有「目前部位」，底下用到部位的地方都要先擋掉 */
+  const slot: FashionSlot | null = tab === "effect" ? null : tab;
+  const grouped = slot !== null && GROUPED_SLOTS.has(slot);
   const palette = slot === "hair" ? HAIR_COLORS : FACE_COLORS;
   const selectedColor = slot === "hair" ? hairColor : faceColor;
 
   const q = query.trim();
   const list = useMemo<GridEntry[]>(() => {
+    if (slot === null) return [];
     if (grouped) {
       const groups = slot === "hair" ? hairGroups : faceGroups;
       const entries: GridEntry[] = [];
@@ -202,17 +218,26 @@ export default function FashionPage() {
       }));
   }, [slot, q, grouped, selectedColor, genderFilter]);
 
+  const effectList = useMemo(
+    () =>
+      fashionEffects.filter(
+        (e) => !q || e.name.includes(q) || String(e.id) === q,
+      ),
+    [q],
+  );
+
   const pageCount = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount - 1);
   const shown = list.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
 
-  const changeSlot = (s: FashionSlot) => {
-    setSlot(s);
+  const changeTab = (t: Tab) => {
+    setTab(t);
     setPage(0);
   };
 
   /** 換髮色／瞳色：更新色票選取，若身上已穿同部位造型，直接換成對應色（即時預覽） */
   const changeColor = (digit: number) => {
+    if (slot === null) return;
     if (slot === "hair") setHairColor(digit);
     else setFaceColor(digit);
     setLook((prev) => {
@@ -253,6 +278,23 @@ export default function FashionPage() {
       return { ...prev, equips };
     });
   };
+
+  /** 特效同時只能開一個（遊戲裡也是），再點一次就關掉 */
+  const toggleEffect = (effect: FashionEffect) =>
+    setLook((prev) => ({
+      ...prev,
+      effect:
+        prev.effect?.id === effect.id
+          ? undefined
+          : {
+              id: effect.id,
+              name: effect.name,
+              kind: effect.kind,
+              z: effect.z,
+              trail: effect.trail,
+              zOverride: effect.zOverride,
+            },
+    }));
 
   const unequip = (s: FashionSlot) =>
     setLook((prev) => {
@@ -418,7 +460,12 @@ export default function FashionPage() {
                 <div className="font-medium">這幾件無法預覽</div>
                 <div className="mt-0.5 text-[var(--text-muted)]">
                   {missing
-                    .map((id) => fashionItem(id)?.name ?? `#${id}`)
+                    .map(
+                      (id) =>
+                        fashionItem(id)?.name ??
+                        fashionEffect(id)?.name ??
+                        `#${id}`,
+                    )
                     .join("、")}
                   —— 素材庫沒有它們的動作資料，仍然穿在身上，只是畫不出來。
                 </div>
@@ -430,12 +477,29 @@ export default function FashionPage() {
             <div className="mb-2 text-xs font-semibold text-[var(--text-muted)]">
               目前穿著
             </div>
-            {equippedRows.length === 0 ? (
+            {equippedRows.length === 0 && !look.effect ? (
               <div className="text-xs text-[var(--text-muted)]">
                 還沒穿任何東西
               </div>
             ) : (
               <div className="space-y-1.5">
+                {look.effect && (
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="text-[var(--text-muted)]">特效</span>
+                    <span className="flex min-w-0 items-center gap-1">
+                      <span className="truncate">{look.effect.name}</span>
+                      <button
+                        onClick={() =>
+                          setLook((p) => ({ ...p, effect: undefined }))
+                        }
+                        aria-label="關掉特效"
+                        className="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
+                      >
+                        <X size={12} />
+                      </button>
+                    </span>
+                  </div>
+                )}
                 {equippedRows.map(({ slot: s, label }) => (
                   <div
                     key={s}
@@ -465,9 +529,9 @@ export default function FashionPage() {
             {SLOT_LABELS.map(({ slot: s, label }) => (
               <button
                 key={s}
-                onClick={() => changeSlot(s)}
+                onClick={() => changeTab(s)}
                 className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
-                  slot === s
+                  tab === s
                     ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
                     : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
                 }`}
@@ -476,6 +540,17 @@ export default function FashionPage() {
                 <span className="ml-1 opacity-60">{SLOT_COUNTS.get(s)}</span>
               </button>
             ))}
+            {/* <button
+              onClick={() => changeTab("effect")}
+              className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
+                tab === "effect"
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
+                  : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+              }`}
+            >
+              特效
+              <span className="ml-1 opacity-60">{fashionEffects.length}</span>
+            </button> */}
           </div>
 
           <div className="flex items-center gap-2">
@@ -490,7 +565,7 @@ export default function FashionPage() {
                   setQuery(e.target.value);
                   setPage(0);
                 }}
-                placeholder="搜尋道具名稱"
+                placeholder={tab === "effect" ? "搜尋特效名稱" : "搜尋道具名稱"}
                 className="w-full rounded-full border border-[var(--border)] bg-[var(--surface)] py-2 pl-10 pr-9 text-sm outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
               />
               {query && (
@@ -505,7 +580,9 @@ export default function FashionPage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-1.5">
+          <div
+            className={`flex-wrap gap-1.5 ${tab === "effect" ? "hidden" : "flex"}`}
+          >
             {GENDER_FILTERS.map(({ value, label }) => (
               <button
                 key={String(value)}
@@ -558,60 +635,91 @@ export default function FashionPage() {
             {list.length} {grouped ? "款造型" : "件"}
           </div> */}
 
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
-            {shown.map((entry) => {
-              const equipped = look.equips[slot];
-              // 髮型／臉型：身上那件是同組任一顏色就算選中（換色前後都亮）
-              const active = grouped
-                ? equipped !== undefined &&
-                  styleBaseId(slot, equipped.id) === entry.key
-                : equipped?.id === entry.item.id;
-              const fits = genderFits(entry.gender, charGender);
-              return (
+          {slot !== null && (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+              {shown.map((entry) => {
+                const equipped = look.equips[slot];
+                // 髮型／臉型：身上那件是同組任一顏色就算選中（換色前後都亮）
+                const active = grouped
+                  ? equipped !== undefined &&
+                    styleBaseId(slot, equipped.id) === entry.key
+                  : equipped?.id === entry.item.id;
+                const fits = genderFits(entry.gender, charGender);
+                return (
+                  <button
+                    key={entry.key}
+                    onClick={() => equip(entry.item)}
+                    title={
+                      fits
+                        ? entry.name
+                        : `${entry.name}（此造型限${entry.gender === 0 ? "男" : "女"}性角色）`
+                    }
+                    className={`cursor-pointer flex items-center gap-2 rounded-lg border p-2 text-left transition-colors ${
+                      active
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                        : "border-[var(--border)] hover:border-[var(--accent)]"
+                    } ${fits ? "" : "opacity-45"}`}
+                  >
+                    <ItemIcon
+                      key={entry.item.id}
+                      id={entry.item.id}
+                      alt={entry.name}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-xs">
+                        {entry.name}
+                      </span>
+                      {(entry.colorMissing || !fits) && (
+                        <span className="mt-0.5 flex items-center gap-1">
+                          {entry.colorMissing && (
+                            <span className="text-[10px] text-[var(--text-muted)]">
+                              無此色，以現有色代替
+                            </span>
+                          )}
+                          {!fits && (
+                            <span className="text-[10px] text-[var(--text-muted)]">
+                              限{entry.gender === 0 ? "男" : "女"}
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {tab === "effect" && (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+              {effectList.map((effect) => (
                 <button
-                  key={entry.key}
-                  onClick={() => equip(entry.item)}
-                  title={
-                    fits
-                      ? entry.name
-                      : `${entry.name}（此造型限${entry.gender === 0 ? "男" : "女"}性角色）`
-                  }
+                  key={effect.id}
+                  onClick={() => toggleEffect(effect)}
+                  title={effect.name}
                   className={`cursor-pointer flex items-center gap-2 rounded-lg border p-2 text-left transition-colors ${
-                    active
+                    look.effect?.id === effect.id
                       ? "border-[var(--accent)] bg-[var(--accent-soft)]"
                       : "border-[var(--border)] hover:border-[var(--accent)]"
-                  } ${fits ? "" : "opacity-45"}`}
+                  }`}
                 >
-                  <ItemIcon
-                    key={entry.item.id}
-                    id={entry.item.id}
-                    alt={entry.name}
-                  />
+                  <ItemIcon id={effect.id} alt={effect.name} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs">{entry.name}</span>
-                    {(entry.colorMissing || !fits) && (
-                      <span className="mt-0.5 flex items-center gap-1">
-                        {entry.colorMissing && (
-                          <span className="text-[10px] text-[var(--text-muted)]">
-                            無此色，以現有色代替
-                          </span>
-                        )}
-                        {!fits && (
-                          <span className="text-[10px] text-[var(--text-muted)]">
-                            限{entry.gender === 0 ? "男" : "女"}
-                          </span>
-                        )}
-                      </span>
-                    )}
+                    <span className="block truncate text-xs">
+                      {effect.name}
+                    </span>
+                    <span className="mt-0.5 block text-[10px] text-[var(--text-muted)]">
+                      {EFFECT_KIND_LABELS[effect.kind]}
+                    </span>
                   </span>
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {list.length === 0 && (
+          {(tab === "effect" ? effectList.length : list.length) === 0 && (
             <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center text-sm text-[var(--text-muted)]">
-              沒有符合的道具
+              沒有符合的{tab === "effect" ? "特效" : "道具"}
             </div>
           )}
 

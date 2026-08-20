@@ -7,7 +7,11 @@
  *   item/2000 一律回 null），所以這一小包非自己帶不可。
  * - 其餘道具走 maplestory.io（見 ./msio.ts）。
  */
-import { fetchItemWz as fetchFromMsio } from "./msio";
+import {
+  fetchItemWz as fetchFromMsio,
+  fetchEffectBooks as fetchEffectFromMsio,
+  type EffectBooks,
+} from "./msio";
 
 const STATIC_BASE = "/wz-static";
 
@@ -78,6 +82,15 @@ export function fetchItemWz(imgPath: string): Promise<unknown> {
     );
   }
   return cachedPromise(itemCache, imgPath, 40, () => fetchFromMsio(imgPath));
+}
+
+const effectCache = new Map<string, Promise<EffectBooks>>();
+
+/** 特效道具的圖（0501 段），只有 maplestory.io 有 */
+export function fetchEffectBooks(effectId: number): Promise<EffectBooks> {
+  return cachedPromise(effectCache, String(effectId), 10, () =>
+    fetchEffectFromMsio(effectId),
+  );
 }
 
 /** 部件圖網址。maplestory.io 的部件圖已經是 data: URI，原樣回傳 */

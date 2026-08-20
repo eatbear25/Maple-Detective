@@ -1,0 +1,2450 @@
+{
+  "frameBooks": {
+    "alert": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAHUlEQVR4nGNhgID/IALE\u002Bf8fyFztCuGAGWF7GBgBeXQG/BloEtEAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 6,
+                "y": 9,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 9,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPUlEQVR4nEWMAQ7AMAgCIfGvfVP72Zub2plocoCE/iHXA9cAZJtGRzIVfs08J9UlwpahkyXWx1R9ga2p0gOdKBOu90WnQAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABAAAAAGCAYAAADKfB7nAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZ0lEQVR4nJWQ7Q2AIAxE7xJHcgVXcAVm0hVcwRWc6SgF6i\u002BDNOEzvHcNC\u002BZLNtgPMwL5JIGk2h3/CgrXHfD9aXSCuiCMHwILLWBLrnB04PZrA/Z70MdjxArqiMD6Bw0mBlVgX9P7NgNQrh5Sbii04gAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPUlEQVR4nEWMAQ7AMAgCIfGvfVP72Zub2plocoCE/iHXA9cAZJtGRzIVfs08J9UlwpahkyXWx1R9ga2p0gOdKBOu90WnQAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABAAAAAGCAYAAADKfB7nAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZ0lEQVR4nJWQ7Q2AIAxE7xJHcgVXcAVm0hVcwRWc6SgF6i\u002BDNOEzvHcNC\u002BZLNtgPMwL5JIGk2h3/CgrXHfD9aXSCuiCMHwILLWBLrnB04PZrA/Z70MdjxArqiMD6Bw0mBlVgX9P7NgNQrh5Sbii04gAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPUlEQVR4nEWMAQ7AMAgCIfGvfVP72Zub2plocoCE/iHXA9cAZJtGRzIVfs08J9UlwpahkyXWx1R9ga2p0gOdKBOu90WnQAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        }
+      ]
+    },
+    "fly": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAECAYAAABGM/VAAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALklEQVR4nFVKywkAIBRScNd2alnzSYcSFH/CD4fUE\u002BAoCaved9rVPpl1XuYCpz2uqgwQzc8pdgAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAECAYAAABGM/VAAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALklEQVR4nFVKywkAIBRScNd2alnzSYcSFH/CD4fUE\u002BAoCaved9rVPpl1XuYCpz2uqgwQzc8pdgAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "heal": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABAAAAAGCAYAAADKfB7nAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAZ0lEQVR4nJWQ7Q2AIAxE7xJHcgVXcAVm0hVcwRWc6SgF6i\u002BDNOEzvHcNC\u002BZLNtgPMwL5JIGk2h3/CgrXHfD9aXSCuiCMHwILLWBLrnB04PZrA/Z70MdjxArqiMD6Bw0mBlVgX9P7NgNQrh5Sbii04gAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPUlEQVR4nEWMAQ7AMAgCIfGvfVP72Zub2plocoCE/iHXA9cAZJtGRzIVfs08J9UlwpahkyXWx1R9ga2p0gOdKBOu90WnQAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        }
+      ]
+    },
+    "jump": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAECAYAAABGM/VAAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALklEQVR4nFWKyQ0AQAgCIaH/ArZZZPWjJhKOEe45T60AR0lY7X3oJpn1U8abtgCfKgunD4sOsgAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 5,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "shoot1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAN0lEQVR4nEWNAQoAMAgCE/rr3rR91gllCQWeSRkramDjgFIAYHukYaVaT/QEs\u002Bp9WXAaBuDdPx\u002BpOROuXaeQyAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAN0lEQVR4nEWNAQoAMAgCE/rr3rR91gllCQWeSRkramDjgFIAYHukYaVaT/QEs\u002Bp9WXAaBuDdPx\u002BpOROuXaeQyAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAN0lEQVR4nEWNAQoAMAgCE/rr3rR91gllCQWeSRkramDjgFIAYHukYaVaT/QEs\u002Bp9WXAaBuDdPx\u002BpOROuXaeQyAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "shoot2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANUlEQVR4nFWL2Q0AIAxCIWEkl9WZuhPa1Hjww5GH8MvbqXew0wgS1ukFAuM\u002BmIRjhQa613sCX1APQoFJ\u002B6wAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAOElEQVR4nDWLAQoAIAwCFfbX3lSfNW1NGI7DK3Tk4/8RKAck9Rkr4E1Tx2RBxUxkvQFHtwpqY3RcCTcTro6aO84AAAAASUVORK5CYII=",
+              "origin": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANUlEQVR4nFWL2Q0AIAxCIWEkl9WZuhPa1Hjww5GH8MvbqXew0wgS1ukFAuM\u002BmIRjhQa613sCX1APQoFJ\u002B6wAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANUlEQVR4nFWL2Q0AIAxCIWEkl9WZuhPa1Hjww5GH8MvbqXew0wgS1ukFAuM\u002BmIRjhQa613sCX1APQoFJ\u002B6wAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANUlEQVR4nFWL2Q0AIAxCIWEkl9WZuhPa1Hjww5GH8MvbqXew0wgS1ukFAuM\u002BmIRjhQa613sCX1APQoFJ\u002B6wAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAN0lEQVR4nE3KUQ4AIAgCUNi8a2eqyxKkH7mJ7o1Cj7ycH0F5QFJjrMCr5hzLgsqNH7qZeL4bEhfrJRKvCgeJlAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANUlEQVR4nFWL2Q0AIAxCIWEkl9WZuhPa1Hjww5GH8MvbqXew0wgS1ukFAuM\u002BmIRjhQa613sCX1APQoFJ\u002B6wAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANklEQVR4nEWKgQkAIAzDVtitepM\u002BW\u002BNwGFihzTI\u002B5tSlhc0slbwovSijLbFZZzgJxXyCp\u002BpwAJqZD9xYvC6cAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        }
+      ]
+    },
+    "shootF": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAFCAYAAACeuGYRAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAUUlEQVR4nIWPAQrAIAwDE/Ct25v0s1mslTHoMGCRNtfQhq/kRxy0IUWRQFLZ\u002B4VbejeH\u002BA8Td5kavQl5\u002BTRnwgKqFKmvZe9NafZAqEVcntnzAMZ3HHqtxewmAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 9,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 9,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAcAAAAFCAYAAACJmvbYAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPUlEQVR4nFWMAQoAIAgDN/Cvvak\u002Bu7Q0TBD0zmn4S96sxRqEJJBUMlqy8jjzcjOgkH4cMBNXvCQapCbqLTavHxWtI2e\u002BAwAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 7,
+                "y": 14,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 14,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAcAAAAFCAYAAACJmvbYAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPUlEQVR4nFWMAQoAIAgDN/Cvvak\u002Bu7Q0TBD0zmn4S96sxRqEJJBUMlqy8jjzcjOgkH4cMBNXvCQapCbqLTavHxWtI2e\u002BAwAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 7,
+                "y": 14,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 14,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "sit": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAsAAAAECAYAAABY\u002BsXzAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPklEQVR4nH2OUQoAIAhDHeyunSkvuyQrpKB9qHtMkfaXygwWiDsYOhgwMWFUN6HdC8t6Nm7zBqdXXIR6vjMAGawRRn9asd8AAAAASUVORK5CYII=",
+              "origin": {
+                "x": 3,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 3,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5\u002BAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAL0lEQVR4nC2LsQ0AMAzCjJRfc1P7LC1RPGEExccHq5NQ2XjKWONZcEeUWBLKheUB3dYMEVEh9REAAAAASUVORK5CYII=",
+              "origin": {
+                "x": -5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        }
+      ]
+    },
+    "stabO1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAKElEQVR4nEXIsQ0AIBDDQEfKruzEsvlQvHB3NhB\u002Bcpa3OsQS6kyh9we85wh1xLYK/wAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "stabO2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAECAYAAABGM/VAAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAL0lEQVR4nEXMyQ0AIBBCUUjo1Zq0WVwI8V0mfw4IYXy8Tx9tkLAaz8pRgwP0zMwGj74KRJ0S034AAAAASUVORK5CYII=",
+              "origin": {
+                "x": -3,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -3,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "stabOF": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPElEQVR4nFWMAQ4AIAgCZfOvvak\u002BSyhrlZsOTyTjL6pRIh8Q1ASss3dec\u002BvlA8pFwr\u002BCGIETBQEW4HTUBjUSFEbE3kbqAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 13,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 13,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5\u002BAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALElEQVR4nE2LwQkAIBDDUuiuzqTL1lM5MK\u002BkUAPhw0m3YNVw5VChgdyS\u002Ba4bIP4JRryivt4AAAAASUVORK5CYII=",
+              "origin": {
+                "x": 3,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 3,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANElEQVR4nFWLQQoAIAzDWtj/7/rZuDEVLQy6hIb\u002BkOd4HgGyTex\u002BuKoXTFnCvZkNb1KaIRZwHhJCOwzoXQAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAAECAYAAACk7\u002B45AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAH0lEQVR4nGNhYGD4D8QMLP9B1CwgA0QwpjMwgqTAAABvZgSrBIXZfQAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 2,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 2,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        }
+      ]
+    },
+    "stabT1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5\u002BAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAKElEQVR4nDWKgQkAAAjCEvr/5aVUgqBjXRtcZQSAr7TwjXrYp\u002BIjQwZDsgwPVy1LxQAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAGklEQVR4nGNhAIL//xn\u002BM8xiYGCBMRjTGRgBamsHoPVy77AAAAAASUVORK5CYII=",
+              "origin": {
+                "x": -2,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -2,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "stabT2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5\u002BAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAJUlEQVR4nGNhgID/QMwIYoAE/v8HchkZIYIwFQwwQbgAkAPWAgAytggSauQCKAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -1,
+                "y": 14,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -1,
+                "y": 14,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAHklEQVR4nGNhYGD4D8QMLP9B1Cwgg5GRgfH/TIb/AEbNBj40udKIAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -1,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -1,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "stabTF": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAGCAYAAAAYLBS/AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAUUlEQVR4nI2PUQ6AIAxD16R35Ux42brpHMQgcT8kj7UPaP9HeYIviK\u002BA4vbwhWbi0xAUQLXtlJSGeW5bBZ1fjIBBSsMdWJn8EZNpUA/3\u002Bux2ToE8Gh2VVohjAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAFCAYAAAB1j90SAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAVklEQVR4nHWPCw7AIAhDacJddyZ32a4CmrEPiZHwWituvagD\u002By/WDb8PSBqADT\u002BdQ\u002BAw89Lvx6I/Az7TSxdKTqNC5rA0aVrp78jkaDtKB32F2aOnjc4vYQEl4GO/spsAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 7,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAH0lEQVR4nGNhgID/QMwI4vz/D2QyMjL8B3EYGWZBZAB2agamIvV3IwAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -3,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -3,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAGklEQVR4nGNhAIL//xn\u002BM8xiYGCBMRjTGRgBamsHoPVy77AAAAAASUVORK5CYII=",
+              "origin": {
+                "x": -2,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -2,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "stand1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAFCAYAAACaTbYsAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAWklEQVR4nJVOwQ2AQAhrE0ZyBHdxJh3BXZypcneIPDRREgjQ0mL4F/LkNXw9Vi8SSCp2tApW1Xoo3ZTeb05cIEswFg8CbtZI4Th46dxA7fOr84jDwQnUml/iBOLtHZ1Su/PrAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 3,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 3,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANElEQVR4nDXL0Q0AIAgD0WvCrs6ky1YQJOHjJdcAnC/mwjaSPFYVuHhSC8erG11IyJs/4QIzAAyyGuHvYAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 1,
+                  "y": 0,
+                  "isEmpty": false
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABEAAAAGCAYAAAAlvnXZAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAbklEQVR4nJ2Q6w2AIAyErwkjuYIruAIz6Qqs4ArOdJbyqH/QSBMevX45LgTMFXVJa/6a0DYSIsKqSXgOmzgyIB21\u002B6FwBIMPXRwY6eMZrgkK25PkoRml9Jqk1KXAAuHu6fufpBXYzg8DFAM7o7M3M70iqc2S0GgAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANElEQVR4nDXL0Q0AIAgD0WvCrs6ky1YQJOHjJdcAnC/mwjaSPFYVuHhSC8erG11IyJs/4QIzAAyyGuHvYAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -8,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -8,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 1,
+                  "y": 0,
+                  "isEmpty": false
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAFCAYAAACaTbYsAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAY0lEQVR4nJWO0Q2AIAxE7xJGkxHqCu7kCHUE3A2PKokxSuJ9UEL7Hk34n3pVpsdDD79AnwArca0pzju6ilxC9ibgvAOeUa0QDSZ5CrYsq6kpexsaRp/0tUPQqmsTgRxx0Zf8AKTBHOPU5qu1AAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 7,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAN0lEQVR4nD2LAQ4AIAgCYfOvvak\u002BSyoWm8huELCUx8koqBRIahijQFfrnSQLir8ycLOdoDbeHBeeGBCuknRfCQAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -7,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -7,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 1,
+                  "y": 0,
+                  "isEmpty": false
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "stand2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAFCAYAAACaTbYsAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAWklEQVR4nJVOwQ2AQAhrE0ZyBHdxJh3BXZypcneIPDRREgjQ0mL4F/LkNXw9Vi8SSCp2tApW1Xoo3ZTeb05cIEswFg8CbtZI4Th46dxA7fOr84jDwQnUml/iBOLtHZ1Su/PrAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 3,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 3,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANElEQVR4nDXL0Q0AIAgD0WvCrs6ky1YQJOHjJdcAnC/mwjaSPFYVuHhSC8erG11IyJs/4QIzAAyyGuHvYAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 1,
+                  "y": 0,
+                  "isEmpty": false
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABEAAAAGCAYAAAAlvnXZAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAbklEQVR4nJ2Q6w2AIAyErwkjuYIruAIz6Qqs4ArOdJbyqH/QSBMevX45LgTMFXVJa/6a0DYSIsKqSXgOmzgyIB21\u002B6FwBIMPXRwY6eMZrgkK25PkoRml9Jqk1KXAAuHu6fufpBXYzg8DFAM7o7M3M70iqc2S0GgAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANElEQVR4nDXL0Q0AIAgD0WvCrs6ky1YQJOHjJdcAnC/mwjaSPFYVuHhSC8erG11IyJs/4QIzAAyyGuHvYAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -8,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -8,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 1,
+                  "y": 0,
+                  "isEmpty": false
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAFCAYAAACaTbYsAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAY0lEQVR4nJWO0Q2AIAxE7xJGkxHqCu7kCHUE3A2PKokxSuJ9UEL7Hk34n3pVpsdDD79AnwArca0pzju6ilxC9ibgvAOeUa0QDSZ5CrYsq6kpexsaRp/0tUPQqmsTgRxx0Zf8AKTBHOPU5qu1AAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 7,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAN0lEQVR4nD2LAQ4AIAgCYfOvvak\u002BSyoWm8huELCUx8koqBRIahijQFfrnSQLir8ycLOdoDbeHBeeGBCuknRfCQAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -7,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -7,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 1,
+                  "y": 0,
+                  "isEmpty": false
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "swingO1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALUlEQVR4nC3JgQkAIBBCUYV2baeWtW\u002BdcOA9l37CebqKCWS/oXHRAAt4eLZyAex7Cg0MzXVjAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAKklEQVR4nGNhgID/QMwIZTOABP//nwkUSQdLgAAjSJARKACUAQrOgkgCAPDdCnOXjmcFAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAJUlEQVR4nDWKQQoAABABqf3/l22TOKhhTk0oIEkZsM1gTdM07X1MoAkTvr8ZoQAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 7,
+                "y": 6,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 6,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        }
+      ]
+    },
+    "swingO2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAFklEQVR4nGNhYGD4D8QMLP9B1CwGBgAfLwOgidQH2gAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -1,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -1,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "backCape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANElEQVR4nC2MiQkAIAwDc9BdnUmXjU01UPJwtPTkPhIyuCVgxkoZJHbk\u002BmSKWE0kg/CeP7rJWBBGGJWOBAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "backCape"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAADUlEQVR4nGNhYGD4DwABGAEEonY2eAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -4,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -4,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        }
+      ]
+    },
+    "swingO3": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAFCAYAAACeuGYRAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAATElEQVR4nHVOAQoAMQhS6K/3prvPOmMNbmwJgZlWgR1yET1yjvg3kkCyC0rvJFHelUNy8rhYHuObIS9PlVpi96J99DXFTbz6aw0fcABSKx15QSalTgAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 10,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 10,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAF0lEQVR4nGNhYGD4D8SMLP9nAsl0hv8AHNkECL1eUGoAAAAASUVORK5CYII=",
+              "origin": {
+                "x": -3,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -3,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAKUlEQVR4nC2KgQkAMAzCIvjrftqz1o4FRCIaSCM\u002BTlV64yJze1lt65ABshQIphc3B88AAAAASUVORK5CYII=",
+              "origin": {
+                "x": -3,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -3,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALUlEQVR4nC3JgQkAIBBCUYV2baeWtW\u002BdcOA9l37CebqKCWS/oXHRAAt4eLZyAex7Cg0MzXVjAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        }
+      ]
+    },
+    "swingOF": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAHCAYAAAA8sqwkAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQElEQVR4nJWPwQ0AIAgDacKuzqTLVqrRp6l98LrCkeGHGm6BFD78AgomWsBWEvyjdJPltp6R39nyLAAB9u3nXJiSYg4itSwK4QAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "gloveWristBelowMailArm"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5\u002BAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAMUlEQVR4nEWJgQkAIAzDGthJ/uRN/qQ31U0RC4UmDf04yxP2TGpSHKhv5RhyCeACXWxnJg10MlBp9gAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeOverHead"
+            }
+          }
+        }
+      ]
+    },
+    "swingP1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAIElEQVR4nBXBgQ0AIAyAMEj2qze5ZzG2U8S3MIpd8uADY4sGo4MPwNoAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 1,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 1,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "swingP2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAG0lEQVR4nGP5/5/hPwMIzGJgYAERjOkMjCA\u002BAFqLBKMjECiEAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 2,
+                "y": 9,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 2,
+                "y": 9,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAkAAAAECAYAAABcDxXOAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQElEQVR4nH2NUQoAIAhDN/Csdaa6rG0SBX00FMdTXOCjHEh2MGzQABI8yxRzCdmELze5murGmvXJzOaN8udKkRa/GhN6CMbS1QAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 6,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPklEQVR4nIWOUQ4AIAhCYfOseaZOS7pmX5XMDT8YD0MjTYgOWhfCCI/7BrMJvv8WXbKDqIZXUIqxBNMLc9MCAb0SSLh5Q8QAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "swingPF": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAGCAYAAAAYLBS/AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAUUlEQVR4nI2PUQ6AIAxD16R35Ux42brpHMQgcT8kj7UPaP9HeYIviK\u002BA4vbwhWbi0xAUQLXtlJSGeW5bBZ1fjIBBSsMdWJn8EZNpUA/3\u002Bux2ToE8Gh2VVohjAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAFCAYAAAB1j90SAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAVklEQVR4nHWPCw7AIAhDacJddyZ32a4CmrEPiZHwWituvagD\u002By/WDb8PSBqADT\u002BdQ\u002BAw89Lvx6I/Az7TSxdKTqNC5rA0aVrp78jkaDtKB32F2aOnjc4vYQEl4GO/spsAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 7,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAADCAYAAABS3WWCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAF0lEQVR4nGNhYGD4z/L/PwMDC8MsBgYAHjkDpNlwrskAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 0,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 0,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "swingT1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAIElEQVR4nBXBgQ0AIAyAMEj2qze5ZzG2U8S3MIpd8uADY4sGo4MPwNoAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 1,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 1,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "swingT2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAECAYAAABV5LW0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQElEQVR4nI2LUQ4AIAhCZeuunakuS2TqR\u002BsjNp2Ar9mfqEGaH4gUAji4hYQqeAHn0Jp66MZWRQQXCITjMKr3bAG/zhUOhsfSMgAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAGCAYAAAD37n\u002BBAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAXklEQVR4nGNhIAz\u002BI7EZ8WkAKwx1ecdw7957sMDZe8r/WZBMYERWnJYGEZ41CyJsrHQXTLPAOCDdMNUgxTCFMINg8iANjCAOyOrVe4SQTUW2Ec6H\u002BYERqPg/FkUYAAAV1CKUlMVrHQAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "mailArmBelowHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPklEQVR4nIWOUQ4AIAhCYfOseaZOS7pmX5XMDT8YD0MjTYgOWhfCCI/7BrMJvv8WXbKDqIZXUIqxBNMLc9MCAb0SSLh5Q8QAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 8,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "swingT3": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAcAAAAFCAYAAACJmvbYAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPUlEQVR4nFWMAQoAIAgDN/Cvvak\u002Bu7Q0TBD0bmr4S96sxRqEJJBUMlqy8jjzcjOgkB6OQH674l12SE3UW2yzGxWtiN40GAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -1,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALElEQVR4nEXKwQ0AIBACQUjs1Zq02ZXTmNvnwNALdS6ETzsyRaHtLEsE7vMA9scJDnfJAD8AAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "mailArmBelowHead"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAOUlEQVR4nIWMwQ0AIAgDj4RZdSZdttL4M1HvA4Frkw8a6ClJiAlPKYLwTNfRaqtE9H08ST9UzTfBLJ6zDRY4ZTOLAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 7,
+                "y": 8,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 7,
+                "y": 8,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAMAAAABCAYAAAAb4BS0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAFUlEQVR4nGP5P5PhP0MaAwPDLAYGACBXA5wGbelxAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 8,
+                "y": 7,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 8,
+                "y": 7,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "backCape"
+            }
+          }
+        }
+      ]
+    },
+    "walk1": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAMElEQVR4nD3JwQ0AIAxCUUhcgO4/YzsCWm3kQvL\u002BwpvnIQmN9ieArIuMkDPrANhhA/UeCTBVJa/IAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAcAAAAFCAYAAACJmvbYAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPklEQVR4nFWMiQkAIAwDE3BWnckue/6ihUJ7R5L0D319nvRAAbLNZh4yw/Wad3RTxJBhK2AnlvBbeyFVp1YNu\u002BIWR8Cd6v8AAAAASUVORK5CYII=",
+              "origin": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -4,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALElEQVR4nE3JwQ0AIAzDwERiAbr/jGUEo4hH8fO89EKTg/CRLYKu2nSfgDMu7MMJDjIaNdkAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 5,
+                "y": 9,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 9,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAPElEQVR4nE2NgQnAQAgDc\u002BCunald9mp5n69gwEsklTP2so8aEDWAwynd4c9seZpesSDoJBdcHz\u002BA9\u002Bl5Acd8FK89THArAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAMElEQVR4nD3JwQ0AIAxCUUhcgO4/YzsCWm3kQvL\u002BwpvnIQmN9ieArIuMkDPrANhhA/UeCTBVJa/IAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": 5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 5,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAOklEQVR4nEWMgQmAAAzDGtiv3qTPxombDlZoWlr5z37W1ICoARxO6ZafsOVqesSCoNN8ITv1Ac/sVG7HexSu9D3w2QAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALElEQVR4nE3JwQ0AIAzDwERiAbr/jGUEo4hH8fO89EKTg/CRLYKu2nSfgDMu7MMJDjIaNdkAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 6,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 6,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQElEQVR4nEWMgQmAMBADc/ALuEKXcxZXcDhXOd/S4sMHcgmp/Gc/29QCUQO4OKW7/IUtd9MzFgTF5xoZx4Rz7gUC3hIymlIyyAAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    },
+    "walk2": {
+      "frames": [
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALklEQVR4nD2JsQ0AIAzDHIkH2v9/5ITQAmoWW87izZ9EBB3tSZDJjZL6wcWyzQHV/AhS4QP2DgAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 4,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 4,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAOUlEQVR4nEWMwQ0AIAwCS9JdnUmXRRRbSfroXSDjhzrUU4IUBq48QRryWRWW6Aim67Ax7EYBcPZUbFB0Eq6RCK3WAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALElEQVR4nE3JwQ0AIAzDwERiAbr/jGUEo4hH8fO89EKTg/CRLYKu2nSfgDMu7MMJDjIaNdkAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 4,
+                "y": 9,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 4,
+                "y": 9,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAOUlEQVR4nEWMwQ0AIAwCS9JdnUmXRRRbSfroXSDjhzrUU4IUBq48QRryWRWW6Aim67Ax7EYBcPZUbFB0Eq6RCK3WAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAJUlEQVR4nE2JuQkAAAyETsj\u002BK1\u002B\u002BIrERNLRYBx3tl0COMTvK9Ejh9wgOAkr6YgAAAABJRU5ErkJggg==",
+              "origin": {
+                "x": 4,
+                "y": 10,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 4,
+                "y": 10,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAOUlEQVR4nEWMwQ0AIAwCS9JdnUmXRRRbSfroXSDjhzrUU4IUBq48QRryWRWW6Aim67Ax7EYBcPZUbFB0Eq6RCK3WAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 12,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        },
+        {
+          "effects": {
+            "cape": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAADCAYAAABbNsX4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAALElEQVR4nE3JwQ0AIAzDwERiAbr/jGUEo4hH8fO89EKTg/CRLYKu2nSfgDMu7MMJDjIaNdkAAAAASUVORK5CYII=",
+              "origin": {
+                "x": 4,
+                "y": 11,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": 4,
+                "y": 11,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "capeBelowBody"
+            },
+            "capeArm": {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAABmWJ3mAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAOUlEQVR4nEWMwQ0AIAwCS9JdnUmXRRRbSfroXSDjhzrUU4IUBq48QRryWRWW6Aim67Ax7EYBcPZUbFB0Eq6RCK3WAAAAAElFTkSuQmCC",
+              "origin": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -5,
+                "y": 13,
+                "isEmpty": false
+              },
+              "mapOffset": {
+                "navel": {
+                  "x": 0,
+                  "y": 0,
+                  "isEmpty": true
+                }
+              },
+              "position": "cape"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "equipGroup": "Cape",
+  "id": 1102232,
+  "description": {
+    "id": 1102232,
+    "name": "\u661F\u661F\u738B\u5B50\u62AB\u98A8",
+    "description": "\u8D70\u8DEF\u6642\u661F\u661F\u6703\u8DDF\u8457\u8D70\u3002"
+  },
+  "metaInfo": {
+    "only": false,
+    "cash": true,
+    "reqLevel": 0,
+    "mob": 0,
+    "iconRaw": "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAcCAYAAAB2\u002BA\u002BpAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAELUlEQVR4nI1WDbXqMAzOzsFAkFAkFAlDwpAAEoYEJoFJoBKYhFsJVAKVsPelzUb3gHvJPbsda5Iv/\u002B2K/qDxQrz4wIuV6XeK8q/a5bWkj8ATYHWkB943b1j4xQwlAF3HG21L8K\u002BAF6Aj1oru\u002BLb7T4nwGCysn1lBW5X5AbjIBKyzCdU\u002BM78Aj1dibD7Su2igilTRTff3qoTTn2kb6KZq09uPMuJ9NpkhH6HfL4DFUwFNsjROX2dF1CeLrxA\u002Bzh5HT9XW2V9ldsn7E9WPM7n1HvJhVYY2WYR8ptCO1axAhDX0wtvlEENGvCZH4\u002BMG73b0USaB/pxpWDtqHleAbyaPyyIR8D3Ar1nRAnT4nxc2cA7xA\u002BBrepERUKFh2wG8BfhJpFbq7bsnC1cJcMKyRX0hv40hc\u002BDEHp91t5RBdFiFPMAZBUG5uFjDVhfvPLbkocCOjztV600uGneEWC9hBgeqWcB8l9/NATzgrcB7b2O16Xi8N56i41T5qfhDmFx6hro\u002BWzJ1nW3LBo4H2TFaqaC6xVZjqCQBDyeA\u002B\u002BT5eONAocstFF3WzbXJwTpFrY/wrOrQDbBKQrdUXBKb/MygHh6LMngSPWtPB5qbzWZmbjIwDzbz\u002BLmdYrJ8ODoyQ022tYnxNxqkuL2Ah5ScOAAwSCDD09Aa4FoDqQ5vUDogXUde0bNaYtoNDqFC8VqE3h7eIIKt32ddAmYPFnl3MByAXseEZjJ0nkyEExfN7BAp7LxIrqaJUrDHlLgAJfbNIZD4fUxAEhnfueQ6F55OwyVVs9UghDi1ntAqDwEwtbcz9bt\u002BBjf1\u002B5NHUsS1FE4AqJ\u002B0ziHm2diQmUm9lJ9n/K4lpzHn\u002BHw/02nj6HA9kNsDHJaZWj0MWkBGKj9/Mw2Td3EBmnsVMaobpGDQ3yi6k5uzGWWW8NzHBNAjtT8X6re9emuSsZJrf0QvhizZe0sN8mVhVDCk3/OTYJsawGrx0GuFl5GLOmngcapI5Kjf7jVQnMLse4TyNCxPQhST21mqr1L1PBs0KY3OKd/w8YqQTYyr6kQR401\u002BhgxrUKVQINW9sFQzKD077FFMHBd7OhQx3kSP9O/0cMH3Mrniczv49CwFSsrgannxzLu64q1BSRvzHOT9oA5mYJwisRjqUcWXHi2A//s\u002BHStm8cXkgXLRibYPNKUyFjeQN\u002BCfqOz8SRUXZ5oaJla0/LRTJpgY4mn2uASnL2n8IY6mgH66OvUO1pPP5S\u002BDQ951jiOxf15vE8hDzJce8gPO\u002BjA7lAEljzrYQzFQUuqxyl2Mp71cGdzYr4ChG\u002B2DS13s5ABOwHEOq4E7F5uPcblChqBe\u002B2xeKLtDDxRHXwJ7VHrXp/WFpJflYfUw0ZSyl\u002B7A5eL99fYd5fD60nJaQ8FjTGFFQx9doTxNlXX1sSvoa\u002BBfSJSWF8A4GfWX4D93pyerN3svVQAAAABJRU5ErkJggg==",
+    "icon": "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEhklEQVR4nI1Xi3XqMAxVzmEBdQQzgjtCGCGMACOQEWCEZgQyAhmhHgGPgEbIu7KVxCnQV/ek\u002BUm6\u002BlzJYUP/WeMX8eoBr85Mvy/Rf9Uun8v1FngCrI70wPX2hQg/uWELQNfxRp8l\u002BJ\u002BAV6AjzhXd8Wz3w4jKOJzYHrOBnkznG\u002BCqE3GeXaj2WfgJeLwS4\u002BUjXasFqsgM3ez93oxw\u002BnOnBrap2nb\u002BrY5Gn11m6AvshxWwRqqgSZfG6elsiLrk8RXKxzliCVR99v5XnV2KvqX6cab\u002BYw/9uClTmzxCPVNqx2o2oMqWepW95BRDR6OmnsbHDdHt6K1OAv0\u002B0/DRU/O4Anw7RVySRMH3AL9mQyvQ4acsfOCc4gfAP\u002BhJR0F1DZ8XgJ8A3qrWxqJ9dWTlKgFOWL7gF\u002BrbOHIHTuKy8G6tg\u002BywKQWAMwhBmVxsaauLax5PFGDAj487VR/bTJr\u002BCLVO0wwJsFnBwiVfuwNkIFtB9n6Sanvh8d4Ekp4T8xP5Y5xCWlJdnz25us6\u002BZQfHg75xxlSs\u002BoRXjaNyKXhsAR5S5OONI8VLbiHps22uXU5WK8aPuLA6XgZ4palbGy4Xu3zMoAERqzFEIoGtpyPNzeazMDcZmAefZcLcTpI8H449uaEmf/JJ8Lc1KLmDgsdUHBkAGDWRcXG0BrhxIPHwBqMDynXkDS1skfQ29kgVyOuRen94gQixbp9tKZg/eNS9h\u002BMADDYmrJLxEsgJgviyyg5CcRdUczNNlEJcUuEijPgXm0CSD5KANDPh0qfQuYh0Gi6Jzd6SEGVqPV2bPAQgdLqdqdt1M7irX\u002B88WiKulTgRoGGyOqeYZ2djFiaLUm/PuK\u002B1ppJrfL6fqd32dLgeqN8DHJ652iKMRiCnzM/PXMMUelmB5l5FjuoGJRjsHqRr\u002B7maorOE5z4mgB7p9P1F3Wdn0brkrNY6HNGLMWt2wVODenk4FR3Z83wk2KYGsHk8dMbwMnNikwYRJ0aiRt3n3hLFKc2hQyrbYb0Tgkz9zlN9Vdbz7NBkVPre5Ia3nwjZRdlULQnGm97GDOvAUhhQdq88tQpqzw57kIll9c6GIsab2tH\u002BnQ4u5J4mlyyvY0jHWqFcGdw8L475rZ1x1YDSzi2DvBsswAyMXUSKoS6mvo5oBfzj\u002BbStuNUTlwfKl020faSplFJ8gbwAf7fKzp9McbGnmWPqxYkXP3WCqSOB5ohLcPrjGr\u002BJxRXQS6hT7\u002BDchkx/HRx6bXMchf3v520CuesUQg9JGLDrJdKFHJNCah1tsOu4o1R/TjsIwLmT7E4shkzj/wScQPl0ELmQd6FXO9ow6FjHznnHXz6NednrJFWIyAqOLzLmGHlJgaR8Y7v8DTjJ6xbetiHWTdv3XdS9KLUIW8d7DcLlJohROGBbGIacVE2w7aIr9ncdyeYN4Hxosi6dHnHaxBNwCFkWAHCilSkkBcahehLIpvUCGkVef1eXjVE2yNMvBgPhKAuh0jyMc9eyyf35l8SP2bpaq/tUtPD2fTkHnobNT\u002BBpxynBX03dcsC8deyNI2n9A1zBbBaRak4UAAAAAElFTkSuQmCC",
+    "iconOrigin": {
+      "x": -1,
+      "y": 30,
+      "isEmpty": false
+    },
+    "iconRawOrigin": {
+      "x": -1,
+      "y": 30,
+      "isEmpty": false
+    },
+    "slotMax": 0,
+    "reqSTR": 0,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqLUK": 0,
+    "reqJob": 0,
+    "reqLevelEquip": 0,
+    "vslots": [
+      "Sr"
+    ],
+    "islots": [
+      "Sr"
+    ],
+    "setCompleteCount": 0
+  },
+  "typeInfo": {
+    "overallCategory": "Equip",
+    "category": "Armor",
+    "subCategory": "Cape",
+    "lowItemId": 1100000,
+    "highItemId": 1110000
+  }
+}

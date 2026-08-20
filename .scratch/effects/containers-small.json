@@ -1,0 +1,319 @@
+{
+ "json_430887d60077dcacada388e21112609d.bundle": {
+  "size": 1103,
+  "prefixes": {
+   "Assets/WzAssets/Json/TamingMob/0006.wzjson": 1,
+   "Assets/WzAssets/Json/TamingMob/0002.wzjson": 1,
+   "Assets/WzAssets/Json/TamingMob/0003.wzjson": 1,
+   "Assets/WzAssets/Json/TamingMob/0004.wzjson": 1,
+   "Assets/WzAssets/Json/TamingMob/0001.wzjson": 1,
+   "Assets/WzAssets/Json/TamingMob/0005.wzjson": 1
+  }
+ },
+ "json_e66ac8390d02720f97a33bca31723791.bundle": {
+  "size": 35424,
+  "prefixes": {
+   "Assets/WzAssets/Json/Sound/MobTable.json": 1,
+   "Assets/WzAssets/Json/Sound/PetTable.json": 1,
+   "Assets/WzAssets/Json/Sound/ItemTable.json": 1,
+   "Assets/WzAssets/Json/Sound/ReactorTable.json": 1,
+   "Assets/WzAssets/Json/Sound/WeaponTable.json": 1,
+   "Assets/WzAssets/Json/Sound/SkillTable.json": 1
+  }
+ },
+ "json_bf757d300f3608f63f655433a39caede.bundle": {
+  "size": 211350,
+  "prefixes": {
+   "Assets/WzAssets/Json/Etc/TW": 3,
+   "Assets/WzAssets/Json/Etc/PetExceptSearchList.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataRegister.json": 1,
+   "Assets/WzAssets/Json/Etc/ScanBlock.wzjson": 1,
+   "Assets/WzAssets/Json/Etc/NpcLocation.wzjson": 1,
+   "Assets/WzAssets/Json/Etc/MapHelperWeather.json": 1,
+   "Assets/WzAssets/Json/Etc/CashItemStock.json": 1,
+   "Assets/WzAssets/Json/Etc/MasterDisciple.json": 1,
+   "Assets/WzAssets/Json/Etc/PetPickupException.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataItemDetailCategory_Consume.json": 1,
+   "Assets/WzAssets/Json/Etc/SetItemInfo.json": 1,
+   "Assets/WzAssets/Json/Etc/ScanBlock.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataLabelOptionalSearchCategory.json": 1,
+   "Assets/WzAssets/Json/Etc/EmotionEffect.wzjson": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataItemDetailCategory_Armor.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataBuyAllUnderPrice_Cash.json": 1,
+   "Assets/WzAssets/Json/Etc/MasterDisciple.wzjson": 1,
+   "Assets/WzAssets/Json/Etc/CashShopCategory.wzjson": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataErrorMsg.json": 1,
+   "Assets/WzAssets/Json/Etc/LunarPetBuff.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketData.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataSlot.json": 1,
+   "Assets/WzAssets/Json/Etc/ItemMake.json": 1,
+   "Assets/WzAssets/Json/Etc/MannequinSetting.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataOptionalSearchCategory.json": 1,
+   "Assets/WzAssets/Json/Etc/ModifiedCommodity.json": 1,
+   "Assets/WzAssets/Json/Etc/WorldMap.json": 1,
+   "Assets/WzAssets/Json/Etc/GlobalMarketDataItemDetailCategory_Weapon.json": 1,
+   "Assets/WzAssets/Json/Etc/RecommendSkill.wzjson": 1,
+   "Assets/WzAssets/Json/Etc/MakeCharInfo.json": 1
+  }
+ },
+ "json_fc4e161bd2228c79fe3d243a1e8590e0.bundle": {
+  "size": 230622,
+  "prefixes": {
+   "Assets/WzAssets/Json/UI/GuildMark.wzjson": 1,
+   "Assets/WzAssets/Json/UI/figureTrackingLieDetector.wzjson": 1,
+   "Assets/WzAssets/Json/UI/NameTag.wzjson": 1,
+   "Assets/WzAssets/Json/UI/ChatBalloon.wzjson": 1
+  }
+ },
+ "json_8b237d4c91c514515b4bf74dda23d0e8.bundle": {
+  "size": 245745,
+  "prefixes": {
+   "Assets/WzAssets/Json/Morph/0398.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0203.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/1001.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/1103.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0397.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0207.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0042.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0041.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0016.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0045.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0017.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0021.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0010.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0009.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/1002.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0006.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0022.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0396.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0040.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/1100.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0044.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0030.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/1101.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0209.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0208.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0003.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0012.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/1003.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/0011.wzjson": 1,
+   "Assets/WzAssets/Json/Morph/1000.wzjson": 1
+  }
+ },
+ "json_6baa5b91985050c8f406de48a83cad30.bundle": {
+  "size": 335415,
+  "prefixes": {
+   "Assets/WzAssets/Json/Effect/Summon.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/SkillName1.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/ItemEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/PetEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/MainNotice.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/Tomb.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/BasicEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/SkillName3.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/CharacterEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/MapEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/OnUserEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/SetItemInfoEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/SetEff.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/SkillName2.wzjson": 1,
+   "Assets/WzAssets/Json/Effect/SkillName4.wzjson": 1
+  }
+ },
+ "json_670307ac2a95df1f8c45e13ed9d160c2.bundle": {
+  "size": 379995,
+  "prefixes": {
+   "Assets/WzAssets/Json/StandardPDD.wzjson": 1,
+   "Assets/WzAssets/Json/GlobalMarketPreview.wzjson": 1,
+   "Assets/WzAssets/Json/CashShopPreviewNew.wzjson": 1,
+   "Assets/WzAssets/Json/MonsterBook.wzjson": 1,
+   "Assets/WzAssets/Json/MapLogin.wzjson": 1
+  }
+ },
+ "json_7f583f6701726440f66638681ff5f1f7.bundle": {
+  "size": 429294,
+  "prefixes": {
+   "Assets/WzAssets/Json/Reactor/2402002.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/9202005.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/9108005.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/9208010.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2298001.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/8009002.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2002006.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/0002000.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2406000.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/9802000.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2708000.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2201003.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2001008.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2008003.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2212004.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/9108006.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2112006.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2401100.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2618006.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2112008.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/1012000.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2619003.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/9102005.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/1002001.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2119001.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/1058015.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/9202012.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2008002.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2119000.wzjson": 1,
+   "Assets/WzAssets/Json/Reactor/2408003.wzjson": 1
+  }
+ },
+ "json_d0204d274fe26485581cd3b21891ab84.bundle": {
+  "size": 663885,
+  "prefixes": {
+   "Assets/WzAssets/Json/Quest/PQuestSearch.wzjson": 1,
+   "Assets/WzAssets/Json/Quest/Exclusive.wzjson": 1,
+   "Assets/WzAssets/Json/Quest/Say.wzjson": 1,
+   "Assets/WzAssets/Json/Quest/Check.wzjson": 1,
+   "Assets/WzAssets/Json/Quest/PQuest.wzjson": 1,
+   "Assets/WzAssets/Json/Quest/Act.wzjson": 1,
+   "Assets/WzAssets/Json/Quest/QuestInfo.wzjson": 1
+  }
+ },
+ "json_2f1452e1c898196af3f6fe242a41a23b.bundle": {
+  "size": 845239,
+  "prefixes": {
+   "Assets/WzAssets/Json/Npc/2081200.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2121011.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2012023.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1092004.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2112007.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1063010.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1072003.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2050000.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2101012.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1012004.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1092014.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2012013.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2071006.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2050015.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2081002.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2090104.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2111024.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2112016.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1094006.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/9010009.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2002000.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1204001.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2012014.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2121009.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/9201013.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/2082001.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/9010019.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/1104205.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/9040006.wzjson": 1,
+   "Assets/WzAssets/Json/Npc/9010013.wzjson": 1
+  }
+ },
+ "json_dd1d5a6fdc0d09fde76a416d7a8272ba.bundle": {
+  "size": 915677,
+  "prefixes": {
+   "Assets/WzAssets/Json/Feature/Constants.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/FeatureMap.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/FeatureNpc.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/FeatureQuest.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/FeatureMob.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/FeatureTips.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/Feature.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/FeatureItem.wzjson": 1,
+   "Assets/WzAssets/Json/Feature/FeatureSetting.wzjson": 1
+  }
+ },
+ "json_a2909ccd82f5e94b165f962fba712349.bundle": {
+  "size": 2411761,
+  "prefixes": {
+   "Assets/WzAssets/Json/String/TW": 162
+  }
+ },
+ "json_4f0192b4db49dca312b7c5d0d6d30555.bundle": {
+  "size": 3255093,
+  "prefixes": {
+   "Assets/WzAssets/Json/Item/Pet": 42,
+   "Assets/WzAssets/Json/Item/Cash": 40,
+   "Assets/WzAssets/Json/Item/Consume": 31,
+   "Assets/WzAssets/Json/Item/Etc": 16,
+   "Assets/WzAssets/Json/Item/Special": 4,
+   "Assets/WzAssets/Json/Item/Install": 3,
+   "Assets/WzAssets/Json/Item/PetTable.json": 1,
+   "Assets/WzAssets/Json/Item/ItemOption.wzjson": 1,
+   "Assets/WzAssets/Json/Item/LinkCashWeaponData.json": 1
+  }
+ },
+ "json_ea789eaaa37ed8ffb3e0760d5d06f6d2.bundle": {
+  "size": 3602061,
+  "prefixes": {
+   "Assets/WzAssets/Json/Skill/Dragon": 10,
+   "Assets/WzAssets/Json/Skill/2218.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/112.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/400.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/2112.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/220.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/Attacktype.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/2211.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/121.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/412.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/420.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/410.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/111.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/411.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/1211.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/2215.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/MCGuardian.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/2111.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/521.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/1311.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/2214.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/800104.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/2110.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/131.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/312.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/212.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/1310.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/522.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/1400.wzjson": 1,
+   "Assets/WzAssets/Json/Skill/130.wzjson": 1
+  }
+ },
+ "json_27ed12ab55c4464e7db01cade1a2e593.bundle": {
+  "size": 5237001,
+  "prefixes": {
+   "Assets/WzAssets/Json/Mob/QuestCountGroup": 3,
+   "Assets/WzAssets/Json/Mob/9500131.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/8820001.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9300291.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9410000.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/3230306.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/2230109.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/8150100.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9300240.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/7130000.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9300342.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9501002.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/8810119.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/8800104.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/8810025.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/8500001.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9200014.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/3300007.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/0100133.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9500162.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/2230106.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/8800110.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9300071.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9100000.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9300041.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/1210103.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/5150000.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/6230201.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9700024.wzjson": 1,
+   "Assets/WzAssets/Json/Mob/9302005.wzjson": 1
+  }
+ }
+}

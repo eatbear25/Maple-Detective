@@ -7,7 +7,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
-import { itemName, itemInfo, itemIconSrc, type EquipStats } from "@/data/drops";
+import { itemName, itemInfo, itemIconSrc, type EquipStats, type ItemInfo } from "@/data/drops";
 import { GameIcon } from "./game-icon";
 
 const WEAPON_CATS: Record<number, string> = {
@@ -257,14 +257,23 @@ export function ItemTooltip({
   modal = false,
   onClose,
   onSearch,
+  searchLabel = "查看誰掉這個道具",
+  name: nameOverride,
+  info: infoOverride,
 }: {
   id: number;
   panelRef: React.RefObject<HTMLDivElement | null>;
   modal?: boolean;
   onClose?: () => void;
   onSearch?: () => void;
+  /** 觸控裝置彈窗底部按鈕的文字（任務頁用的是「哪些任務會給這個」） */
+  searchLabel?: string;
+  /** 名稱／說明覆寫：任務道具不在怪物掉落資料裡，由呼叫端自帶 */
+  name?: string;
+  info?: ItemInfo;
 }) {
-  const info = itemInfo(id);
+  const info = infoOverride ?? itemInfo(id);
+  const name = nameOverride ?? itemName(id);
   const panelStyle: React.CSSProperties = {
     background: "var(--surface)",
     borderColor: "var(--border)",
@@ -291,7 +300,7 @@ export function ItemTooltip({
           <X size={15} />
         </button>
       )}
-      <div className="text-center text-[13px] font-semibold leading-tight">{itemName(id)}</div>
+      <div className="text-center text-[13px] font-semibold leading-tight">{name}</div>
       {info?.eq ? (
         <EquipBody id={id} eq={info.eq} />
       ) : (
@@ -322,7 +331,7 @@ export function ItemTooltip({
           className="cursor-pointer mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] py-1.5 text-[11px] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
         >
           <Search size={12} />
-          查看誰掉這個道具
+          {searchLabel}
         </button>
       )}
       </div>

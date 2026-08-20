@@ -1,0 +1,1939 @@
+{
+ "AranGetSkill": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": null,
+  "15": null,
+  "16": null,
+  "17": null,
+  "18": null,
+  "19": null,
+  "20": null,
+  "21": null,
+  "22": null
+ },
+ "Assaulter": {
+  "effect": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null
+  },
+  "effect0": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null
+  },
+  "remain": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null
+  }
+ },
+ "Buff": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null
+ },
+ "Catch": {
+  "Fail": null,
+  "Success": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null
+  }
+ },
+ "Combo": {
+  "0": {
+   "0": {
+    "0": null
+   },
+   "1": {
+    "0": null
+   },
+   "2": {
+    "0": null
+   },
+   "3": {
+    "0": null
+   },
+   "4": {
+    "0": null
+   },
+   "5": {
+    "0": null
+   },
+   "6": {
+    "0": null
+   },
+   "7": {
+    "0": null
+   },
+   "8": {
+    "0": null
+   },
+   "9": {
+    "0": null
+   },
+   "Combo": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null
+   }
+  },
+  "1": {
+   "0": {
+    "0": null
+   },
+   "1": {
+    "0": null
+   },
+   "2": {
+    "0": null
+   },
+   "3": {
+    "0": null
+   },
+   "4": {
+    "0": null
+   },
+   "5": {
+    "0": null
+   },
+   "6": {
+    "0": null
+   },
+   "7": {
+    "0": null
+   },
+   "8": {
+    "0": null
+   },
+   "9": {
+    "0": null
+   },
+   "Combo": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null
+   }
+  },
+  "2": {
+   "0": {
+    "0": null
+   },
+   "1": {
+    "0": null
+   },
+   "2": {
+    "0": null
+   },
+   "3": {
+    "0": null
+   },
+   "4": {
+    "0": null
+   },
+   "5": {
+    "0": null
+   },
+   "6": {
+    "0": null
+   },
+   "7": {
+    "0": null
+   },
+   "8": {
+    "0": null
+   },
+   "9": {
+    "0": null
+   },
+   "Combo": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null
+   }
+  },
+  "3": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "2": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "3": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "4": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "5": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "6": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "7": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "8": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "9": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null
+   },
+   "Combo": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null
+   }
+  }
+ },
+ "ComboCommand": {
+  "1": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null
+   }
+  },
+  "2": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null
+   }
+  },
+  "3": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null
+   }
+  }
+ },
+ "CoolHit": {
+  "cool": null
+ },
+ "DoubleJump": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null
+ },
+ "DragonChanged": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null
+ },
+ "EmptyCanvas": {
+  "0": null
+ },
+ "Enchant": {
+  "Failure": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null
+  },
+  "Success": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null,
+   "18": null,
+   "19": null,
+   "20": null
+  }
+ },
+ "Event1": {
+  "Best": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null
+  },
+  "Failure": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null
+  },
+  "Good": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null
+  },
+  "Success": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null
+  }
+ },
+ "FindPrize": {
+  "Failure": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null,
+   "18": null,
+   "19": null,
+   "20": null,
+   "21": null,
+   "22": null,
+   "23": null,
+   "24": null,
+   "25": null,
+   "26": null,
+   "27": null
+  },
+  "Success": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null,
+   "18": null,
+   "19": null,
+   "20": null,
+   "21": null,
+   "22": null,
+   "23": null,
+   "24": null,
+   "25": null,
+   "26": null,
+   "27": null,
+   "28": null,
+   "29": null,
+   "30": null,
+   "31": null
+  }
+ },
+ "FindSmartEye": {
+  "Failure": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null
+  },
+  "Success": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null
+  }
+ },
+ "Flame": {
+  "0": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": null,
+    "14": null,
+    "15": null,
+    "16": null,
+    "17": null,
+    "18": null,
+    "19": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": null,
+    "14": null,
+    "15": null,
+    "16": null,
+    "17": null,
+    "18": null,
+    "19": null
+   },
+   "2": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": null,
+    "14": null,
+    "15": null,
+    "16": null,
+    "17": null,
+    "18": null,
+    "19": null
+   }
+  },
+  "1": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   },
+   "2": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   },
+   "3": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   }
+  },
+  "SquibEffect": {
+   "0": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 1000,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2265,
+    "y": 542
+   },
+   "1": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 1900,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 206
+   },
+   "2": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 1500,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2060,
+    "y": 360
+   },
+   "3": {
+    "duration": 2000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 2400,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 24
+   },
+   "4": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 1800,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2600,
+    "y": 360
+   },
+   "5": {
+    "duration": 500,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 2700,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 24
+   },
+   "6": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 1800,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2470,
+    "y": 420
+   },
+   "7": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 2700,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2470,
+    "y": 84
+   },
+   "8": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 1400,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2210,
+    "y": 420
+   },
+   "9": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 2300,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2210,
+    "y": 84
+   },
+   "10": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 3000,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 1470,
+    "y": 538
+   },
+   "11": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 3900,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 1470,
+    "y": 202
+   },
+   "12": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 3900,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 1720,
+    "y": 570
+   },
+   "13": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 4700,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 1720,
+    "y": 234
+   },
+   "14": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 1400,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 1880,
+    "y": 570
+   },
+   "15": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 2300,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 1880,
+    "y": 234
+   },
+   "16": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 4000,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2710,
+    "y": 570
+   },
+   "17": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 4900,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2710,
+    "y": 234
+   },
+   "18": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 3000,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2265,
+    "y": 542
+   },
+   "19": {
+    "duration": 2000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 3900,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 206
+   },
+   "20": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 3200,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2060,
+    "y": 360
+   },
+   "21": {
+    "duration": 2000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 4100,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 24
+   },
+   "22": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 3600,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2600,
+    "y": 360
+   },
+   "23": {
+    "duration": 2500,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 4500,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 24
+   },
+   "24": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 4000,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2600,
+    "y": 360
+   },
+   "25": {
+    "duration": 500,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 4900,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 24
+   },
+   "26": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 4500,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2470,
+    "y": 420
+   },
+   "27": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 5400,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2470,
+    "y": 84
+   },
+   "28": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 4800,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2210,
+    "y": 420
+   },
+   "29": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 5700,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2210,
+    "y": 84
+   },
+   "30": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 4800,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2265,
+    "y": 542
+   },
+   "31": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 5700,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 206
+   },
+   "32": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 5000,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2060,
+    "y": 360
+   },
+   "33": {
+    "duration": 2000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 5900,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 24
+   },
+   "34": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 5300,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2600,
+    "y": 360
+   },
+   "35": {
+    "duration": 500,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 6200,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 24
+   },
+   "36": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 5800,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2470,
+    "y": 420
+   },
+   "37": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 6700,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2470,
+    "y": 84
+   },
+   "38": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 6500,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2265,
+    "y": 542
+   },
+   "39": {
+    "duration": 2000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 7400,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 206
+   },
+   "40": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 7000,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2265,
+    "y": 542
+   },
+   "41": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 7900,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2265,
+    "y": 206
+   },
+   "42": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 7800,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 2210,
+    "y": 420
+   },
+   "43": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 8700,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 2210,
+    "y": 84
+   },
+   "44": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 8500,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0",
+    "x": 1470,
+    "y": 538
+   },
+   "45": {
+    "duration": 1000,
+    "height": 300,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 9400,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 600,
+    "x": 1470,
+    "y": 202
+   }
+  },
+  "SquibEffect2": {
+   "0": {
+    "sound": "Effect/BasicEff/Flame/sound0",
+    "start": 470,
+    "type": 0,
+    "visual": "Effect/BasicEff.img/Flame/0"
+   },
+   "1": {
+    "duration": 1500,
+    "dx": 0,
+    "dy": -300,
+    "height": 150,
+    "probability": null,
+    "sound": "Effect/BasicEff/Flame/sound1",
+    "start": 1370,
+    "type": 1,
+    "visual": "Effect/BasicEff.img/Flame/1",
+    "width": 450
+   }
+  },
+  "sp": [
+   0,
+   -1012465664
+  ]
+ },
+ "Flying": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null
+ },
+ "Flying1": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null
+ },
+ "Flying2": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null
+ },
+ "GetParao": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": null,
+  "15": null
+ },
+ "IncEXP": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null
+ },
+ "ItemLevelUp": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": null,
+  "15": null,
+  "16": null,
+  "17": null,
+  "18": null,
+  "19": null,
+  "20": null,
+  "21": null
+ },
+ "ItemMake": {
+  "Failure": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null
+  },
+  "Success": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null,
+   "18": null,
+   "19": null,
+   "20": null
+  }
+ },
+ "ItemSkill": {
+  "Success": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null
+  }
+ },
+ "JobChanged": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null,
+  "z": -1
+ },
+ "LevelUp": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": null,
+  "15": null,
+  "16": null,
+  "17": null,
+  "18": null,
+  "19": null,
+  "20": null
+ },
+ "MainNotice": {
+  "CN_Web_NEWS": {
+   "Appear": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   },
+   "Default": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   },
+   "Notify": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   }
+  },
+  "MaplePass": {
+   "Appear": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   },
+   "Default": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   },
+   "Notify": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   }
+  },
+  "MysteryMerchant": {
+   "Appear": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   },
+   "Default": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   },
+   "Notify": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   }
+  },
+  "Notify": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null
+  },
+  "userReward": {
+   "Appear": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null
+   },
+   "Default": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   },
+   "Notify": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null
+   }
+  }
+ },
+ "MonsterBook": {
+  "cardGet": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null,
+   "18": null,
+   "19": null
+  }
+ },
+ "NoBlue0": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null
+ },
+ "NoBlue1": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null
+ },
+ "NoCri0": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null
+ },
+ "NoCri1": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "effect": null
+ },
+ "NoRed0": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "Miss": null
+ },
+ "NoRed1": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null
+ },
+ "NoViolet0": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "Miss": null
+ },
+ "NoViolet1": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null
+ },
+ "QuestAlert": {
+  "Appear": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "pos": 1
+  },
+  "Default": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "pos": 1
+  }
+ },
+ "QuestClear": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null
+ },
+ "QuestEffect": {
+  "0": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null,
+   "17": null,
+   "18": null,
+   "19": null,
+   "20": null,
+   "21": null,
+   "22": null,
+   "23": null,
+   "24": null,
+   "25": null,
+   "26": null,
+   "27": null,
+   "28": null,
+   "29": null
+  }
+ },
+ "SkillBook": {
+  "Failure": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": null,
+    "14": null,
+    "15": null,
+    "16": null,
+    "17": null,
+    "18": null,
+    "19": null,
+    "20": null,
+    "21": null,
+    "22": null,
+    "23": null,
+    "24": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": null,
+    "14": null,
+    "15": null,
+    "16": null,
+    "17": null,
+    "18": null,
+    "19": null,
+    "20": null,
+    "21": null
+   }
+  },
+  "Success": {
+   "0": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": null,
+    "14": null,
+    "15": null,
+    "16": null,
+    "17": null
+   },
+   "1": {
+    "0": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": null,
+    "14": null,
+    "15": null,
+    "16": null
+   }
+  }
+ },
+ "SoulRush": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null
+ },
+ "Summoned": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null
+ },
+ "Teleport": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null
+ },
+ "TombUpgrade": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": null,
+  "15": null,
+  "16": null,
+  "17": null,
+  "18": null,
+  "19": null,
+  "20": null,
+  "21": null,
+  "22": null,
+  "23": null,
+  "24": null,
+  "25": null,
+  "26": null,
+  "27": null,
+  "28": null,
+  "29": null,
+  "z": -1
+ },
+ "Transform": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null
+ },
+ "TransformOnLadder": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null
+ },
+ "VerticalJump": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null
+ },
+ "Wedding": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": null,
+  "15": null
+ },
+ "dragonFury": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": null
+ }
+}

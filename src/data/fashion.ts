@@ -31,6 +31,21 @@ export interface FashionItem {
   gender: Gender;
 }
 
+/**
+ * 特效（點裝 0501 段）：綁在快捷鍵上的動畫，不佔部位也沒有性別限制，
+ * 所以不混進 fashionItems。z 決定畫在角色前面還是後面、trail 是跟隨隊列
+ * 每一隻落後的距離——這兩項只有客戶端知道，欄位語意見 tools/extract-effects.py。
+ */
+export interface FashionEffect {
+  id: number;
+  name: string;
+  /** follow=跟在身後的隊列 action=依動作換圖 simple=單一循環 */
+  kind: "follow" | "action" | "simple";
+  z: number;
+  trail?: number[];
+  zOverride?: Record<string, number>;
+}
+
 interface RawRow {
   i: number;
   n: string;
@@ -38,7 +53,20 @@ interface RawRow {
   g: number;
 }
 
-const data = raw as unknown as { meta: { builtAt: string; items: number }; items: RawRow[] };
+interface RawEffectRow {
+  i: number;
+  n: string;
+  k: string;
+  z: number;
+  t?: number[];
+  zo?: Record<string, number>;
+}
+
+const data = raw as unknown as {
+  meta: { builtAt: string; items: number };
+  items: RawRow[];
+  effects: RawEffectRow[];
+};
 
 export const fashionItems: FashionItem[] = data.items.map((r) => ({
   id: r.i,
@@ -49,6 +77,18 @@ export const fashionItems: FashionItem[] = data.items.map((r) => ({
 
 const byId = new Map(fashionItems.map((it) => [it.id, it]));
 export const fashionItem = (id: number) => byId.get(id);
+
+export const fashionEffects: FashionEffect[] = data.effects.map((r) => ({
+  id: r.i,
+  name: r.n,
+  kind: r.k as FashionEffect["kind"],
+  z: r.z,
+  ...(r.t ? { trail: r.t } : {}),
+  ...(r.zo ? { zOverride: r.zo } : {}),
+}));
+
+const effectById = new Map(fashionEffects.map((e) => [e.id, e]));
+export const fashionEffect = (id: number) => effectById.get(id);
 
 /** 部位顯示名稱與排列順序（試衣間左欄的分頁順序） */
 export const SLOT_LABELS: { slot: FashionSlot; label: string }[] = [

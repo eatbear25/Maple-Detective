@@ -1,0 +1,458 @@
+{
+ "meta": {
+  "eventAdId": 19046,
+  "title": "轉蛋機",
+  "startDate": "2026-08-20T09:00:00",
+  "endDate": "2026-09-10T00:00:00",
+  "capturedAt": "2026-08-20",
+  "source": "https://maplestoryclassic-event.beanfun.com/api/EventAd/GetDetail?EventADID=19046",
+  "prizeCount": 101,
+  "rateTotal": 99.97
+ },
+ "prizes": [
+  {
+   "name": "蘑菇友情椅子",
+   "rate": 1.0
+  },
+  {
+   "name": "玫瑰椅",
+   "rate": 1.0
+  },
+  {
+   "name": "紅色設計師椅",
+   "rate": 1.0
+  },
+  {
+   "name": "綠色設計師椅",
+   "rate": 1.0
+  },
+  {
+   "name": "木妖橡皮擦",
+   "rate": 0.35
+  },
+  {
+   "name": "蘑菇王橡皮擦",
+   "rate": 0.35
+  },
+  {
+   "name": "猴子橡皮擦",
+   "rate": 0.35
+  },
+  {
+   "name": "大幽靈橡皮擦",
+   "rate": 0.35
+  },
+  {
+   "name": "綠水靈橡皮擦",
+   "rate": 0.35
+  },
+  {
+   "name": "三眼章魚橡皮擦",
+   "rate": 0.35
+  },
+  {
+   "name": "六角水晶項鍊",
+   "rate": 0.35
+  },
+  {
+   "name": "水女神的衣料",
+   "rate": 0.35
+  },
+  {
+   "name": "黑之包",
+   "rate": 0.94
+  },
+  {
+   "name": "10個能力點數重配卷軸交換券",
+   "rate": 0.67
+  },
+  {
+   "name": "10個一轉技能點數重配卷軸交換券",
+   "rate": 0.67
+  },
+  {
+   "name": "二轉技能點數重配卷軸5個交換券",
+   "rate": 0.67
+  },
+  {
+   "name": "瞬移之石交換券",
+   "rate": 0.5
+  },
+  {
+   "name": "裝備欄8格擴充券",
+   "rate": 0.5
+  },
+  {
+   "name": "消耗欄8格擴充券",
+   "rate": 0.5
+  },
+  {
+   "name": "裝飾欄8格擴充券",
+   "rate": 0.5
+  },
+  {
+   "name": "其他欄8格擴充券",
+   "rate": 0.5
+  },
+  {
+   "name": "寵物速度卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "套服防禦卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "褲、裙防禦卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "鞋子敏捷卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "手套敏捷卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "盾牌防禦卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "披風魔防卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "披風防禦卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "披風生命卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "披風魔力卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "單手劍攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "單手斧攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "單手棍攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "短劍攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "短杖魔力卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "長杖魔力卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "雙手劍攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "雙手斧攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "雙手棍攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "槍攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "矛攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "弓攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "弩攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "拳套攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "指虎攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "火槍攻擊卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "寵物跳躍力卷軸100%",
+   "rate": 0.58
+  },
+  {
+   "name": "雪人變身藥水",
+   "rate": 0.9
+  },
+  {
+   "name": "蘑菇王變身藥水",
+   "rate": 0.9
+  },
+  {
+   "name": "超級綠水靈變身藥水",
+   "rate": 0.9
+  },
+  {
+   "name": "巴洛古變身藥水",
+   "rate": 0.9
+  },
+  {
+   "name": "菇菇寶貝的雕像",
+   "rate": 0.9
+  },
+  {
+   "name": "緞帶肥肥的雕像",
+   "rate": 0.9
+  },
+  {
+   "name": "斧木妖變身藥水",
+   "rate": 0.9
+  },
+  {
+   "name": "綠水靈變身藥水",
+   "rate": 0.9
+  },
+  {
+   "name": "殭屍菇菇變身！",
+   "rate": 0.9
+  },
+  {
+   "name": "天使猴變身！",
+   "rate": 0.9
+  },
+  {
+   "name": "大幽靈變身！",
+   "rate": 0.9
+  },
+  {
+   "name": "頭暈目眩交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "氣喘吁吁交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "嘎嗚交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "親親交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "眨眼交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "淚痕交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "閃閃發光交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "嘩嘩交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "閃閃發亮交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "噗交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "呵哈呵哈交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "哼嗯交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "點頭瞌睡交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "啊好燙交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "吐舌頭交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "微笑太陽交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "閃閃星月交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "七色彩虹交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "魔女莉莉交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "潛水中交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "戀愛心願交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "守護天使交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "懸賞海報交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "一起玩吧交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "我要自己玩交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "烏雲交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "星星交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "微笑交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "愛心交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "閃耀之星特效交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "對你心動特效交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "玩具小鴨家族交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "火冒三丈交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "我的男友交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "我的女友交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "抖抖抖交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "撥水柱特效交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "聚光燈交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "啦啦啦音符交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "眼光交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "天打雷劈交換券",
+   "rate": 1.48
+  },
+  {
+   "name": "花精靈交換券",
+   "rate": 1.48
+  }
+ ],
+ "raw": {
+  "listData": null,
+  "data": {
+   "event": [
+    {
+     "mainPic": "https://tw.hicdn.beanfun.com/beanfun/WebImage/",
+     "mainTitle": "轉蛋機",
+     "mainContent": "轉蛋機",
+     "startDate": "2026-08-20T09:00:00",
+     "endDate": "2026-09-10T00:00:00"
+    }
+   ],
+   "topics": [
+    {
+     "topicName": "抽取機率說明",
+     "topicContent": "<p>\n<style type=\"text/css\"><!--td {border: 1px solid #cccccc;}br {mso-data-placement:same-cell;}-->\n</style>\n</p>\n\n<table border=\"1\" cellpadding=\"0\" cellspacing=\"0\" data-sheets-baot=\"1\" data-sheets-root=\"1\" dir=\"ltr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n\t<colgroup>\n\t\t<col width=\"350\" />\n\t\t<col width=\"100\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">道具名稱</td>\n\t\t\t<td style=\"text-align: center;\">機率</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">蘑菇友情椅子</td>\n\t\t\t<td style=\"text-align: center;\">1.00%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">玫瑰椅</td>\n\t\t\t<td style=\"text-align: center;\">1.00%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">紅色設計師椅</td>\n\t\t\t<td style=\"text-align: center;\">1.00%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">綠色設計師椅</td>\n\t\t\t<td style=\"text-align: center;\">1.00%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">木妖橡皮擦</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">蘑菇王橡皮擦</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">猴子橡皮擦</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">大幽靈橡皮擦</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">綠水靈橡皮擦</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">三眼章魚橡皮擦</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">六角水晶項鍊</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">水女神的衣料</td>\n\t\t\t<td style=\"text-align: center;\">0.35%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">黑之包</td>\n\t\t\t<td style=\"text-align: center;\">0.94%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">10個能力點數重配卷軸交換券</td>\n\t\t\t<td style=\"text-align: center;\">0.67%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">10個一轉技能點數重配卷軸交換券</td>\n\t\t\t<td style=\"text-align: center;\">0.67%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">二轉技能點數重配卷軸5個交換券</td>\n\t\t\t<td style=\"text-align: center;\">0.67%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">瞬移之石交換券</td>\n\t\t\t<td style=\"text-align: center;\">0.50%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">裝備欄8格擴充券</td>\n\t\t\t<td style=\"text-align: center;\">0.50%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">消耗欄8格擴充券</td>\n\t\t\t<td style=\"text-align: center;\">0.50%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">裝飾欄8格擴充券</td>\n\t\t\t<td style=\"text-align: center;\">0.50%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">其他欄8格擴充券</td>\n\t\t\t<td style=\"text-align: center;\">0.50%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">寵物速度卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">套服防禦卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">褲、裙防禦卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">鞋子敏捷卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">手套敏捷卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">盾牌防禦卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">披風魔防卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">披風防禦卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">披風生命卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">披風魔力卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">單手劍攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">單手斧攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">單手棍攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">短劍攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">短杖魔力卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">長杖魔力卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">雙手劍攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">雙手斧攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">雙手棍攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">槍攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">矛攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">弓攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">弩攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">拳套攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">指虎攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">火槍攻擊卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">寵物跳躍力卷軸100%</td>\n\t\t\t<td style=\"text-align: center;\">0.58%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">雪人變身藥水</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">蘑菇王變身藥水</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">超級綠水靈變身藥水</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">巴洛古變身藥水</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">菇菇寶貝的雕像</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">緞帶肥肥的雕像</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">斧木妖變身藥水</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">綠水靈變身藥水</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">殭屍菇菇變身！</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">天使猴變身！</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">大幽靈變身！</td>\n\t\t\t<td style=\"text-align: center;\">0.90%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">頭暈目眩交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">氣喘吁吁交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">嘎嗚交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">親親交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">眨眼交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">淚痕交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">閃閃發光交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">嘩嘩交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">閃閃發亮交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">噗交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">呵哈呵哈交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">哼嗯交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">點頭瞌睡交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">啊好燙交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">吐舌頭交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">微笑太陽交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">閃閃星月交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">七色彩虹交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">魔女莉莉交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">潛水中交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">戀愛心願交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">守護天使交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">懸賞海報交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">一起玩吧交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">我要自己玩交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">烏雲交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">星星交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">微笑交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">愛心交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">閃耀之星特效交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">對你心動特效交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">玩具小鴨家族交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">火冒三丈交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">我的男友交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">我的女友交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">抖抖抖交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">撥水柱特效交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">聚光燈交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">啦啦啦音符交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">眼光交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">天打雷劈交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style=\"text-align: center;\">花精靈交換券</td>\n\t\t\t<td style=\"text-align: center;\">1.48%</td>\n\t\t</tr>\n\t</tbody>\n</table>\n"
+    }
+   ],
+   "links": [
+    {
+     "linkName": "皇家美容院",
+     "linkUrl": "https://maplestoryclassic-event.beanfun.com/EventAd/EventAd?eventAdId=18938",
+     "linkType": "0"
+    },
+    {
+     "linkName": "閃亮彗星",
+     "linkUrl": "https://maplestoryclassic-event.beanfun.com/EventAd/EventAd?eventAdId=18945",
+     "linkType": "0"
+    },
+    {
+     "linkName": "轉蛋機",
+     "linkUrl": "https://maplestoryclassic-event.beanfun.com/EventAd/EventAd?eventAdId=19046",
+     "linkType": "0"
+    }
+   ]
+  },
+  "code": 1,
+  "message": null,
+  "url": null
+ }
+}

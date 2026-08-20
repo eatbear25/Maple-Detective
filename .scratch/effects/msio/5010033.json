@@ -1,0 +1,239 @@
+{
+  "effect": {
+    "framebooks": {
+      "default": [
+        {
+          "frames": [
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAHCAYAAAAxrNxjAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQUlEQVR4nIXO0QkAIAgEUIWbtWaqZU0DISPtfhR8woE0IjJsMnOnJFDUHNhDhqGH\u002BUMb\u002BlKhAF85u6NAoXsK7\u002B4LaxMg8Y7pvpAAAAAASUVORK5CYII=",
+              "delay": 100,
+              "origin": {
+                "x": -18,
+                "y": 17,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -18,
+                "y": 17,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAHCAYAAAAxrNxjAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAARElEQVR4nIXO0QkAIAgEUIWbtRkaoRla1jQQMtLuR8EnHEgjIsMmM3dKAkXNgT1kGHqYP7ShLxUK8JWzOwoUuqfw7r4Ag6UhE5YV0CMAAAAASUVORK5CYII=",
+              "delay": 100,
+              "origin": {
+                "x": -19,
+                "y": 19,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -19,
+                "y": 19,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAgElEQVR4nJWP2w2AMAhFacJIjqA7dQR30hHqLB2hQgSD2Fjkp/RxbjkIVK21Ga6qKaUDAoUM0ePdBYxBC2kfArX5Az1A\u002BXWTkEWnkKuXOxpoNQAH5C93O2pWSAMU6mmgP7CQ7LvuCIHy7iHQuRdaWKkOQeNeqJ\u002Bkn0OjSsANsfcJl/BJX3XpYuYAAAAASUVORK5CYII=",
+              "delay": 100,
+              "origin": {
+                "x": -18,
+                "y": 25,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -18,
+                "y": 25,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAfklEQVR4nJWQiwmAMAxEU8gCdjhX0RHqKg7XjhATTCQW\u002BzFQuMK9hlcEHiJKcE8JIRwwMSgQl/fqgTHoIctToIU/0Av8mp47ulLWzVHvW8/dfvV0QJZsG1ruqFtWD/lCyx2rUoTJwVHBu4s3x4VPGf2qdyfOQXPqgpX7A4n3BcORT05ZzpOZAAAAAElFTkSuQmCC",
+              "delay": 100,
+              "origin": {
+                "x": -20,
+                "y": 27,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -20,
+                "y": 27,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAOCAYAAADwikbvAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAm0lEQVR4nJWQAQ2EMAxFt6QG0IAETgJIQCUWkHAnASwgYfwl\u002B8tujFKakDbkvzZ74lKFELY07t77yRlKCALoqyU2uAQ5m2HWG/ACt0pzocIAv5qL0vYcO8IL/2H\u002BEGw9ibZHtAOBNS4pF6QlTReC8BAhXq9BrQThH69bwOgBrcO35zfzeiOcXSSB2cOT7drFn0BRwFsXFHgLW1ycNvJmv0MGTYQAAAAASUVORK5CYII=",
+              "delay": 100,
+              "origin": {
+                "x": -21,
+                "y": 29,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -21,
+                "y": 29,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABQAAAATCAYAAACQjC21AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA20lEQVR4nJ2UgQmDQAxFr5AFXKErdAVnsSt0hK5Qd3IFV3CENoFEQpr8O/wgnBof5/tw1EC\u002BHFvfOG0gJVBgBvHgy0APG90dBEbwJSBv5qPLgzmv6iPkltyQwDaB8TUjGHJL\u002BmLhmaeBbZ2l55Z0aI3gXiq3FIbWbGjU7R\u002BwgL1bx613GVt\u002B6E43vV9sR5XbWJJv\u002Ba6/tAtYoCNuY0nkYM3Dwkep2wxMDJgEZOAIy6Jep5aURPzgcLC9AJxuFSZzaUmnQwCLbmFJvfMwdYtKQudh6RaVhM7DrtssP5LVtjPQnDpIAAAAAElFTkSuQmCC",
+              "delay": 100,
+              "origin": {
+                "x": -21,
+                "y": 34,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -21,
+                "y": 34,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA\u002BElEQVR4nJ2UCw3DMAxEM8kEimEQRmEYSmEQNggthGLpIKwQhqEQtvPkVFFix9YsVfnIebHvlFLqxAeR5ydECoQJFNiMb8c3pWCoQLCmXBGDo9WZQJx/1OC/gAC8ZbqBM2ZwHT1tqUhi2E2Wi1WBpy1J0hXDKEkrLj0bsLunLWH/gv1nBlswaW\u002BWPFNbwv4mSQdYqSyk7Q9Y3L4ZsDU52pYmeS\u002BFteVqTG1rk0qXB6l0l7WrrWYS1TCe8xjRVjOJNFh1qNEWeS8MfK4xiYoWG5gWYlIGNCYdLVuwqgPXJMrJAdgQeQC9/6Gqbc\u002BkLtDS1noALlCDReILwpPMwGbK/jQAAAAASUVORK5CYII=",
+              "delay": 100,
+              "origin": {
+                "x": -22,
+                "y": 35,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -22,
+                "y": 35,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABUAAAATCAYAAAB/TkaLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA/0lEQVR4nKWUgQ2CMBBFr0kXYAUcwRVkBB0BR9ARZAQcwRVkBF2BEWQE/dUrIeSu18ZLmoP289L8n8OTUW8UP47OuQ1lVBLKwA5rwrpQZqlQ8AKkYeADt3R/QQHcgXGO8BKgCAXkHsFoQ4QLOtVrvxIG4BCEWG0C\u002BKKE134hPKEd\u002BbUHsFGAQXeghNeehTXalffaBHCLs46fVa89DiucjREePxKA0esnJbz\u002BQnE4sXiGC8CeDK\u002BXwc2eRrgg3tMvlFCi1\u002BvgrImq\u002BYZEitdScKmJMr3WglOhltfYv6FVUnDmX0rymoMLMDE4EyoAzeCKoDnBFUNzhqQYykB1SGJ9AGj/sm3fQTSRAAAAAElFTkSuQmCC",
+              "delay": 100,
+              "origin": {
+                "x": -22,
+                "y": 36,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -22,
+                "y": 36,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABYAAAASCAYAAABfJS4tAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA9ElEQVR4nJ2UjRGCMAyF6V0X0BG6givoKjqCjMAKugIjyAqu0BFkBHzlEi\u002BHSX/oHZcAzZfw3lHf7VjLsnxSdM4drT0mGMVnzgGYJJSBMq8CEzTSbdi8HktQFYyCB8JM4CinpelvFE3oHxjQgQtTA\u002BTPrmFJ7b14eEIYEdOnX7mBUmxp/5LaewGd6QrY0GegqvaouTB0nThNiOTNDThXoFntRYN1ao8kUmHIQO\u002Bt2v805gYKNMk0lbQ3wQY0wbLaW2bm/ryDkEnVPmemCQZo5qkN6ECpambxENK0JzN7ylUzm0\u002B3WjObwDVmNoNrzNwFLpm5XV89qLcgRH/chAAAAABJRU5ErkJggg==",
+              "delay": 100,
+              "origin": {
+                "x": -24,
+                "y": 37,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -24,
+                "y": 37,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABcAAAATCAYAAAB7u5a2AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA2klEQVR4nKWU0Q3DIAwFg\u002BQF2hGyQlfocp2pWaErZIQyQmokG71aGBziH0iID4eToWUyjuP4ljGldPe\u002BmYIXsEJxfhnOsCcP2wjswjnppnNOzgjm5wLeZO6Cm/ACViBuIrGbTVqFVRdkFlaAZqxaEnYZPfAbXRAsrJos87ycCHHxUnCtXCu1mzQAnouH/g26IHvGPbDngt9/AFyPjAy4eRQjF7DJnwuCBRc866LbRFEXU/CRC09wCA7g3HvfaLYY3AGHBM9cXGHBM1duWPBpeKm012yX4L1ms/EDy6bKJydmTsYAAAAASUVORK5CYII=",
+              "delay": 100,
+              "origin": {
+                "x": -25,
+                "y": 39,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -25,
+                "y": 39,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABYAAAASCAYAAABfJS4tAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAz0lEQVR4nK3U4RGDIAwFYLljgXaEukJn6gqdgRW6QldwBFeoI\u002BgI9KUXKM0JJlr\u002BhFP4go87fbdjxBhHqs65a22NGQY6owSggRrUcBMM6I7yYHRGPdfWqmFAF5QJ2JMatFA1TCigiWCeh8q6nL32xItosIa\u002Bum9Mo\u002BeHp7QALxa5KT1roDe863n\u002Byd4TmjaWDbSDsx94nrP3Jbp22i00fYXMPmdsRXlPif7E1Ly8rexlAxV8NPsqfCT7Jiwb/B3eO6w/IdVlmmDrZaph62W\u002BAbKtiGkLkWR/AAAAAElFTkSuQmCC",
+              "delay": 100,
+              "origin": {
+                "x": -27,
+                "y": 40,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -27,
+                "y": 40,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            },
+            {
+              "image": "iVBORw0KGgoAAAANSUhEUgAAABYAAAASCAYAAABfJS4tAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAz0lEQVR4nK3U4RGDIAwFYLljgXaEukJn6gqdgRW6QldwBFeoI\u002BgI9KUXKM0JJlr\u002BhFP4go87fbdjxBhHqs65a22NGQY6owSggRrUcBMM6I7yYHRGPdfWqmFAF5QJ2JMatFA1TCigiWCeh8q6nL32xItosIa\u002Bum9Mo\u002BeHp7QALxa5KT1roDe863n\u002Byd4TmjaWDbSDsx94nrP3Jbp22i00fYXMPmdsRXlPif7E1Ly8rexlAxV8NPsqfCT7Jiwb/B3eO6w/IdVlmmDrZaph62W\u002BAbKtiGkLkWR/AAAAAElFTkSuQmCC",
+              "delay": 100,
+              "origin": {
+                "x": -28,
+                "y": 41,
+                "isEmpty": false
+              },
+              "originOrZero": {
+                "x": -28,
+                "y": 41,
+                "isEmpty": false
+              },
+              "mapOffset": {},
+              "position": "2"
+            }
+          ]
+        }
+      ]
+    },
+    "isFollow": false
+  },
+  "id": 5010033,
+  "description": {
+    "id": 5010033,
+    "name": "\u597D\u7DCA\u5F35",
+    "description": "\u78B0\u5230\u53EF\u6015\u6216\u4E0D\u77E5\u6240\u63AA\u7684\u4E8B\u60C5\u6642\uFF0C\u6240\u80FD\u4F7F\u7528\u7684\u7279\u6548\u3002\u9023\u64CA\u5716\u793A\u6216\u65BC\u6309\u9375\u8A2D\u5B9A\u4E2D\uFF0C\u914D\u7F6E\u5230\u7279\u5B9A\u5FEB\u6377\u9375\u5373\u53EF\u958B\u95DC\u8A72\u529F\u80FD\u3002"
+  },
+  "metaInfo": {
+    "only": false,
+    "cash": true,
+    "mob": 0,
+    "iconRaw": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAADH0lEQVR4nL2XgZGzIBCF15lrAEvAErQEU4IpwSshV0JSgldCLMGUoCVICaEE/30oEQVN5v677FxOIrDvY4ElfNDSBnqPRbbgAgxN279F/ZAlg4WwAEY8T\u002BVbAM7Xlr6OmYH4WIsfPy9/Kn6tTnQqUi6MEIs1APH6\u002B/vGxV8NRdNc5eFwVFxUR6IcENY\u002BAu3lbwI0TUUsjidDfHr1IYD/tmHoKYoSUw6J/imAFXch9kB8ACF2BQTXSym9ZlrzBCtFUZzNPqbncG/H9y8BhGVJSEEpCxdFTunGdu06RXV9m0AOC/EtiACA8L5KIaksc8rz1LzKkoRC1vY9w5WkGOTrUpPSFkTMzp4CCGd0RlzQqcSoUxaOzevTqQ0CWDDklbIs6BvRwNzwX5R8Ln1vA8yUksNeTiGH\u002BOm8n6rHeo1Uy9G4G18GQunNPh6AkDMlhAv\u002BJCx\u002Bvr56TnDEqt4A9wzRqZSRlFO/hNmMAB7u2YBovGKIuBCzCHx0/FI/Xj0FGEVTFkTnJI6o4ZHwPuC9PK7spmmC4ra\u002BqiqqONcjcv19oBsH4GanQatFn90IWANMHMd0v9/Nd7dsbV1/vc6Qxpd1uFoO/hoQ68K0eTiGjzduOfTOlB0l9uVOyy7AViYchoFTa/Qo79W3bcsMK8ENv5uZ0B0jnCEFh4RdwxQgC9r2S1\u002BvRuDRCZtHmEUU80KEc7FzTmiz0meRLMtMXzX52rIwAA4WftQdJ5cx\u002B5qRjYeQD2HF7cdtAx9mA\u002BAT4PcB9PxUiIIeo4DtiLkVZkEtPa3FH6OHjykVL3w/iYC7mKnmUBScGiwEDCChKNg8gLadJrP/V2vRi4EPoOZgYaCYASRBiIcWoTv3SFCIANoCAv0RBQfCm4jNCEC0SJENt8VHSH86EKExgw7GR91pmhLh6xEQLJzLffFnEFnCkWCIW0c0nUfa5PRdAHt06TGB0g/M2yla2HnCzl78KFgA4Pc63w3yCYR/1fA0lOcfX1bQ9\u002Bti\u002Bgo\u002B10Al3TuBBYhwV7O3o3WDv7ALJwe\u002BFaEY2QgYCNzZ3mFWHP/cKYimC\u002BM77HE9/wdNyppXd2DGigAAAABJRU5ErkJggg==",
+    "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAADG0lEQVR4nL2XgZGzIBCF15lrAEvQErQEU4IpwSshKSEpwZQQSzAlaAlSQijBfx\u002BKoqDJ/HeXnctJBPZ9LLCEL1paT5\u002BxwBRsgL5uuo\u002BoH9K4NxAGQItnSfQRgMu9ofMx1RBfa/Hj9/VPxe/liU55woUBYrEGIF7dbg8u/moo6voeHQ5HyUV5JMoAYezL0z76TYC6LonF8WSIb6feB/Bj6/uOgiDWZZ/onwIYcRtiD8QFEGJXQHB9FEVOM6V4gqWkIExnH\u002BOzfzbD\u002B7cA/LIkIkEJC\u002Bd5RsnGdm1bSVX1GEEOC/EtCA\u002BAcL5GIqKiyCjLEv0qjWPyWdN1DFeQZJDztSKpDIiYnb0EENbotLigU4FRJywc6tenU\u002BMFMGDIK0WR0w3RwNzwXxB/L31vA8yUEYe9GEMO8dNlP1UP9QqplqPx1L40hFSbfRwAEc2UEM75E7P45f7uOcERKzsN3DFEKxNGklb9EmYzAnjYZwOi8Y4h4kLMIvDR8ks1vXoJMIgmLIjOcRhQzSPhfcB7eVjZdV17xU19WZZUcq5H5LpnTw8OwMNMg5KLPrsRMAaYMAzp\u002BXzq73bZ2Lr\u002Bfp8htS/jcLUc3DUg1oVx83AMpzd22fdOly0l9mVPyy7AVibs\u002B55TazCV9\u002BqbpmGGleCG381MaI8RzpCCfcK2YQqQBU37pa93IzB1wuYRehGFvBDhXOycE0qv9FkkTVPdV46\u002BtswPgIOFH1XLyWXIvnpkwyHkQhhx87HbwIfeAPh4\u002BF0ANT8loqCGKGA7Ym6FXlBLT2vxafTwMabihe8XEbAXM1UcipxTg4GAAcQXBZMH0LZVpPf/ai06MXAB5BwsDBQzgCQIcd8itOceCQoRQFtAoD\u002BiYEE4E7EZAYjmCbLhtvgA6U4HIjRk0F77qFpFYyJ8PwKChbNoX/wVRBpzJBji0RJN59EKwbcIhzWrhJf4HXN2ijI7UWFnJ5sA\u002BL3Od4Nk7MS/angaist/X1bQ93zVfcV4sCb2ncAABLirmdvRusFf2JWTA9\u002BKUAxMBDQE7myfMCOOf/YUBOOF8RM2Xc//AeEImUb57gTDAAAAAElFTkSuQmCC",
+    "iconOrigin": {
+      "x": 0,
+      "y": 32,
+      "isEmpty": false
+    },
+    "iconRawOrigin": {
+      "x": 0,
+      "y": 32,
+      "isEmpty": false
+    },
+    "slotMax": 0,
+    "vslots": [],
+    "islots": [],
+    "setCompleteCount": 0
+  },
+  "typeInfo": {
+    "overallCategory": "Cash",
+    "category": "Appearance",
+    "subCategory": "Effect",
+    "lowItemId": 5010000,
+    "highItemId": 5020000
+  }
+}

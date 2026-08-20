@@ -114,7 +114,66 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 5. `python tools/fetch-map-names.py` → `reference-data/map-supplement.json`（maplestory.io 補客戶端 Map.json 沒有的地圖名；**未實裝判斷與未來視地圖名靠這份**；已查過的會跳過）
 6. `python tools/extract-worldmap.py` → `reference-data/worldmap.json` + `public/worldmap/*.png`（從客戶端抽 16 張世界地圖底圖與各地圖在圖上的點位座標；`Etc/WorldMap.json` 是純 JSON TextAsset，底圖藏在 spriteset 包的 `BaseImg.asset`，混淆 MonoBehaviour 的解法見腳本 docstring）
 7. `python tools/build-site-data.py` → `src/data/generated/monster-drops.json` + `item-info.json` + `worldmap-nav.json`（join 好的網站用資料，含 released 旗標/futureDrops/世界地圖點位 wm/數值/屬性抗性；worldmap-nav 是地圖導覽頁用的全點位+出沒怪反查，規則見腳本 docstring）
-8. `python tools/download-icons.py` 補抓新圖示到 `public/icons/{item,mob}/`（TMS/209 優先、GMS/62 備援；已存在會跳過）
+8. `python tools/download-icons.py` 補抓新圖示到 `public/icons/{item,mob,npc}/`（TMS/209 優先、GMS/62 備援；已存在會跳過。清單同時吃 `monster-book.json` 與 `generated/gacha.json`）
+
+### 時裝與特效（`/fashion`，跟上面那串各自獨立）
+
+1. `python tools/extract-cash-items.py` → `reference-data/cash-items.json` ＋ 當期商城快照
+   `reference-data/commodity-history/<日期>.json`（**每次跑都要留檔**：商城換檔後下架的時裝
+   會從 Commodity.json 完全消失，今天不存之後補不回來）
+2. `python tools/extract-effects.py` → `reference-data/effects.json`（點裝特效，`Item/Cash/0501`）
+3. `python tools/build-fashion-data.py` → `src/data/generated/fashion-catalog.json`（5099 件時裝 ＋ 45 件特效）
+
+**圖不在我們這邊**：紙娃娃與特效的圖都是執行期打 maplestory.io（TMS/209 優先，見
+`src/lib/fashion/msio.ts`）。客戶端的圖鎖在 `.wzspritesheet` 裡出不來。
+
+**特效（2026-08-20 上線）**：客戶端 `Item/Cash/0501.wzjson` 有 46 件，45 件在
+maplestory.io 找得到圖（只有「殘像效果」沒有——它本來就不是圖，是 alpha 濾鏡）。
+只有客戶端知道的是三件事：有哪些特效、`z`（畫在角色前面還是後面）、`loose`（跟隨隊列
+每一隻落後幾 px，沒有它玩具小鴨家族會五隻疊在同一點）。圖的 origin 客戶端與
+maplestory.io 逐幀比對完全一致，所以借圖不會跑位。錨點就是角色原點 (0,0)，跟 body
+同一套算式；特效動畫與角色動作**各跑各的計時器**（遊戲裡也是這樣）。
+
+順帶修好 `tools/wzjs.py` 兩個坑（之前沒有人讀到那層所以沒發現）：canvas 節點**有子節點**
+（origin/delay 掛在底下，`decode(..., expand_canvas=True)` 才展開）、vector 值池是
+**float32** 不是 int32（原本會讀成 1093664768 這種天文數字）。
+
+**拿不到的**：裝備自帶的特效（`Effect/CharacterEff.wzjson` 19 件，如星星王子披風、
+各種發光戒指）——maplestory.io 的 item JSON 不含這層、也沒有 effect 端點，只剩客戶端
+spritesheet 那條被圖集順序擋死的路。
+
+### 轉蛋機率表（**這條跟其他的不一樣，會過期**）
+
+其他腳本都是從本機客戶端抽、隨時可重跑；**這條打的是線上 API，活動一過期就永遠抓不到**。
+
+```
+python tools/fetch-gacha-odds.py "<官方活動網址>"   → reference-data/gacha-history/<eventAdId>.json
+python tools/build-gacha-data.py                    → src/data/generated/gacha.json
+python tools/download-icons.py                      （已擴充，一併抓轉蛋道具與轉蛋機 sprite）
+```
+
+- 活動頁是 Vue SPA，真資料在 `GET https://maplestoryclassic-event.beanfun.com/api/EventAd/GetDetail?EventADID=<id>`。
+  該 API **只服務當期還活著的活動**（掃過 18900~19200，只有當期的 5 個有回應）。
+- 每期都要**手動**在活動結束前跑一次（拷問時明確否決了自動掃描與排程）。快照含 `raw` 原始回應。
+- 19046（2026-08-20~09-10 那期）＝ **101 個獎品、機率總和 99.97%**，7 個機率階層。
+- 轉蛋券 `5222222`：20 點/張、180 點/10 張；**樂豆點與新台幣 1:1**。
+- 官方機率表只給中文名稱，`Item.json` 有 **31 筆同名撞 ID**。消歧用「同機率組的連號叢集分數」，
+  較小 ID 只當平手 tiebreak——單純取較小 ID 會選錯（欄位擴充券正解是 `2832888~2832891` 不是
+  `2430768~2430771`；雕像正解是 `2210287/2210288` 不是 `2210000/2210001`）。判定會逐筆印出，
+  要覆寫就寫 `reference-data/gacha-id-overrides.json`。
+- **圖示 101/101 全有**（2026-08-20 解決）。其中 61 個是台服專屬獎品、maplestory.io 沒有
+  它們自己的圖（各版本全 404），改顯示**它實際代表的東西**，對應表在
+  `reference-data/gacha-icon-alias.json`：
+  - 表情交換券 → `5160xxx` 表情本體。對應靠位置：券 `2832892+k` ↔ 表情 `5160000+k`，
+    中間有親親／眨眼／閃閃發亮／吐舌頭四個同名定錨點（第 3、4、8、14 位）確認對位；
+    券名與道具名是同一個表情的兩種翻譯（`頭暈目眩交換券` ↔ `嘔吐`）。
+  - 特效交換券 → `5010xxx` 特效本體；重配卷軸交換券 → `5050xxx`（客戶端寫「捲軸」不是「卷軸」）。
+  - 欄位擴充券／瞬移之石／雕像 → 同名的舊版道具 ID（就是消歧時沒選中的那個孿生 ID）。
+  - 變身藥水 → **它變成的那隻怪**（`mob` 圖），因為 `2210283~2210293` 沒有任何可用道具圖，
+    而通用藥水瓶九款長一樣、沒有辨識度。
+  - `prize.icon` = `{kind:"item"|"mob", id}`，`download-icons.py` 只抓這個欄位指到的圖。
+  - 客戶端裡其實有原圖，但卡在 `.wzspritesheet` 的 128-bit 雜湊索引（試過的路都失敗），
+    完整調查見 `.scratch/gacha-sim/research-item-icons.md`——**上面的替代方案已經夠用，不必再碰**。
 
 **實裝判斷（2026-08-16 修正）**：怪物在 Mob.json ≠ 實裝——客戶端名稱表涵蓋全部舊 wz 怪。正確判斷是「≥1 張出沒地圖在客戶端 Map.json 有名字」，據此現行版本 70 隻、未來視 273 隻。
 
@@ -137,6 +196,10 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 - **2026-08-16 移除分風格結構**：原本有 `/minimal`（現代簡約風，正式站）、`/retro`（復古像素風畫廊）、`/dark`（深色電競儀表板畫廊）三條並存路徑，`/` 只是 redirect 到 `/minimal`。風格畫廊已確定不留，整個 `minimal/*` 直接搬到 `src/app/` 根目錄，`retro`、`dark` 連同只有它們在用的假資料 `src/data/monsters.ts`、`src/data/outfits.ts` 一併刪除。原本 `MinimalLayout`（`src/app/minimal/layout.tsx`）拆成 `src/app/layout.tsx`（html/body/字型/metadata）＋ `src/app/site-shell.tsx`（header/nav/footer 這層 client shell，被根 layout 包住 children）。`src/nav.ts` 的 `themeHref(theme, path)` 也簡化成 `navHref(path)`（不用再帶 theme 參數）。現在網站沒有風格切換的概念，頁面路徑就是 `/monsters`、`/map`、`/boss-timer`、`/fashion`、`/party`，不再有 `/minimal` 前綴。
 - `src/nav.ts`：toolbox 選單設定，`裝備模擬器`／`楓幣計算機` 目前是 `enabled: false` 佔位，之後開新工具就是加一筆 + 建對應 `page.tsx`。
 - `/map` **地圖導覽**（2026-08-16 上線）：拆包的遊戲世界地圖瀏覽器。上方 chips 切大陸（總圖/楓之島/維多利亞島/…，順序＝總圖 links），大陸圖再有「內部區域」子圖（奇幻村/鯨魚號/廢礦/鐘塔最下層）。地圖上畫**全部**點位（遊戲風黃點，資料 `src/data/worldmap.ts` → `generated/worldmap-nav.json`），點了右欄列出該點的地圖清單＋出沒怪物（依等級排序，點怪物 → `/monsters?q=怪名` 跳掉落查詢）；隱藏地圖/迷你地城掛在借用點的「這附近的隱藏地圖」區。點位共用元件 `src/app/worldmap-view.tsx`（黃點＝一般、橘紅大點＋脈動＝選中、虛線邊＝約略位置），怪物頁的世界地圖彈窗也用它。
+- `/gacha` **轉蛋模擬**（2026-08-20 上線）：官方轉蛋活動的模擬器。上半部是遊戲風的轉蛋機視窗（CSS 仿製遊戲 UI：銀灰視窗框＋放射光背景＋`public/icons/npc/9110011.png` 那台機器，**沒有挖客戶端 UI 圖集**），三顆鈕＝單抽／十連／自動；下半部是站內簡約風的分析區。刻意的視覺斷層：上面是爽度、下面是真相。版面由上到下＝遊戲視窗 → 目標設定 → 統計面板 → 官方機率表。內建目標「神秘任務」＝ 6 種怪物橡皮擦 ＋（六角水晶項鍊 OR 水女神的衣料），目標模型是 `AND of OR-groups`（`src/data/gacha.ts`），但 UI 只暴露「勾選＋數量」不讓使用者組 OR。連抽是**直接設次數**（預設 100，快捷 10/100/500，旁邊顯示約略花費；原本設計的「預算上限＋抽到達成為止」在 2026-08-20 實測後因為太複雜而廢除），另有 10,000 抽的 session 上限；引擎一次算完再由 UI 快轉播放 3.5 秒。官方機率表與獲得進度連動（抽到的打勾／×N）。**純 session，重整歸零**，不寫 localStorage——數字是假的，跨 session 累積花費是假成就。
+  - **明確不做機率計算**（2026-08-20 定案，不是待辦）：沒有期望值、達成抽數分佈、運氣百分位。理由是使用者不想背書可能算錯的數字。未來要加回來的話，驗證方法是容斥閉式 `P(n)=Σ(-1)^|S|(1-Σp)ⁿ` 對照 10 萬次蒙地卡羅，小數點後三位一致即證明兩邊都對。參考量級（**不要放進網站**）：集齊神秘任務蒙地卡羅 300 次實測平均 692 抽、中位數 617、最多 2527，約 NT$12,449。
+  - 規格與 issue 在 `.scratch/gacha-sim/`。
+- `/fashion` **時裝搭配**：紙娃娃試衣間。右欄分頁預設停在**髮型**，最後一個分頁是**特效**（45 件，同時只能開一個，再點一次關掉）。特效不佔部位、沒有性別限制，所以跟 `equips` 分開放在 `CharacterLook.effect`。渲染見 `src/lib/fashion/renderer.ts`：特效不參與遮蔽也不吃錨點傳播，就是畫在角色原點的一組圖，`z` 決定畫在角色前面還是後面（`drawFrame` 的後方那疊→角色→前方那疊）。
 - `/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名；放大鏡旁的漏斗按鈕開進階篩選（屬性弱點多選、等級範圍）。分「現行版本／未來視」分頁：現行 70 隻（有實裝地圖的怪）＋人工補充掉落；未來視 273 隻（未實裝怪與帶未實裝掉落的怪）。**出沒地圖 chip 點了會開世界地圖彈窗**，在拆包出的遊戲世界地圖上標出該地圖位置（同張圖上這隻怪的其他出沒點也會標小點，可點切換）；不在遊戲世界地圖上的隱藏圖/迷你地城借「ID 最接近的鄰居」標約略位置（顯示「約略位置」徽章）。原本的「地區分類」已移除（2026-08-16）——ID 前綴推地區在維多利亞整個對不上（101030xxx 遺跡發掘地其實在勇士之村、100040xxx 其實是魔法森林南部），改用世界地圖標點一勞永逸。詳情面板有怪物數值（HP/攻防/命中/迴避）與屬性抗性（elemAttr：F火 I冰 L雷 S毒 H聖 D暗；1=免疫 2=抗性 3=弱點）。UI 無掉落機率欄位（拿不到真值）。
 
 ---

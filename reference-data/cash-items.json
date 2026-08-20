@@ -1,9 +1,9 @@
 {
  "meta": {
   "source": "json_c32a59ee3c932de55e86771676afba45.bundle -> Assets/WzAssets/Json/Character/*/*.wzjson (info.cash=1)",
-  "extractedAt": "2026-08-16T17:48:46+08:00",
+  "extractedAt": "2026-08-20T19:04:36+08:00",
   "items": 5173,
-  "onSale": 639
+  "onSale": 640
  },
  "items": {
   "20000": {
@@ -26456,7 +26456,8 @@
    "slot": "pants",
    "islot": "Pn",
    "vslot": "Pn",
-   "gender": 1
+   "gender": 1,
+   "onSale": 1
   },
   "1061068": {
    "slot": "pants",

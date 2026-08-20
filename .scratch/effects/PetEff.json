@@ -1,0 +1,256 @@
+{
+ "5000000": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000001": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000002": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000003": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000004": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000005": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000006": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000007": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000008": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000009": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000010": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000011": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000012": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000013": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000014": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000015": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000017": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000020": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000021": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000022": {
+  "warp": {
+   "0": null,
+   "1": null
+  }
+ },
+ "5000023": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000024": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000026": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000040": {
+  "warp": {
+   "0": null,
+   "1": null
+  }
+ },
+ "5000041": {
+  "warp": {
+   "0": null,
+   "1": null
+  }
+ },
+ "5000042": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000043": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000046": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000054": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000064": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "5000065": {
+  "warp": {
+   "0": null,
+   "1": null
+  }
+ },
+ "5000068": {
+  "warp": {
+   "0": null,
+   "1": null
+  }
+ },
+ "5000072": {
+  "warp": {
+   "0": null,
+   "1": null,
+   "2": null
+  }
+ },
+ "Basic": {
+  "LevelUp": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null,
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null,
+   "10": null,
+   "11": null,
+   "12": null,
+   "13": null,
+   "14": null,
+   "15": null,
+   "16": null
+  },
+  "Teleport": {
+   "0": null,
+   "1": null,
+   "2": null,
+   "3": null,
+   "4": null
+  }
+ }
+}
