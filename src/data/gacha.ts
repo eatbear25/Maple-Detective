@@ -111,7 +111,7 @@ export const TIER_META: Record<
     short: "稀有",
     color: "#f59e0b",
     deep: "#b45309",
-    glow: "0 0 26px 7px rgba(245,158,11,0.7)",
+    glow: "0 0 0 2px rgba(245,158,11,0.85), 0 0 10px 1px rgba(245,158,11,0.45)",
     order: 0,
   },
   chair: {
@@ -119,7 +119,7 @@ export const TIER_META: Record<
     short: "椅子",
     color: "#a855f7",
     deep: "#7e22ce",
-    glow: "0 0 22px 6px rgba(168,85,247,0.6)",
+    glow: "0 0 0 2px rgba(168,85,247,0.85), 0 0 10px 1px rgba(168,85,247,0.45)",
     order: 1,
   },
   slot: {
@@ -127,7 +127,7 @@ export const TIER_META: Record<
     short: "擴充",
     color: "#0ea5e9",
     deep: "#0369a1",
-    glow: "0 0 18px 5px rgba(14,165,233,0.5)",
+    glow: "0 0 0 2px rgba(14,165,233,0.85), 0 0 10px 1px rgba(14,165,233,0.4)",
     order: 2,
   },
   reset: {
@@ -135,7 +135,7 @@ export const TIER_META: Record<
     short: "重配",
     color: "#14b8a6",
     deep: "#0f766e",
-    glow: "0 0 18px 5px rgba(20,184,166,0.5)",
+    glow: "0 0 0 2px rgba(20,184,166,0.85), 0 0 10px 1px rgba(20,184,166,0.4)",
     order: 3,
   },
   morph: {
@@ -143,7 +143,7 @@ export const TIER_META: Record<
     short: "變身",
     color: "#22c55e",
     deep: "#15803d",
-    glow: "0 0 16px 4px rgba(34,197,94,0.45)",
+    glow: "none",
     order: 4,
   },
   bag: {
@@ -151,7 +151,7 @@ export const TIER_META: Record<
     short: "包包",
     color: "#94a3b8",
     deep: "#475569",
-    glow: "0 0 14px 4px rgba(148,163,184,0.4)",
+    glow: "0 0 0 2px rgba(148,163,184,0.7), 0 0 8px 1px rgba(148,163,184,0.35)",
     order: 5,
   },
   scroll: {

@@ -39,39 +39,59 @@ export function CustomPicker({
   return (
     <div
       className={`mt-3 rounded-md border p-2 ${
-        tone === "dark" ? "border-white/10 bg-black/30" : "border-slate-200 bg-slate-50"
+        tone === "dark"
+          ? "border-white/10 bg-black/30"
+          : "border-[var(--border)] bg-[var(--bg)]"
       }`}
     >
       <div className="mb-1.5 flex items-center justify-between">
         <span className="text-xs font-semibold">挑選要蒐集的道具</span>
-        <button type="button" onClick={onClose} className="cursor-pointer opacity-60 hover:opacity-100">
+        <button
+          type="button"
+          onClick={onClose}
+          className="cursor-pointer opacity-60 hover:opacity-100"
+        >
           <X size={14} />
         </button>
       </div>
       <div className="max-h-56 space-y-2 overflow-y-auto p-1">
         {TIER_ORDER.filter((t) => byTier.has(t)).map((t) => (
           <div key={t}>
-            <p className="mb-1 text-[0.65rem] font-bold" style={{ color: TIER_META[t].color }}>
+            <p
+              className="mb-1 text-[0.65rem] font-bold"
+              style={{ color: TIER_META[t].color }}
+            >
               {TIER_META[t].label}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {(byTier.get(t) ?? []).map((p) => {
-                const n = p.itemId === null ? 0 : (ctx.custom.get(p.itemId) ?? 0);
+                const n =
+                  p.itemId === null ? 0 : (ctx.custom.get(p.itemId) ?? 0);
                 return (
                   <button
                     key={p.name}
                     type="button"
-                    onClick={() => p.itemId !== null && setCount(p.itemId, n > 0 ? 0 : 1)}
+                    onClick={() =>
+                      p.itemId !== null && setCount(p.itemId, n > 0 ? 0 : 1)
+                    }
                     onContextMenu={(e) => {
                       e.preventDefault();
                       if (p.itemId !== null) setCount(p.itemId, n + 1);
                     }}
                     title={`${p.name}｜左鍵選取／取消，右鍵 +1`}
                     className={`cursor-pointer rounded-lg p-0.5 transition ${
-                      n > 0 ? "bg-amber-400" : "bg-transparent hover:bg-black/10"
+                      n > 0
+                        ? "bg-amber-400"
+                        : "bg-transparent hover:bg-black/10"
                     }`}
                   >
-                    <PrizeTile prize={p} size={34} count={n} dimmed={n === 0} tone={tone} />
+                    <PrizeTile
+                      prize={p}
+                      size={34}
+                      count={n}
+                      dimmed={n === 0}
+                      tone={tone}
+                    />
                   </button>
                 );
               })}
@@ -79,12 +99,20 @@ export function CustomPicker({
           </div>
         ))}
       </div>
-      <p className="mt-1.5 text-[0.65rem] opacity-60">左鍵選取／取消，右鍵可增加需要數量。</p>
+      <p className="mt-1.5 text-[0.65rem] opacity-60">
+        左鍵選取／取消，右鍵可增加需要數量。
+      </p>
     </div>
   );
 }
 
-export function ResultModal({ ctx, onClose }: { ctx: GachaCtx; onClose: () => void }) {
+export function ResultModal({
+  ctx,
+  onClose,
+}: {
+  ctx: GachaCtx;
+  onClose: () => void;
+}) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -107,13 +135,13 @@ export function ResultModal({ ctx, onClose }: { ctx: GachaCtx; onClose: () => vo
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm overflow-hidden rounded-xl border-2 border-slate-400 bg-slate-300 shadow-2xl dark:border-slate-600 dark:bg-slate-700"
+        className="w-full max-w-sm overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex items-center justify-between border-b-2 border-slate-400 bg-gradient-to-b from-slate-50 to-slate-200 px-3 py-2 dark:border-slate-600 dark:from-slate-600 dark:to-slate-700">
-          <p className="text-sm font-black tracking-wide text-slate-800 dark:text-slate-50">
+        <header className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+          <p className="text-sm font-semibold">
             {achieved ? (
-              <span className="text-emerald-600 dark:text-emerald-400">目標達成 ✓</span>
+              <span className="text-emerald-500">目標達成 ✓</span>
             ) : (
               `連抽 ${r.pulls.toLocaleString()} 次結束`
             )}
@@ -121,34 +149,36 @@ export function ResultModal({ ctx, onClose }: { ctx: GachaCtx; onClose: () => vo
           <button
             type="button"
             onClick={onClose}
-            className="grid h-4 w-4 cursor-pointer place-items-center rounded-[3px] bg-slate-500 text-[0.6rem] font-bold text-white hover:bg-slate-400"
+            aria-label="關閉"
+            className="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
           >
-            <X size={11} />
+            <X size={18} />
           </button>
         </header>
 
-        <div className="space-y-2.5 p-3">
-          <p className="text-xs text-slate-600 dark:text-slate-300">
+        <div className="space-y-2.5 p-4">
+          <p className="text-xs text-[var(--text-muted)]">
             {ctx.goal.groups.length
               ? `${ctx.goal.label}　${ctx.progress.cleared}/${ctx.goal.groups.length}`
               : "未設定目標"}
-            {capped && `　（已達 ${r.requested.toLocaleString()} 次上限，只抽了 ${r.pulls.toLocaleString()} 次）`}
+            {capped &&
+              `　（已達 ${r.requested.toLocaleString()} 次上限，只抽了 ${r.pulls.toLocaleString()} 次）`}
           </p>
 
-          <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-500/40 bg-slate-800 p-2.5 text-center">
+          <div className="grid grid-cols-2 gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-2.5 text-center">
             <div>
-              <p className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[0.65rem] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                 這輪抽了
               </p>
-              <p className="text-lg font-black tabular-nums text-slate-50">
+              <p className="text-lg font-black tabular-nums">
                 {r.pulls.toLocaleString()}
               </p>
             </div>
             <div>
-              <p className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[0.65rem] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                 這輪花了
               </p>
-              <p className="text-lg font-black tabular-nums text-rose-400">
+              <p className="text-lg font-black tabular-nums text-rose-500">
                 NT${r.spent.toLocaleString()}
               </p>
             </div>
@@ -156,20 +186,22 @@ export function ResultModal({ ctx, onClose }: { ctx: GachaCtx; onClose: () => vo
 
           {!achieved && missing.length > 0 && (
             <div>
-              <p className="mb-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+              <p className="mb-1.5 text-xs font-semibold text-[var(--text-muted)]">
                 還差 {missing.length} 項
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {missing.map((g, i) => {
                   const p = ctx.prizeById.get(g.any[0]);
-                  return p ? <PrizeTile key={i} prize={p} size={36} tone="dark" /> : null;
+                  return p ? (
+                    <PrizeTile key={i} prize={p} size={36} tone="light" />
+                  ) : null;
                 })}
               </div>
             </div>
           )}
 
-          <div className="border-t border-slate-400/60 pt-2.5 dark:border-slate-500/40">
-            <p className="mb-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+          <div className="border-t border-[var(--border)] pt-2.5">
+            <p className="mb-1.5 text-xs font-semibold text-[var(--text-muted)]">
               獲得總覽
             </p>
             <div className="flex flex-wrap gap-1">
@@ -195,14 +227,22 @@ export function ResultModal({ ctx, onClose }: { ctx: GachaCtx; onClose: () => vo
 }
 
 /** 連抽次數輸入 + 快捷鈕。抽幾次就是幾次，不設預算、不追目標——單純好懂。 */
-export function AutoCountInput({ ctx, tone }: { ctx: GachaCtx; tone: "light" | "dark" }) {
+export function AutoCountInput({
+  ctx,
+  tone,
+}: {
+  ctx: GachaCtx;
+  tone: "light" | "dark";
+}) {
   const dark = tone === "dark";
   return (
     <span className="inline-flex flex-wrap items-center gap-1.5 text-xs">
       <span className="opacity-70">連抽</span>
       <span
-        className={`inline-flex items-center rounded border px-1.5 ${
-          dark ? "border-white/20 bg-black/30" : "border-slate-300 bg-white"
+        className={`inline-flex items-center rounded-md border px-1.5 ${
+          dark
+            ? "border-white/20 bg-black/30"
+            : "border-[var(--border)] bg-[var(--bg)]"
         }`}
       >
         <input
@@ -212,23 +252,28 @@ export function AutoCountInput({ ctx, tone }: { ctx: GachaCtx; tone: "light" | "
           step={10}
           value={ctx.autoCount}
           onChange={(e) =>
-            ctx.setAutoCount(Math.min(PULL_CAP, Math.max(1, Number(e.target.value) || 1)))
+            ctx.setAutoCount(
+              Math.min(PULL_CAP, Math.max(1, Number(e.target.value) || 1)),
+            )
           }
           className="w-16 bg-transparent px-1 py-1 text-right font-bold tabular-nums outline-none"
         />
         <span className="pl-0.5 opacity-50">次</span>
       </span>
-      {[10, 100, 500].map((n) => (
+      {[50, 100, 500].map((n) => (
         <button
           key={n}
           type="button"
           onClick={() => ctx.setAutoCount(n)}
-          className={`cursor-pointer rounded px-1.5 py-0.5 font-bold transition ${
+          style={
+            ctx.autoCount === n ? { background: "var(--accent)" } : undefined
+          }
+          className={`cursor-pointer rounded-md px-1.5 py-0.5 font-bold transition-colors ${
             ctx.autoCount === n
-              ? "bg-amber-500 text-white"
+              ? "text-white"
               : dark
                 ? "bg-white/10 hover:bg-white/20"
-                : "bg-slate-200 hover:bg-slate-300 dark:bg-slate-700"
+                : "bg-[var(--accent-soft)] text-[var(--text-muted)] hover:text-[var(--text)]"
           }`}
         >
           {n}
@@ -246,7 +291,13 @@ export function AutoCountInput({ ctx, tone }: { ctx: GachaCtx; tone: "light" | "
 }
 
 /** 目標的 7 個條件進度。變體 A/B/C 用不同的排法包它。 */
-export function GoalDots({ ctx, tone }: { ctx: GachaCtx; tone: "light" | "dark" }) {
+export function GoalDots({
+  ctx,
+  tone,
+}: {
+  ctx: GachaCtx;
+  tone: "light" | "dark";
+}) {
   if (ctx.goal.groups.length === 0) {
     return <p className="text-xs opacity-60">尚未選擇任何道具。</p>;
   }
@@ -259,7 +310,11 @@ export function GoalDots({ ctx, tone }: { ctx: GachaCtx; tone: "light" | "dark" 
           <div key={i} className="flex flex-col items-center gap-0.5">
             <span
               className="rounded-lg p-0.5"
-              style={{ background: g.done ? TIER_META[prize.tier].color : "transparent" }}
+              style={{
+                background: g.done
+                  ? TIER_META[prize.tier].color
+                  : "transparent",
+              }}
             >
               <PrizeTile prize={prize} size={38} dimmed={!g.done} tone={tone} />
             </span>
@@ -268,7 +323,7 @@ export function GoalDots({ ctx, tone }: { ctx: GachaCtx; tone: "light" | "dark" 
                 g.done ? "text-emerald-500" : "opacity-45"
               }`}
             >
-              {Math.min(g.have, g.need)}/{g.need}
+              {g.have}/{g.need}
             </span>
           </div>
         );
@@ -285,7 +340,8 @@ export function useCollected(ctx: GachaCtx) {
         .filter((x): x is { prize: Prize; n: number } => !!x.prize)
         .sort(
           (a, b) =>
-            TIER_META[a.prize.tier].order - TIER_META[b.prize.tier].order || b.n - a.n,
+            TIER_META[a.prize.tier].order - TIER_META[b.prize.tier].order ||
+            b.n - a.n,
         ),
     [ctx.view.counts, ctx.prizeById],
   );

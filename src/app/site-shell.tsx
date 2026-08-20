@@ -14,6 +14,7 @@ import {
   X,
   Map as MapIcon,
   Timer,
+  Dices,
 } from "lucide-react";
 import { navItems, navHref } from "@/nav";
 import { LIGHT_TOKENS, DARK_TOKENS, useDarkMode, themeVars } from "./theme";
@@ -24,6 +25,7 @@ const NAV_ICONS: Record<
 > = {
   home: Home,
   monsters: Search,
+  gacha: Dices,
   fashion: Shirt,
   party: Users,
   map: MapIcon,

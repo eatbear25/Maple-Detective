@@ -8,7 +8,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RotateCcw, Search } from "lucide-react";
-import { GACHA_MACHINE_ICON, TIER_META, TIER_ORDER, poolPeriod } from "@/data/gacha";
+import {
+  GACHA_MACHINE_ICON,
+  TIER_META,
+  TIER_ORDER,
+  poolPeriod,
+} from "@/data/gacha";
 import { PrizeTile } from "../prize-tile";
 import type { GachaCtx } from "../use-gacha";
 import { CUSTOM_GOAL_ID } from "../use-gacha";
@@ -62,7 +67,9 @@ export function VariantC({ ctx }: { ctx: GachaCtx }) {
           <div className="min-w-[7rem]">
             <p className="text-[0.65rem] opacity-60">已抽・花費</p>
             <p className="text-sm font-black tabular-nums">
-              <span className="text-amber-600 dark:text-amber-400">{ctx.view.pulls}</span>
+              <span className="text-amber-600 dark:text-amber-400">
+                {ctx.view.pulls}
+              </span>
               <span className="mx-1 opacity-30">・</span>
               <span className="text-rose-600 dark:text-rose-400">
                 NT${ctx.view.spent.toLocaleString()}
@@ -148,7 +155,11 @@ export function VariantC({ ctx }: { ctx: GachaCtx }) {
       </div>
 
       {ctx.goalId === CUSTOM_GOAL_ID && picking && (
-        <CustomPicker ctx={ctx} tone="light" onClose={() => setPicking(false)} />
+        <CustomPicker
+          ctx={ctx}
+          tone="light"
+          onClose={() => setPicking(false)}
+        />
       )}
 
       {/* 篩選列 */}
@@ -169,13 +180,16 @@ export function VariantC({ ctx }: { ctx: GachaCtx }) {
           type="button"
           onClick={() => setOnlyGot((v) => !v)}
           className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-            onlyGot ? "bg-emerald-600 text-white" : "bg-slate-200 dark:bg-slate-700"
+            onlyGot
+              ? "bg-emerald-600 text-white"
+              : "bg-slate-200 dark:bg-slate-700"
           }`}
         >
           只看抽到的
         </button>
         <span className="text-xs opacity-60">
-          收集 {ctx.tiers.reduce((s, t) => s + t.collected, 0)}/{ctx.pool.prizes.length} 種
+          收集 {ctx.tiers.reduce((s, t) => s + t.collected, 0)}/
+          {ctx.pool.prizes.length} 種
         </span>
         <button
           type="button"
@@ -206,12 +220,14 @@ export function VariantC({ ctx }: { ctx: GachaCtx }) {
               </span>
               <span className="text-[0.7rem] opacity-55">
                 各 {list[0].rate.toFixed(2)}%
-                {row && ` ・ ${row.collected}/${row.kinds} 種 ・ 共 ${row.got} 個`}
+                {row &&
+                  ` ・ ${row.collected}/${row.kinds} 種 ・ 共 ${row.got} 個`}
               </span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {list.map((p) => {
-                const n = p.itemId === null ? 0 : (ctx.view.counts.get(p.itemId) ?? 0);
+                const n =
+                  p.itemId === null ? 0 : (ctx.view.counts.get(p.itemId) ?? 0);
                 const isGoal = p.itemId !== null && goalIds.has(p.itemId);
                 const isFlash = p.itemId !== null && flash.has(p.itemId);
                 return (

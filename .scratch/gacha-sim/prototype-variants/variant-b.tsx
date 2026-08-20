@@ -7,11 +7,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
-import { GACHA_MACHINE_ICON, TIER_META, TIER_ORDER, poolPeriod } from "@/data/gacha";
+import {
+  GACHA_MACHINE_ICON,
+  TIER_META,
+  TIER_ORDER,
+  poolPeriod,
+} from "@/data/gacha";
 import { PrizeTile } from "../prize-tile";
 import type { GachaCtx } from "../use-gacha";
 import { CUSTOM_GOAL_ID } from "../use-gacha";
-import { BudgetInput, CustomPicker, useCollected, useOddsSearch } from "./shared";
+import {
+  BudgetInput,
+  CustomPicker,
+  useCollected,
+  useOddsSearch,
+} from "./shared";
 
 export const NAME = "深色 HUD";
 
@@ -45,7 +55,11 @@ export function VariantB({ ctx }: { ctx: GachaCtx }) {
 
         {/* HUD：數字當主角 */}
         <section className="grid grid-cols-3 gap-2">
-          <Hud label="已抽" value={ctx.view.pulls.toLocaleString()} accent="#fbbf24" />
+          <Hud
+            label="已抽"
+            value={ctx.view.pulls.toLocaleString()}
+            accent="#fbbf24"
+          />
           <Hud
             label="花費"
             value={`NT$${ctx.view.spent.toLocaleString()}`}
@@ -127,12 +141,18 @@ export function VariantB({ ctx }: { ctx: GachaCtx }) {
                 );
               })}
               {ctx.goal.reward === null && ctx.goalId !== CUSTOM_GOAL_ID && (
-                <span className="ml-1 text-[0.7rem] text-slate-500">獎勵未公開</span>
+                <span className="ml-1 text-[0.7rem] text-slate-500">
+                  獎勵未公開
+                </span>
               )}
             </div>
           )}
           {ctx.goalId === CUSTOM_GOAL_ID && picking && (
-            <CustomPicker ctx={ctx} tone="dark" onClose={() => setPicking(false)} />
+            <CustomPicker
+              ctx={ctx}
+              tone="dark"
+              onClose={() => setPicking(false)}
+            />
           )}
         </section>
 
@@ -141,7 +161,9 @@ export function VariantB({ ctx }: { ctx: GachaCtx }) {
           <div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-6 h-44 w-44 -translate-x-1/2 rounded-full blur-2xl"
-            style={{ background: "radial-gradient(circle,#f59e0b55,transparent 70%)" }}
+            style={{
+              background: "radial-gradient(circle,#f59e0b55,transparent 70%)",
+            }}
           />
           <div className="relative flex flex-col items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element -- 像素圖 */}
@@ -205,7 +227,9 @@ export function VariantB({ ctx }: { ctx: GachaCtx }) {
                   <span
                     key={`${ctx.state.log.length}-${i}`}
                     className="shrink-0 rounded-md"
-                    style={{ boxShadow: i === 0 ? TIER_META[p.tier].glow : "none" }}
+                    style={{
+                      boxShadow: i === 0 ? TIER_META[p.tier].glow : "none",
+                    }}
                   >
                     <PrizeTile prize={p} size={i === 0 ? 48 : 40} tone="dark" />
                   </span>
@@ -218,7 +242,10 @@ export function VariantB({ ctx }: { ctx: GachaCtx }) {
         {/* 分頁：獲得清單 / 官方機率表 */}
         <section className="rounded-xl border border-white/10 bg-white/[0.04]">
           <div className="flex items-center gap-1 border-b border-white/10 px-2 py-1.5">
-            <TabBtn on={tab === "collected"} onClick={() => setTab("collected")}>
+            <TabBtn
+              on={tab === "collected"}
+              onClick={() => setTab("collected")}
+            >
               獲得清單 {collected.length}
             </TabBtn>
             <TabBtn on={tab === "odds"} onClick={() => setTab("odds")}>
@@ -294,11 +321,23 @@ export function VariantB({ ctx }: { ctx: GachaCtx }) {
                       <ul className="divide-y divide-white/5">
                         {(odds.byTier.get(t) ?? []).map((p) => {
                           const n =
-                            p.itemId === null ? 0 : (ctx.view.counts.get(p.itemId) ?? 0);
+                            p.itemId === null
+                              ? 0
+                              : (ctx.view.counts.get(p.itemId) ?? 0);
                           return (
-                            <li key={p.name} className="flex items-center gap-2 py-1">
-                              <PrizeTile prize={p} size={26} dimmed={n === 0} tone="dark" />
-                              <span className="flex-1 truncate text-xs">{p.name}</span>
+                            <li
+                              key={p.name}
+                              className="flex items-center gap-2 py-1"
+                            >
+                              <PrizeTile
+                                prize={p}
+                                size={26}
+                                dimmed={n === 0}
+                                tone="dark"
+                              />
+                              <span className="flex-1 truncate text-xs">
+                                {p.name}
+                              </span>
                               {n > 0 && (
                                 <span className="text-[0.7rem] font-bold text-emerald-400">
                                   ×{n}
@@ -323,11 +362,24 @@ export function VariantB({ ctx }: { ctx: GachaCtx }) {
   );
 }
 
-function Hud({ label, value, accent }: { label: string; value: string; accent: string }) {
+function Hud({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent: string;
+}) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
-      <p className="text-[0.65rem] uppercase tracking-wider text-slate-400">{label}</p>
-      <p className="truncate text-2xl font-black tabular-nums" style={{ color: accent }}>
+      <p className="text-[0.65rem] uppercase tracking-wider text-slate-400">
+        {label}
+      </p>
+      <p
+        className="truncate text-2xl font-black tabular-nums"
+        style={{ color: accent }}
+      >
         {value}
       </p>
     </div>
@@ -372,7 +424,9 @@ function TabBtn({
       type="button"
       onClick={onClick}
       className={`rounded px-2.5 py-1 text-xs font-bold ${
-        on ? "bg-white/15 text-slate-100" : "text-slate-400 hover:text-slate-200"
+        on
+          ? "bg-white/15 text-slate-100"
+          : "text-slate-400 hover:text-slate-200"
       }`}
     >
       {children}

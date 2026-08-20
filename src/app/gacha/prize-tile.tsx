@@ -42,12 +42,12 @@ export function PrizeTile({
       style={{
         width: size,
         height: size,
-        borderColor: showFallback ? meta.deep : tone === "dark" ? "#ffffff26" : "#0f172a1f",
+        borderColor: showFallback ? meta.deep : tone === "dark" ? "#ffffff26" : "var(--border)",
         background: showFallback
           ? `linear-gradient(160deg, ${meta.color} 0%, ${meta.deep} 100%)`
           : tone === "dark"
             ? "#0f172a"
-            : "#f1f5f9",
+            : "var(--bg)",
         boxShadow: showFallback ? "inset 0 -1px 3px rgba(0,0,0,0.35)" : undefined,
       }}
       title={`${prize.name}（${prize.rate}%）`}
@@ -99,9 +99,9 @@ export function EmptySlot({
       style={{
         width: size,
         height: size,
-        borderColor: tone === "dark" ? "#ffffff2e" : "#94a3b855",
-        background: tone === "dark" ? "#ffffff0a" : "#0f172a08",
-        color: tone === "dark" ? "#ffffff4d" : "#94a3b8",
+        borderColor: tone === "dark" ? "#ffffff2e" : "var(--border)",
+        background: tone === "dark" ? "#ffffff0a" : "var(--bg)",
+        color: tone === "dark" ? "#ffffff4d" : "var(--text-muted)",
       }}
     >
       {label ?? ""}
