@@ -114,7 +114,17 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 5. `python tools/fetch-map-names.py` → `reference-data/map-supplement.json`（maplestory.io 補客戶端 Map.json 沒有的地圖名；**未實裝判斷與未來視地圖名靠這份**；已查過的會跳過）
 6. `python tools/extract-worldmap.py` → `reference-data/worldmap.json` + `public/worldmap/*.png`（從客戶端抽 16 張世界地圖底圖與各地圖在圖上的點位座標；`Etc/WorldMap.json` 是純 JSON TextAsset，底圖藏在 spriteset 包的 `BaseImg.asset`，混淆 MonoBehaviour 的解法見腳本 docstring）
 7. `python tools/build-site-data.py` → `src/data/generated/monster-drops.json` + `item-info.json` + `worldmap-nav.json`（join 好的網站用資料，含 released 旗標/futureDrops/世界地圖點位 wm/數值/屬性抗性；worldmap-nav 是地圖導覽頁用的全點位+出沒怪反查，規則見腳本 docstring）
-8. `python tools/download-icons.py` 補抓新圖示到 `public/icons/{item,mob}/`（TMS/209 優先、GMS/62 備援；已存在會跳過）
+8. `python tools/extract-quest.py` → `reference-data/quest.json`（任務 QuestInfo/Check/Act + 中文名稱表）＋ `npc-map.json`（NPC→出沒地圖，掃全部 705 張地圖的 `life` 節點建的）
+9. `python tools/build-quest-data.py` → `src/data/generated/quests.json`（任務查詢頁用：任務、任務鏈、任務道具名稱/說明、NPC 所在地圖與世界地圖點位）
+10. `python tools/download-icons.py` 補抓新圖示到 `public/icons/{item,mob}/`（TMS/209 優先、GMS/62 備援；已存在會跳過。道具清單 = 怪物掉落 + 人工補充 + **任務需求/獎勵**，所以要排在 build-quest-data 之後）
+
+`tools/worldmap_spots.py` 是 build-site-data 與 build-quest-data 共用的「地圖→世界地圖點位」規則（精準點位、否則借 ID 最接近的鄰居標約略位置），只該有一份。
+
+**任務資料的三個坑（2026-08-19 逆向完成，別重踩）**：
+1. `Quest/QuestInfo.wzjson` 的**字串值池只有 12 筆，內容是欄位名本身**（`name`/`parent`/`demandSummary`…）——Gamania 把文字掏空搬去本地化了。所以 QuestInfo 只剩 `area`/`order` 有用，**中文一律從 `String/TW/QuestData.json` 拿**（494 筆，比 QuestInfo 的 485 還全）；連帶 `rewardSummary`/`demandSummary` 在客戶端是空的，做不出「遊戲內任務摘要」這種功能。
+2. `QuestData.json` 是 **UTF-8 不是 Big5**（`m_Script.encode('utf-8','surrogateescape').decode('utf-8')`）。
+3. **大部分任務的獎勵不在客戶端**：`Act` 只有 **15 個任務**帶 `money`（11 正、4 負），**84 個任務的 `Act` 完全是空的**。原因查明：`Check` 裡有 **66 個任務**帶 `startscript`/`endscript`，代表接受/完成處理交給**伺服器端腳本**，獎勵不走 Act——例如 #2156「可以許願的彩虹鍋牛殼」有 `endscript: q2156e`，實際會給 3 萬楓幣，客戶端一個欄位都沒有。其中 **52 個是「有 script 且 Act 全空」**，獎勵一定查不到（含全部轉職任務）。掃過 `Act` 全部欄位、任務說明文字、`ScriptString` 的 quest0/quest1，客戶端都沒有腳本內容——跟掉落機率一樣只能靠玩家回報。人工補充走 **`reference-data/quest-supplement.json`**（`{ questId: { exp?, money?, cost?, pop?, items? } }`，會覆蓋客戶端資料），網站上吃到補充的任務會標「＊部分獎勵來自玩家回報補充」，查不到獎勵的則直接說明是伺服器端腳本、不會印成「沒有獎勵」。另外**負數 money 是「任務向玩家收費」不是獎勵**（例：#6000 收 100 萬），build 腳本拆成 `money`(得到) 與 `cost`(花費)。
+4. **任務的實裝判斷 = 該任務的 NPC 有沒有站在「Map.json 有名字」的地圖上**。實測 490 個任務裡：NPC 全部實裝 296、部分實裝 28、完全沒有 166。定案是 296+28 算現行版本，只有 166 掛未實裝徽章。另外 155 個任務 NPC 只有 97 個查得到地圖，查不到的 14 個正常號段 NPC 是腳本動態生成的劇情 NPC（705 張地圖已確認是全部，不是漏掃）。
 
 **實裝判斷（2026-08-16 修正）**：怪物在 Mob.json ≠ 實裝——客戶端名稱表涵蓋全部舊 wz 怪。正確判斷是「≥1 張出沒地圖在客戶端 Map.json 有名字」，據此現行版本 70 隻、未來視 273 隻。
 
@@ -135,8 +145,9 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 
 - Next.js 16（App Router）+ TypeScript + Tailwind v4，位置就是這個資料夾。
 - **2026-08-16 移除分風格結構**：原本有 `/minimal`（現代簡約風，正式站）、`/retro`（復古像素風畫廊）、`/dark`（深色電競儀表板畫廊）三條並存路徑，`/` 只是 redirect 到 `/minimal`。風格畫廊已確定不留，整個 `minimal/*` 直接搬到 `src/app/` 根目錄，`retro`、`dark` 連同只有它們在用的假資料 `src/data/monsters.ts`、`src/data/outfits.ts` 一併刪除。原本 `MinimalLayout`（`src/app/minimal/layout.tsx`）拆成 `src/app/layout.tsx`（html/body/字型/metadata）＋ `src/app/site-shell.tsx`（header/nav/footer 這層 client shell，被根 layout 包住 children）。`src/nav.ts` 的 `themeHref(theme, path)` 也簡化成 `navHref(path)`（不用再帶 theme 參數）。現在網站沒有風格切換的概念，頁面路徑就是 `/monsters`、`/map`、`/boss-timer`、`/fashion`、`/party`，不再有 `/minimal` 前綴。
-- `src/nav.ts`：toolbox 選單設定，`裝備模擬器`／`楓幣計算機` 目前是 `enabled: false` 佔位，之後開新工具就是加一筆 + 建對應 `page.tsx`。
+- `src/nav.ts`：toolbox 選單設定（**注意 nav 的圖示不是讀這裡的 emoji**，是 `site-shell.tsx` 的 `NAV_ICONS` 這份 lucide 元件對照表，新增工具兩邊都要加），`裝備模擬器`／`楓幣計算機` 目前是 `enabled: false` 佔位，之後開新工具就是加一筆 + 建對應 `page.tsx`。
 - `/map` **地圖導覽**（2026-08-16 上線）：拆包的遊戲世界地圖瀏覽器。上方 chips 切大陸（總圖/楓之島/維多利亞島/…，順序＝總圖 links），大陸圖再有「內部區域」子圖（奇幻村/鯨魚號/廢礦/鐘塔最下層）。地圖上畫**全部**點位（遊戲風黃點，資料 `src/data/worldmap.ts` → `generated/worldmap-nav.json`），點了右欄列出該點的地圖清單＋出沒怪物（依等級排序，點怪物 → `/monsters?q=怪名` 跳掉落查詢）；隱藏地圖/迷你地城掛在借用點的「這附近的隱藏地圖」區。點位共用元件 `src/app/worldmap-view.tsx`（黃點＝一般、橘紅大點＋脈動＝選中、虛線邊＝約略位置），怪物頁的世界地圖彈窗也用它。
+- `/quests` **任務查詢**（2026-08-19 上線）：吃真資料（`src/data/quests.ts` → `generated/quests.json`）。490 個任務，依需求等級排序、每頁 50 筆分頁（分頁列中央標該頁的等級區間，因為按等級排序＋分頁的話翻頁只能用猜的）。**搜尋只吃任務名與獎勵道具名**——不搜 NPC 名、不搜需求道具（定案：需求道具點進詳情看就好）。列表卡片是「左等級圓徽＋任務名＋NPC 名」三項，刻意不放獎勵。詳情面板由上到下是：標題 →**系列鏈卡片**→ NPC → 需求道具 → 獎勵。系列鏈用**前後關聯圖遍歷**建（96 條、最長 21 步），但**分組鍵是系列名 `parent` 而不是連通元件**——遊戲的任務關聯會跨系列相連（「泰實夫的秘密之書」最後一步的後續就是「妖精羅雯和詛咒的娃娃」第一步），純靠連通元件會把三條線併成一條、標題和「第 N/M 步」都是錯的，而且還會透過中間沒系列名的任務間接發生。搜尋框下方有**地區 chips**（帶任務數）：粒度是「弓箭手村／墮落城市／維多利亞港」這種大地區，規則是**用 `streetName` 分組，但某個 streetName 底下有 ≥3 個主城代碼時（＝它其實是整座大陸的名字，例如「維多利亞」涵蓋 172 個任務）才再依主城代碼拆開**——單用 streetName 太粗、用世界地圖點位太碎（42 組、混進「魔法森林北部」這種子區域）、純用 ID 主城代碼則標籤會歪（楓之島變成「菇菇村訓練所入口」）。NPC 沒有已實裝地圖的 184 個任務歸在「未知」chip。道具**只有 icon＋名稱前兩字標籤＋數量**（前兩字是因為卷軸類 icon 全長一樣，一個任務要五張不同卷軸時完全分不出來），hover 才出道具彈窗。點獎勵道具開彈窗反查「還有哪些任務給這個」；點 NPC 地圖開世界地圖彈窗。詳情的任務 NPC 有站立圖（`public/icons/npc/<npcId>.gif`，`download-icons.py` 從 maplestory.io 抓，147 個 NPC 有 143 個抓得到）。**不做**：個人進度勾選、任務對話原文、等級篩選框。
 - `/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名；放大鏡旁的漏斗按鈕開進階篩選（屬性弱點多選、等級範圍）。分「現行版本／未來視」分頁：現行 70 隻（有實裝地圖的怪）＋人工補充掉落；未來視 273 隻（未實裝怪與帶未實裝掉落的怪）。**出沒地圖 chip 點了會開世界地圖彈窗**，在拆包出的遊戲世界地圖上標出該地圖位置（同張圖上這隻怪的其他出沒點也會標小點，可點切換）；不在遊戲世界地圖上的隱藏圖/迷你地城借「ID 最接近的鄰居」標約略位置（顯示「約略位置」徽章）。原本的「地區分類」已移除（2026-08-16）——ID 前綴推地區在維多利亞整個對不上（101030xxx 遺跡發掘地其實在勇士之村、100040xxx 其實是魔法森林南部），改用世界地圖標點一勞永逸。詳情面板有怪物數值（HP/攻防/命中/迴避）與屬性抗性（elemAttr：F火 I冰 L雷 S毒 H聖 D暗；1=免疫 2=抗性 3=弱點）。UI 無掉落機率欄位（拿不到真值）。
 
 ---

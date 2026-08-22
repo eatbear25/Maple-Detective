@@ -1,0 +1,5 @@
+{
+  "_note": "人工補充的任務獎勵。客戶端 Act 只記錄 15 個任務的楓幣，另有 52 個任務把完成處理交給伺服器端腳本（Check 的 startscript/endscript），那些獎勵在客戶端完全沒有記錄——跟掉落機率一樣拿不到。玩家實測回報就往這裡加。",
+  "_format": "{ questId: { exp?, money?, cost?, pop?, items?: [{id, n}] } }，會覆蓋客戶端資料",
+  "2156": { "money": 30000 }
+}

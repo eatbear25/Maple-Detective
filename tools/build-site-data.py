@@ -50,6 +50,8 @@ import json
 import os
 import re
 
+from worldmap_spots import build_wm_lookup
+
 PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(PROJECT, "reference-data")
 OUT = os.path.join(PROJECT, "src", "data", "generated", "monster-drops.json")
@@ -89,37 +91,8 @@ def main():
     def client_named(mp):
         return bool((map_tbl.get(str(mp)) or {}).get("mapName"))
 
-    # mapId → { s: 圖名, x, y }。同地圖出現在多張圖時取層級最深的
-    # （奇幻村/廢礦等子圖 > 大陸圖 > 世界總圖，總圖的點是整個大陸糊在一起）。
-    def sheet_depth(name):
-        d = 0
-        while name and wm_sheets.get(name, {}).get("parent"):
-            name = wm_sheets[name]["parent"]
-            d += 1
-        return d
-
-    spot_of = {}
-    for sname, sheet in sorted(wm_sheets.items(), key=lambda kv: sheet_depth(kv[0])):
-        for spot in sheet["spots"]:
-            for mp in spot["maps"]:
-                spot_of[mp] = {"s": sname, "x": spot["x"], "y": spot["y"]}
-
-    spot_ids = sorted(spot_of)
-
-    def wm_of(mp):
-        """精準點位；沒有就借「ID 最接近的鄰居」的點標約略位置（a=1）。"""
-        if mp in spot_of:
-            return spot_of[mp]
-        pad = str(mp).zfill(9)
-        best, best_key = None, (0, float("-inf"))
-        for sid in spot_ids:
-            common = len(os.path.commonprefix([pad, str(sid).zfill(9)]))
-            key = (common, -abs(mp - sid))
-            if key > best_key:
-                best, best_key = sid, key
-        if best is None or best_key[0] < 6:
-            return None
-        return {**spot_of[best], "a": 1}
+    # mapId → { s: 圖名, x, y, a? }（規則見 tools/worldmap_spots.py，與任務管線共用）
+    wm_of = build_wm_lookup(wm_sheets)
 
     def level_of(mid):
         st = stats_tbl.get(mid)

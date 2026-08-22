@@ -257,12 +257,15 @@ export function ItemTooltip({
   modal = false,
   onClose,
   onSearch,
+  searchLabel = "查看誰掉這個道具",
 }: {
   id: number;
   panelRef: React.RefObject<HTMLDivElement | null>;
   modal?: boolean;
   onClose?: () => void;
   onSearch?: () => void;
+  /** 觸控裝置彈窗底部按鈕的文字（任務頁用的是「哪些任務會給這個」） */
+  searchLabel?: string;
 }) {
   const info = itemInfo(id);
   const panelStyle: React.CSSProperties = {
@@ -322,7 +325,7 @@ export function ItemTooltip({
           className="cursor-pointer mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] py-1.5 text-[11px] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
         >
           <Search size={12} />
-          查看誰掉這個道具
+          {searchLabel}
         </button>
       )}
       </div>

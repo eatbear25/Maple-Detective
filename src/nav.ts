@@ -15,6 +15,13 @@ export const navItems: NavItem[] = [
     path: "monsters",
     enabled: true,
   },
+  {
+    key: "quests",
+    label: "任務查詢",
+    icon: "📜",
+    path: "quests",
+    enabled: true,
+  },
   { key: "map", label: "地圖", icon: "🗺️", path: "map", enabled: true },
   {
     key: "boss-timer",
