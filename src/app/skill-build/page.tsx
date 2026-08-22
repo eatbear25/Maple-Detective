@@ -7,32 +7,27 @@
  * - SP 是**累計共用池**，不是各轉獨立：1 轉沒點完的會留到 2 轉，2 轉後也還能回頭
  *   加 1 轉技能。所以預算用「到某等級為止累計可得的 SP」表示。
  * - 兩個階段**並排顯示、不做切換**——配 2 轉時還看得到 1 轉的餘額。
- * - 嚴格模式：超額或前置不足時按鈕點不下去，但一定附上原因。純 disabled 不說原因
- *   會讓人反覆亂點卻不知道卡在哪。
+ * - **配點用滑桿，不用 +/- 按鈕**（2026-08-22 改）：要點滿 20 級得按 20 次加號，
+ *   或想直接跳到 15 級也只能一下一下按，成本太高。改成拖滑桿直接到位，另外給
+ *   「點滿」「歸零」兩個一鍵操作；鍵盤方向鍵仍可 ±1 微調。
+ * - 嚴格模式：滑桿拖過頭會被夾在合法範圍，而且**一定附上原因**。默默夾住不說話
+ *   會讓人以為壞了。
  * - 降級也會擋：把前置技能降到不足會讓已點的技能違規。
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  Minus,
-  Plus,
-  RotateCcw,
-  Link2,
-  Check,
-  Sparkles,
-  Lock,
-} from "lucide-react";
+import { Sparkles, ChevronsUp, RotateCcw, Link2, Check } from "lucide-react";
 import {
   jobs,
   jobById,
   skillById,
   skillsOf,
-  skillIconSrc,
   levelText,
   type Job,
   type Skill,
 } from "@/data/skills";
+import { SkillIcon } from "../skill-icon";
 
 /** 每升 1 級 +3 SP、每次轉職 +1 SP。法師 8 級轉職、其他 10 級。 */
 const POOLS: { at: number; label: string; mage: number; other: number }[] = [
@@ -68,7 +63,9 @@ export default function SkillBuildPage() {
   const pool = useMemo(() => [...tier1, ...tier2], [tier1, tier2]);
   const maxSp = capOf(job, POOLS.length - 1);
 
-  // 網址帶配點時優先吃網址，否則吃 localStorage 草稿
+  // 網址帶配點時優先吃網址，否則吃 localStorage 草稿。
+  // 這兩樣只有瀏覽器有，SSR 階段讀不到，所以只能掛載後才設 state（提前讀會 hydration 不一致）。
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const fromUrl = params.get("b");
@@ -90,6 +87,7 @@ export default function SkillBuildPage() {
     }
     setLoaded(true);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!loaded) return;
@@ -100,49 +98,70 @@ export default function SkillBuildPage() {
     () => pool.reduce((a, s) => a + (build[s.id] ?? 0), 0),
     [pool, build],
   );
+  const usedTier1 = useMemo(
+    () => tier1.reduce((a, s) => a + (build[s.id] ?? 0), 0),
+    [tier1, build],
+  );
   const usedTier2 = useMemo(
     () => tier2.reduce((a, s) => a + (build[s.id] ?? 0), 0),
     [tier2, build],
   );
   const left = maxSp - used;
 
-  const blockPlus = useCallback(
-    (s: Skill): string | null => {
-      const cur = build[s.id] ?? 0;
-      if (cur >= s.maxLevel) return `已經是上限 ${s.maxLevel} 級`;
-      if (left <= 0) return "剩餘 SP 不足";
-      for (const [rid, need] of Object.entries(s.req ?? {})) {
-        const have = build[rid] ?? 0;
-        if (have < need) {
-          const rn = skillById[rid]?.name ?? `#${rid}`;
-          return `需要先把〈${rn}〉點到 ${need} 級（目前 ${have}）`;
-        }
+  /** 最低能降到幾級：有別的技能拿它當前置、而且那個技能點著的話就降不下去。 */
+  const minLevel = useCallback(
+    (s: Skill) => {
+      let floor = 0;
+      for (const o of pool) {
+        if ((build[o.id] ?? 0) > 0) floor = Math.max(floor, o.req?.[s.id] ?? 0);
       }
-      return null;
+      return floor;
+    },
+    [pool, build],
+  );
+
+  /** 最高能點到幾級：受「前置技能」與「剩餘 SP」兩件事限制。 */
+  const maxLevel = useCallback(
+    (s: Skill) => {
+      const cur = build[s.id] ?? 0;
+      for (const [rid, need] of Object.entries(s.req ?? {})) {
+        if ((build[rid] ?? 0) < need) return cur; // 前置不足：只能維持現況
+      }
+      return Math.min(s.maxLevel, cur + left);
     },
     [build, left],
   );
 
-  const blockMinus = useCallback(
-    (s: Skill): string | null => {
-      const cur = build[s.id] ?? 0;
-      if (cur <= 0) return null;
-      const dep = pool.find(
-        (o) => (build[o.id] ?? 0) > 0 && (o.req?.[s.id] ?? 0) > cur - 1,
-      );
-      return dep ? `〈${dep.name}〉還點著，這個不能降到 ${dep.req![s.id]} 級以下` : null;
+  /** 夾住的時候要說得出原因，不然使用者只會覺得滑桿壞了。 */
+  const clampReason = useCallback(
+    (s: Skill, target: number, lo: number, hi: number) => {
+      if (target > hi) {
+        for (const [rid, need] of Object.entries(s.req ?? {})) {
+          const have = build[rid] ?? 0;
+          if (have < need) {
+            const rn = skillById[rid]?.name ?? `#${rid}`;
+            return `〈${s.name}〉要先把前置〈${rn}〉點到 ${need} 級（目前 ${have}）`;
+          }
+        }
+        if (hi >= s.maxLevel) return `〈${s.name}〉已經是上限 ${s.maxLevel} 級`;
+        return `SP 只夠把〈${s.name}〉點到 ${hi} 級`;
+      }
+      if (target < lo) {
+        const dep = pool.find((o) => (build[o.id] ?? 0) > 0 && (o.req?.[s.id] ?? 0) >= lo);
+        return `〈${dep?.name ?? "後面的技能"}〉還點著，〈${s.name}〉不能低於 ${lo} 級`;
+      }
+      return null;
     },
     [build, pool],
   );
 
-  const act = (s: Skill, dir: 1 | -1) => {
-    const reason = dir === 1 ? blockPlus(s) : blockMinus(s);
-    if (reason) {
-      setWhy(reason);
-      return;
-    }
-    setWhy(null);
-    setBuild((b) => ({ ...b, [s.id]: (b[s.id] ?? 0) + dir }));
+  /** 直接把技能設到某一級：滑桿、點滿、歸零共用這一條路。 */
+  const setLevel = (s: Skill, target: number) => {
+    const lo = minLevel(s);
+    const hi = maxLevel(s);
+    const next = Math.max(lo, Math.min(hi, Math.round(target)));
+    setWhy(clampReason(s, target, lo, hi));
+    setBuild((b) => ((b[s.id] ?? 0) === next ? b : { ...b, [s.id]: next }));
   };
 
   const share = async () => {
@@ -157,7 +176,7 @@ export default function SkillBuildPage() {
       <div>
         <h1 className="text-xl font-semibold">技能配點模擬</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          選一個 2 轉職業，1 轉與 2 轉技能一起配。
+          選一個 2 轉職業，1 轉與 2 轉技能一起配。拖滑桿直接到位，或按「點滿」。
           <Link
             href="/skills"
             className="ml-2 inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
@@ -198,99 +217,113 @@ export default function SkillBuildPage() {
         })}
       </div>
 
-      {/* 預算：兩階段並排 */}
-      <div className="sticky top-14 z-10 space-y-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="text-sm">
-            <span className="text-[var(--text-muted)]">已配點 </span>
-            <span className="text-lg font-bold tabular-nums">{used}</span>
-            <span className="text-[var(--text-muted)]"> 點・剩餘 {left}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setBuild({});
-                setWhy(null);
-              }}
-              className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-            >
-              <RotateCcw size={12} /> 重置
-            </button>
-            <button
-              onClick={share}
-              className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-            >
-              {copied ? <Check size={12} /> : <Link2 size={12} />}
-              {copied ? "已複製" : "分享"}
-            </button>
-          </div>
-        </div>
-        <div className="space-y-1.5 border-t border-[var(--border)] pt-2">
-          {POOLS.map((p, i) => (
-            <PoolRow
-              key={p.at}
-              label={p.label}
-              cap={capOf(job, i)}
-              used={used}
-              blocked={p.at === 30 && usedTier2 > 0 ? "還沒轉職，做不到" : null}
-            />
-          ))}
-        </div>
-        {why && (
-          <div className="rounded-lg bg-[var(--accent-soft)] px-3 py-1.5 text-xs">⚠️ {why}</div>
-        )}
-      </div>
+      {/* 技能卡在左、預算面板在右側 sticky（手機版預算在最上面）。
+          原本是吸頂大卡，蓋在技能卡上很吵；側欄捲到哪都看得到又不擋內容。 */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_230px]">
+        <aside className="order-first lg:order-last lg:sticky lg:top-20 lg:self-start">
+          <div className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
+            <div>
+              <div className="text-[11px] text-[var(--text-muted)]">已配點</div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-bold tabular-nums">{used}</span>
+                <span className="text-xs text-[var(--text-muted)]">/ {maxSp}</span>
+              </div>
+              <div className="text-xs text-[var(--text-muted)]">剩餘 {left} SP</div>
+            </div>
 
-      <SkillGrid
-        title={`1 轉・${firstJob.name}`}
-        list={tier1}
-        build={build}
-        blockPlus={blockPlus}
-        blockMinus={blockMinus}
-        act={act}
-      />
-      <SkillGrid
-        title={`2 轉・${job.name}`}
-        list={tier2}
-        build={build}
-        blockPlus={blockPlus}
-        blockMinus={blockMinus}
-        act={act}
-      />
+            <div className="space-y-1 border-t border-[var(--border)] pt-2 text-xs">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="min-w-0 truncate text-[var(--text-muted)]">
+                  1 轉 {firstJob.name}
+                </span>
+                <span className="shrink-0 font-semibold tabular-nums">{usedTier1} 點</span>
+              </div>
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="min-w-0 truncate text-[var(--text-muted)]">2 轉 {job.name}</span>
+                <span className="shrink-0 font-semibold tabular-nums">{usedTier2} 點</span>
+              </div>
+            </div>
+
+            <div className="space-y-2 border-t border-[var(--border)] pt-2">
+              {POOLS.map((pool, i) => (
+                <PoolMeter key={pool.at} label={pool.label} cap={capOf(job, i)} used={used} />
+              ))}
+              <p className="text-[10px] leading-relaxed text-[var(--text-muted)]">
+                SP 是共用池：這是「配到這個等級為止總共拿得到幾點」，不是各轉各自的額度。
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 border-t border-[var(--border)] pt-2">
+              <button
+                onClick={() => {
+                  setBuild({});
+                  setWhy(null);
+                }}
+                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <RotateCcw size={12} /> 重置
+              </button>
+              <button
+                onClick={share}
+                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                {copied ? <Check size={12} /> : <Link2 size={12} />}
+                {copied ? "已複製" : "分享"}
+              </button>
+            </div>
+
+            {why && (
+              <div className="rounded-lg bg-[var(--accent-soft)] px-3 py-1.5 text-xs leading-relaxed">
+                ⚠️ {why}
+              </div>
+            )}
+          </div>
+        </aside>
+
+        <div className="min-w-0 space-y-6">
+          <SkillGrid
+            title={`1 轉・${firstJob.name}`}
+            list={tier1}
+            build={build}
+            minLevel={minLevel}
+            maxLevel={maxLevel}
+            setLevel={setLevel}
+          />
+          <SkillGrid
+            title={`2 轉・${job.name}`}
+            list={tier2}
+            build={build}
+            minLevel={minLevel}
+            maxLevel={maxLevel}
+            setLevel={setLevel}
+          />
+        </div>
+      </div>
     </div>
   );
 }
 
-function PoolRow({
-  label,
-  cap,
-  used,
-  blocked,
-}: {
-  label: string;
-  cap: number;
-  used: number;
-  blocked: string | null;
-}) {
-  const over = used > cap;
+/**
+ * 某個里程碑（30 級前／70 級前）的 SP 額度用掉多少。
+ * **顯示值夾在額度內**：SP 是累計共用池，總共點了 188 點時第一條寫「188 / 67」
+ * 只會讓人以為算錯（實際上是「30 級前拿得到的 67 點早就用完了」）。
+ */
+function PoolMeter({ label, cap, used }: { label: string; cap: number; used: number }) {
+  const shown = Math.min(used, cap);
   return (
-    <div className="flex items-center gap-3">
-      <span className="w-32 shrink-0 text-[11px] text-[var(--text-muted)]">{label}</span>
-      <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
+    <div>
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="min-w-0 truncate text-[10px] text-[var(--text-muted)]">{label}</span>
+        <span className="shrink-0 text-[11px] tabular-nums">
+          <span className="font-semibold">{shown}</span>
+          <span className="text-[var(--text-muted)]"> / {cap}</span>
+        </span>
+      </div>
+      <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-[var(--border)]">
         <span
-          className={`block h-full rounded-full transition-all ${
-            over || blocked ? "bg-[var(--text-muted)]" : "bg-[var(--accent)]"
-          }`}
-          style={{ width: `${Math.min(100, (used / cap) * 100)}%` }}
+          className="block h-full rounded-full bg-[var(--accent)] transition-all"
+          style={{ width: `${(shown / cap) * 100}%` }}
         />
-      </span>
-      <span className="w-20 shrink-0 text-right text-xs tabular-nums">
-        <span className={over ? "text-[var(--text-muted)]" : "font-semibold"}>{used}</span>
-        <span className="text-[var(--text-muted)]"> / {cap}</span>
-      </span>
-      <span className="hidden w-40 shrink-0 items-center gap-1 text-[10px] text-[var(--text-muted)] sm:flex">
-        {blocked && <Lock size={10} />}
-        {blocked ?? (over ? "這個階段點不完" : "達得到")}
       </span>
     </div>
   );
@@ -300,16 +333,16 @@ function SkillGrid({
   title,
   list,
   build,
-  blockPlus,
-  blockMinus,
-  act,
+  minLevel,
+  maxLevel,
+  setLevel,
 }: {
   title: string;
   list: Skill[];
   build: Build;
-  blockPlus: (s: Skill) => string | null;
-  blockMinus: (s: Skill) => string | null;
-  act: (s: Skill, dir: 1 | -1) => void;
+  minLevel: (s: Skill) => number;
+  maxLevel: (s: Skill) => number;
+  setLevel: (s: Skill, target: number) => void;
 }) {
   return (
     <section className="space-y-2">
@@ -318,8 +351,10 @@ function SkillGrid({
         {list.map((s) => {
           const lv = build[s.id] ?? 0;
           const shown = lv === 0 ? 1 : lv;
-          const plusWhy = blockPlus(s);
-          const minusWhy = blockMinus(s);
+          const lo = minLevel(s);
+          const hi = maxLevel(s);
+          const canRaise = hi > lv;
+          const canClear = lo < lv;
           const reqEntries = Object.entries(s.req ?? {});
           return (
             <div
@@ -331,8 +366,7 @@ function SkillGrid({
               }`}
             >
               <div className="flex items-start gap-2.5 p-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={skillIconSrc(s.id)} alt="" className="h-10 w-10 shrink-0" />
+                <SkillIcon id={s.id} size={40} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{s.name}</span>
                   {reqEntries.length ? (
@@ -361,31 +395,45 @@ function SkillGrid({
                 <p className="text-xs leading-relaxed">{levelText(s, shown) || "—"}</p>
               </div>
 
-              <div className="flex items-center gap-3 p-3">
-                <span className="min-w-0 flex-1">
-                  <span className="block h-1 w-full overflow-hidden rounded-full bg-[var(--border)]">
-                    <span
-                      className="block h-full rounded-full bg-[var(--accent)] transition-all"
-                      style={{ width: `${(lv / s.maxLevel) * 100}%` }}
-                    />
-                  </span>
-                </span>
-                <span className="flex shrink-0 items-center gap-1.5">
-                  <StepBtn
-                    why={lv <= 0 ? "已經是 0 級" : minusWhy}
-                    onClick={() => act(s, -1)}
-                    label="減一級"
-                  >
-                    <Minus size={14} />
-                  </StepBtn>
-                  <span className="w-12 text-center text-sm font-semibold tabular-nums">
+              {/* 滑桿直接拖到要的等級；拖過頭會被夾住並在上方說明原因 */}
+              <div className="space-y-2 p-3">
+                <input
+                  type="range"
+                  min={0}
+                  max={s.maxLevel}
+                  value={lv}
+                  onChange={(e) => setLevel(s, Number(e.target.value))}
+                  aria-label={`${s.name} 等級`}
+                  title={`拖動設定等級（方向鍵可 ±1）・目前可點到 ${hi} 級`}
+                  className="w-full cursor-pointer accent-[var(--accent)]"
+                />
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-semibold tabular-nums">
                     {lv}
                     <span className="text-[var(--text-muted)]"> / {s.maxLevel}</span>
+                    {hi > lv && (
+                      <span className="ml-2 text-[10px] font-normal text-[var(--text-muted)]">
+                        可到 {hi}
+                      </span>
+                    )}
                   </span>
-                  <StepBtn why={plusWhy} onClick={() => act(s, 1)} label="加一級">
-                    <Plus size={14} />
-                  </StepBtn>
-                </span>
+                  <span className="flex items-center gap-1.5">
+                    <QuickBtn
+                      onClick={() => setLevel(s, hi)}
+                      disabled={!canRaise}
+                      label={`把 ${s.name} 點到可負擔的上限`}
+                    >
+                      <ChevronsUp size={12} /> 點滿
+                    </QuickBtn>
+                    <QuickBtn
+                      onClick={() => setLevel(s, 0)}
+                      disabled={!canClear}
+                      label={`把 ${s.name} 的點數收回`}
+                    >
+                      歸零
+                    </QuickBtn>
+                  </span>
+                </div>
               </div>
             </div>
           );
@@ -395,25 +443,25 @@ function SkillGrid({
   );
 }
 
-function StepBtn({
-  why,
+function QuickBtn({
   onClick,
+  disabled,
   label,
   children,
 }: {
-  why: string | null;
   onClick: () => void;
+  disabled: boolean;
   label: string;
   children: React.ReactNode;
 }) {
   return (
     <button
-      title={why ?? label}
-      aria-label={label}
-      disabled={!!why}
       onClick={onClick}
-      className={`flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border)] transition-colors ${
-        why
+      disabled={disabled}
+      title={label}
+      aria-label={label}
+      className={`flex items-center gap-0.5 rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] transition-colors ${
+        disabled
           ? "cursor-not-allowed opacity-30"
           : "cursor-pointer hover:border-[var(--accent)] hover:text-[var(--accent)]"
       }`}
