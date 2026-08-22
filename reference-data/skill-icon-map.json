@@ -1,0 +1,665 @@
+{
+ "1000000": {
+  "job": "100",
+  "name": "生命淨化",
+  "src": "client",
+  "sprite": 118
+ },
+ "1000001": {
+  "job": "100",
+  "name": "生命擴展",
+  "src": "client",
+  "sprite": 0
+ },
+ "1000002": {
+  "job": "100",
+  "name": "生命恢復",
+  "src": "ref",
+  "file": "hpRestore.png"
+ },
+ "1001003": {
+  "job": "100",
+  "name": "自身強化",
+  "src": "client",
+  "sprite": 82
+ },
+ "1001004": {
+  "job": "100",
+  "name": "魔天一擊",
+  "src": "client",
+  "sprite": 142
+ },
+ "1001005": {
+  "job": "100",
+  "name": "劍氣縱橫",
+  "src": "client",
+  "sprite": 50
+ },
+ "2000000": {
+  "job": "200",
+  "name": "魔力淨化",
+  "src": "client",
+  "sprite": 84
+ },
+ "2000001": {
+  "job": "200",
+  "name": "魔力擴展",
+  "src": "client",
+  "sprite": 67
+ },
+ "2001002": {
+  "job": "200",
+  "name": "魔心防禦",
+  "src": "client",
+  "sprite": 13
+ },
+ "2001003": {
+  "job": "200",
+  "name": "魔力之盾",
+  "src": "client",
+  "sprite": 58
+ },
+ "2001004": {
+  "job": "200",
+  "name": "魔靈彈",
+  "src": "client",
+  "sprite": 15
+ },
+ "2001005": {
+  "job": "200",
+  "name": "魔力爪",
+  "src": "client",
+  "sprite": 21,
+  "how": "人工指定"
+ },
+ "3000000": {
+  "job": "300",
+  "name": "精準強化",
+  "src": "ref",
+  "file": "archeryMastery.png"
+ },
+ "3000001": {
+  "job": "300",
+  "name": "霸王箭",
+  "src": "client",
+  "sprite": 29
+ },
+ "3000002": {
+  "job": "300",
+  "name": "百步穿楊",
+  "src": "ref",
+  "file": "eyeOfTheAmazon.png"
+ },
+ "3001003": {
+  "job": "300",
+  "name": "集中術",
+  "src": "client",
+  "sprite": 93
+ },
+ "3001004": {
+  "job": "300",
+  "name": "斷魂箭",
+  "src": "client",
+  "sprite": 67
+ },
+ "3001005": {
+  "job": "300",
+  "name": "二連箭",
+  "src": "client",
+  "sprite": 87
+ },
+ "4000000": {
+  "job": "400",
+  "name": "幻化術",
+  "src": "client",
+  "sprite": 53
+ },
+ "4000001": {
+  "job": "400",
+  "name": "鷹之眼",
+  "src": "client",
+  "sprite": 21
+ },
+ "4001002": {
+  "job": "400",
+  "name": "詛咒術",
+  "src": "client",
+  "sprite": 26
+ },
+ "4001003": {
+  "job": "400",
+  "name": "隱身術",
+  "src": "client",
+  "sprite": 108
+ },
+ "4001334": {
+  "job": "400",
+  "name": "劈空斬",
+  "src": "client",
+  "sprite": 12
+ },
+ "4001344": {
+  "job": "400",
+  "name": "雙飛斬",
+  "src": "ref",
+  "file": "luckySeven.png"
+ },
+ "5000000": {
+  "job": "500",
+  "name": "極限迴避",
+  "src": "client",
+  "sprite": 61
+ },
+ "5001001": {
+  "job": "500",
+  "name": "衝擊拳",
+  "src": "ref",
+  "file": "straightPunch.png"
+ },
+ "5001002": {
+  "job": "500",
+  "name": "旋風斬",
+  "src": "ref",
+  "file": "somersaultKick.png"
+ },
+ "5001003": {
+  "job": "500",
+  "name": "雙子星攻擊　",
+  "src": "client",
+  "sprite": 28
+ },
+ "5001005": {
+  "job": "500",
+  "name": "衝鋒",
+  "src": "client",
+  "sprite": 53
+ },
+ "1100000": {
+  "job": "110",
+  "name": "精準之劍",
+  "src": "client",
+  "sprite": 67
+ },
+ "1100001": {
+  "job": "110",
+  "name": "精準之斧",
+  "src": "client",
+  "sprite": 15
+ },
+ "1100002": {
+  "job": "110",
+  "name": "終極之劍",
+  "src": "ref",
+  "file": "finalAttackSword.png"
+ },
+ "1100003": {
+  "job": "110",
+  "name": "終極之斧",
+  "src": "client",
+  "sprite": 2
+ },
+ "1101004": {
+  "job": "110",
+  "name": "快速之劍",
+  "src": "client",
+  "sprite": 64
+ },
+ "1101005": {
+  "job": "110",
+  "name": "快速之斧",
+  "src": "client",
+  "sprite": 62
+ },
+ "1101006": {
+  "job": "110",
+  "name": "激勵",
+  "src": "client",
+  "sprite": 45
+ },
+ "1101007": {
+  "job": "110",
+  "name": "反射之盾",
+  "src": "client",
+  "sprite": 69
+ },
+ "1200000": {
+  "job": "120",
+  "name": "精準之劍",
+  "src": "client",
+  "sprite": 63
+ },
+ "1200001": {
+  "job": "120",
+  "name": "精準之棍",
+  "src": "client",
+  "sprite": 21
+ },
+ "1200002": {
+  "job": "120",
+  "name": "終極之劍",
+  "src": "ref",
+  "file": "finalAttackSword.png"
+ },
+ "1200003": {
+  "job": "120",
+  "name": "終極之棍",
+  "src": "ref",
+  "file": "finalAttackBluntWeapon.png"
+ },
+ "1201004": {
+  "job": "120",
+  "name": "快速之劍",
+  "src": "client",
+  "sprite": 13
+ },
+ "1201005": {
+  "job": "120",
+  "name": "快速之棍",
+  "src": "client",
+  "sprite": 36
+ },
+ "1201006": {
+  "job": "120",
+  "name": "降魔咒",
+  "src": "client",
+  "sprite": 65
+ },
+ "1201007": {
+  "job": "120",
+  "name": "反射之盾",
+  "src": "client",
+  "sprite": 5
+ },
+ "1300000": {
+  "job": "130",
+  "name": "精準之槍",
+  "src": "client",
+  "sprite": 51
+ },
+ "1300001": {
+  "job": "130",
+  "name": "精準之矛",
+  "src": "client",
+  "sprite": 12
+ },
+ "1300002": {
+  "job": "130",
+  "name": "終極之槍",
+  "src": "ref",
+  "file": "finalAttackSpear.png"
+ },
+ "1300003": {
+  "job": "130",
+  "name": "終極之矛",
+  "src": "ref",
+  "file": "finalAttackPolearm.png"
+ },
+ "1301004": {
+  "job": "130",
+  "name": "快速之槍",
+  "src": "client",
+  "sprite": 5
+ },
+ "1301005": {
+  "job": "130",
+  "name": "快速之矛",
+  "src": "client",
+  "sprite": 64
+ },
+ "1301006": {
+  "job": "130",
+  "name": "禦魔陣",
+  "src": "client",
+  "sprite": 19
+ },
+ "1301007": {
+  "job": "130",
+  "name": "神聖之火",
+  "src": "client",
+  "sprite": 6
+ },
+ "2100000": {
+  "job": "210",
+  "name": "魔力吸收",
+  "src": "client",
+  "sprite": 63
+ },
+ "2101001": {
+  "job": "210",
+  "name": "精神強化",
+  "src": "client",
+  "sprite": 79
+ },
+ "2101002": {
+  "job": "210",
+  "name": "瞬間移動",
+  "src": "client",
+  "sprite": 39
+ },
+ "2101003": {
+  "job": "210",
+  "name": "緩速術",
+  "src": "client",
+  "sprite": 31
+ },
+ "2101004": {
+  "job": "210",
+  "name": "火焰箭",
+  "src": "client",
+  "sprite": 16
+ },
+ "2101005": {
+  "job": "210",
+  "name": "毒霧",
+  "src": "client",
+  "sprite": 70
+ },
+ "2200000": {
+  "job": "220",
+  "name": "魔力吸收",
+  "src": "client",
+  "sprite": 14
+ },
+ "2201001": {
+  "job": "220",
+  "name": "精神強化",
+  "src": "client",
+  "sprite": 2
+ },
+ "2201002": {
+  "job": "220",
+  "name": "瞬間移動",
+  "src": "client",
+  "sprite": 3
+ },
+ "2201003": {
+  "job": "220",
+  "name": "緩速術",
+  "src": "client",
+  "sprite": 74
+ },
+ "2201004": {
+  "job": "220",
+  "name": "冰錐術",
+  "src": "client",
+  "sprite": 16
+ },
+ "2201005": {
+  "job": "220",
+  "name": "電閃雷鳴",
+  "src": "client",
+  "sprite": 57
+ },
+ "2300000": {
+  "job": "230",
+  "name": "魔力吸收",
+  "src": "client",
+  "sprite": 33
+ },
+ "2301001": {
+  "job": "230",
+  "name": "瞬間移動",
+  "src": "client",
+  "sprite": 41
+ },
+ "2301002": {
+  "job": "230",
+  "name": "群體治癒",
+  "src": "client",
+  "sprite": 53
+ },
+ "2301003": {
+  "job": "230",
+  "name": "神聖之光",
+  "src": "client",
+  "sprite": 83
+ },
+ "2301004": {
+  "job": "230",
+  "name": "天使祝福",
+  "src": "client",
+  "sprite": 19
+ },
+ "2301005": {
+  "job": "230",
+  "name": "神聖之箭",
+  "src": "client",
+  "sprite": 43
+ },
+ "3100000": {
+  "job": "310",
+  "name": "精準之弓",
+  "src": "client",
+  "sprite": 0
+ },
+ "3100001": {
+  "job": "310",
+  "name": "終極之弓",
+  "src": "ref",
+  "file": "finalAttackBow.png"
+ },
+ "3101002": {
+  "job": "310",
+  "name": "快速之弓",
+  "src": "client",
+  "sprite": 53
+ },
+ "3101003": {
+  "job": "310",
+  "name": "強弓",
+  "src": "ref",
+  "file": "powerKnockBack.png"
+ },
+ "3101005": {
+  "job": "310",
+  "name": "炸彈箭",
+  "src": "client",
+  "sprite": 42
+ },
+ "3101004": {
+  "job": "310",
+  "name": "無形之箭",
+  "src": "client",
+  "sprite": 46,
+  "how": "人工指定"
+ },
+ "3200000": {
+  "job": "320",
+  "name": "精準之弩",
+  "src": "client",
+  "sprite": 56
+ },
+ "3200001": {
+  "job": "320",
+  "name": "終極之弩",
+  "src": "ref",
+  "file": "finalAttackCrossbow.png"
+ },
+ "3201002": {
+  "job": "320",
+  "name": "快速之弩",
+  "src": "client",
+  "sprite": 31
+ },
+ "3201003": {
+  "job": "320",
+  "name": "強弩",
+  "src": "client",
+  "sprite": 58
+ },
+ "3201005": {
+  "job": "320",
+  "name": "穿透之箭",
+  "src": "client",
+  "sprite": 17
+ },
+ "3201004": {
+  "job": "320",
+  "name": "無形之箭",
+  "src": "client",
+  "sprite": 59,
+  "how": "人工指定"
+ },
+ "4100000": {
+  "job": "410",
+  "name": "精準暗器",
+  "src": "client",
+  "sprite": 14
+ },
+ "4100001": {
+  "job": "410",
+  "name": "強力投擲",
+  "src": "ref",
+  "file": "criticalThrow.png"
+ },
+ "4100002": {
+  "job": "410",
+  "name": "恢復術",
+  "src": "ref",
+  "file": "recovery.png"
+ },
+ "4101003": {
+  "job": "410",
+  "name": "極速暗殺",
+  "src": "client",
+  "sprite": 29
+ },
+ "4101004": {
+  "job": "410",
+  "name": "速度激發",
+  "src": "client",
+  "sprite": 10
+ },
+ "4101005": {
+  "job": "410",
+  "name": "吸血術",
+  "src": "client",
+  "sprite": 17
+ },
+ "4200000": {
+  "job": "420",
+  "name": "精準之刀",
+  "src": "client",
+  "sprite": 17
+ },
+ "4200001": {
+  "job": "420",
+  "name": "恢復術",
+  "src": "ref",
+  "file": "recovery.png"
+ },
+ "4201002": {
+  "job": "420",
+  "name": "快速之刀",
+  "src": "client",
+  "sprite": 10
+ },
+ "4201003": {
+  "job": "420",
+  "name": "速度激發",
+  "src": "client",
+  "sprite": 43
+ },
+ "4201004": {
+  "job": "420",
+  "name": "妙手術",
+  "src": "client",
+  "sprite": 45
+ },
+ "4201005": {
+  "job": "420",
+  "name": "迴旋斬",
+  "src": "client",
+  "sprite": 40
+ },
+ "5100000": {
+  "job": "510",
+  "name": "體魄強健",
+  "src": "client",
+  "sprite": 11
+ },
+ "5100001": {
+  "job": "510",
+  "name": "精通指虎",
+  "src": "client",
+  "sprite": 121
+ },
+ "5101002": {
+  "job": "510",
+  "name": "迴旋肘擊",
+  "src": "client",
+  "sprite": 106
+ },
+ "5101003": {
+  "job": "510",
+  "name": "昇龍拳",
+  "src": "client",
+  "sprite": 13
+ },
+ "5101004": {
+  "job": "510",
+  "name": "狂暴衝擊　",
+  "src": "client",
+  "sprite": 111
+ },
+ "5101005": {
+  "job": "510",
+  "name": "魔力再生",
+  "src": "client",
+  "sprite": 25
+ },
+ "5101006": {
+  "job": "510",
+  "name": "致命快打",
+  "src": "client",
+  "sprite": 75
+ },
+ "5101007": {
+  "job": "510",
+  "name": "偽裝術",
+  "src": "client",
+  "sprite": 22
+ },
+ "5200000": {
+  "job": "520",
+  "name": "精通槍法",
+  "src": "client",
+  "sprite": 106
+ },
+ "5201001": {
+  "job": "520",
+  "name": "散射",
+  "src": "client",
+  "sprite": 54
+ },
+ "5201002": {
+  "job": "520",
+  "name": "炸彈投擲",
+  "src": "client",
+  "sprite": 83
+ },
+ "5201003": {
+  "job": "520",
+  "name": "迅雷再起",
+  "src": "client",
+  "sprite": 104
+ },
+ "5201004": {
+  "job": "520",
+  "name": "偽裝射擊",
+  "src": "client",
+  "sprite": 65
+ },
+ "5201005": {
+  "job": "520",
+  "name": "緩降術",
+  "src": "client",
+  "sprite": 11
+ },
+ "5201006": {
+  "job": "520",
+  "name": "脫離戰場",
+  "src": "client",
+  "sprite": 89
+ }
+}
