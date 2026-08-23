@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -15,8 +15,12 @@ import {
   Map as MapIcon,
   Timer,
   Dices,
+  ScrollText,
+  Sparkles,
+  Target,
+  ChevronDown,
 } from "lucide-react";
-import { navItems, navHref } from "@/nav";
+import { navGroups, navHref, type NavItem } from "@/nav";
 import { LIGHT_TOKENS, DARK_TOKENS, useDarkMode, themeVars } from "./theme";
 
 const NAV_ICONS: Record<
@@ -26,10 +30,13 @@ const NAV_ICONS: Record<
   home: Home,
   monsters: Search,
   gacha: Dices,
+  quests: ScrollText,
   fashion: Shirt,
   party: Users,
   map: MapIcon,
   "boss-timer": Timer,
+  skills: Sparkles,
+  "skill-build": Target,
 };
 
 // 偵探帽 + 放大鏡標誌。用 CSS var 上色（不是 media query），
@@ -67,7 +74,112 @@ function Logo({ size }: { size: number }) {
   );
 }
 
-function NavLinks({
+function NavEntry({
+  item,
+  pathname,
+  linkClassName,
+  onNavigate,
+}: {
+  item: NavItem;
+  pathname: string;
+  linkClassName: (isActive: boolean, enabled: boolean) => string;
+  onNavigate?: () => void;
+}) {
+  const Icon = NAV_ICONS[item.key];
+  const href = navHref(item.path);
+  const isActive = item.enabled && pathname === href;
+  return (
+    <Link
+      href={item.enabled ? href : "#"}
+      aria-disabled={!item.enabled}
+      onClick={(e) => {
+        if (!item.enabled) {
+          e.preventDefault();
+          return;
+        }
+        onNavigate?.();
+      }}
+      className={linkClassName(isActive, item.enabled)}
+    >
+      {Icon && <Icon size={15} />}
+      {item.label}
+      {!item.enabled && (
+        <span className="text-[10px] bg-[var(--accent-soft)] text-[var(--text-muted)] rounded-full px-1.5 py-0.5">
+          籌備中
+        </span>
+      )}
+    </Link>
+  );
+}
+
+/** 桌機版：兩個主選單（查詢／工具），點了展開子選單。 */
+function NavMenus({
+  pathname,
+  className,
+  linkClassName,
+}: {
+  pathname: string;
+  className: string;
+  linkClassName: (isActive: boolean, enabled: boolean) => string;
+}) {
+  const [open, setOpen] = useState<string | null>(null);
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(null);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
+    document.addEventListener("mousedown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <nav ref={ref} className={className}>
+      {navGroups.map((group) => {
+        const groupActive = group.items.some(
+          (i) => i.enabled && pathname === navHref(i.path),
+        );
+        return (
+          <div key={group.key} className="relative">
+            <button
+              onClick={() => setOpen(open === group.key ? null : group.key)}
+              aria-expanded={open === group.key}
+              className={`${linkClassName(groupActive, true)} cursor-pointer`}
+            >
+              {group.label}
+              <ChevronDown
+                size={14}
+                className={`transition-transform ${open === group.key ? "rotate-180" : ""}`}
+              />
+            </button>
+            {open === group.key && (
+              <div className="absolute left-0 top-full z-40 mt-1 min-w-44 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg">
+                {group.items.map((item) => (
+                  <NavEntry
+                    key={item.key}
+                    item={item}
+                    pathname={pathname}
+                    linkClassName={linkClassName}
+                    onNavigate={() => setOpen(null)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
+
+/** 手機版側邊選單：分組攤平列出，不做展開收合（少一層點擊）。 */
+function NavList({
   pathname,
   className,
   linkClassName,
@@ -80,34 +192,22 @@ function NavLinks({
 }) {
   return (
     <nav className={className}>
-      {navItems.map((item) => {
-        const Icon = NAV_ICONS[item.key];
-        const href = navHref(item.path);
-        const isActive = item.enabled && pathname === href;
-        return (
-          <Link
-            key={item.key}
-            href={item.enabled ? href : "#"}
-            aria-disabled={!item.enabled}
-            onClick={(e) => {
-              if (!item.enabled) {
-                e.preventDefault();
-                return;
-              }
-              onNavigate?.();
-            }}
-            className={linkClassName(isActive, item.enabled)}
-          >
-            {Icon && <Icon size={15} />}
-            {item.label}
-            {!item.enabled && (
-              <span className="text-[10px] bg-[var(--accent-soft)] text-[var(--text-muted)] rounded-full px-1.5 py-0.5">
-                籌備中
-              </span>
-            )}
-          </Link>
-        );
-      })}
+      {navGroups.map((group) => (
+        <div key={group.key} className="mb-2">
+          <div className="px-3 py-1 text-[11px] font-semibold text-[var(--text-muted)]">
+            {group.label}
+          </div>
+          {group.items.map((item) => (
+            <NavEntry
+              key={item.key}
+              item={item}
+              pathname={pathname}
+              linkClassName={linkClassName}
+              onNavigate={onNavigate}
+            />
+          ))}
+        </div>
+      ))}
     </nav>
   );
 }
@@ -160,9 +260,9 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             </span> */}
           </Link>
 
-          <NavLinks
+          <NavMenus
             pathname={pathname}
-            className="hidden md:flex items-center gap-1 flex-1 overflow-x-auto"
+            className="hidden md:flex items-center gap-1 flex-1"
             linkClassName={linkClassName}
           />
 
@@ -207,7 +307,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
               <X size={19} />
             </button>
           </div>
-          <NavLinks
+          <NavList
             pathname={pathname}
             className="flex flex-col gap-0.5 px-3 py-3"
             linkClassName={linkClassName}

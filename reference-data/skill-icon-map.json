@@ -1,0 +1,1625 @@
+{
+ "1000000": {
+  "job": "100",
+  "name": "生命淨化",
+  "sprite": 118,
+  "src": "client"
+ },
+ "1000001": {
+  "job": "100",
+  "name": "生命擴展",
+  "sprite": 0,
+  "src": "client"
+ },
+ "1000002": {
+  "file": "hpRestore.png",
+  "job": "100",
+  "name": "生命恢復",
+  "src": "ref"
+ },
+ "1001003": {
+  "job": "100",
+  "name": "自身強化",
+  "sprite": 82,
+  "src": "client"
+ },
+ "1001004": {
+  "job": "100",
+  "name": "魔天一擊",
+  "sprite": 142,
+  "src": "client"
+ },
+ "1001005": {
+  "job": "100",
+  "name": "劍氣縱橫",
+  "sprite": 50,
+  "src": "client"
+ },
+ "1100000": {
+  "job": "110",
+  "name": "精準之劍",
+  "sprite": 67,
+  "src": "client"
+ },
+ "1100001": {
+  "job": "110",
+  "name": "精準之斧",
+  "sprite": 15,
+  "src": "client"
+ },
+ "1100002": {
+  "file": "finalAttackSword.png",
+  "job": "110",
+  "name": "終極之劍",
+  "src": "ref"
+ },
+ "1100003": {
+  "job": "110",
+  "name": "終極之斧",
+  "sprite": 2,
+  "src": "client"
+ },
+ "1101004": {
+  "job": "110",
+  "name": "快速之劍",
+  "sprite": 64,
+  "src": "client"
+ },
+ "1101005": {
+  "job": "110",
+  "name": "快速之斧",
+  "sprite": 62,
+  "src": "client"
+ },
+ "1101006": {
+  "job": "110",
+  "name": "激勵",
+  "sprite": 45,
+  "src": "client"
+ },
+ "1101007": {
+  "job": "110",
+  "name": "反射之盾",
+  "sprite": 69,
+  "src": "client"
+ },
+ "1110000": {
+  "file": "mpRecoveryHero.png",
+  "job": "111",
+  "name": "魔力恢復",
+  "src": "ref"
+ },
+ "1110001": {
+  "file": "shieldMastery.png",
+  "job": "111",
+  "name": "盾防精通",
+  "src": "ref"
+ },
+ "1111002": {
+  "file": "combatMastery.png",
+  "job": "111",
+  "name": "鬥氣集中",
+  "src": "ref"
+ },
+ "1111003": {
+  "file": "brandishSword.png",
+  "job": "111",
+  "name": "黑暗之劍",
+  "src": "ref"
+ },
+ "1111004": {
+  "file": "brandishAxe.png",
+  "job": "111",
+  "name": "黑暗之斧",
+  "src": "ref"
+ },
+ "1111005": {
+  "file": "panicSword.png",
+  "job": "111",
+  "name": "氣絕劍",
+  "src": "ref"
+ },
+ "1111006": {
+  "file": "panicAxe.png",
+  "job": "111",
+  "name": "氣絕斧",
+  "src": "ref"
+ },
+ "1111007": {
+  "file": "guardCancel.png",
+  "job": "111",
+  "name": "防禦消除",
+  "src": "ref"
+ },
+ "1111008": {
+  "file": "tigerOfFury.png",
+  "job": "111",
+  "name": "虎咆哮",
+  "src": "ref"
+ },
+ "1120003": {
+  "file": "advancedCombatMastery.png",
+  "job": "112",
+  "name": "進階鬥氣",
+  "src": "ref"
+ },
+ "1120004": {
+  "file": "sturdyArmor.png",
+  "job": "112",
+  "name": "武神防禦",
+  "src": "ref"
+ },
+ "1120005": {
+  "file": "ultimateShield.png",
+  "job": "112",
+  "name": "究極神盾",
+  "src": "ref"
+ },
+ "1121000": {
+  "file": "mapleWarrior.png",
+  "job": "112",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "1121001": {
+  "file": "absolutecity.png",
+  "job": "112",
+  "name": "絕對引力",
+  "src": "ref"
+ },
+ "1121002": {
+  "file": "powerGuard.png",
+  "job": "112",
+  "name": "格擋",
+  "src": "ref"
+ },
+ "1121006": {
+  "file": "ultimateSpear.png",
+  "job": "112",
+  "name": "究極突刺",
+  "src": "ref"
+ },
+ "1121008": {
+  "file": "monsterMagnet.png",
+  "job": "112",
+  "name": "無雙劍舞",
+  "src": "ref"
+ },
+ "1121010": {
+  "file": "berserk.png",
+  "job": "112",
+  "name": "鬥氣爆發",
+  "src": "ref"
+ },
+ "1121011": {
+  "file": "heroesWill.png",
+  "job": "112",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "1200000": {
+  "job": "120",
+  "name": "精準之劍",
+  "sprite": 63,
+  "src": "client"
+ },
+ "1200001": {
+  "job": "120",
+  "name": "精準之棍",
+  "sprite": 21,
+  "src": "client"
+ },
+ "1200002": {
+  "file": "finalAttackSword.png",
+  "job": "120",
+  "name": "終極之劍",
+  "src": "ref"
+ },
+ "1200003": {
+  "file": "finalAttackBluntWeapon.png",
+  "job": "120",
+  "name": "終極之棍",
+  "src": "ref"
+ },
+ "1201004": {
+  "job": "120",
+  "name": "快速之劍",
+  "sprite": 13,
+  "src": "client"
+ },
+ "1201005": {
+  "job": "120",
+  "name": "快速之棍",
+  "sprite": 36,
+  "src": "client"
+ },
+ "1201006": {
+  "job": "120",
+  "name": "降魔咒",
+  "sprite": 65,
+  "src": "client"
+ },
+ "1201007": {
+  "job": "120",
+  "name": "反射之盾",
+  "sprite": 5,
+  "src": "client"
+ },
+ "1210000": {
+  "file": "mpRecoveryKnight.png",
+  "job": "121",
+  "name": "魔力恢復",
+  "src": "ref"
+ },
+ "1210001": {
+  "file": "shieldMastery.png",
+  "job": "121",
+  "name": "盾防精通",
+  "src": "ref"
+ },
+ "1220005": {
+  "file": "sturdyArmor.png",
+  "job": "122",
+  "name": "武神防禦",
+  "src": "ref"
+ },
+ "1220006": {
+  "file": "ultimateShield.png",
+  "job": "122",
+  "name": "究極神盾",
+  "src": "ref"
+ },
+ "1220010": {
+  "file": "elementalReinforcement.png",
+  "job": "122",
+  "name": "屬性強化",
+  "src": "ref"
+ },
+ "1221000": {
+  "file": "mapleWarrior.png",
+  "job": "122",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "1221001": {
+  "file": "absolutecity.png",
+  "job": "122",
+  "name": "絕對引力",
+  "src": "ref"
+ },
+ "1221002": {
+  "file": "powerGuard.png",
+  "job": "122",
+  "name": "格擋",
+  "src": "ref"
+ },
+ "1221003": {
+  "file": "holyChargeSword.png",
+  "job": "122",
+  "name": "聖靈之劍",
+  "src": "ref"
+ },
+ "1221004": {
+  "file": "holyChargeBlunt.png",
+  "job": "122",
+  "name": "聖靈之棍",
+  "src": "ref"
+ },
+ "1221007": {
+  "file": "ultimateSpear.png",
+  "job": "122",
+  "name": "究極突刺",
+  "src": "ref"
+ },
+ "1221009": {
+  "file": "blast.png",
+  "job": "122",
+  "name": "騎士衝擊波",
+  "src": "ref"
+ },
+ "1221011": {
+  "file": "heavensHammer.png",
+  "job": "122",
+  "name": "鬼神之擊",
+  "src": "ref"
+ },
+ "1221012": {
+  "file": "heroesWill.png",
+  "job": "122",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "1300000": {
+  "job": "130",
+  "name": "精準之槍",
+  "sprite": 51,
+  "src": "client"
+ },
+ "1300001": {
+  "job": "130",
+  "name": "精準之矛",
+  "sprite": 12,
+  "src": "client"
+ },
+ "1300002": {
+  "file": "finalAttackSpear.png",
+  "job": "130",
+  "name": "終極之槍",
+  "src": "ref"
+ },
+ "1300003": {
+  "file": "finalAttackPolearm.png",
+  "job": "130",
+  "name": "終極之矛",
+  "src": "ref"
+ },
+ "1301004": {
+  "job": "130",
+  "name": "快速之槍",
+  "sprite": 5,
+  "src": "client"
+ },
+ "1301005": {
+  "job": "130",
+  "name": "快速之矛",
+  "sprite": 64,
+  "src": "client"
+ },
+ "1301006": {
+  "job": "130",
+  "name": "禦魔陣",
+  "sprite": 19,
+  "src": "client"
+ },
+ "1301007": {
+  "job": "130",
+  "name": "神聖之火",
+  "sprite": 6,
+  "src": "client"
+ },
+ "1310000": {
+  "file": "magicResistance.png",
+  "job": "131",
+  "name": "魔法抵抗",
+  "src": "ref"
+ },
+ "1311001": {
+  "file": "dragonBusterSpear.png",
+  "job": "131",
+  "name": "槍連擊",
+  "src": "ref"
+ },
+ "1311002": {
+  "file": "dragonBusterPolearm.png",
+  "job": "131",
+  "name": "矛連擊",
+  "src": "ref"
+ },
+ "1311003": {
+  "file": "dragonFurySpear.png",
+  "job": "131",
+  "name": "無雙槍",
+  "src": "ref"
+ },
+ "1311004": {
+  "file": "dragonFuryPolearm.png",
+  "job": "131",
+  "name": "無雙矛",
+  "src": "ref"
+ },
+ "1311005": {
+  "file": "dragonSacrifice.png",
+  "job": "131",
+  "name": "龍之獻祭",
+  "src": "ref"
+ },
+ "1311006": {
+  "file": "dragonRoar.png",
+  "job": "131",
+  "name": "龍咆哮",
+  "src": "ref"
+ },
+ "1311007": {
+  "file": "powerCrash.png",
+  "job": "131",
+  "name": "力量消除",
+  "src": "ref"
+ },
+ "1311008": {
+  "file": "dragonSpirit.png",
+  "job": "131",
+  "name": "龍之魂",
+  "src": "ref"
+ },
+ "1320005": {
+  "file": "sturdyArmor.png",
+  "job": "132",
+  "name": "武神防禦",
+  "src": "ref"
+ },
+ "1320006": {
+  "file": "darkForce.png",
+  "job": "132",
+  "name": "黑暗力量",
+  "src": "ref"
+ },
+ "1320008": {
+  "file": "darkSpiritHeal.png",
+  "job": "132",
+  "name": "闇靈治癒",
+  "src": "ref"
+ },
+ "1320009": {
+  "file": "darkGuardian.png",
+  "job": "132",
+  "name": "黑暗守護",
+  "src": "ref"
+ },
+ "1321000": {
+  "file": "mapleWarrior.png",
+  "job": "132",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "1321001": {
+  "file": "absolutecity.png",
+  "job": "132",
+  "name": "絕對引力",
+  "src": "ref"
+ },
+ "1321002": {
+  "file": "powerGuard.png",
+  "job": "132",
+  "name": "格擋",
+  "src": "ref"
+ },
+ "1321003": {
+  "file": "ultimateSpear.png",
+  "job": "132",
+  "name": "究極突刺",
+  "src": "ref"
+ },
+ "1321007": {
+  "file": "darkSoul.png",
+  "job": "132",
+  "name": "暗之靈魂",
+  "src": "ref"
+ },
+ "1321010": {
+  "file": "heroesWill.png",
+  "job": "132",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "2000000": {
+  "job": "200",
+  "name": "魔力淨化",
+  "sprite": 84,
+  "src": "client"
+ },
+ "2000001": {
+  "job": "200",
+  "name": "魔力擴展",
+  "sprite": 67,
+  "src": "client"
+ },
+ "2001002": {
+  "job": "200",
+  "name": "魔心防禦",
+  "sprite": 13,
+  "src": "client"
+ },
+ "2001003": {
+  "job": "200",
+  "name": "魔力之盾",
+  "sprite": 58,
+  "src": "client"
+ },
+ "2001004": {
+  "job": "200",
+  "name": "魔靈彈",
+  "sprite": 15,
+  "src": "client"
+ },
+ "2001005": {
+  "how": "人工指定",
+  "job": "200",
+  "name": "魔力爪",
+  "sprite": 21,
+  "src": "client"
+ },
+ "2100000": {
+  "job": "210",
+  "name": "魔力吸收",
+  "sprite": 63,
+  "src": "client"
+ },
+ "2101001": {
+  "job": "210",
+  "name": "精神強化",
+  "sprite": 79,
+  "src": "client"
+ },
+ "2101002": {
+  "job": "210",
+  "name": "瞬間移動",
+  "sprite": 39,
+  "src": "client"
+ },
+ "2101003": {
+  "job": "210",
+  "name": "緩速術",
+  "sprite": 31,
+  "src": "client"
+ },
+ "2101004": {
+  "job": "210",
+  "name": "火焰箭",
+  "sprite": 16,
+  "src": "client"
+ },
+ "2101005": {
+  "job": "210",
+  "name": "毒霧",
+  "sprite": 70,
+  "src": "client"
+ },
+ "2110000": {
+  "file": "firePoisonResistance.png",
+  "job": "211",
+  "name": "火毒抵抗",
+  "src": "ref"
+ },
+ "2111003": {
+  "file": "deadlyPoison.png",
+  "job": "211",
+  "name": "致命毒霧",
+  "src": "ref"
+ },
+ "2111004": {
+  "file": "magicSeal.png",
+  "job": "211",
+  "name": "魔法封印",
+  "src": "ref"
+ },
+ "2121000": {
+  "file": "mapleWarrior.png",
+  "job": "212",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "2121001": {
+  "file": "genesis.png",
+  "job": "212",
+  "name": "核爆術",
+  "src": "ref"
+ },
+ "2121002": {
+  "file": "magicReflect.png",
+  "job": "212",
+  "name": "魔法反射",
+  "src": "ref"
+ },
+ "2121003": {
+  "file": "fieryHell.png",
+  "job": "212",
+  "name": "炎靈地獄",
+  "src": "ref"
+ },
+ "2121004": {
+  "file": "infinity.png",
+  "job": "212",
+  "name": "魔力無限",
+  "src": "ref"
+ },
+ "2121005": {
+  "file": "summonIfritI.png",
+  "job": "212",
+  "name": "召喚冰魔",
+  "src": "ref"
+ },
+ "2121006": {
+  "file": "paralyze.png",
+  "job": "212",
+  "name": "劇毒麻痺",
+  "src": "ref"
+ },
+ "2121007": {
+  "file": "meteorShower.png",
+  "job": "212",
+  "name": "火流星",
+  "src": "ref"
+ },
+ "2121008": {
+  "file": "heroesWill.png",
+  "job": "212",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "2200000": {
+  "job": "220",
+  "name": "魔力吸收",
+  "sprite": 14,
+  "src": "client"
+ },
+ "2201001": {
+  "job": "220",
+  "name": "精神強化",
+  "sprite": 2,
+  "src": "client"
+ },
+ "2201002": {
+  "job": "220",
+  "name": "瞬間移動",
+  "sprite": 3,
+  "src": "client"
+ },
+ "2201003": {
+  "job": "220",
+  "name": "緩速術",
+  "sprite": 74,
+  "src": "client"
+ },
+ "2201004": {
+  "job": "220",
+  "name": "冰錐術",
+  "sprite": 16,
+  "src": "client"
+ },
+ "2201005": {
+  "job": "220",
+  "name": "電閃雷鳴",
+  "sprite": 57,
+  "src": "client"
+ },
+ "2210000": {
+  "file": "iceLightningResistance.png",
+  "job": "221",
+  "name": "冰雷抵抗",
+  "src": "ref"
+ },
+ "2211004": {
+  "file": "magicSeal.png",
+  "job": "221",
+  "name": "魔法封印",
+  "src": "ref"
+ },
+ "2221000": {
+  "file": "mapleWarrior.png",
+  "job": "222",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "2221001": {
+  "file": "genesis.png",
+  "job": "222",
+  "name": "核爆術",
+  "src": "ref"
+ },
+ "2221002": {
+  "file": "magicReflect.png",
+  "job": "222",
+  "name": "魔法反射",
+  "src": "ref"
+ },
+ "2221003": {
+  "file": "iceInferno.png",
+  "job": "222",
+  "name": "寒冰地獄",
+  "src": "ref"
+ },
+ "2221004": {
+  "file": "infinity.png",
+  "job": "222",
+  "name": "魔力無限",
+  "src": "ref"
+ },
+ "2221005": {
+  "file": "summonIfritF.png",
+  "job": "222",
+  "name": "召喚火炎神",
+  "src": "ref"
+ },
+ "2221006": {
+  "file": "chainLightning.png",
+  "job": "222",
+  "name": "閃電連擊",
+  "src": "ref"
+ },
+ "2221007": {
+  "file": "blizzard.png",
+  "job": "222",
+  "name": "暴風雪",
+  "src": "ref"
+ },
+ "2221008": {
+  "file": "heroesWill.png",
+  "job": "222",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "2300000": {
+  "job": "230",
+  "name": "魔力吸收",
+  "sprite": 33,
+  "src": "client"
+ },
+ "2301001": {
+  "job": "230",
+  "name": "瞬間移動",
+  "sprite": 41,
+  "src": "client"
+ },
+ "2301002": {
+  "job": "230",
+  "name": "群體治癒",
+  "sprite": 53,
+  "src": "client"
+ },
+ "2301003": {
+  "job": "230",
+  "name": "神聖之光",
+  "sprite": 83,
+  "src": "client"
+ },
+ "2301004": {
+  "job": "230",
+  "name": "天使祝福",
+  "sprite": 19,
+  "src": "client"
+ },
+ "2301005": {
+  "job": "230",
+  "name": "神聖之箭",
+  "sprite": 43,
+  "src": "client"
+ },
+ "2310000": {
+  "file": "magicResistance.png",
+  "job": "231",
+  "name": "魔法抵抗",
+  "src": "ref"
+ },
+ "2311001": {
+  "file": "dispel.png",
+  "job": "231",
+  "name": "淨化",
+  "src": "ref"
+ },
+ "2311002": {
+  "file": "mysticDoor.png",
+  "job": "231",
+  "name": "時空門",
+  "src": "ref"
+ },
+ "2311003": {
+  "file": "holySymbol.png",
+  "job": "231",
+  "name": "神聖祈禱",
+  "src": "ref"
+ },
+ "2311004": {
+  "file": "shiningRay.png",
+  "job": "231",
+  "name": "聖光",
+  "src": "ref"
+ },
+ "2311006": {
+  "file": "summonHolyDragon.png",
+  "job": "231",
+  "name": "聖龍召喚",
+  "src": "ref"
+ },
+ "2321000": {
+  "file": "mapleWarrior.png",
+  "job": "232",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "2321001": {
+  "file": "genesis.png",
+  "job": "232",
+  "name": "核爆術",
+  "src": "ref"
+ },
+ "2321002": {
+  "file": "magicReflect.png",
+  "job": "232",
+  "name": "魔法反射",
+  "src": "ref"
+ },
+ "2321003": {
+  "file": "summonDragon.png",
+  "job": "232",
+  "name": "召喚神龍",
+  "src": "ref"
+ },
+ "2321004": {
+  "file": "infinity.png",
+  "job": "232",
+  "name": "魔力無限",
+  "src": "ref"
+ },
+ "2321005": {
+  "file": "holyShield.png",
+  "job": "232",
+  "name": "聖盾護鎧",
+  "src": "ref"
+ },
+ "2321006": {
+  "file": "resurrection.png",
+  "job": "232",
+  "name": "復甦之光",
+  "src": "ref"
+ },
+ "2321007": {
+  "file": "angelRay.png",
+  "job": "232",
+  "name": "天使之箭",
+  "src": "ref"
+ },
+ "2321008": {
+  "file": "heavensDoor.png",
+  "job": "232",
+  "name": "天怒",
+  "src": "ref"
+ },
+ "2321009": {
+  "file": "heroesWill.png",
+  "job": "232",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "3000000": {
+  "file": "archeryMastery.png",
+  "job": "300",
+  "name": "精準強化",
+  "src": "ref"
+ },
+ "3000001": {
+  "job": "300",
+  "name": "霸王箭",
+  "sprite": 29,
+  "src": "client"
+ },
+ "3000002": {
+  "file": "eyeOfTheAmazon.png",
+  "job": "300",
+  "name": "百步穿楊",
+  "src": "ref"
+ },
+ "3001003": {
+  "job": "300",
+  "name": "集中術",
+  "sprite": 93,
+  "src": "client"
+ },
+ "3001004": {
+  "job": "300",
+  "name": "斷魂箭",
+  "sprite": 67,
+  "src": "client"
+ },
+ "3001005": {
+  "job": "300",
+  "name": "二連箭",
+  "sprite": 87,
+  "src": "client"
+ },
+ "3100000": {
+  "job": "310",
+  "name": "精準之弓",
+  "sprite": 0,
+  "src": "client"
+ },
+ "3100001": {
+  "file": "finalAttackBow.png",
+  "job": "310",
+  "name": "終極之弓",
+  "src": "ref"
+ },
+ "3101002": {
+  "job": "310",
+  "name": "快速之弓",
+  "sprite": 53,
+  "src": "client"
+ },
+ "3101003": {
+  "file": "powerKnockBack.png",
+  "job": "310",
+  "name": "強弓",
+  "src": "ref"
+ },
+ "3101004": {
+  "how": "人工指定",
+  "job": "310",
+  "name": "無形之箭",
+  "sprite": 46,
+  "src": "client"
+ },
+ "3101005": {
+  "job": "310",
+  "name": "炸彈箭",
+  "sprite": 42,
+  "src": "client"
+ },
+ "3110000": {
+  "file": "nimbleFeet.png",
+  "job": "311",
+  "name": "疾風步",
+  "src": "ref"
+ },
+ "3111002": {
+  "file": "puppet.png",
+  "job": "311",
+  "name": "替身術",
+  "src": "ref"
+ },
+ "3111003": {
+  "file": "inferno.png",
+  "job": "311",
+  "name": "烈火箭",
+  "src": "ref"
+ },
+ "3111005": {
+  "file": "summonSilverHawk.png",
+  "job": "311",
+  "name": "銀鷹召喚",
+  "src": "ref"
+ },
+ "3120005": {
+  "file": "bowExpert.png",
+  "job": "312",
+  "name": "弓術精通",
+  "src": "ref"
+ },
+ "3121000": {
+  "file": "mapleWarrior.png",
+  "job": "312",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "3121002": {
+  "file": "sharpEyes.png",
+  "job": "312",
+  "name": "會心之眼",
+  "src": "ref"
+ },
+ "3121003": {
+  "file": "dragonBreath.png",
+  "job": "312",
+  "name": "龍魂之箭",
+  "src": "ref"
+ },
+ "3121004": {
+  "file": "hurricane.png",
+  "job": "312",
+  "name": "暴風神射",
+  "src": "ref"
+ },
+ "3121006": {
+  "file": "phoenix.png",
+  "job": "312",
+  "name": "召喚鳳凰",
+  "src": "ref"
+ },
+ "3121007": {
+  "file": "hamstringShot.png",
+  "job": "312",
+  "name": "牽制射擊",
+  "src": "ref"
+ },
+ "3121008": {
+  "file": "concentrate.png",
+  "job": "312",
+  "name": "念力集中",
+  "src": "ref"
+ },
+ "3121009": {
+  "file": "heroesWill.png",
+  "job": "312",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "3200000": {
+  "job": "320",
+  "name": "精準之弩",
+  "sprite": 56,
+  "src": "client"
+ },
+ "3200001": {
+  "file": "finalAttackCrossbow.png",
+  "job": "320",
+  "name": "終極之弩",
+  "src": "ref"
+ },
+ "3201002": {
+  "job": "320",
+  "name": "快速之弩",
+  "sprite": 31,
+  "src": "client"
+ },
+ "3201003": {
+  "job": "320",
+  "name": "強弩",
+  "sprite": 58,
+  "src": "client"
+ },
+ "3201004": {
+  "how": "人工指定",
+  "job": "320",
+  "name": "無形之箭",
+  "sprite": 59,
+  "src": "client"
+ },
+ "3201005": {
+  "job": "320",
+  "name": "穿透之箭",
+  "sprite": 17,
+  "src": "client"
+ },
+ "3210000": {
+  "file": "nimbleFeet.png",
+  "job": "321",
+  "name": "疾風步",
+  "src": "ref"
+ },
+ "3211003": {
+  "file": "blizzardCrossbow.png",
+  "job": "321",
+  "name": "寒冰箭",
+  "src": "ref"
+ },
+ "3211005": {
+  "file": "summonGoldenEagle.png",
+  "job": "321",
+  "name": "金鷹召喚",
+  "src": "ref"
+ },
+ "3220004": {
+  "file": "crossbowExpert.png",
+  "job": "322",
+  "name": "弩術精通",
+  "src": "ref"
+ },
+ "3221000": {
+  "file": "mapleWarrior.png",
+  "job": "322",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "3221001": {
+  "file": "piercingArrowMarksman.png",
+  "job": "322",
+  "name": "光速神弩",
+  "src": "ref"
+ },
+ "3221002": {
+  "file": "sharpEyes.png",
+  "job": "322",
+  "name": "會心之眼",
+  "src": "ref"
+ },
+ "3221003": {
+  "file": "dragonBreath.png",
+  "job": "322",
+  "name": "龍魂之箭",
+  "src": "ref"
+ },
+ "3221005": {
+  "file": "frostprey.png",
+  "job": "322",
+  "name": "召喚銀隼",
+  "src": "ref"
+ },
+ "3221006": {
+  "file": "blind.png",
+  "job": "322",
+  "name": "黑暗狙擊",
+  "src": "ref"
+ },
+ "3221007": {
+  "file": "snipe.png",
+  "job": "322",
+  "name": "必殺狙擊",
+  "src": "ref"
+ },
+ "3221008": {
+  "file": "heroesWill.png",
+  "job": "322",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "4000000": {
+  "job": "400",
+  "name": "幻化術",
+  "sprite": 53,
+  "src": "client"
+ },
+ "4000001": {
+  "job": "400",
+  "name": "鷹之眼",
+  "sprite": 21,
+  "src": "client"
+ },
+ "4001002": {
+  "job": "400",
+  "name": "詛咒術",
+  "sprite": 26,
+  "src": "client"
+ },
+ "4001003": {
+  "job": "400",
+  "name": "隱身術",
+  "sprite": 108,
+  "src": "client"
+ },
+ "4001334": {
+  "job": "400",
+  "name": "劈空斬",
+  "sprite": 12,
+  "src": "client"
+ },
+ "4001344": {
+  "file": "luckySeven.png",
+  "job": "400",
+  "name": "雙飛斬",
+  "src": "ref"
+ },
+ "4100000": {
+  "job": "410",
+  "name": "精準暗器",
+  "sprite": 14,
+  "src": "client"
+ },
+ "4100001": {
+  "file": "criticalThrow.png",
+  "job": "410",
+  "name": "強力投擲",
+  "src": "ref"
+ },
+ "4100002": {
+  "file": "recovery.png",
+  "job": "410",
+  "name": "恢復術",
+  "src": "ref"
+ },
+ "4101003": {
+  "job": "410",
+  "name": "極速暗殺",
+  "sprite": 29,
+  "src": "client"
+ },
+ "4101004": {
+  "job": "410",
+  "name": "速度激發",
+  "sprite": 10,
+  "src": "client"
+ },
+ "4101005": {
+  "job": "410",
+  "name": "吸血術",
+  "sprite": 17,
+  "src": "client"
+ },
+ "4111003": {
+  "file": "shadowWeb.png",
+  "job": "411",
+  "name": "影網術",
+  "src": "ref"
+ },
+ "4111006": {
+  "file": "doubleJump.png",
+  "job": "411",
+  "name": "二段跳",
+  "src": "ref"
+ },
+ "4120002": {
+  "file": "shadowerInstinct.png",
+  "job": "412",
+  "name": "瞬身迴避",
+  "src": "ref"
+ },
+ "4120005": {
+  "file": "toxicVenom.png",
+  "job": "412",
+  "name": "飛毒殺",
+  "src": "ref"
+ },
+ "4121000": {
+  "file": "mapleWarrior.png",
+  "job": "412",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "4121003": {
+  "file": "tauntNL.png",
+  "job": "412",
+  "name": "挑釁",
+  "src": "ref"
+ },
+ "4121004": {
+  "file": "ninjaAmbush.png",
+  "job": "412",
+  "name": "忍影瞬殺",
+  "src": "ref"
+ },
+ "4121006": {
+  "file": "expertThrowingStarHandling.png",
+  "job": "412",
+  "name": "無形鏢",
+  "src": "ref"
+ },
+ "4121007": {
+  "file": "tripleThrow.png",
+  "job": "412",
+  "name": "三飛閃",
+  "src": "ref"
+ },
+ "4121008": {
+  "file": "ninjaStorm.png",
+  "job": "412",
+  "name": "忍術風影",
+  "src": "ref"
+ },
+ "4121009": {
+  "file": "heroesWill.png",
+  "job": "412",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "4200000": {
+  "job": "420",
+  "name": "精準之刀",
+  "sprite": 17,
+  "src": "client"
+ },
+ "4200001": {
+  "file": "recovery.png",
+  "job": "420",
+  "name": "恢復術",
+  "src": "ref"
+ },
+ "4201002": {
+  "job": "420",
+  "name": "快速之刀",
+  "sprite": 10,
+  "src": "client"
+ },
+ "4201003": {
+  "job": "420",
+  "name": "速度激發",
+  "sprite": 43,
+  "src": "client"
+ },
+ "4201004": {
+  "job": "420",
+  "name": "妙手術",
+  "sprite": 45,
+  "src": "client"
+ },
+ "4201005": {
+  "job": "420",
+  "name": "迴旋斬",
+  "sprite": 40,
+  "src": "client"
+ },
+ "4210000": {
+  "file": "shieldMasteryThief.png",
+  "job": "421",
+  "name": "強化盾",
+  "src": "ref"
+ },
+ "4211001": {
+  "file": "mesoGuard.png",
+  "job": "421",
+  "name": "血魔轉換",
+  "src": "ref"
+ },
+ "4211002": {
+  "file": "assaulter.png",
+  "job": "421",
+  "name": "落葉斬",
+  "src": "ref"
+ },
+ "4211003": {
+  "file": "mesoUp.png",
+  "job": "421",
+  "name": "勇者掠奪術",
+  "src": "ref"
+ },
+ "4211005": {
+  "file": "mesoGuardShield.png",
+  "job": "421",
+  "name": "楓幣護盾",
+  "src": "ref"
+ },
+ "4211006": {
+  "file": "mesoExplosion.png",
+  "job": "421",
+  "name": "楓幣炸彈",
+  "src": "ref"
+ },
+ "4220002": {
+  "file": "shadowerInstinct.png",
+  "job": "422",
+  "name": "瞬身迴避",
+  "src": "ref"
+ },
+ "4220005": {
+  "file": "venom.png",
+  "job": "422",
+  "name": "飛毒殺",
+  "src": "ref"
+ },
+ "4221000": {
+  "file": "mapleWarrior.png",
+  "job": "422",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "4221001": {
+  "file": "assassinate.png",
+  "job": "422",
+  "name": "致命暗殺",
+  "src": "ref"
+ },
+ "4221003": {
+  "file": "taunt.png",
+  "job": "422",
+  "name": "挑釁",
+  "src": "ref"
+ },
+ "4221004": {
+  "file": "ninjaAmbush.png",
+  "job": "422",
+  "name": "忍影瞬殺",
+  "src": "ref"
+ },
+ "4221008": {
+  "file": "heroesWill.png",
+  "job": "422",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "5000000": {
+  "job": "500",
+  "name": "極限迴避",
+  "sprite": 61,
+  "src": "client"
+ },
+ "5001001": {
+  "file": "straightPunch.png",
+  "job": "500",
+  "name": "衝擊拳",
+  "src": "ref"
+ },
+ "5001002": {
+  "file": "somersaultKick.png",
+  "job": "500",
+  "name": "旋風斬",
+  "src": "ref"
+ },
+ "5001003": {
+  "job": "500",
+  "name": "雙子星攻擊　",
+  "sprite": 28,
+  "src": "client"
+ },
+ "5001005": {
+  "job": "500",
+  "name": "衝鋒",
+  "sprite": 53,
+  "src": "client"
+ },
+ "5100000": {
+  "job": "510",
+  "name": "體魄強健",
+  "sprite": 11,
+  "src": "client"
+ },
+ "5100001": {
+  "job": "510",
+  "name": "精通指虎",
+  "sprite": 121,
+  "src": "client"
+ },
+ "5101002": {
+  "job": "510",
+  "name": "迴旋肘擊",
+  "sprite": 106,
+  "src": "client"
+ },
+ "5101003": {
+  "job": "510",
+  "name": "昇龍拳",
+  "sprite": 13,
+  "src": "client"
+ },
+ "5101004": {
+  "job": "510",
+  "name": "狂暴衝擊　",
+  "sprite": 111,
+  "src": "client"
+ },
+ "5101005": {
+  "job": "510",
+  "name": "魔力再生",
+  "sprite": 25,
+  "src": "client"
+ },
+ "5101006": {
+  "job": "510",
+  "name": "致命快打",
+  "sprite": 75,
+  "src": "client"
+ },
+ "5101007": {
+  "job": "510",
+  "name": "偽裝術",
+  "sprite": 22,
+  "src": "client"
+ },
+ "5110001": {
+  "file": "energyCharge.png",
+  "job": "511",
+  "name": "蓄能激發",
+  "src": "ref"
+ },
+ "5111002": {
+  "file": "energyBlast.png",
+  "job": "511",
+  "name": "能量暴擊",
+  "src": "ref"
+ },
+ "5111004": {
+  "file": "energyDrain.png",
+  "job": "511",
+  "name": "損人利己",
+  "src": "ref"
+ },
+ "5111006": {
+  "file": "shockwave.png",
+  "job": "511",
+  "name": "衝擊波",
+  "src": "ref"
+ },
+ "5121000": {
+  "file": "mapleWarrior.png",
+  "job": "512",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "5121002": {
+  "file": "energyBlast.png",
+  "job": "512",
+  "name": "元氣彈",
+  "src": "ref"
+ },
+ "5121003": {
+  "file": "finalAttack.png",
+  "job": "512",
+  "name": "鬥神降世",
+  "src": "ref"
+ },
+ "5121004": {
+  "file": "flashBlast.png",
+  "job": "512",
+  "name": "閃．爆破",
+  "src": "ref"
+ },
+ "5121008": {
+  "file": "heroesWill.png",
+  "job": "512",
+  "name": "楓葉淨化",
+  "src": "ref"
+ },
+ "5200000": {
+  "job": "520",
+  "name": "精通槍法",
+  "sprite": 106,
+  "src": "client"
+ },
+ "5201001": {
+  "job": "520",
+  "name": "散射",
+  "sprite": 54,
+  "src": "client"
+ },
+ "5201002": {
+  "job": "520",
+  "name": "炸彈投擲",
+  "sprite": 83,
+  "src": "client"
+ },
+ "5201003": {
+  "job": "520",
+  "name": "迅雷再起",
+  "sprite": 104,
+  "src": "client"
+ },
+ "5201004": {
+  "job": "520",
+  "name": "偽裝射擊",
+  "sprite": 65,
+  "src": "client"
+ },
+ "5201005": {
+  "job": "520",
+  "name": "緩降術",
+  "sprite": 11,
+  "src": "client"
+ },
+ "5201006": {
+  "job": "520",
+  "name": "脫離戰場",
+  "sprite": 89,
+  "src": "client"
+ },
+ "5211001": {
+  "file": "summonOctopus.png",
+  "job": "521",
+  "name": "章魚砲台",
+  "src": "ref"
+ },
+ "5211005": {
+  "file": "coldBeam.png",
+  "job": "521",
+  "name": "寒霜噴射",
+  "src": "ref"
+ },
+ "5220002": {
+  "file": "octopusKing.png",
+  "job": "522",
+  "name": "砲台章魚王",
+  "src": "ref"
+ },
+ "5220011": {
+  "file": "preciseCannon.png",
+  "job": "522",
+  "name": "精準砲擊",
+  "src": "ref"
+ },
+ "5221000": {
+  "file": "mapleWarrior.png",
+  "job": "522",
+  "name": "楓葉祝福",
+  "src": "ref"
+ },
+ "5221003": {
+  "file": "specialForce.png",
+  "job": "522",
+  "name": "海鷗特戰隊",
+  "src": "ref"
+ },
+ "5221004": {
+  "file": "instantFlash.png",
+  "job": "522",
+  "name": "瞬‧迅雷",
+  "src": "ref"
+ },
+ "5221006": {
+  "file": "pirateShip.png",
+  "job": "522",
+  "name": "海盜船",
+  "src": "ref"
+ },
+ "5221008": {
+  "file": "pirateTorpedo.png",
+  "job": "522",
+  "name": "海盜魚雷",
+  "src": "ref"
+ },
+ "5221009": {
+  "file": "mindControl.png",
+  "job": "522",
+  "name": "心靈控制",
+  "src": "ref"
+ },
+ "5221010": {
+  "file": "heroesWill.png",
+  "job": "522",
+  "name": "楓葉淨化",
+  "src": "ref"
+ }
+}

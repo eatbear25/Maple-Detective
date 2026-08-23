@@ -3,6 +3,7 @@
 //          → generated/monster-drops.json
 import data from "./generated/monster-drops.json";
 import rawItemInfo from "./generated/item-info.json";
+import rawQuestData from "./generated/quests.json";
 
 /** 怪物數值（wz 原始欄位名；5 隻未實裝活動怪沒有數值，物件為空） */
 export interface MobStats {
@@ -110,11 +111,18 @@ export interface ItemInfo {
 
 const infos = rawItemInfo as unknown as Record<string, ItemInfo>;
 
+// 任務道具（需求/獎勵）不在怪物掉落資料裡，但道具彈窗是全站共用的，
+// 所以這裡把任務那份併進來當 fallback——名稱/說明查詢對呼叫端只有一個入口。
+const questItems = (rawQuestData as unknown as {
+  items: Record<string, ItemInfo & { name: string }>;
+}).items;
+
 export const monsters: DropMonster[] = d.monsters;
 
 export const itemName = (id: number) =>
-  d.items[String(id)] ?? d.futureItems[String(id)] ?? `#${id}`;
-export const itemInfo = (id: number): ItemInfo | undefined => infos[String(id)];
+  d.items[String(id)] ?? d.futureItems[String(id)] ?? questItems[String(id)]?.name ?? `#${id}`;
+export const itemInfo = (id: number): ItemInfo | undefined =>
+  infos[String(id)] ?? questItems[String(id)];
 export const mapInfo = (id: number): MapInfo | undefined => d.maps[String(id)];
 /** 未實裝地圖名稱（maplestory.io 補充，未來視分頁用） */
 export const futureMapInfo = (id: number): MapInfo | undefined => d.futureMaps[String(id)];

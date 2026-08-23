@@ -4,9 +4,11 @@
 已存在的檔案會跳過，可重複執行。來源優先 TMS/209，404 時退回 GMS/62。
 - 道具：public/icons/item/{itemId}.png
 - 怪物：public/icons/mob/{mobId}.gif（站立動圖）
-- NPC：public/icons/npc/{npcId}.png（轉蛋模擬器的轉蛋機圖）
+- 轉蛋機 NPC：public/icons/npc/{npcId}.png（轉蛋模擬器用）
+- 任務 NPC：public/icons/npc/{npcId}.gif（站立動圖）
 
-道具清單來自兩處：monster-book.json（掉落查詢）與 generated/gacha.json（轉蛋模擬）。
+道具清單來自三處：monster-book.json（掉落查詢）、generated/quests.json（任務需求／獎勵）
+與 generated/gacha.json（轉蛋模擬）。
 """
 
 import json
@@ -52,6 +54,18 @@ def download(kind, oid, path_tpl, dest):
     return (kind, oid)
 
 
+def quest_data():
+    """任務查詢頁用到的道具（需求+獎勵）與 NPC。build-quest-data.py 還沒跑過就回空集合。"""
+    path = os.path.join(PROJECT, "src", "data", "generated", "quests.json")
+    if not os.path.exists(path):
+        return set(), set()
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    items = {int(iid) for iid in data["items"]}
+    npcs = {q["npcId"] for q in data["quests"] if q.get("npcId")}
+    return items, npcs
+
+
 def main():
     with open(os.path.join(PROJECT, "reference-data", "monster-book.json"), encoding="utf-8") as f:
         mobs = json.load(f)["mobs"]
@@ -60,6 +74,8 @@ def main():
     if os.path.exists(sup_path):
         with open(sup_path, encoding="utf-8") as f:
             sup_items = {i for k, v in json.load(f).items() if not k.startswith("_") for i in v}
+    q_items, q_npcs = quest_data()
+    sup_items |= q_items
 
     # 轉蛋獎品也要圖示；轉蛋資料還沒 build 過就跳過，不擋掉落查詢的圖
     gacha_path = os.path.join(PROJECT, "src", "data", "generated", "gacha.json")
@@ -91,6 +107,8 @@ def main():
         jobs.append(("item", item_id, "item/{id}/icon", os.path.join(PUB, "item", f"{item_id}.png")))
     for npc_id in GACHA_NPCS:
         jobs.append(("npc", npc_id, "npc/{id}/render/stand", os.path.join(PUB, "npc", f"{npc_id}.png")))
+    for npc_id in sorted(q_npcs):
+        jobs.append(("npc", npc_id, "npc/{id}/render/stand", os.path.join(PUB, "npc", f"{npc_id}.gif")))
 
     print(f"{len(jobs)} 個圖示要抓")
     with ThreadPoolExecutor(max_workers=8) as ex:
