@@ -147,7 +147,9 @@ export default function SkillBuildPage() {
         return `SP 只夠把〈${s.name}〉點到 ${hi} 級`;
       }
       if (target < lo) {
-        const dep = pool.find((o) => (build[o.id] ?? 0) > 0 && (o.req?.[s.id] ?? 0) >= lo);
+        const dep = pool.find(
+          (o) => (build[o.id] ?? 0) > 0 && (o.req?.[s.id] ?? 0) >= lo,
+        );
         return `〈${dep?.name ?? "後面的技能"}〉還點著，〈${s.name}〉不能低於 ${lo} 級`;
       }
       return null;
@@ -176,7 +178,7 @@ export default function SkillBuildPage() {
       <div>
         <h1 className="text-xl font-semibold">技能配點模擬</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          選一個 2 轉職業，1 轉與 2 轉技能一起配。拖滑桿直接到位，或按「點滿」。
+          分配好技能點後也可以按下分享，複製網址給朋友或自己收藏。
           <Link
             href="/skills"
             className="ml-2 inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
@@ -226,9 +228,13 @@ export default function SkillBuildPage() {
               <div className="text-[11px] text-[var(--text-muted)]">已配點</div>
               <div className="flex items-baseline gap-1">
                 <span className="text-2xl font-bold tabular-nums">{used}</span>
-                <span className="text-xs text-[var(--text-muted)]">/ {maxSp}</span>
+                <span className="text-xs text-[var(--text-muted)]">
+                  / {maxSp}
+                </span>
               </div>
-              <div className="text-xs text-[var(--text-muted)]">剩餘 {left} SP</div>
+              <div className="text-xs text-[var(--text-muted)]">
+                剩餘 {left} SP
+              </div>
             </div>
 
             <div className="space-y-1 border-t border-[var(--border)] pt-2 text-xs">
@@ -236,20 +242,32 @@ export default function SkillBuildPage() {
                 <span className="min-w-0 truncate text-[var(--text-muted)]">
                   1 轉 {firstJob.name}
                 </span>
-                <span className="shrink-0 font-semibold tabular-nums">{usedTier1} 點</span>
+                <span className="shrink-0 font-semibold tabular-nums">
+                  {usedTier1} 點
+                </span>
               </div>
               <div className="flex items-baseline justify-between gap-2">
-                <span className="min-w-0 truncate text-[var(--text-muted)]">2 轉 {job.name}</span>
-                <span className="shrink-0 font-semibold tabular-nums">{usedTier2} 點</span>
+                <span className="min-w-0 truncate text-[var(--text-muted)]">
+                  2 轉 {job.name}
+                </span>
+                <span className="shrink-0 font-semibold tabular-nums">
+                  {usedTier2} 點
+                </span>
               </div>
             </div>
 
             <div className="space-y-2 border-t border-[var(--border)] pt-2">
               {POOLS.map((pool, i) => (
-                <PoolMeter key={pool.at} label={pool.label} cap={capOf(job, i)} used={used} />
+                <PoolMeter
+                  key={pool.at}
+                  label={pool.label}
+                  cap={capOf(job, i)}
+                  used={used}
+                />
               ))}
               <p className="text-[10px] leading-relaxed text-[var(--text-muted)]">
-                SP 是共用池：這是「配到這個等級為止總共拿得到幾點」，不是各轉各自的額度。
+                SP
+                是共用池：這是「配到這個等級為止總共拿得到幾點」，不是各轉各自的額度。
               </p>
             </div>
 
@@ -308,12 +326,22 @@ export default function SkillBuildPage() {
  * **顯示值夾在額度內**：SP 是累計共用池，總共點了 188 點時第一條寫「188 / 67」
  * 只會讓人以為算錯（實際上是「30 級前拿得到的 67 點早就用完了」）。
  */
-function PoolMeter({ label, cap, used }: { label: string; cap: number; used: number }) {
+function PoolMeter({
+  label,
+  cap,
+  used,
+}: {
+  label: string;
+  cap: number;
+  used: number;
+}) {
   const shown = Math.min(used, cap);
   return (
     <div>
       <div className="flex items-baseline justify-between gap-2">
-        <span className="min-w-0 truncate text-[10px] text-[var(--text-muted)]">{label}</span>
+        <span className="min-w-0 truncate text-[10px] text-[var(--text-muted)]">
+          {label}
+        </span>
         <span className="shrink-0 text-[11px] tabular-nums">
           <span className="font-semibold">{shown}</span>
           <span className="text-[var(--text-muted)]"> / {cap}</span>
@@ -346,7 +374,9 @@ function SkillGrid({
 }) {
   return (
     <section className="space-y-2">
-      <h2 className="border-b border-[var(--border)] pb-2 text-sm font-semibold">{title}</h2>
+      <h2 className="border-b border-[var(--border)] pb-2 text-sm font-semibold">
+        {title}
+      </h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {list.map((s) => {
           const lv = build[s.id] ?? 0;
@@ -368,7 +398,9 @@ function SkillGrid({
               <div className="flex items-start gap-2.5 p-3">
                 <SkillIcon id={s.id} size={40} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium">{s.name}</span>
+                  <span className="block truncate text-sm font-medium">
+                    {s.name}
+                  </span>
                   {reqEntries.length ? (
                     <span className="mt-0.5 flex flex-wrap gap-1">
                       {reqEntries.map(([rid, need]) => (
@@ -392,7 +424,9 @@ function SkillGrid({
                 <div className="mb-1 text-[10px] font-semibold text-[var(--text-muted)]">
                   {lv === 0 ? "Lv.1（預覽）" : `Lv.${lv}`}
                 </div>
-                <p className="text-xs leading-relaxed">{levelText(s, shown) || "—"}</p>
+                <p className="text-xs leading-relaxed">
+                  {levelText(s, shown) || "—"}
+                </p>
               </div>
 
               {/* 滑桿直接拖到要的等級；拖過頭會被夾住並在上方說明原因 */}
@@ -410,7 +444,10 @@ function SkillGrid({
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-sm font-semibold tabular-nums">
                     {lv}
-                    <span className="text-[var(--text-muted)]"> / {s.maxLevel}</span>
+                    <span className="text-[var(--text-muted)]">
+                      {" "}
+                      / {s.maxLevel}
+                    </span>
                     {hi > lv && (
                       <span className="ml-2 text-[10px] font-normal text-[var(--text-muted)]">
                         可到 {hi}

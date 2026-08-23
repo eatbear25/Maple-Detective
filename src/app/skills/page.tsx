@@ -8,13 +8,13 @@
  * - **右欄是「總覽列＋就地展開」**：一技能一列（圖示＋名稱＋上限＋滿級效果摘要），
  *   點列就地長出全等級表格，可以同時開多個，另有「全部展開」。全部攤開的版本
  *   一個職業會拉到十幾個螢幕高，總覽列讓「這個職業有哪些技能」一眼看得完。
- * - 左欄**依職業群分組、依轉職階段縮排**：狂戰士／見習騎士／槍騎兵是劍士底下的
- *   三條分支，平鋪成同一層會看起來像互不相干的職業。
+ * - 左欄**依職業群分組、只縮一層**：1 轉與 2 轉分支各一列，3/4 轉平列在分支底下。
+ *   一階縮一格會疊到四層＋三條連接線，在 260px 的欄位裡太雜（比過五種原型）。
  * - 搜尋只吃「技能名」與「職業名」，不吃敘述——敘述吃進去的話「攻擊」會命中三百個技能。
  *   搜尋時左欄仍是職業清單（沒命中的灰掉），右欄只留命中的技能。
  */
 
-import { Suspense, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, X, Telescope, Target, ChevronDown, Rows3 } from "lucide-react";
 import {
@@ -25,16 +25,10 @@ import {
   isReleased,
   cleanDesc,
   LEVEL_LABELS,
+  type Job,
   type Skill,
 } from "@/data/skills";
 import { SkillIcon } from "../skill-icon";
-// 【原型】左欄職業清單版型比較中，選定後把贏的那版寫回這個檔案、刪掉這兩個 import
-import { PrototypeSwitcher, useVariant } from "../prototype-switcher";
-import {
-  JobColumnVariants,
-  VARIANTS,
-  VARIANT_LABELS,
-} from "./job-column.prototype";
 
 type Tab = "released" | "future";
 
@@ -51,16 +45,6 @@ const defaultJobOf = (tab: Tab) =>
     .id;
 
 export default function SkillsPage() {
-  // useSearchParams（原型切換器）在靜態頁需要 Suspense 包住
-  return (
-    <Suspense fallback={null}>
-      <SkillsInner />
-    </Suspense>
-  );
-}
-
-function SkillsInner() {
-  const variant = useVariant([...VARIANTS]);
   const [tab, setTab] = useState<Tab>("released");
   const [query, setQuery] = useState("");
   const [picked, setPicked] = useState<string>(jobsOf("released")[0].id);
@@ -205,8 +189,7 @@ function SkillsInner() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr] lg:gap-10">
-        <JobColumnVariants
-          variant={variant}
+        <JobColumn
           jobs={tabJobs}
           hits={hits}
           selected={jobId}
@@ -262,9 +245,133 @@ function SkillsInner() {
           )}
         </div>
       </div>
-
-      <PrototypeSwitcher keys={[...VARIANTS]} labels={VARIANT_LABELS} current={variant} />
     </div>
+  );
+}
+
+/**
+ * 左欄職業清單。依職業群分組，**只縮一層**：1 轉與 2 轉分支各佔一列，
+ * 3/4 轉平列在自己那條分支底下（字級略小、共用一條連接線）。
+ *
+ * 一階縮一格的樹狀在 260px 的欄位裡會疊到四層＋三條連接線，太雜；
+ * 比過五種原型（四層縮排／兩層／分支卡膠囊／零縮排／先選轉職階段）後選這版。
+ */
+function JobColumn({
+  jobs: list,
+  hits,
+  selected,
+  onPick,
+}: {
+  jobs: Job[];
+  hits: Record<string, Skill[]> | null;
+  selected: string;
+  onPick: (id: string) => void;
+}) {
+  const groups = useMemo(() => {
+    const out: { group: string; groupName: string; first?: Job; lines: Job[][] }[] = [];
+    for (const j of list) {
+      let g = out.find((x) => x.group === j.group);
+      if (!g) {
+        g = { group: j.group, groupName: j.groupName, lines: [] };
+        out.push(g);
+      }
+      if (j.tier === 1) g.first = j;
+      else if (j.tier === 2) g.lines.push([j]);
+      else {
+        // 3/4 轉接到自己那條分支的尾巴（資料本身就是職業線順序）
+        const line = g.lines.find((l) => l[l.length - 1].id === j.from);
+        if (line) line.push(j);
+        else g.lines.push([j]);
+      }
+    }
+    return out;
+  }, [list]);
+
+  const countOf = (jobId: string) =>
+    hits ? (hits[jobId]?.length ?? 0) : skills.filter((s) => s.job === jobId).length;
+
+  const row = (job: Job, tone: "normal" | "sub" = "normal") => (
+    <JobRow
+      key={job.id}
+      job={job}
+      tone={tone}
+      count={countOf(job.id)}
+      dimmed={hits !== null && !hits[job.id]}
+      active={selected === job.id}
+      onPick={onPick}
+    />
+  );
+
+  return (
+    <div className="themed-scroll max-h-[40vh] space-y-3 overflow-y-auto rounded-lg border border-[var(--border)] p-1.5 lg:sticky lg:top-20 lg:max-h-[78vh] lg:self-start lg:border-0 lg:p-0 lg:pr-2">
+      {groups.map((g) => (
+        <div key={g.group} className="space-y-1">
+          <div className="px-2.5 pb-0.5 text-[11px] font-semibold tracking-wide text-[var(--text-muted)]">
+            {g.groupName}系
+          </div>
+          {g.first && row(g.first)}
+          {g.lines.map((line) => (
+            <div key={line[0].id}>
+              {row(line[0])}
+              {line.length > 1 && (
+                <div className="ml-3 border-l border-[var(--border)] pl-1">
+                  {line.slice(1).map((j) => row(j, "sub"))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+      {list.length === 0 && (
+        <div className="px-2 py-8 text-center text-sm text-[var(--text-muted)]">
+          沒有符合的職業。
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** 一列職業：階段圓徽＋名稱＋（尚未開放的）望遠鏡＋技能數。 */
+function JobRow({
+  job,
+  count,
+  dimmed,
+  active,
+  onPick,
+  tone = "normal",
+}: {
+  job: Job;
+  count: number;
+  dimmed: boolean;
+  active: boolean;
+  onPick: (id: string) => void;
+  tone?: "normal" | "sub";
+}) {
+  return (
+    <button
+      disabled={dimmed}
+      onClick={() => onPick(job.id)}
+      className={`flex w-full items-center gap-2 rounded-lg px-2.5 text-left transition-colors ${
+        tone === "sub" ? "py-1 text-[13px]" : "py-1.5 text-sm"
+      } ${
+        active
+          ? "bg-[var(--accent-soft)] font-medium text-[var(--accent)]"
+          : "hover:bg-[var(--accent-soft)]/50"
+      } ${dimmed ? "cursor-default opacity-35" : "cursor-pointer"}`}
+    >
+      <span
+        className={`flex shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[9px] font-semibold text-[var(--accent)] ${
+          tone === "sub" ? "h-4 w-4" : "h-5 w-5"
+        }`}
+      >
+        {job.tier}
+      </span>
+      <span className="min-w-0 flex-1 truncate">{job.name}</span>
+      {!isReleased(job.id) && (
+        <Telescope size={12} aria-label="尚未開放" className="shrink-0 text-[var(--text-muted)]" />
+      )}
+      <span className="shrink-0 text-[11px] text-[var(--text-muted)]">{count}</span>
+    </button>
   );
 }
 
