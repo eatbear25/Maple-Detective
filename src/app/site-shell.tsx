@@ -18,16 +18,22 @@ import {
   ScrollText,
   Sparkles,
   Target,
+  BookOpen,
+  Gamepad2,
   ChevronDown,
 } from "lucide-react";
 import { navTree, isNavGroup, navHref, type NavItem } from "@/nav";
 import { LIGHT_TOKENS, DARK_TOKENS, useDarkMode, themeVars } from "./theme";
 
+// nav 圖示對照表。鍵可以是 NavItem 的 key，也可以是 NavGroup 的 key
+// （群組在桌機主列上也要有圖示，不然同一排只有單項有會看起來歪掉）。
 const NAV_ICONS: Record<
   string,
   React.ComponentType<{ size?: number; className?: string }>
 > = {
   home: Home,
+  lookup: BookOpen,
+  simulators: Gamepad2,
   monsters: Search,
   gacha: Dices,
   quests: ScrollText,
@@ -79,14 +85,14 @@ function NavEntry({
   pathname,
   linkClassName,
   onNavigate,
-  showIcon = true,
+  onMouseEnter,
 }: {
   item: NavItem;
   pathname: string;
   linkClassName: (isActive: boolean, enabled: boolean) => string;
   onNavigate?: () => void;
-  /** 桌機主列關掉圖示：那一排另外兩項是下拉群組、本來就沒有圖示，只有兩項有會看起來歪掉。 */
-  showIcon?: boolean;
+  /** 桌機主列用：滑到頂層單項時把別的群組下拉收掉。 */
+  onMouseEnter?: () => void;
 }) {
   const Icon = NAV_ICONS[item.key];
   const href = navHref(item.path);
@@ -95,6 +101,7 @@ function NavEntry({
     <Link
       href={item.enabled ? href : "#"}
       aria-disabled={!item.enabled}
+      onMouseEnter={onMouseEnter}
       onClick={(e) => {
         if (!item.enabled) {
           e.preventDefault();
@@ -104,7 +111,7 @@ function NavEntry({
       }}
       className={linkClassName(isActive, item.enabled)}
     >
-      {showIcon && Icon && <Icon size={15} />}
+      {Icon && <Icon size={15} />}
       {item.label}
       {!item.enabled && (
         <span className="text-[10px] bg-[var(--accent-soft)] text-[var(--text-muted)] rounded-full px-1.5 py-0.5">
@@ -115,7 +122,10 @@ function NavEntry({
   );
 }
 
-/** 桌機版：群組（查詢／工具）點了展開子選單，頂層單項（轉蛋模擬／時裝搭配）直接連過去。 */
+/**
+ * 桌機版：群組（查詢／模擬器）滑鼠移上去就展開，頂層單項（怪物掉落／BOSS 計時器）直接連過去。
+ * 點擊仍然可以切換（鍵盤與觸控裝置只有這條路）。
+ */
 function NavMenus({
   pathname,
   className,
@@ -127,6 +137,7 @@ function NavMenus({
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const ref = useRef<HTMLElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -142,6 +153,41 @@ function NavMenus({
     };
   }, [open]);
 
+  // 元件卸載時別留下待觸發的關閉計時器
+  useEffect(
+    () => () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    },
+    [],
+  );
+
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+
+  // 觸控裝置不吃 hover：那邊點一下也會先觸發 mouseenter，會跟按鈕的 click toggle
+  // 打架變成「點開又立刻關掉」。在事件處理器裡才查（不是 render 時），避免 hydration 不一致。
+  const canHover = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(hover: hover)").matches;
+
+  const hoverOpen = (key: string) => {
+    if (!canHover()) return;
+    cancelClose();
+    setOpen(key);
+  };
+
+  // 延遲關閉：下拉是 absolute + mt-1，畫在 .relative 容器的框外，
+  // 游標穿過那 4px 空隙時會先觸發 mouseleave，沒有緩衝的話選單會在半路關掉。
+  const hoverClose = () => {
+    if (!canHover()) return;
+    cancelClose();
+    closeTimer.current = setTimeout(() => setOpen(null), 120);
+  };
+
   return (
     <nav ref={ref} className={className}>
       {navTree.map((node) => {
@@ -152,21 +198,28 @@ function NavMenus({
               item={node}
               pathname={pathname}
               linkClassName={linkClassName}
-              showIcon={false}
+              onMouseEnter={hoverClose}
             />
           );
         }
         const group = node;
+        const GroupIcon = NAV_ICONS[group.key];
         const groupActive = group.items.some(
           (i) => i.enabled && pathname === navHref(i.path),
         );
         return (
-          <div key={group.key} className="relative">
+          <div
+            key={group.key}
+            className="relative"
+            onMouseEnter={() => hoverOpen(group.key)}
+            onMouseLeave={hoverClose}
+          >
             <button
               onClick={() => setOpen(open === group.key ? null : group.key)}
               aria-expanded={open === group.key}
               className={`${linkClassName(groupActive, true)} cursor-pointer`}
             >
+              {GroupIcon && <GroupIcon size={15} />}
               {group.label}
               <ChevronDown
                 size={14}
@@ -181,7 +234,10 @@ function NavMenus({
                     item={item}
                     pathname={pathname}
                     linkClassName={linkClassName}
-                    onNavigate={() => setOpen(null)}
+                    onNavigate={() => {
+                      cancelClose();
+                      setOpen(null);
+                    }}
                   />
                 ))}
               </div>
