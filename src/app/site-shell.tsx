@@ -20,7 +20,7 @@ import {
   Target,
   ChevronDown,
 } from "lucide-react";
-import { navGroups, navHref, type NavItem } from "@/nav";
+import { navTree, isNavGroup, navHref, type NavItem } from "@/nav";
 import { LIGHT_TOKENS, DARK_TOKENS, useDarkMode, themeVars } from "./theme";
 
 const NAV_ICONS: Record<
@@ -79,11 +79,14 @@ function NavEntry({
   pathname,
   linkClassName,
   onNavigate,
+  showIcon = true,
 }: {
   item: NavItem;
   pathname: string;
   linkClassName: (isActive: boolean, enabled: boolean) => string;
   onNavigate?: () => void;
+  /** 桌機主列關掉圖示：那一排另外兩項是下拉群組、本來就沒有圖示，只有兩項有會看起來歪掉。 */
+  showIcon?: boolean;
 }) {
   const Icon = NAV_ICONS[item.key];
   const href = navHref(item.path);
@@ -101,7 +104,7 @@ function NavEntry({
       }}
       className={linkClassName(isActive, item.enabled)}
     >
-      {Icon && <Icon size={15} />}
+      {showIcon && Icon && <Icon size={15} />}
       {item.label}
       {!item.enabled && (
         <span className="text-[10px] bg-[var(--accent-soft)] text-[var(--text-muted)] rounded-full px-1.5 py-0.5">
@@ -112,7 +115,7 @@ function NavEntry({
   );
 }
 
-/** 桌機版：兩個主選單（查詢／工具），點了展開子選單。 */
+/** 桌機版：群組（查詢／工具）點了展開子選單，頂層單項（轉蛋模擬／時裝搭配）直接連過去。 */
 function NavMenus({
   pathname,
   className,
@@ -141,7 +144,19 @@ function NavMenus({
 
   return (
     <nav ref={ref} className={className}>
-      {navGroups.map((group) => {
+      {navTree.map((node) => {
+        if (!isNavGroup(node)) {
+          return (
+            <NavEntry
+              key={node.key}
+              item={node}
+              pathname={pathname}
+              linkClassName={linkClassName}
+              showIcon={false}
+            />
+          );
+        }
+        const group = node;
         const groupActive = group.items.some(
           (i) => i.enabled && pathname === navHref(i.path),
         );
@@ -178,7 +193,7 @@ function NavMenus({
   );
 }
 
-/** 手機版側邊選單：分組攤平列出，不做展開收合（少一層點擊）。 */
+/** 手機版側邊選單：分組攤平列出，不做展開收合（少一層點擊）；頂層單項沒有小標，直接列。 */
 function NavList({
   pathname,
   className,
@@ -192,22 +207,32 @@ function NavList({
 }) {
   return (
     <nav className={className}>
-      {navGroups.map((group) => (
-        <div key={group.key} className="mb-2">
-          <div className="px-3 py-1 text-[11px] font-semibold text-[var(--text-muted)]">
-            {group.label}
+      {navTree.map((node) =>
+        isNavGroup(node) ? (
+          <div key={node.key} className="mb-2">
+            <div className="px-3 py-1 text-[11px] font-semibold text-[var(--text-muted)]">
+              {node.label}
+            </div>
+            {node.items.map((item) => (
+              <NavEntry
+                key={item.key}
+                item={item}
+                pathname={pathname}
+                linkClassName={linkClassName}
+                onNavigate={onNavigate}
+              />
+            ))}
           </div>
-          {group.items.map((item) => (
-            <NavEntry
-              key={item.key}
-              item={item}
-              pathname={pathname}
-              linkClassName={linkClassName}
-              onNavigate={onNavigate}
-            />
-          ))}
-        </div>
-      ))}
+        ) : (
+          <NavEntry
+            key={node.key}
+            item={node}
+            pathname={pathname}
+            linkClassName={linkClassName}
+            onNavigate={onNavigate}
+          />
+        ),
+      )}
     </nav>
   );
 }
