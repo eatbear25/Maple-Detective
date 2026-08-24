@@ -1,7 +1,7 @@
 "use client";
 
 // 任務查詢：搜尋（任務名 / 獎勵道具名）→ 列表（依需求等級排序、分頁）→ 右側詳情。
-// 詳情最上面是系列鏈卡片（可收合），接著 NPC、需求道具、獎勵。
+// 詳情最上面是系列鏈卡片（可收合），接著 NPC、接任務時拿到的道具、需求道具、獎勵。
 // 道具只放 icon + 前兩字標籤 + 數量，沒有敘述文字；hover 才出道具彈窗。
 
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -21,15 +21,20 @@ import {
 import {
   chainOf,
   npcIconSrc,
+  questById,
   questItemName,
+  questMobName,
   questRegion,
+  questSkillName,
   questMapInfo,
   questWorldMapSheet,
+  questRegions,
   quests,
   type Quest,
   type QuestItem,
+  type QuestMob,
 } from "@/data/quests";
-import { itemIconSrc, worldMapSrc } from "@/data/drops";
+import { itemIconSrc, mobIconSrc, worldMapSrc } from "@/data/drops";
 import { GameIcon } from "../monsters/game-icon";
 import { ItemTooltip, useItemTooltip } from "../monsters/item-tooltip";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
@@ -46,22 +51,35 @@ function matches(q: Quest, kw: string) {
 
 const lvLabel = (lv: number) => (lv > 0 ? `Lv.${lv}` : "無限制");
 
+/** 96 個任務有等級上限（例：#1034 只有 Lv.10 以下接得到），只印下限會讓人白跑一趟 */
+const lvRangeLabel = (q: Quest) => {
+  if (!q.lvMax) return lvLabel(q.lv);
+  return q.lv > 0 ? `Lv.${q.lv}–${q.lvMax}` : `Lv.${q.lvMax} 以下`;
+};
+
+/** 可重複任務的間隔，客戶端存的是分鐘（目前全部是 1440） */
+const repeatLabel = (min: number) =>
+  min % 1440 === 0 ? `${min / 1440} 天` : min % 60 === 0 ? `${min / 60} 小時` : `${min} 分鐘`;
+
 /** 千分位：獎勵/花費動輒六七位數，不分隔根本讀不出來 */
 const num = (n: number) => n.toLocaleString("en-US");
 
-/** 沒有已實裝 NPC 地圖的任務歸這一類（多半是未實裝任務） */
-const UNKNOWN_REGION = "未知";
+/**
+ * 地區判不出來的任務歸這一類。判不出來 ⇔ 這個任務的 NPC 全都不在已實裝地圖上，
+ * 所以這一類就等於未實裝任務（166 個），標題直接講白，不要留一個看不懂的「未知」。
+ */
+const UNKNOWN_REGION = "未實裝";
 
-/** 地區 chips：依任務數多寡排，「未知」永遠擺最後 */
+/** 地區 chips：順序由 build-quest-data.py 給（大致依遊戲地理動線），「未實裝」擺最後 */
 const REGIONS: [string, number][] = (() => {
   const count = new Map<string, number>();
   for (const q of quests) {
     const r = questRegion(q) ?? UNKNOWN_REGION;
     count.set(r, (count.get(r) ?? 0) + 1);
   }
-  return [...count.entries()].sort((a, b) =>
-    a[0] === UNKNOWN_REGION ? 1 : b[0] === UNKNOWN_REGION ? -1 : b[1] - a[1],
-  );
+  return [...questRegions, UNKNOWN_REGION]
+    .filter((r) => count.has(r))
+    .map((r): [string, number] => [r, count.get(r)!]);
 })();
 
 function QuestPageSkeleton() {
@@ -166,6 +184,7 @@ function QuestExplorer() {
               key={name}
               label={`${name} ${n}`}
               active={region === name}
+              icon={name === UNKNOWN_REGION}
               onClick={() => {
                 setRegion(region === name ? null : name);
                 setPage(0);
@@ -177,6 +196,7 @@ function QuestExplorer() {
         <div className="mt-2 text-xs text-[var(--text-muted)]">
           共 {filtered.length} 個任務{kw && `符合「${kw}」`}
           {region && `・${region}`}・依需求等級排序
+          {region === UNKNOWN_REGION && "（這些任務的 NPC 目前都不在遊戲裡，查不到地點）"}
         </div>
       </div>
 
@@ -253,21 +273,25 @@ function QuestExplorer() {
 function RegionChip({
   label,
   active,
+  icon,
   onClick,
 }: {
   label: string;
   active: boolean;
+  /** 「未實裝」那顆掛望遠鏡，跟任務卡片上的未實裝徽章同一個符號 */
+  icon?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`cursor-pointer shrink-0 rounded-full border px-3 py-1 text-xs transition-colors ${
+      className={`cursor-pointer inline-flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
         active
           ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--accent)]"
           : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
       }`}
     >
+      {icon && <Telescope size={12} />}
       {label}
     </button>
   );
@@ -388,7 +412,8 @@ function QuestDetail({
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--text-muted)]">
           <span>#{q.id}</span>
-          <span>需求等級 {lvLabel(q.lv)}</span>
+          <span>需求等級 {lvRangeLabel(q)}</span>
+          {q.repeat ? <span>可重複（間隔 {repeatLabel(q.repeat)}）</span> : null}
         </div>
       </div>
 
@@ -429,11 +454,63 @@ function QuestDetail({
         )}
       </Section>
 
-      <Section title="需求道具">
-        {q.need.length ? (
-          <ItemRow items={q.need} tip={tip} />
+      {/* 接取條件：職業限制（227 個任務有）與互斥任務。
+          客戶端的 `have`（身上要有的道具）**刻意不顯示**：20 個楓之島教學任務都寫
+          「要有維澤特西裝」，那不是玩家要準備的東西；其餘的也都是前一步任務給的，
+          任務鏈已經講過了。資料還留在 quests.json，要復活再說。 */}
+      {q.jobs?.length || q.exclude?.length ? (
+        <Section title="接取條件">
+          <div className="space-y-2">
+            {q.jobs?.length ? (
+              <div className="flex flex-wrap items-center gap-1.5 text-sm">
+                <span className="text-[var(--text-muted)]">職業</span>
+                {q.jobs.map((j) => (
+                  <span
+                    key={j}
+                    className="rounded-full border border-[var(--border)] px-2 py-0.5 text-xs"
+                  >
+                    {j}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+            {/* 互斥（Check["0"].quest 的 state 0）：五條「XX 之路」轉職任務只能挑一條 */}
+            {q.exclude?.length ? (
+              <p className="text-xs text-[var(--text-muted)]">
+                接過這些就不能接：
+                {q.exclude.map((id, i) => {
+                  const other = questById(id);
+                  return (
+                    <span key={id}>
+                      {i > 0 && "、"}
+                      {other ? (
+                        <button
+                          onClick={() => onPickQuest(other.id)}
+                          className="cursor-pointer text-[var(--accent)] hover:underline"
+                        >
+                          {other.name}
+                        </button>
+                      ) : (
+                        `#${id}`
+                      )}
+                    </span>
+                  );
+                })}
+              </p>
+            ) : null}
+          </div>
+        </Section>
+      ) : null}
+
+      {/* 完成條件 = 打倒怪物（79 個任務，以前完全沒顯示）＋ 繳交道具 */}
+      <Section title="完成條件">
+        {q.kill?.length || q.need.length ? (
+          <div className="space-y-3">
+            {q.kill?.length ? <MobRow mobs={q.kill} /> : null}
+            {q.need.length ? <ItemRow items={q.need} tip={tip} /> : null}
+          </div>
         ) : (
-          <Empty>不需要繳交道具</Empty>
+          <Empty>不用打怪也不用繳道具，跟 NPC 對話就完成</Empty>
         )}
       </Section>
 
@@ -446,41 +523,50 @@ function QuestDetail({
         </Section>
       ) : null}
 
-      <Section title="獎勵">
-        <div className="space-y-3">
-          {(q.exp || q.money || q.pop || q.skill) && (
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-              {q.exp ? <Stat icon={<Sparkles size={13} />} label={`經驗 ${num(q.exp)}`} /> : null}
-              {q.money ? <Stat icon={<Coins size={13} />} label={`${num(q.money)} 楓幣`} /> : null}
-              {q.pop ? <Stat icon={<Sparkles size={13} />} label={`名聲 +${q.pop}`} /> : null}
-              {q.skill ? <Stat icon={<Zap size={13} />} label="技能" /> : null}
-            </div>
-          )}
-          {q.rewards.length ? (
-            <ItemRow items={q.rewards} tip={tip} onPick={onPickReward} />
-          ) : hasReward ? (
-            <Empty>沒有道具獎勵</Empty>
-          ) : null}
-
-          {/* 客戶端查不到獎勵時要講清楚原因，不然「沒有道具獎勵」會被讀成「這任務沒獎勵」 */}
-          {!hasReward &&
-            (q.scripted ? (
-              <div className="rounded-lg border border-dashed border-[var(--border)] px-3 py-2 text-xs text-[var(--text-muted)]">
-                這個任務的完成處理是遊戲的伺服器端腳本，
-                <span className="text-[var(--text)]">獎勵沒有寫在客戶端資料裡</span>
-                ，所以查不到。實際跑過知道給什麼的話，回報給我們補上。
+      {/* 查不到獎勵就整段不畫。客戶端有 81 個任務的獎勵在伺服器端腳本裡，
+          之前印過「沒有獎勵」「獎勵在伺服器端查不到」兩種說明，都是廢話——
+          畫面上少一塊比多一句解釋乾淨。 */}
+      {hasReward ? (
+        <Section title="獎勵">
+          <div className="space-y-3">
+            {(q.exp || q.money || q.pop || q.skill) && (
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                {q.exp ? <Stat icon={<Sparkles size={13} />} label={`經驗 ${num(q.exp)}`} /> : null}
+                {q.money ? <Stat icon={<Coins size={13} />} label={`${num(q.money)} 楓幣`} /> : null}
+                {q.pop ? <Stat icon={<Sparkles size={13} />} label={`名聲 +${q.pop}`} /> : null}
+                {q.skill && !q.skills?.length ? <Stat icon={<Zap size={13} />} label="技能" /> : null}
               </div>
-            ) : (
-              <Empty>沒有獎勵</Empty>
-            ))}
+            )}
+            {/* 技能獎勵要印名字：只寫「技能」等於沒講。m = 精通書（把上限拉到 N 級） */}
+            {q.skills?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {q.skills.map((sk, i) => (
+                  <span
+                    key={`${sk.id}-${i}`}
+                    className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-sm"
+                  >
+                    <Zap size={13} className="text-[var(--accent)]" />
+                    {questSkillName(sk.id)}
+                    {sk.job?.length ? (
+                      <span className="text-xs text-[var(--text-muted)]">{sk.job.join("、")}</span>
+                    ) : null}
+                    <span className="text-xs text-[var(--text-muted)]">
+                      {sk.m && sk.m > 1 ? `上限 ${sk.m} 級（精通書）` : `學到 ${sk.lv ?? 1} 級`}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            ) : null}
+            {q.rewards.length ? <RewardItems q={q} tip={tip} onPick={onPickReward} /> : null}
 
-          {q.sup ? (
-            <div className="text-[11px] text-[var(--text-muted)]">
-              ＊部分獎勵來自玩家回報補充，非客戶端資料
-            </div>
-          ) : null}
-        </div>
-      </Section>
+            {q.sup ? (
+              <div className="text-[11px] text-[var(--text-muted)]">
+                ＊部分獎勵來自玩家回報補充，非客戶端資料
+              </div>
+            ) : null}
+          </div>
+        </Section>
+      ) : null}
     </div>
   );
 }
@@ -515,6 +601,72 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
  * 前兩字標籤是因為卷軸類 icon 幾乎長一樣（同一個任務要五張不同卷軸時完全分不出來），
  * 數量徽章也因此掛右上角，不然會壓到標籤。
  */
+/**
+ * 完成條件的「打倒怪物」。點下去跳怪物掉落查詢——查任務的人下一步通常就是
+ * 「這隻怪在哪打」，而那頁已經有出沒地圖了。
+ */
+function MobRow({ mobs }: { mobs: QuestMob[] }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {mobs.map((m) => {
+        const name = questMobName(m.id);
+        return (
+          <a
+            key={m.id}
+            href={`/monsters?q=${encodeURIComponent(name)}`}
+            className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] py-1 pl-1.5 pr-2.5 text-sm transition-colors hover:border-[var(--accent)]"
+          >
+            <GameIcon src={mobIconSrc(String(m.id))} alt="" fallback="👾" className="h-8 w-8" />
+            <span>{name}</span>
+            <span className="text-xs font-semibold tabular-nums text-[var(--text-muted)]">
+              ×{m.n}
+            </span>
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * 獎勵道具。**有職業限定的要分組印**——#2001 酋長蓋房子有 16 張攻擊卷軸，
+ * 但一個人只拿得到自己職業的那幾張，攤平印會看起來像全給你。
+ * 只有一組（例：整個任務本來就只有初心者能接）就照舊平鋪，不用多一層標題。
+ */
+function RewardItems({
+  q,
+  tip,
+  onPick,
+}: {
+  q: Quest;
+  tip: Tip;
+  onPick: (i: QuestItem) => void;
+}) {
+  const groups = new Map<string, QuestItem[]>();
+  for (const it of q.rewards) {
+    const key = it.job?.length ? it.job.join("、") : "";
+    groups.set(key, [...(groups.get(key) ?? []), it]);
+  }
+  const keyed = [...groups.entries()].filter(([k]) => k);
+  if (keyed.length < 2) return <ItemRow items={q.rewards} tip={tip} onPick={onPick} />;
+
+  const common = groups.get("") ?? [];
+  return (
+    <div className="space-y-2">
+      {common.length ? <ItemRow items={common} tip={tip} onPick={onPick} /> : null}
+      <p className="text-xs text-[var(--text-muted)]">依職業給不同道具，只會拿到自己那一份：</p>
+      {keyed.map(([job, items]) => (
+        <div key={job} className="flex flex-wrap items-start gap-2">
+          <span className="mt-1 shrink-0 rounded-full border border-[var(--border)] px-2 py-0.5 text-xs">
+            {job}
+          </span>
+          <ItemRow items={items} tip={tip} onPick={onPick} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ItemRow({
   items,
   tip,
@@ -546,6 +698,12 @@ function ItemRow({
                 {it.n}
               </span>
             )}
+            {/* 男女版本不同的獎勵（#2023 桑那服、#2046 黑飛影之服），不標會以為兩件都拿 */}
+            {it.g === 0 || it.g === 1 ? (
+              <span className="absolute -left-1 -top-1 rounded-full border border-[var(--border)] bg-[var(--surface)] px-1 text-[10px] font-semibold shadow-sm">
+                {it.g === 0 ? "♂" : "♀"}
+              </span>
+            ) : null}
           </button>
         );
       })}
@@ -573,6 +731,9 @@ function QuestChainCard({
 }) {
   const [open, setOpen] = useState(true);
   const idx = chain.findIndex((q) => q.id === current);
+  /* 互斥的分支（五條「XX 之路」）會落在同一條鏈上，編號印成 1→6 會被讀成先後順序。
+     標出跟目前這步互斥的那幾步，至少講清楚「只能挑一條」。 */
+  const alt = new Set(chain.find((q) => q.id === current)?.exclude ?? []);
 
   return (
     <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
@@ -624,6 +785,11 @@ function QuestChainCard({
                       className={`flex items-center gap-1 truncate text-sm ${isCur ? "font-semibold" : ""}`}
                     >
                       <span className="truncate">{q.name}</span>
+                      {alt.has(q.id) && (
+                        <span className="shrink-0 rounded-full border border-[var(--border)] px-1.5 text-[10px] font-normal text-[var(--text-muted)]">
+                          擇一
+                        </span>
+                      )}
                       {!q.released && (
                         <Telescope size={11} className="shrink-0 text-[var(--text-muted)]" />
                       )}

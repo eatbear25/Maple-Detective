@@ -7,7 +7,7 @@
 - 轉蛋機 NPC：public/icons/npc/{npcId}.png（轉蛋模擬器用）
 - 任務 NPC：public/icons/npc/{npcId}.gif（站立動圖）
 
-道具清單來自三處：monster-book.json（掉落查詢）、generated/quests.json（任務需求／獎勵）
+道具清單來自三處：monster-book.json（掉落查詢）、generated/quests.json（任務需求／獎勵／打怪）
 與 generated/gacha.json（轉蛋模擬）。
 """
 
@@ -55,15 +55,20 @@ def download(kind, oid, path_tpl, dest):
 
 
 def quest_data():
-    """任務查詢頁用到的道具（需求+獎勵）與 NPC。build-quest-data.py 還沒跑過就回空集合。"""
+    """任務查詢頁用到的道具（需求+獎勵）、NPC 與怪物。
+
+    build-quest-data.py 還沒跑過就回空集合。怪物是「完成條件要打倒的」，
+    有 11 隻（小石球那種活動怪）不在怪物圖鑑的清單裡，所以要另外聯集進來。
+    """
     path = os.path.join(PROJECT, "src", "data", "generated", "quests.json")
     if not os.path.exists(path):
-        return set(), set()
+        return set(), set(), set()
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
     items = {int(iid) for iid in data["items"]}
     npcs = {q["npcId"] for q in data["quests"] if q.get("npcId")}
-    return items, npcs
+    mobs = set(data.get("mobs", {}))
+    return items, npcs, mobs
 
 
 def main():
@@ -74,7 +79,7 @@ def main():
     if os.path.exists(sup_path):
         with open(sup_path, encoding="utf-8") as f:
             sup_items = {i for k, v in json.load(f).items() if not k.startswith("_") for i in v}
-    q_items, q_npcs = quest_data()
+    q_items, q_npcs, q_mobs = quest_data()
     sup_items |= q_items
 
     # 轉蛋獎品也要圖示；轉蛋資料還沒 build 過就跳過，不擋掉落查詢的圖
@@ -100,7 +105,7 @@ def main():
     os.makedirs(os.path.join(PUB, "npc"), exist_ok=True)
 
     jobs = []
-    for mob_id in sorted(set(mobs) | gacha_mobs):
+    for mob_id in sorted(set(mobs) | gacha_mobs | q_mobs):
         jobs.append(("mob", mob_id, "mob/{id}/render/{stance}", os.path.join(PUB, "mob", f"{mob_id}.gif")))
     items = {i for v in mobs.values() for i in v["rewards"]} | sup_items | gacha_items
     for item_id in sorted(items):
