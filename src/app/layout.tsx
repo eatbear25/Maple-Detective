@@ -46,11 +46,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // 瀏覽器擴充功能會在 hydrate 前往 <html> 塞自訂屬性（speedupyoutubeads 等），只抑制此元素的屬性比對
       suppressHydrationWarning
     >
-      {/* overflow-x-hidden：手機選單抽屜是 position:fixed + translate-x-full 藏到畫面外，
-          但部分瀏覽器排版時還是把它算進水平捲動範圍，縮小視窗會多出一截 X 軸可以捲、
-          把抽屜內容露出來。這裡直接在根層擋掉，不管哪個 fixed 元件犯規都跑不出去。 */}
+      {/* overflow-x-hidden 只掛在 <html> 一層：手機選單抽屜是 position:fixed +
+          translate-x-full 藏到畫面外，但部分瀏覽器排版時還是把它算進水平捲動範圍，
+          縮小視窗會多出一截 X 軸可以捲、把抽屜內容露出來，這裡把它擋掉。
+          body 不能重複套一樣的 class——只設 overflow-x 會被 CSS 規範自動把
+          overflow-y 轉成 auto，html 和 body 兩層同時變成獨立的捲動容器，
+          子孫的 position:sticky 就會抓到「不會真的捲動」的 body 當基準而整個失效
+          （2026-08-24 skill-build 配點面板不會吸附就是這個坑）。 */}
       <body
-        className="min-h-full flex flex-col overflow-x-hidden"
+        className="min-h-full flex flex-col"
         style={{ fontFamily: "system-ui, 'Microsoft JhengHei', sans-serif" }}
       >
         <SiteShell>{children}</SiteShell>

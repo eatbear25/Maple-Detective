@@ -45,7 +45,7 @@ const TOOL_META: Record<
   { label?: string; desc: string; group: HomeGroup; icon: LucideIcon }
 > = {
   monsters: {
-    desc: "查這隻怪掉什麼、這道具誰會掉",
+    desc: "查詢怪物掉落物，包含未來視",
     group: "lookup",
     icon: Search,
   },
@@ -63,12 +63,16 @@ const TOOL_META: Record<
   },
   quests: {
     label: "任務查詢",
-    desc: "任務需求、獎勵與整條系列鏈",
+    desc: "任務需求、獎勵查詢",
     group: "lookup",
     icon: ScrollText,
   },
   gacha: { desc: "用官方機率表模擬抽獎", group: "sim", icon: Dices },
-  fashion: { desc: "紙娃娃試穿，含點裝特效", group: "sim", icon: Shirt },
+  fashion: {
+    desc: "紙娃娃試穿，包含客戶端未加入點裝",
+    group: "sim",
+    icon: Shirt,
+  },
   "skill-build": {
     desc: "1、2 轉 SP 怎麼分配的試算",
     group: "sim",
