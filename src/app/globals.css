@@ -4,6 +4,19 @@
   box-sizing: border-box;
 }
 
+/* 全站 focus 樣式：蓋掉瀏覽器預設的黑色 outline，滑鼠點擊不顯示、鍵盤 tab 才顯示，顏色吃主題 --accent。
+   單層半透明 box-shadow 做柔和光暈，跟著元件自己的 border-radius 走，不像 outline 在部分瀏覽器
+   會被畫成生硬的直角框。刻意不用高飽和實線環——很多元件本身 focus 時邊框就會變 --accent 色，
+   兩個疊在一起太搶眼。 */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+  transition: box-shadow 150ms ease;
+}
+
 body {
   margin: 0;
 }

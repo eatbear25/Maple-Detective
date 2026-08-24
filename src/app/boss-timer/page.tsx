@@ -476,7 +476,7 @@ function KillFormModal({
               max={60}
               value={channel}
               onChange={(e) => setChannel(e.target.value)}
-              placeholder="例如 3"
+              // placeholder="例如 3"
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm outline-none focus:border-[var(--accent)]"
             />
           </div>
