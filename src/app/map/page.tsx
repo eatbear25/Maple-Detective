@@ -1,8 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, MapPin, Telescope } from "lucide-react";
+import {
+  ArrowLeft,
+  ExternalLink,
+  MapPin,
+  Search,
+  Telescope,
+  X,
+} from "lucide-react";
 import {
   monsters,
   mobIconSrc,
@@ -34,6 +41,68 @@ function mapLabel(id: number) {
   return info.street ? `${info.street}・${info.name}` : info.name;
 }
 
+interface MapLoc {
+  sheetId: string;
+  spotIdx: number;
+  /** 借鄰居約略標位置，不是精準座標 */
+  approx: boolean;
+}
+
+/** 地圖 id → 該去哪個 sheet 的哪個點才找得到它。同一張圖常常在總圖與大陸圖都有一個點，
+ *  優先取最深層（最精準）的那個；完全沒有精準點的（隱藏圖/迷你地城）才退而用 near 的約略位置。 */
+function buildMapLocationIndex(): Map<number, MapLoc> {
+  const depthCache = new Map<string, number>();
+  const depthOf = (id: string): number => {
+    const cached = depthCache.get(id);
+    if (cached != null) return cached;
+    let n = 0;
+    let cur = wmSheets[id];
+    while (cur?.parent) {
+      n++;
+      cur = wmSheets[cur.parent];
+    }
+    depthCache.set(id, n);
+    return n;
+  };
+
+  const index = new Map<number, MapLoc>();
+  const bestDepth = new Map<number, number>();
+  for (const [sheetId, sheet] of Object.entries(wmSheets)) {
+    const depth = depthOf(sheetId);
+    sheet.spots.forEach((spot, spotIdx) => {
+      for (const id of spot.maps) {
+        if ((bestDepth.get(id) ?? -1) < depth) {
+          bestDepth.set(id, depth);
+          index.set(id, { sheetId, spotIdx, approx: false });
+        }
+      }
+    });
+  }
+
+  const bestNearDepth = new Map<number, number>();
+  for (const [sheetId, sheet] of Object.entries(wmSheets)) {
+    const depth = depthOf(sheetId);
+    sheet.spots.forEach((spot, spotIdx) => {
+      for (const id of spot.near ?? []) {
+        if (index.has(id)) continue;
+        if ((bestNearDepth.get(id) ?? -1) < depth) {
+          bestNearDepth.set(id, depth);
+          index.set(id, { sheetId, spotIdx, approx: true });
+        }
+      }
+    });
+  }
+
+  return index;
+}
+
+const mapLocationIndex = buildMapLocationIndex();
+
+/** 可搜尋的地圖清單（有中文名、也找得到精準或約略位置的） */
+const searchableMaps = Array.from(mapLocationIndex.entries())
+  .map(([id, loc]) => ({ id, label: mapLabel(id), approx: loc.approx }))
+  .filter((m) => !m.label.startsWith("#"));
+
 export default function MapNavPage() {
   const [sheetId, setSheetId] = useState(WM_ROOT);
   const [spotIdx, setSpotIdx] = useState<number | null>(null);
@@ -42,6 +111,47 @@ export default function MapNavPage() {
   const switchSheet = (s: string) => {
     setSheetId(s);
     setSpotIdx(null);
+  };
+
+  const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const searchBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onDocMouseDown(e: MouseEvent) {
+      if (
+        searchBoxRef.current &&
+        !searchBoxRef.current.contains(e.target as Node)
+      ) {
+        setSearchFocused(false);
+      }
+    }
+    document.addEventListener("mousedown", onDocMouseDown);
+    return () => document.removeEventListener("mousedown", onDocMouseDown);
+  }, []);
+
+  const trimmedQuery = query.trim();
+  const showDropdown = searchFocused && trimmedQuery.length > 0;
+
+  const mapResults = useMemo(() => {
+    if (!trimmedQuery) return [];
+    const q = trimmedQuery.toLowerCase();
+    return searchableMaps.filter((m) => m.label.toLowerCase().includes(q)).slice(0, 6);
+  }, [trimmedQuery]);
+
+  const monsterResults = useMemo(() => {
+    if (!trimmedQuery) return [];
+    const q = trimmedQuery.toLowerCase();
+    return monsters.filter((m) => m.name.toLowerCase().includes(q)).slice(0, 5);
+  }, [trimmedQuery]);
+
+  const jumpToMap = (id: number) => {
+    const loc = mapLocationIndex.get(id);
+    if (!loc) return;
+    setSheetId(loc.sheetId);
+    setSpotIdx(loc.spotIdx);
+    setQuery("");
+    setSearchFocused(false);
   };
 
   const dots: WorldMapDot[] = useMemo(
@@ -65,6 +175,123 @@ export default function MapNavPage() {
         <p className="mt-1 text-sm text-[var(--text-muted)]">
           遊戲世界地圖，透過點擊地圖上黃點看哪裡有出沒哪些怪物，包含了未來視的地圖，僅供參考。
         </p>
+      </div>
+
+      <div ref={searchBoxRef} className="relative max-w-md">
+        <div className="relative">
+          <Search
+            size={16}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none"
+          />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            placeholder="搜尋地圖 / 怪物名稱"
+            className="w-full rounded-full border border-[var(--border)] bg-[var(--surface)] pl-10 pr-9 py-2 text-sm outline-none focus:border-[var(--accent)] transition-colors placeholder:text-[var(--text-muted)]"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              aria-label="清除搜尋"
+              className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text)]"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+
+        {showDropdown && (
+          <div className="absolute z-20 mt-1.5 max-h-96 w-full overflow-y-auto themed-scroll rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2 shadow-lg">
+            {mapResults.length === 0 && monsterResults.length === 0 ? (
+              <div className="px-2 py-3 text-center text-xs text-[var(--text-muted)]">
+                找不到符合的地圖或怪物
+              </div>
+            ) : (
+              <>
+                {mapResults.length > 0 && (
+                  <div className="mb-1.5">
+                    <div className="px-2 py-1 text-[10px] font-semibold text-[var(--text-muted)]">
+                      地圖
+                    </div>
+                    {mapResults.map((m) => (
+                      <button
+                        key={m.id}
+                        onClick={() => jumpToMap(m.id)}
+                        className="cursor-pointer flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-[var(--accent-soft)]"
+                      >
+                        <MapPin
+                          size={13}
+                          className="shrink-0 text-[var(--text-muted)]"
+                        />
+                        <span className="flex-1">{m.label}</span>
+                        {m.approx && (
+                          <span className="shrink-0 text-[10px] text-[var(--text-muted)]">
+                            約略位置
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {monsterResults.length > 0 && (
+                  <div>
+                    <div className="px-2 py-1 text-[10px] font-semibold text-[var(--text-muted)]">
+                      怪物
+                    </div>
+                    {monsterResults.map((m) => {
+                      const spots = m.maps
+                        .filter((id) => mapLocationIndex.has(id))
+                        .map((id) => ({ id, label: mapLabel(id) }))
+                        .sort((a, b) => a.id - b.id);
+                      return (
+                        <div key={m.id} className="px-2 py-1.5">
+                          <div className="flex items-center gap-1.5 text-sm">
+                            <GameIcon
+                              src={mobIconSrc(m.id)}
+                              alt={m.name}
+                              fallback="🐌"
+                              className="h-5 w-5 shrink-0"
+                            />
+                            <span className="font-medium">{m.name}</span>
+                            {m.level != null && (
+                              <span className="text-xs text-[var(--text-muted)]">
+                                Lv.{m.level}
+                              </span>
+                            )}
+                          </div>
+                          {spots.length > 0 ? (
+                            <div className="mt-1 flex flex-wrap gap-1 pl-[26px]">
+                              {spots.slice(0, 8).map((s) => (
+                                <button
+                                  key={s.id}
+                                  onClick={() => jumpToMap(s.id)}
+                                  className="cursor-pointer rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]"
+                                >
+                                  {s.label}
+                                </button>
+                              ))}
+                              {spots.length > 8 && (
+                                <span className="px-1 py-0.5 text-[11px] text-[var(--text-muted)]">
+                                  等共 {spots.length} 個地點
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="mt-1 pl-[26px] text-[11px] text-[var(--text-muted)]">
+                              找不到可導覽的地點
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
