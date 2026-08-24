@@ -33,9 +33,31 @@ const rajdhani = Rajdhani({
   weight: ["500", "600", "700"],
 });
 
+const SITE_URL = "https://maple-detective.vercel.app";
+const SITE_TITLE = "楓探 | 新楓之谷：經典版工具箱";
+const SITE_DESCRIPTION =
+  "新楓之谷經典版攻略工具箱：怪物掉落查詢、地圖導覽、技能查詢與配點模擬、任務查詢、BOSS 計時器、轉蛋模擬、時裝搭配，資料取自遊戲用戶端拆包整理。";
+
 export const metadata: Metadata = {
-  title: "楓探 | 新楓之谷：經典版工具箱",
-  description: "楓之谷攻略工具箱：怪物掉落查詢、時裝搭配等",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: "%s | 楓探",
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "zh_TW",
+    siteName: "楓探",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
