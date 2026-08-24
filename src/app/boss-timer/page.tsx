@@ -250,7 +250,7 @@ function BossCard({
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
       <a
-        href={`/monsters?q=${encodeURIComponent(boss.name)}`}
+        href={`/monsters?id=${boss.id}`}
         target="_blank"
         rel="noopener noreferrer"
         title="在新視窗查看掉落資訊"
