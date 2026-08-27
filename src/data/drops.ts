@@ -4,6 +4,7 @@
 import data from "./generated/monster-drops.json";
 import rawItemInfo from "./generated/item-info.json";
 import rawQuestData from "./generated/quests.json";
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 
 /** 怪物數值（wz 原始欄位名；5 隻未實裝活動怪沒有數值，物件為空） */
 export interface MobStats {
@@ -128,6 +129,6 @@ export const mapInfo = (id: number): MapInfo | undefined => d.maps[String(id)];
 export const futureMapInfo = (id: number): MapInfo | undefined => d.futureMaps[String(id)];
 /** 世界地圖底圖資訊 */
 export const worldMapSheet = (s: string): WorldMapSheet | undefined => d.worldmap[s];
-export const worldMapSrc = (s: string) => `/worldmap/${s}.png`;
-export const mobIconSrc = (id: string) => `/icons/mob/${id}.gif`;
-export const itemIconSrc = (id: number) => `/icons/item/${id}.png`;
+export const worldMapSrc = (s: string) => `${ASSET_BASE_URL}/worldmap/${s}.png`;
+export const mobIconSrc = (id: string) => `${ASSET_BASE_URL}/icons/mob/${id}.gif`;
+export const itemIconSrc = (id: number) => `${ASSET_BASE_URL}/icons/item/${id}.png`;

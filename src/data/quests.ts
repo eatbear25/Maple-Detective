@@ -2,6 +2,7 @@
 // 產生流程：extract-quest.py → build-quest-data.py → generated/quests.json
 import data from "./generated/quests.json";
 import type { EquipStats, MapInfo, WorldMapSheet } from "./drops";
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 
 /** NPC 所在地圖 */
 export type QuestMapInfo = MapInfo;
@@ -118,6 +119,6 @@ export const questRegion = (q: Quest) => q.region;
 /** 地區 chips 的順序：大致依遊戲地理動線（見 tools/build-quest-data.py 的 TOWNS） */
 export const questRegions: string[] = d.regions;
 /** 任務 NPC 站立圖（tools/download-icons.py 抓的；少數 NPC maplestory.io 沒有圖） */
-export const npcIconSrc = (id: number) => `/icons/npc/${id}.gif`;
+export const npcIconSrc = (id: number) => `${ASSET_BASE_URL}/icons/npc/${id}.gif`;
 
 export const questWorldMapSheet = (s: string): WorldMapSheet | undefined => d.worldmap[s];

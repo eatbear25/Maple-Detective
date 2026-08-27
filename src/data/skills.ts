@@ -2,6 +2,7 @@
 // 產生流程：extract-skill.py → build-skill-data.py → generated/skills.json
 // 圖示：public/icons/skill/<skillId>.png（來源見 reference-data/skill-icon-source.json）
 import data from "./generated/skills.json";
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 
 export interface Job {
   id: string;
@@ -79,7 +80,7 @@ export function jobPath(jobId: string): Job[] {
 }
 
 export function skillIconSrc(id: string) {
-  return `/icons/skill/${id}.png`;
+  return `${ASSET_BASE_URL}/icons/skill/${id}.png`;
 }
 
 export const LEVEL_LABELS: { key: keyof SkillLevel; label: string; unit?: string }[] = [

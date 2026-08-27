@@ -4,6 +4,7 @@
 // 這裡不放抽卡邏輯（見 src/app/gacha/engine.ts），也不放任何機率計算——
 // 模擬器只回答「實際發生了什麼」，不回答「應該會發生什麼」。
 import data from "./generated/gacha.json";
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 
 /** 稀有度分層。依官方機率值分組，是分類不是計算。 */
 export type Tier =
@@ -179,12 +180,12 @@ export const TIER_ORDER = (Object.keys(TIER_META) as Tier[]).sort(
 export function prizeIcon(prize: Prize): string | null {
   if (!prize.icon) return null;
   return prize.icon.kind === "mob"
-    ? `/icons/mob/${prize.icon.id}.gif`
-    : `/icons/item/${prize.icon.id}.png`;
+    ? `${ASSET_BASE_URL}/icons/mob/${prize.icon.id}.gif`
+    : `${ASSET_BASE_URL}/icons/item/${prize.icon.id}.png`;
 }
 
 /** 轉蛋機圖。9110011 = 遊戲截圖裡那台（機身有紅楓葉）。 */
-export const GACHA_MACHINE_ICON = "/icons/npc/9110011.png";
+export const GACHA_MACHINE_ICON = `${ASSET_BASE_URL}/icons/npc/9110011.png`;
 
 /** itemId → 獎品，供獲得清單與機率表連動用。 */
 export function prizeIndex(pool: GachaPool): Map<number, Prize> {

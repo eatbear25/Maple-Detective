@@ -8,6 +8,7 @@ import {
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import SiteShell from "./site-shell";
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 
 const notoSansTC = Noto_Sans_TC({
   variable: "--font-noto-tc",
@@ -71,6 +72,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // 瀏覽器擴充功能會在 hydrate 前往 <html> 塞自訂屬性（speedupyoutubeads 等），只抑制此元素的屬性比對
       suppressHydrationWarning
     >
+      {/* 圖示/世界地圖改吃外部 CDN（ASSET_BASE_URL）後，第一張圖要多做一次跨網域連線
+          握手；preconnect 讓瀏覽器提早把這個握手做掉，同頁後面上百張圖沿用同一條連線。 */}
+      {ASSET_BASE_URL && (
+        <link rel="preconnect" href={new URL(ASSET_BASE_URL).origin} crossOrigin="" />
+      )}
       {/* overflow-x-hidden 只掛在 <html> 一層：手機選單抽屜是 position:fixed +
           translate-x-full 藏到畫面外，但部分瀏覽器排版時還是把它算進水平捲動範圍，
           縮小視窗會多出一截 X 軸可以捲、把抽屜內容露出來，這裡把它擋掉。
