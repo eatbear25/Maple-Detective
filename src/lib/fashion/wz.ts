@@ -12,8 +12,9 @@ import {
   fetchEffectBooks as fetchEffectFromMsio,
   type EffectBooks,
 } from "./msio";
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 
-const STATIC_BASE = "/wz-static";
+const STATIC_BASE = `${ASSET_BASE_URL}/wz-static`;
 
 /** 身體/頭的 .img 路徑（直接在 Character/ 下，沒有部位子目錄） */
 const BODY_HEAD_RE = /^Character\/000[01]2\d{3}\.img$/;
