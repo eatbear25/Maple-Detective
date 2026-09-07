@@ -16,7 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
-import { navItems, navHref, type NavItem } from "@/nav";
+import { navTree, isNavGroup, navHref, type NavItem } from "@/nav";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -44,113 +44,98 @@ const WEBSITE_JSONLD = {
 };
 
 /**
- * 首頁的工作是「一次把站上有什麼攤在眼前」：功能已經十一個，
- * 首頁若只放一個搜尋框，等於只通往怪物掉落、其餘的完全沒被提到。
+ * 首頁是走廊，不是房間。
  *
- * 版面是磁磚牆，但刻意壓掉三種噪音（做過兩輪原型才收斂成這樣，
- * 原型留在 prototype/home-redesign 分支）：
- *   1. 沒有區段小標與分隔線 — 分組改用排列順序表達（前兩格是釘選的高頻入口，
- *      其餘依 查資料 → 模擬器 → 組隊 排）。原本八張卡剛好排成完整的 4×2，
- *      2026-09-07 併入組隊三個工具後變成 11 張、末排 3 張。
- *      要避免的是「4／3／1」那種末排只剩一張的參差，4／4／3 還可以接受；
- *      之後再加工具時湊到 12 張就會回到完整的 4×3
- *   2. 卡片平常沒有外框 — 只有很淡的底色，邊框 hover 才浮出來
- *   3. 圖示不套底色色塊 — 避免「框裡面還有一個框」
+ * GA（2026-08-23）：觸及率 97.87%，停留 13 秒——幾乎每個人都會經過，但沒有人
+ * 停下來看；而 76.6% 的人要去的是怪物掉落，那本來就是一個搜尋框。
+ *
+ * 原本是 8 張磁磚的磁磚牆，工具長到 11 個之後整面牆佔掉一整個螢幕卻沒人在看。
+ * 2026-09-07 做了四版原型（分組磁磚牆／搜尋優先／主力放大＋側欄／依動作分組，
+ * 留在 prototype/home-redesign-2 分支）比過之後改成現在這樣：
+ *   上半螢幕只有搜尋，工具全部降級成一份四欄的文字清單。
+ *
+ * 刻意不做的兩件事（原型階段試過又拿掉）：
+ *   1. 工具名旁邊標 GA 觸及率——那是挑版型用的註記，長得卻像 UI，
+ *      而且只有四頁有數據，其餘七個會被誤讀成「沒人用」
+ *   2. 搜尋框下面放「試試：嫩寶／綠水靈…」的範例查詢
  */
-type HomeGroup = "lookup" | "sim" | "party" | "track";
 
-/** 磁磚的排列順序。沒有小標，靠這個順序讓同類的排在一起。 */
-const GROUP_ORDER: Record<HomeGroup, number> = {
-  lookup: 0,
-  sim: 1,
-  party: 2,
-  track: 3,
+/**
+ * 清單的分段直接吃 nav.ts 的 navTree：每個 NavGroup 就是一段，成員跟著它走，
+ * 所以在 nav.ts 加一個工具，首頁會自己長出來（跟舊版磁磚牆一樣的性質，別退化成
+ * 寫死的 key 清單）。兩個頂層單項在 nav 上沒有群組，用下面這張表指定落點。
+ */
+const TOP_LEVEL_SECTION: Record<string, string> = {
+  monsters: "lookup",
+  "boss-timer": "track",
 };
 
 /**
- * 釘在最前面的兩格 ＝ nav.ts 的頂層兩項，理由跟那裡一樣：
- * BOSS 計時器觸及率第 2（35.5%）但停留只有 22 秒（開啟→掃一眼→關掉），
- * 任何多餘的摩擦都佔體感時間很大一塊；而磁磚在手機（<640px）是單欄直排，
- * 照 GROUP_ORDER 排的話它會落在第 8 格，等於要滑過 7 張卡才看得到。
- *
- * 其餘六格維持語意分組。之後要依 GA 重排整面牆時請注意：2026-08-23 那份 GA
- * 只涵蓋 monsters / boss-timer / fashion / map 四頁，quests / skills /
- * skill-build / gacha 當時還沒上線，八格有四格沒數據，不足以拿來排序。
+ * 段落標題與順序。刻意跟 nav 的群組標籤不同：nav 在一條橫列上，字要短
+ *（「查詢」「組隊」）；首頁是段落小標，可以講清楚一點。
+ * "other" 是安全網——新增的頂層工具沒登記到 TOP_LEVEL_SECTION 時會掉進來，
+ * 不會從畫面上無聲消失。
  */
-const PINNED = ["monsters", "boss-timer"];
+const SECTIONS: { id: string; title: string }[] = [
+  { id: "lookup", title: "查資料" },
+  { id: "simulators", title: "模擬器" },
+  { id: "party", title: "組隊任務" },
+  { id: "track", title: "追蹤" },
+  { id: "other", title: "其他" },
+];
+
+function buildSections() {
+  const bucket = new Map<string, NavItem[]>();
+  const push = (id: string, item: NavItem) => {
+    const list = bucket.get(id) ?? [];
+    list.push(item);
+    bucket.set(id, list);
+  };
+
+  for (const node of navTree) {
+    if (isNavGroup(node)) {
+      for (const item of node.items) push(node.key, item);
+    } else {
+      push(TOP_LEVEL_SECTION[node.key] ?? "other", node);
+    }
+  }
+
+  return SECTIONS.map((s) => ({ ...s, items: bucket.get(s.id) ?? [] })).filter(
+    (s) => s.items.length > 0,
+  );
+}
 
 /**
- * 卡片的圖示、說明與分組。
- * 分組刻意跟主選單的分組不同：選單依「點擊成本 ÷ 停留時間」排（見 nav.ts），
- * 首頁則依「這個工具在幫你做什麼」排，所以 BOSS 計時器在這裡自成一類。
- * 清單本身是從 navItems 推出來的，新增工具只要在 nav.ts 加，首頁就會跟著長出卡片；
- * 這份表沒補到的話會退回沒有說明的陽春卡片，不會憑空消失。
+ * 每個工具的一句話說明與圖示。label 是選填的覆寫，沒寫就用選單的標籤——
+ * 地圖／技能／任務在選單裡有群組小標撐著才能用短標籤，單獨列出來會太光溜。
+ * 這份表沒補到的工具會退回沒有說明的陽春列，不會憑空消失。
  *
- * label 是選填的覆寫，沒寫就用選單的標籤。地圖／技能／任務三個在選單裡有「查詢」
- * 群組小標撐著才能用短標籤，攤在卡片牆上會太光溜，所以補成跟各頁 h1 一致的全名。
+ * 圖示與 site-shell.tsx 的 NAV_ICONS 是兩份（那份還要吃 NavGroup 的 key），
+ * 新增工具兩邊都要加。
  */
-const TOOL_META: Record<
-  string,
-  { label?: string; desc: string; group: HomeGroup; icon: LucideIcon }
-> = {
-  monsters: {
-    desc: "查詢怪物掉落物，包含未來視",
-    group: "lookup",
-    icon: Search,
-  },
-  map: {
-    label: "地圖導覽",
-    desc: "在世界地圖上找位置與出沒怪物",
-    group: "lookup",
-    icon: MapIcon,
-  },
-  skills: {
-    label: "技能查詢",
-    desc: "各職業技能與每一級的數值",
-    group: "lookup",
-    icon: Sparkles,
-  },
-  quests: {
-    label: "任務查詢",
-    desc: "任務需求、獎勵查詢",
-    group: "lookup",
-    icon: ScrollText,
-  },
-  gacha: { desc: "用官方機率表模擬抽獎", group: "sim", icon: Dices },
-  fashion: {
-    desc: "紙娃娃試穿，包含客戶端未加入點裝",
-    group: "sim",
-    icon: Shirt,
-  },
-  "skill-build": {
-    desc: "1、2 轉 SP 怎麼分配的試算",
-    group: "sim",
-    icon: Target,
-  },
-  "moon-bunny": {
-    desc: "第一階段種子放置位置",
-    group: "party",
-    icon: MoonStar,
-  },
-  "first-time-together": {
-    desc: "第一階段克魯特題庫",
-    group: "party",
-    icon: ListChecks,
-  },
-  "tower-of-goddess": {
-    desc: "唱盤對照、封印房站位、倉庫擊殺順序",
-    group: "party",
-    icon: TowerControl,
-  },
-  "boss-timer": {
-    desc: "記下擊殺時間，自動算下次重生",
-    group: "track",
-    icon: Timer,
-  },
-};
+const TOOL_META: Record<string, { label?: string; desc: string; icon: LucideIcon }> =
+  {
+    monsters: { desc: "查怪物掉落物，包含未來視", icon: Search },
+    map: {
+      label: "地圖導覽",
+      desc: "在世界地圖上找位置與出沒怪物",
+      icon: MapIcon,
+    },
+    skills: { label: "技能查詢", desc: "各職業技能與每一級的數值", icon: Sparkles },
+    quests: { label: "任務查詢", desc: "任務需求、獎勵查詢", icon: ScrollText },
+    gacha: { desc: "用官方機率表模擬抽獎", icon: Dices },
+    fashion: { desc: "紙娃娃試穿，包含客戶端未加入點裝", icon: Shirt },
+    "skill-build": { desc: "1、2 轉 SP 怎麼分配的試算", icon: Target },
+    "boss-timer": { desc: "記下擊殺時間，自動算下次重生", icon: Timer },
+    "moon-bunny": { desc: "第一階段種子放置位置", icon: MoonStar },
+    "first-time-together": { desc: "第一階段克魯特題庫", icon: ListChecks },
+    "tower-of-goddess": {
+      desc: "唱盤對照、封印房站位、倉庫擊殺順序",
+      icon: TowerControl,
+    },
+  };
 
-const FALLBACK_META = { desc: "", group: "lookup" as HomeGroup, icon: Search };
-
+const FALLBACK_META = { desc: "", icon: Search };
 const metaOf = (i: NavItem) => TOOL_META[i.key] ?? FALLBACK_META;
 
 const FAQ: { q: string; a: ReactNode }[] = [
@@ -185,76 +170,30 @@ const FAQ: { q: string; a: ReactNode }[] = [
   },
 ];
 
-function ToolTile({ item }: { item: NavItem }) {
-  const { label, desc, icon: Icon } = metaOf(item);
-
-  const inner = (
-    <>
-      <div className="flex items-center gap-2">
-        <Icon size={20} style={{ color: "var(--accent)" }} />
-        {!item.enabled && (
-          <span className="ml-auto rounded-full bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">
-            籌備中
-          </span>
-        )}
-      </div>
-      <div className="mt-3 text-[15px] font-semibold leading-snug">
-        {label ?? item.label}
-      </div>
-      {desc && (
-        <p className="mt-1 text-xs leading-relaxed text-[var(--text-muted)]">
-          {desc}
-        </p>
-      )}
-    </>
-  );
-
-  // 用 ring 而不是 border：hover 時不會因為多一圈邊框而讓整塊位移 1px
-  const className =
-    "flex flex-col rounded-xl bg-[var(--surface)] p-4 transition-shadow";
-
-  if (!item.enabled) {
-    return <div className={`${className} opacity-50`}>{inner}</div>;
-  }
-  return (
-    <Link
-      href={navHref(item.path)}
-      className={`${className} ring-1 ring-transparent hover:ring-[var(--accent)]`}
-    >
-      {inner}
-    </Link>
-  );
-}
-
 export default function Home() {
-  const tools = [...navItems].sort((a, b) => {
-    const pa = PINNED.indexOf(a.key);
-    const pb = PINNED.indexOf(b.key);
-    if (pa !== -1 || pb !== -1) {
-      return (pa === -1 ? PINNED.length : pa) - (pb === -1 ? PINNED.length : pb);
-    }
-    return GROUP_ORDER[metaOf(a).group] - GROUP_ORDER[metaOf(b).group];
-  });
+  const sections = buildSections();
 
   return (
-    <div className="space-y-9">
+    <div className="space-y-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
       />
-      {/* 標題與搜尋同一排：搜尋是附屬工具，不是主角 */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">楓探 工具箱</h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
-            新楓之谷經典版 ·
-            資料來自遊戲用戶端拆包整理，與實際版本有差異，僅供參考
-          </p>
-        </div>
-        <form action="/monsters" method="get" className="relative sm:w-72">
+
+      {/* 上半螢幕只有一件事 */}
+      <div className="flex flex-col items-center pt-10 text-center sm:pt-16">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">楓探</h1>
+        <p className="mt-2 text-sm text-[var(--text-muted)]">
+          新楓之谷經典版工具箱 · 查怪物掉落、道具來源、地圖與任務
+        </p>
+        <form
+          action="/monsters"
+          method="get"
+          className="relative mt-7 w-full max-w-2xl"
+        >
           <Search
-            size={15}
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+            size={20}
+            className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
           />
           <label htmlFor="home-search" className="sr-only">
             搜尋怪物 / 道具 / 地圖
@@ -264,14 +203,26 @@ export default function Home() {
             name="q"
             placeholder="搜尋怪物 / 道具 / 地圖"
             autoComplete="off"
-            className="h-10 w-full rounded-full border border-[var(--border)] bg-[var(--surface)] pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
+            className="h-14 w-full rounded-full border border-[var(--border)] bg-[var(--surface)] pl-14 pr-5 text-base outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
           />
         </form>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {tools.map((i) => (
-          <ToolTile key={i.key} item={i} />
+      {/* 工具全部平鋪成文字清單，四欄，一眼看完 */}
+      <div className="grid gap-x-8 gap-y-7 border-t border-[var(--border)] pt-8 sm:grid-cols-2 lg:grid-cols-4">
+        {sections.map((s) => (
+          <section key={s.id}>
+            <h2 className="text-xs font-semibold tracking-wide text-[var(--text-muted)]">
+              {s.title}
+            </h2>
+            <ul className="mt-2 space-y-0.5">
+              {s.items.map((item) => (
+                <li key={item.key}>
+                  <ToolLink item={item} />
+                </li>
+              ))}
+            </ul>
+          </section>
         ))}
       </div>
 
@@ -298,5 +249,47 @@ export default function Home() {
         </div>
       </section> */}
     </div>
+  );
+}
+
+function ToolLink({ item }: { item: NavItem }) {
+  const { label, desc, icon: Icon } = metaOf(item);
+
+  const inner = (
+    <>
+      <Icon
+        size={15}
+        className="mt-0.5 shrink-0 text-[var(--text-muted)] group-hover:text-[var(--accent)]"
+      />
+      <span className="min-w-0">
+        <span className="text-sm font-medium">
+          {label ?? item.label}
+          {!item.enabled && (
+            <span className="ml-1.5 rounded-full bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10px] font-normal text-[var(--text-muted)]">
+              籌備中
+            </span>
+          )}
+        </span>
+        {desc && (
+          <span className="block text-xs leading-snug text-[var(--text-muted)]">
+            {desc}
+          </span>
+        )}
+      </span>
+    </>
+  );
+
+  const className = "group flex items-start gap-2 rounded-md px-2 py-1.5";
+
+  if (!item.enabled) {
+    return <div className={`${className} opacity-50`}>{inner}</div>;
+  }
+  return (
+    <Link
+      href={navHref(item.path)}
+      className={`${className} transition-colors hover:bg-[var(--accent-soft)]`}
+    >
+      {inner}
+    </Link>
   );
 }
