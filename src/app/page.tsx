@@ -12,7 +12,33 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
+import type { Metadata } from "next";
 import { navItems, navHref, type NavItem } from "@/nav";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+
+/**
+ * WebSite 結構化資料。SearchAction 指的就是下面那個 <form action="/monsters">，
+ * 讓 Google 有機會在搜尋結果直接附一個站內搜尋框（sitelinks searchbox）。
+ * 沒有做 FAQPage：這頁的 FAQ 常數目前整段被註解掉，畫面上沒有的東西不能上 schema。
+ */
+const WEBSITE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "楓探",
+  alternateName: "楓探 | 新楓之谷：經典版工具箱",
+  url: "https://maple-detective.vercel.app",
+  inLanguage: "zh-Hant-TW",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate:
+        "https://maple-detective.vercel.app/monsters?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
 
 /**
  * 首頁的工作是「一次把站上有什麼攤在眼前」：功能已經八個，
@@ -20,8 +46,9 @@ import { navItems, navHref, type NavItem } from "@/nav";
  *
  * 版面是磁磚牆，但刻意壓掉三種噪音（做過兩輪原型才收斂成這樣，
  * 原型留在 prototype/home-redesign 分支）：
- *   1. 沒有區段小標與分隔線 — 分組改用排列順序表達（查資料 → 模擬器 → 追蹤），
- *      八張卡排成完整的 4×2，不會出現 4／3／1 的參差排數
+ *   1. 沒有區段小標與分隔線 — 分組改用排列順序表達（前兩格是釘選的高頻入口，
+ *      其餘依 查資料 → 模擬器 排），八張卡排成完整的 4×2，
+ *      不會出現 4／3／1 的參差排數
  *   2. 卡片平常沒有外框 — 只有很淡的底色，邊框 hover 才浮出來
  *   3. 圖示不套底色色塊 — 避免「框裡面還有一個框」
  */
@@ -29,6 +56,18 @@ type HomeGroup = "lookup" | "sim" | "track";
 
 /** 磁磚的排列順序。沒有小標，靠這個順序讓同類的排在一起。 */
 const GROUP_ORDER: Record<HomeGroup, number> = { lookup: 0, sim: 1, track: 2 };
+
+/**
+ * 釘在最前面的兩格 ＝ nav.ts 的頂層兩項，理由跟那裡一樣：
+ * BOSS 計時器觸及率第 2（35.5%）但停留只有 22 秒（開啟→掃一眼→關掉），
+ * 任何多餘的摩擦都佔體感時間很大一塊；而磁磚在手機（<640px）是單欄直排，
+ * 照 GROUP_ORDER 排的話它會落在第 8 格，等於要滑過 7 張卡才看得到。
+ *
+ * 其餘六格維持語意分組。之後要依 GA 重排整面牆時請注意：2026-08-23 那份 GA
+ * 只涵蓋 monsters / boss-timer / fashion / map 四頁，quests / skills /
+ * skill-build / gacha 當時還沒上線，八格有四格沒數據，不足以拿來排序。
+ */
+const PINNED = ["monsters", "boss-timer"];
 
 /**
  * 卡片的圖示、說明與分組。
@@ -163,12 +202,21 @@ function ToolTile({ item }: { item: NavItem }) {
 }
 
 export default function Home() {
-  const tools = [...navItems].sort(
-    (a, b) => GROUP_ORDER[metaOf(a).group] - GROUP_ORDER[metaOf(b).group],
-  );
+  const tools = [...navItems].sort((a, b) => {
+    const pa = PINNED.indexOf(a.key);
+    const pb = PINNED.indexOf(b.key);
+    if (pa !== -1 || pb !== -1) {
+      return (pa === -1 ? PINNED.length : pa) - (pb === -1 ? PINNED.length : pb);
+    }
+    return GROUP_ORDER[metaOf(a).group] - GROUP_ORDER[metaOf(b).group];
+  });
 
   return (
     <div className="space-y-9">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
+      />
       {/* 標題與搜尋同一排：搜尋是附屬工具，不是主角 */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>

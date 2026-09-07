@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+// 這頁是還沒做的「組隊攻略」佔位版面，裡面的三則攻略是假資料，也沒有掛在 nav.ts 上。
+// 對搜尋引擎關掉：虛構內容被索引只會拉低整站的評價，等真的做出來再拿掉 noindex。
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
+
 const guides = [
   { title: "楓葉新手村 5人本推薦配置", tag: "Lv.1-20", desc: "劍士頂前排、法師遠程輸出，新手最穩配置。" },
   { title: "紅寶王 頭目速刷組隊", tag: "Lv.15-25", desc: "建議 4 人：坦一、輸出二、補師一，注意王的突進技能。" },

@@ -122,6 +122,14 @@ export const monsters: DropMonster[] = d.monsters;
 
 export const itemName = (id: number) =>
   d.items[String(id)] ?? d.futureItems[String(id)] ?? questItems[String(id)]?.name ?? `#${id}`;
+/** true = 這件道具目前版本還沒實裝（只在未來視看得到） */
+export const isFutureItem = (id: number) =>
+  d.items[String(id)] === undefined && d.futureItems[String(id)] !== undefined;
+/** 客戶端名稱表（含任務道具）查得到名字 = 這個 id 有真的名稱，不是 fallback 的 #id */
+export const hasItemName = (id: number) =>
+  d.items[String(id)] !== undefined ||
+  d.futureItems[String(id)] !== undefined ||
+  questItems[String(id)] !== undefined;
 export const itemInfo = (id: number): ItemInfo | undefined =>
   infos[String(id)] ?? questItems[String(id)];
 export const mapInfo = (id: number): MapInfo | undefined => d.maps[String(id)];
