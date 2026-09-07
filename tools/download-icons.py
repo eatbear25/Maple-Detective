@@ -28,6 +28,10 @@ def fetch(url):
         return r.read()
 
 
+# 掉落表以外、頁面自己要用的道具圖示（掉落資料裡不會出現，得手動列）。
+# 4001095–4001100：月妙的年糕第一階段的六色迎月花種子。
+EXTRA_ITEMS = [4001095, 4001096, 4001097, 4001098, 4001099, 4001100]
+
 MOB_STANCES = ["stand", "fly", "move"]  # 部分怪物（如純飛行怪）沒有 stand 動畫，依序退回
 
 # 轉蛋模擬器要用的轉蛋機 sprite。9110011 是遊戲截圖裡那台（機身有紅楓葉），
@@ -107,7 +111,7 @@ def main():
     jobs = []
     for mob_id in sorted(set(mobs) | gacha_mobs | q_mobs):
         jobs.append(("mob", mob_id, "mob/{id}/render/{stance}", os.path.join(PUB, "mob", f"{mob_id}.gif")))
-    items = {i for v in mobs.values() for i in v["rewards"]} | sup_items | gacha_items
+    items = {i for v in mobs.values() for i in v["rewards"]} | sup_items | gacha_items | set(EXTRA_ITEMS)
     for item_id in sorted(items):
         jobs.append(("item", item_id, "item/{id}/icon", os.path.join(PUB, "item", f"{item_id}.png")))
     for npc_id in GACHA_NPCS:

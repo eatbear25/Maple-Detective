@@ -121,7 +121,7 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 11. `python tools/build-skill-data.py` → `src/data/generated/skills.json`（技能查詢與配點模擬用；316 個技能＝1轉29／2轉81／3轉89／4轉117）
 12. `python tools/extract-skill-icons.py` 依 `reference-data/skill-icon-map.json` 從圖集切出 `public/icons/skill/<skillId>.png`
 13. `python tools/fetch-skill-icons.py` 補還沒有圖的技能（3/4 轉靠這支），從參考站 `data.js` 依「職業＋技能名」抓圖，同時把來源寫回 `skill-icon-map.json`
-14. `python tools/download-icons.py` 補抓新圖示到 `public/icons/{item,mob,npc}/`（TMS/209 優先、GMS/62 備援；已存在會跳過。道具清單 = 怪物掉落 + 人工補充 + **任務需求/獎勵** + **轉蛋獎品**，NPC 清單 = 任務 NPC（`.gif`）+ 轉蛋機（`.png`），所以要排在 build-quest-data 與 build-gacha-data 之後）
+14. `python tools/download-icons.py` 補抓新圖示到 `public/icons/{item,mob,npc}/`（TMS/209 優先、GMS/62 備援；已存在會跳過。道具清單 = 怪物掉落 + 人工補充 + **任務需求/獎勵** + **轉蛋獎品** + 腳本裡的 `EXTRA_ITEMS`（掉落表以外、頁面自己要用的圖，例：月妙的六色種子），NPC 清單 = 任務 NPC（`.gif`）+ 轉蛋機（`.png`），所以要排在 build-quest-data 與 build-gacha-data 之後）
 
 `tools/worldmap_spots.py` 是 build-site-data 與 build-quest-data 共用的「地圖→世界地圖點位」規則（精準點位、否則借 ID 最接近的鄰居標約略位置），只該有一份。
 
@@ -140,6 +140,10 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 6. **完成條件不只有道具**：`Check["1"].mob` 有 79 個任務要打怪（`kill`），以前整段沒顯示、還印成「不需要繳交道具」。技能獎勵 `Act["1"].skill` 有 40 個（多半是 4 轉精通書），以前只印一顆「技能」chip 沒有名字；`masterLevel` = 把上限拉到幾級、`skillLevel` = 直接學到幾級，同一個技能常有冒險家/騎士團/龍魔導士三份 id，要用「名字＋職業」去重。
 7. **大部分任務的獎勵不在客戶端**：`Act` 只有 **15 個任務**帶 `money`（11 正、4 負），**84 個任務的 `Act` 完全是空的**。原因查明：`Check` 裡有 **66 個任務**帶 `startscript`/`endscript`，代表接受/完成處理交給**伺服器端腳本**，獎勵不走 Act——例如 #2156「可以許願的彩虹鍋牛殼」有 `endscript: q2156e`，實際會給 3 萬楓幣，客戶端一個欄位都沒有。其中 **52 個是「有 script 且 Act 全空」**，獎勵一定查不到（含全部轉職任務）。掃過 `Act` 全部欄位、任務說明文字、`ScriptString` 的 quest0/quest1，客戶端都沒有腳本內容——跟掉落機率一樣只能靠玩家回報。人工補充走 **`reference-data/quest-supplement.json`**（`{ questId: { exp?, money?, cost?, pop?, items? } }`，會覆蓋客戶端資料），網站上吃到補充的任務會標「＊部分獎勵來自玩家回報補充」，查不到獎勵的則直接說明是伺服器端腳本、不會印成「沒有獎勵」。另外**負數 money 是「任務向玩家收費」不是獎勵**（例：#6000 收 100 萬），build 腳本拆成 `money`(得到) 與 `cost`(花費)。
 8. **任務的實裝判斷 = 該任務的 NPC 有沒有站在「Map.json 有名字」的地圖上**。實測 490 個任務裡：NPC 全部實裝 296、部分實裝 28、完全沒有 166。定案是 296+28 算現行版本，只有 166 掛未實裝徽章。另外 155 個任務 NPC 只有 97 個查得到地圖，查不到的 14 個正常號段 NPC 是腳本動態生成的劇情 NPC（705 張地圖已確認是全部，不是漏掃）。
+
+### 組隊工具的地圖底圖（`/party`，跟上面那串各自獨立）
+
+`python tools/extract-moonbunny-map.py` → `src/data/generated/moon-bunny-map.json` + `public/maps/910010000.webp`（月妙的年糕第一階段「迎月花山丘 910010000」；花收哪色種子讀自 Reactor 9108000-9108005 的 event 道具 id，草掉哪色讀自 Reactor 9102002-9102007 的 action `moonItemN` → 種子 4001095+N，已用實機截圖交叉驗證 14 叢全中。**要連網**：Unity 版客戶端的 Map wzjson 只剩玩法資料、畫面在 prefab 裡不好重組，底圖改抓 maplestory.io 的地圖渲染，再用 footholds 自動對位求出座標原點。**注意底圖那版的地形跟現行版本不一樣**——下層平台 TMS/209 是三長段、現行版是五段 244 高/116 低交錯，`rebuild_ground()` 會照客戶端 footholds 把那一帶整欄上下平移 60px 重鋪（順便補高低差、擦掉會被切斷的裝飾、把梯子挖起來最後貼回並接長），細節與踩過的坑見腳本 docstring）
 
 ### 時裝與特效（`/fashion`，跟上面那串各自獨立）
 
@@ -199,7 +203,6 @@ python tools/download-icons.py                      （已擴充，一併抓轉�
   - `prize.icon` = `{kind:"item"|"mob", id}`，`download-icons.py` 只抓這個欄位指到的圖。
   - 客戶端裡其實有原圖，但卡在 `.wzspritesheet` 的 128-bit 雜湊索引（試過的路都失敗），
     完整調查見 `.scratch/gacha-sim/research-item-icons.md`——**上面的替代方案已經夠用，不必再碰**。
-
 **實裝判斷（2026-08-16 修正）**：怪物在 Mob.json ≠ 實裝——客戶端名稱表涵蓋全部舊 wz 怪。正確判斷是「≥1 張出沒地圖在客戶端 Map.json 有名字」，據此現行版本 70 隻、未來視 273 隻。
 
 **後台檢視器**：`../maple-detective-admin/`（獨立資料夾，**不部署、不進公開 repo**）。雙擊 `start.bat` 可查完整未過濾拆包資料（mobId/itemId/名稱搜尋、完整數值、未過濾掉落、道具反查）。遊戲更新後重跑主專案管線，再跑它的 `refresh-data.py` 即同步。
@@ -228,7 +231,8 @@ python tools/download-icons.py                      （已擴充，一併抓轉�
   - **明確不做機率計算**（2026-08-20 定案，不是待辦）：沒有期望值、達成抽數分佈、運氣百分位。理由是使用者不想背書可能算錯的數字。未來要加回來的話，驗證方法是容斥閉式 `P(n)=Σ(-1)^|S|(1-Σp)ⁿ` 對照 10 萬次蒙地卡羅，小數點後三位一致即證明兩邊都對。參考量級（**不要放進網站**）：集齊神秘任務蒙地卡羅 300 次實測平均 692 抽、中位數 617、最多 2527，約 NT$12,449。
   - 規格與 issue 在 `.scratch/gacha-sim/`。
 - `/fashion` **時裝搭配**：紙娃娃試衣間。右欄分頁預設停在**髮型**，最後一個分頁是**特效**（45 件，同時只能開一個，再點一次關掉）。特效不佔部位、沒有性別限制，所以跟 `equips` 分開放在 `CharacterLook.effect`。渲染見 `src/lib/fashion/renderer.ts`：特效不參與遮蔽也不吃錨點傳播，就是畫在角色原點的一組圖，`z` 決定畫在角色前面還是後面（`drawFrame` 的後方那疊→角色→前方那疊）。
-- `/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名；放大鏡旁的漏斗按鈕開進階篩選（屬性弱點多選、等級範圍）。分「現行版本／未來視」分頁：現行 70 隻（有實裝地圖的怪）＋人工補充掉落；未來視 273 隻（未實裝怪與帶未實裝掉落的怪）。**出沒地圖 chip 點了會開世界地圖彈窗**，在拆包出的遊戲世界地圖上標出該地圖位置（同張圖上這隻怪的其他出沒點也會標小點，可點切換）；不在遊戲世界地圖上的隱藏圖/迷你地城借「ID 最接近的鄰居」標約略位置（顯示「約略位置」徽章）。原本的「地區分類」已移除（2026-08-16）——ID 前綴推地區在維多利亞整個對不上（101030xxx 遺跡發掘地其實在勇士之村、100040xxx 其實是魔法森林南部），改用世界地圖標點一勞永逸。詳情面板有怪物數值（HP/攻防/命中/迴避）與屬性抗性（elemAttr：F火 I冰 L雷 S毒 H聖 D暗；1=免疫 2=抗性 3=弱點）。UI 無掉落機率欄位（拿不到真值）。
+- `/party/*` **組隊工具**（2026-09-07 併入 dev）：各組隊任務一頁，**沒有 `/party` 這個 landing page**——選單上是 `nav.ts` 的「組隊」`NavGroup`，下拉本身就在做「列出三個工具」這件事，再放一頁一模一樣的入口是重複的（分支原本自帶一套 `NavItem.children` 兩層選單，dev 這邊已有 `NavGroup`，合併時丟掉分支那套）。`first-time-together`（第一次同行）是第一階段克魯特 9 題題庫，題目字串出自客戶端 `String/TW/ScriptString/party.wzjson`、答案是交叉比對來的（見 `src/data/party-quests.ts` 註解）；`moon-bunny`（月妙的年糕）是在真實地圖底圖上把 14 叢草＋6 朵花標成一張攻略圖（SVG 疊在圖上、共用底圖像素座標）；`tower-of-goddess`（女神之塔）三個分頁小工具。
+- **NPC 對話／關卡說明文字**都在 `json_a2909ccd…` 包的 `Assets/WzAssets/Json/String/TW/ScriptString/*.wzjson`（126 檔，`party`~`party6` 是六個組隊任務、`job`/`job2` 轉職…），格式就是 WZJS，`tools/wzjs.py` 直接解得開。- `/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名；放大鏡旁的漏斗按鈕開進階篩選（屬性弱點多選、等級範圍）。分「現行版本／未來視」分頁：現行 70 隻（有實裝地圖的怪）＋人工補充掉落；未來視 273 隻（未實裝怪與帶未實裝掉落的怪）。**出沒地圖 chip 點了會開世界地圖彈窗**，在拆包出的遊戲世界地圖上標出該地圖位置（同張圖上這隻怪的其他出沒點也會標小點，可點切換）；不在遊戲世界地圖上的隱藏圖/迷你地城借「ID 最接近的鄰居」標約略位置（顯示「約略位置」徽章）。原本的「地區分類」已移除（2026-08-16）——ID 前綴推地區在維多利亞整個對不上（101030xxx 遺跡發掘地其實在勇士之村、100040xxx 其實是魔法森林南部），改用世界地圖標點一勞永逸。詳情面板有怪物數值（HP/攻防/命中/迴避）與屬性抗性（elemAttr：F火 I冰 L雷 S毒 H聖 D暗；1=免疫 2=抗性 3=弱點）。UI 無掉落機率欄位（拿不到真值）。
 
 ---
 

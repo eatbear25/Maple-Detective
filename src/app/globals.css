@@ -88,9 +88,28 @@ body {
     transform: translateX(2px) rotate(1.2deg);
   }
 }
+
+/* 分頁切換：內容依切換方向滑入。--slide-from 由元件依左右方向給值。 */
+.tab-panel {
+  animation: tab-slide-in 260ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes tab-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--slide-from, 24px));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 合併成一個區塊：轉蛋動畫與分頁滑入原本各自帶一份 reduced-motion，
+   分開留會有兩個同樣的 media query。 */
 @media (prefers-reduced-motion: reduce) {
   .animate-spin-slow,
-  .animate-machine-shake {
+  .animate-machine-shake,
+  .tab-panel {
     animation: none;
   }
 }

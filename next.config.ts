@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/(icons|worldmap|wz-static)/:path*",
+        source: "/(icons|worldmap|wz-static|maps)/:path*",
         headers: [
           {
             key: "Cache-Control",

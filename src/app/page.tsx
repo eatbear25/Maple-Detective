@@ -10,6 +10,9 @@ import {
   Dices,
   Shirt,
   Target,
+  MoonStar,
+  ListChecks,
+  TowerControl,
   type LucideIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -41,21 +44,28 @@ const WEBSITE_JSONLD = {
 };
 
 /**
- * 首頁的工作是「一次把站上有什麼攤在眼前」：功能已經八個，
- * 首頁若只放一個搜尋框，等於只通往怪物掉落、其餘七個完全沒被提到。
+ * 首頁的工作是「一次把站上有什麼攤在眼前」：功能已經十一個，
+ * 首頁若只放一個搜尋框，等於只通往怪物掉落、其餘的完全沒被提到。
  *
  * 版面是磁磚牆，但刻意壓掉三種噪音（做過兩輪原型才收斂成這樣，
  * 原型留在 prototype/home-redesign 分支）：
  *   1. 沒有區段小標與分隔線 — 分組改用排列順序表達（前兩格是釘選的高頻入口，
- *      其餘依 查資料 → 模擬器 排），八張卡排成完整的 4×2，
- *      不會出現 4／3／1 的參差排數
+ *      其餘依 查資料 → 模擬器 → 組隊 排）。原本八張卡剛好排成完整的 4×2，
+ *      2026-09-07 併入組隊三個工具後變成 11 張、末排 3 張。
+ *      要避免的是「4／3／1」那種末排只剩一張的參差，4／4／3 還可以接受；
+ *      之後再加工具時湊到 12 張就會回到完整的 4×3
  *   2. 卡片平常沒有外框 — 只有很淡的底色，邊框 hover 才浮出來
  *   3. 圖示不套底色色塊 — 避免「框裡面還有一個框」
  */
-type HomeGroup = "lookup" | "sim" | "track";
+type HomeGroup = "lookup" | "sim" | "party" | "track";
 
 /** 磁磚的排列順序。沒有小標，靠這個順序讓同類的排在一起。 */
-const GROUP_ORDER: Record<HomeGroup, number> = { lookup: 0, sim: 1, track: 2 };
+const GROUP_ORDER: Record<HomeGroup, number> = {
+  lookup: 0,
+  sim: 1,
+  party: 2,
+  track: 3,
+};
 
 /**
  * 釘在最前面的兩格 ＝ nav.ts 的頂層兩項，理由跟那裡一樣：
@@ -116,6 +126,21 @@ const TOOL_META: Record<
     desc: "1、2 轉 SP 怎麼分配的試算",
     group: "sim",
     icon: Target,
+  },
+  "moon-bunny": {
+    desc: "第一階段種子放置位置",
+    group: "party",
+    icon: MoonStar,
+  },
+  "first-time-together": {
+    desc: "第一階段克魯特題庫",
+    group: "party",
+    icon: ListChecks,
+  },
+  "tower-of-goddess": {
+    desc: "唱盤對照、封印房站位、倉庫擊殺順序",
+    group: "party",
+    icon: TowerControl,
   },
   "boss-timer": {
     desc: "記下擊殺時間，自動算下次重生",

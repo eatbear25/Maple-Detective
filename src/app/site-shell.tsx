@@ -9,6 +9,9 @@ import {
   Shirt,
   Users,
   Moon,
+  MoonStar,
+  ListChecks,
+  TowerControl,
   Sun,
   Menu,
   X,
@@ -39,6 +42,11 @@ const NAV_ICONS: Record<
   quests: ScrollText,
   fashion: Shirt,
   party: Users,
+  // 組隊群組的三個工具。moon-bunny 用 MoonStar 不用 Moon：Moon 是右上角深色模式
+  // 切換的圖示，同一條列上出現兩個一樣的月亮會看不出誰是誰。
+  "moon-bunny": MoonStar,
+  "first-time-together": ListChecks,
+  "tower-of-goddess": TowerControl,
   map: MapIcon,
   "boss-timer": Timer,
   skills: Sparkles,

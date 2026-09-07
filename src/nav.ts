@@ -96,7 +96,53 @@ const SIMULATORS: NavGroup = {
   ],
 };
 
-export const navTree: NavNode[] = [MONSTERS, BOSS_TIMER, LOOKUP, SIMULATORS];
+/**
+ * 組隊任務的關卡小工具。三個都是「開著查、邊打邊看」的對照表，
+ * 跟「模擬器」那種一次玩很久的深度工具性質不同，所以自成一組。
+ *
+ * feat/party 原本自己做了一套 NavItem.children 的兩層選單（父層 /party 是
+ * 一張列出三個工具的 landing page），但 dev 這邊已經有 NavGroup 了，
+ * 同一個功能沒必要兩套實作，所以改用 NavGroup、landing page 一併移除——
+ * 下拉選單本來就在做「列出三個工具」這件事。
+ *
+ * 位置排在最後只是因為還沒有 GA 數據，不是判斷它不重要；
+ * 有數據之後照這個檔案開頭那條「觸及率 ÷ 停留時間」的標準重排。
+ */
+const PARTY: NavGroup = {
+  key: "party",
+  label: "組隊",
+  items: [
+    {
+      key: "moon-bunny",
+      label: "月妙的年糕",
+      icon: "🌙",
+      path: "party/moon-bunny",
+      enabled: true,
+    },
+    {
+      key: "first-time-together",
+      label: "超綠題庫",
+      icon: "❓",
+      path: "party/first-time-together",
+      enabled: true,
+    },
+    {
+      key: "tower-of-goddess",
+      label: "女神速查",
+      icon: "🗼",
+      path: "party/tower-of-goddess",
+      enabled: true,
+    },
+  ],
+};
+
+export const navTree: NavNode[] = [
+  MONSTERS,
+  BOSS_TIMER,
+  LOOKUP,
+  SIMULATORS,
+  PARTY,
+];
 
 /** 攤平的清單，給不分組的地方用（路徑比對等）。 */
 export const navItems: NavItem[] = navTree.flatMap((n) =>
