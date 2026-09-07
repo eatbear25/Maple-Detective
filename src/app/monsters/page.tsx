@@ -322,13 +322,13 @@ function MonsterExplorer() {
         </div>
       </div>
 
+      {filtered.length === 0 ? (
+        <div className="py-16 text-center text-sm text-[var(--text-muted)]">
+          沒有符合條件的怪物，試著放寬搜尋或篩選。
+        </div>
+      ) : (
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr] lg:gap-10">
         <div className="themed-scroll space-y-0.5 max-h-[40vh] overflow-y-auto rounded-lg border border-[var(--border)] p-1.5 lg:max-h-[70vh] lg:border-0 lg:p-0 lg:pr-2">
-          {filtered.length === 0 && (
-            <div className="px-2 py-8 text-center text-sm text-[var(--text-muted)]">
-              沒有符合條件的怪物，試著放寬搜尋或篩選。
-            </div>
-          )}
           {filtered.map((m) => (
             <button
               key={m.id}
@@ -512,6 +512,7 @@ function MonsterExplorer() {
           </div>
         )}
       </div>
+      )}
 
       {tooltip.id != null && (
         <ItemTooltip
