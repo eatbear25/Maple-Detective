@@ -29,12 +29,12 @@ import {
   type FashionItem,
   type FashionEffect,
   type FashionSlot,
-  type Gender,
 } from "@/data/fashion";
 import {
   ACTIONS,
   EXPRESSIONS,
   SKINS,
+  BACKGROUNDS,
   DEFAULT_LOOK,
   type CharacterLook,
   type EquippedItem,
@@ -43,11 +43,12 @@ import { effectIconUrl } from "@/lib/fashion/msio";
 import CharacterCanvas, {
   type CharacterCanvasHandle,
 } from "./character-canvas";
+import PreviewStage from "./preview-stage";
 
 const PAGE_SIZE = 60;
 
-/** 右欄分頁：12 個部位，外加不佔部位的「特效」 */
-type Tab = FashionSlot | "effect";
+/** 右欄分頁：「全部」＋ 12 個部位，外加不佔部位的「特效」 */
+type Tab = FashionSlot | "all" | "effect";
 
 /** 特效分頁卡片上的一行說明 */
 const EFFECT_KIND_LABELS: Record<FashionEffect["kind"], string> = {
@@ -55,13 +56,6 @@ const EFFECT_KIND_LABELS: Record<FashionEffect["kind"], string> = {
   action: "隨動作變化",
   simple: "循環播放",
 };
-
-const GENDER_FILTERS: { value: Gender | "all"; label: string }[] = [
-  { value: "all", label: "全部性別" },
-  { value: 0, label: "男" },
-  { value: 1, label: "女" },
-  { value: 2, label: "共用" },
-];
 
 /** 依部位先分好組，避免每次篩選都掃全部 5000 筆 */
 const BY_SLOT = new Map<FashionSlot, FashionItem[]>();
@@ -83,11 +77,15 @@ const SLOT_COUNTS = new Map<FashionSlot, number>(
   ]),
 );
 
+/** 「全部」chip 上的數字＝各部位 chip 的加總（髮型／臉型一樣算造型組數） */
+const TOTAL_COUNT = [...SLOT_COUNTS.values()].reduce((a, b) => a + b, 0);
+
+const SLOT_NAMES = new Map(SLOT_LABELS.map(({ slot, label }) => [slot, label]));
+
 /** 清單格子的統一形狀：一般部位一件＝一格；髮型／臉型一組造型＝一格 */
 interface GridEntry {
   key: number;
   name: string;
-  gender: Gender;
   /** 點下去要穿的那件（髮型／臉型已依選色解析成對應色的 variant） */
   item: FashionItem;
   /** 這組造型沒有目前選的顏色（退回其他色） */
@@ -102,16 +100,51 @@ const availableFirst = (entries: GridEntry[]) => [
   ...entries.filter((e) => e.unavailable),
 ];
 
+/**
+ * 某個部位符合搜尋字的清單格子。髮型／臉型一組造型收成一格，
+ * color 是要挑的顏色碼（其他部位用不到）。
+ */
+function slotEntries(slot: FashionSlot, q: string, color: number): GridEntry[] {
+  if (!GROUPED_SLOTS.has(slot)) {
+    return (BY_SLOT.get(slot) ?? [])
+      .filter((it) => !q || it.name.includes(q) || String(it.id) === q)
+      .map((it) => ({
+        key: it.id,
+        name: it.name,
+        item: it,
+        unavailable: it.preview === "none",
+      }));
+  }
+  const entries: GridEntry[] = [];
+  for (const g of slot === "hair" ? hairGroups : faceGroups) {
+    if (
+      q &&
+      !g.name.includes(q) &&
+      !g.variants.some((v) => v.item.name.includes(q) || String(v.item.id) === q)
+    ) {
+      continue;
+    }
+    // 只在畫得出來的顏色裡挑；整組都沒圖才標成無法預覽
+    const usable = g.variants.filter((v) => v.item.preview !== "none");
+    const variant =
+      usable.find((v) => v.color === color) ?? usable[0] ?? g.variants[0];
+    entries.push({
+      key: g.key,
+      name: g.name,
+      item: variant.item,
+      colorMissing: usable.length > 0 && variant.color !== color,
+      unavailable: usable.length === 0,
+    });
+  }
+  return entries;
+}
+
 const toEquipped = (item: FashionItem): EquippedItem => ({
   id: item.id,
   name: item.name,
   path: itemImgPath(item),
   ...(item.preview === "blank" ? { blank: true } : {}),
 });
-
-/** 角色性別 vs 道具性別限制：2=共用、-1=不明都算穿得下 */
-const genderFits = (gender: Gender, charGender: 0 | 1) =>
-  gender === charGender || gender === 2 || gender === -1;
 
 /** 頁碼列表：頁數多時只顯示目前頁附近＋首尾，中間用 "…" 省略 */
 function pageNumbers(current: number, count: number): (number | "…")[] {
@@ -130,13 +163,22 @@ function pageNumbers(current: number, count: number): (number | "…")[] {
   return result;
 }
 
-function ItemIcon({ srcs, alt }: { srcs: string[]; alt: string }) {
+function ItemIcon({
+  srcs,
+  alt,
+  size = "h-8 w-8",
+}: {
+  srcs: string[];
+  alt: string;
+  /** 尺寸的 Tailwind class（清單 32px；「目前穿著」那欄列數多，用小一號的） */
+  size?: string;
+}) {
   // 依序試候選網址，全部失敗（或根本沒有縮圖）才顯示空位；呼叫端用 key 讓換色時重置
   const [index, setIndex] = useState(0);
   if (index >= srcs.length) {
     return (
       <div
-        className="h-8 w-8 shrink-0 rounded bg-[var(--accent-soft)]"
+        className={`${size} shrink-0 rounded bg-[var(--accent-soft)]`}
         aria-hidden
       />
     );
@@ -147,7 +189,7 @@ function ItemIcon({ srcs, alt }: { srcs: string[]; alt: string }) {
     <img
       src={srcs[index]}
       alt={alt}
-      className="h-8 w-8 shrink-0 object-contain"
+      className={`${size} shrink-0 object-contain`}
       style={{ imageRendering: "pixelated" }}
       loading="lazy"
       onError={() => setIndex((i) => i + 1)}
@@ -157,10 +199,8 @@ function ItemIcon({ srcs, alt }: { srcs: string[]; alt: string }) {
 
 export default function FashionPage() {
   const [look, setLook] = useState<CharacterLook>(DEFAULT_LOOK);
-  const [charGender, setCharGender] = useState<0 | 1>(0);
   const [tab, setTab] = useState<Tab>("hair");
   const [query, setQuery] = useState("");
-  const [genderFilter, setGenderFilter] = useState<Gender | "all">("all");
   // 髮色／瞳色各自記住（DEFAULT_LOOK 是黑髮黑眼，跟 0 對齊）
   const [hairColor, setHairColor] = useState(0);
   const [faceColor, setFaceColor] = useState(0);
@@ -170,6 +210,10 @@ export default function FashionPage() {
   const [expression, setExpression] = useState("default");
   const [animated, setAnimated] = useState(true);
   const [flipX, setFlipX] = useState(false);
+  // 舞台底色：存 CSS 值本身，色票與自訂選色器共用同一個 state
+  const [background, setBackground] = useState(BACKGROUNDS[0].value);
+  // 放大試衣間：左欄加寬、舞台變高，右邊的清單照樣能點（不是蓋住整頁的燈箱）
+  const [expanded, setExpanded] = useState(false);
 
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
@@ -191,60 +235,24 @@ export default function FashionPage() {
   );
   const onMissing = useCallback((ids: number[]) => setMissing(ids), []);
 
-  /** 在特效分頁時沒有「目前部位」，底下用到部位的地方都要先擋掉 */
-  const slot: FashionSlot | null = tab === "effect" ? null : tab;
+  /** 「全部」與特效分頁沒有「目前部位」，底下用到部位的地方都要先擋掉 */
+  const slot: FashionSlot | null =
+    tab === "effect" || tab === "all" ? null : tab;
   const grouped = slot !== null && GROUPED_SLOTS.has(slot);
   const palette = slot === "hair" ? HAIR_COLORS : FACE_COLORS;
   const selectedColor = slot === "hair" ? hairColor : faceColor;
 
   const q = query.trim();
   const list = useMemo<GridEntry[]>(() => {
-    if (slot === null) return [];
-    if (grouped) {
-      const groups = slot === "hair" ? hairGroups : faceGroups;
-      const entries: GridEntry[] = [];
-      for (const g of groups) {
-        if (genderFilter !== "all" && g.gender !== genderFilter) continue;
-        if (
-          q &&
-          !g.name.includes(q) &&
-          !g.variants.some(
-            (v) => v.item.name.includes(q) || String(v.item.id) === q,
-          )
-        ) {
-          continue;
-        }
-        // 只在畫得出來的顏色裡挑；整組都沒圖才標成無法預覽
-        const usable = g.variants.filter((v) => v.item.preview !== "none");
-        const variant =
-          usable.find((v) => v.color === selectedColor) ??
-          usable[0] ??
-          g.variants[0];
-        entries.push({
-          key: g.key,
-          name: g.name,
-          gender: g.gender,
-          item: variant.item,
-          colorMissing: usable.length > 0 && variant.color !== selectedColor,
-          unavailable: usable.length === 0,
-        });
-      }
-      return availableFirst(entries);
-    }
-    const all = BY_SLOT.get(slot) ?? [];
+    if (tab === "effect") return [];
+    // 「全部」照分頁順序把每個部位接起來；髮型／臉型沿用各自記住的顏色
+    const slots = tab === "all" ? SLOT_LABELS.map((l) => l.slot) : [tab];
     return availableFirst(
-      all
-        .filter((it) => genderFilter === "all" || it.gender === genderFilter)
-        .filter((it) => !q || it.name.includes(q) || String(it.id) === q)
-        .map((it) => ({
-          key: it.id,
-          name: it.name,
-          gender: it.gender,
-          item: it,
-          unavailable: it.preview === "none",
-        })),
+      slots.flatMap((s) =>
+        slotEntries(s, q, s === "hair" ? hairColor : faceColor),
+      ),
     );
-  }, [slot, q, grouped, selectedColor, genderFilter]);
+  }, [tab, q, hairColor, faceColor]);
 
   const effectList = useMemo(
     () =>
@@ -333,6 +341,11 @@ export default function FashionPage() {
   };
 
   const equippedRows = SLOT_LABELS.filter(({ slot: s }) => look.equips[s]);
+  const customBackground = !BACKGROUNDS.some((b) => b.value === background);
+  // 放大模式左欄吃掉 160px，清單少排一欄，卡片才不會窄到名稱只剩三個字
+  const gridCols = expanded
+    ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3"
+    : "grid-cols-2 sm:grid-cols-3 xl:grid-cols-4";
 
   return (
     <div className="space-y-8">
@@ -343,11 +356,48 @@ export default function FashionPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
+      <div
+        className={`grid grid-cols-1 gap-6 ${
+          expanded ? "lg:grid-cols-[480px_1fr]" : "lg:grid-cols-[320px_1fr]"
+        }`}
+      >
         {/* ===== 左：角色預覽 ===== */}
         <div className="lg:sticky lg:top-6 lg:self-start space-y-3">
           <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <div className="relative flex min-h-[220px] items-center justify-center overflow-hidden rounded-lg bg-[var(--bg)]">
+            <PreviewStage
+              background={background}
+              expanded={expanded}
+              onToggleExpanded={() => setExpanded((v) => !v)}
+              overlay={
+                <>
+                  {status === "loading" &&
+                    (hasDrawn ? (
+                      // 換裝：舊的那隻留著，角落亮個小點就好（素材是靜態檔，通常一閃就過）
+                      <div
+                        className="fashion-busy absolute right-2 top-2"
+                        role="status"
+                        aria-label="載入中"
+                      >
+                        <div className="maple-loader" style={{ width: 30 }} />
+                      </div>
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                        <div className="maple-loader" />
+                        <span className="text-sm text-[var(--text-muted)]">
+                          載入中…
+                        </span>
+                      </div>
+                    ))}
+                  {status === "error" && (
+                    <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-sm text-[var(--text-muted)]">
+                      {error instanceof Error
+                        ? error.message
+                        : "這個組合畫不出來"}
+                    </div>
+                  )}
+                </>
+              }
+            >
               <CharacterCanvas
                 ref={canvasRef}
                 look={look}
@@ -359,30 +409,7 @@ export default function FashionPage() {
                 onStatusChange={onStatusChange}
                 onMissing={onMissing}
               />
-              {status === "loading" &&
-                (hasDrawn ? (
-                  // 換裝：舊的那隻留著，角落亮個小點就好（素材是靜態檔，通常一閃就過）
-                  <div
-                    className="fashion-busy absolute right-2 top-2"
-                    role="status"
-                    aria-label="載入中"
-                  >
-                    <div className="maple-loader" style={{ width: 30 }} />
-                  </div>
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                    <div className="maple-loader" />
-                    <span className="text-sm text-[var(--text-muted)]">
-                      載入中…
-                    </span>
-                  </div>
-                ))}
-              {status === "error" && (
-                <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-sm text-[var(--text-muted)]">
-                  {error instanceof Error ? error.message : "這個組合畫不出來"}
-                </div>
-              )}
-            </div>
+            </PreviewStage>
 
             <div className="mt-3 flex flex-wrap gap-1.5">
               <button
@@ -446,7 +473,7 @@ export default function FashionPage() {
                   ))}
                 </select>
               </label>
-              <label className="space-y-1">
+              <label className="col-span-2 space-y-1">
                 <span className="text-[var(--text-muted)]">膚色</span>
                 <select
                   value={look.skinId}
@@ -462,19 +489,49 @@ export default function FashionPage() {
                   ))}
                 </select>
               </label>
-              <label className="space-y-1">
-                <span className="text-[var(--text-muted)]">角色性別</span>
-                <select
-                  value={charGender}
-                  onChange={(e) =>
-                    setCharGender(Number(e.target.value) as 0 | 1)
-                  }
-                  className="w-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 outline-none focus:border-[var(--accent)]"
-                >
-                  <option value={0}>男</option>
-                  <option value={1}>女</option>
-                </select>
-              </label>
+              <div className="col-span-2">
+                <span className="text-[var(--text-muted)]">背景</span>
+                {/* 選中的色票會放大再加一圈外框，四周要留位置才不會壓到上面的字 */}
+                <div className="mt-2 flex flex-wrap items-center gap-2 px-1 pb-1">
+                  {BACKGROUNDS.map((b) => (
+                    <button
+                      key={b.id}
+                      onClick={() => setBackground(b.value)}
+                      title={b.label}
+                      aria-label={b.label}
+                      aria-pressed={background === b.value}
+                      className={`h-6 w-6 cursor-pointer rounded-full transition-transform ${
+                        background === b.value
+                          ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--surface)]"
+                          : "ring-1 ring-[var(--border)] hover:scale-110"
+                      }`}
+                      style={{ background: b.value }}
+                    />
+                  ))}
+                  {/* 色票以外的顏色：整顆圓就是原生選色器，選了之後圓會變成那個顏色 */}
+                  <label
+                    title="自訂顏色"
+                    className={`relative h-6 w-6 cursor-pointer overflow-hidden rounded-full transition-transform ${
+                      customBackground
+                        ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--surface)]"
+                        : "ring-1 ring-[var(--border)] hover:scale-110"
+                    }`}
+                    style={{
+                      background: customBackground
+                        ? background
+                        : "conic-gradient(#f87171, #fbbf24, #a3e635, #22d3ee, #818cf8, #e879f9, #f87171)",
+                    }}
+                  >
+                    <input
+                      type="color"
+                      aria-label="自訂背景顏色"
+                      value={customBackground ? background : "#ffffff"}
+                      onChange={(e) => setBackground(e.target.value)}
+                      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    />
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -510,42 +567,69 @@ export default function FashionPage() {
                 還沒穿任何東西
               </div>
             ) : (
-              <div className="space-y-1.5">
+              // 縮圖排在最左邊對成一直欄——用圖認比讀名字快；名字靠右的話縮圖會跟著參差
+              <div className="space-y-1">
                 {look.effect && (
-                  <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-[var(--text-muted)]">特效</span>
-                    <span className="flex min-w-0 items-center gap-1">
-                      <span className="truncate">{look.effect.name}</span>
-                      <button
-                        onClick={() =>
-                          setLook((p) => ({ ...p, effect: undefined }))
-                        }
-                        aria-label="關掉特效"
-                        className="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
-                      >
-                        <X size={12} />
-                      </button>
+                  <div className="flex items-center gap-2 text-xs">
+                    <ItemIcon
+                      key={look.effect.id}
+                      srcs={[effectIconUrl(look.effect.id)]}
+                      alt=""
+                      size="h-7 w-7"
+                    />
+                    <span className="shrink-0 text-[var(--text-muted)]">
+                      特效
                     </span>
+                    <span
+                      className="min-w-0 flex-1 truncate"
+                      title={look.effect.name}
+                    >
+                      {look.effect.name}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setLook((p) => ({ ...p, effect: undefined }))
+                      }
+                      aria-label="關掉特效"
+                      className="shrink-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
+                    >
+                      <X size={12} />
+                    </button>
                   </div>
                 )}
-                {equippedRows.map(({ slot: s, label }) => (
-                  <div
-                    key={s}
-                    className="flex items-center justify-between gap-2 text-xs"
-                  >
-                    <span className="text-[var(--text-muted)]">{label}</span>
-                    <span className="flex min-w-0 items-center gap-1">
-                      <span className="truncate">{look.equips[s]!.name}</span>
+                {equippedRows.map(({ slot: s, label }) => {
+                  const worn = look.equips[s]!;
+                  return (
+                    <div key={s} className="flex items-center gap-2 text-xs">
+                      <ItemIcon
+                        key={worn.id}
+                        srcs={
+                          fashionItem(worn.id)?.hasIcon
+                            ? fashionIconSrcs(worn.id)
+                            : []
+                        }
+                        alt=""
+                        size="h-7 w-7"
+                      />
+                      <span className="shrink-0 text-[var(--text-muted)]">
+                        {label}
+                      </span>
+                      <span
+                        className="min-w-0 flex-1 truncate"
+                        title={worn.name}
+                      >
+                        {worn.name}
+                      </span>
                       <button
                         onClick={() => unequip(s)}
                         aria-label={`脫掉${label}`}
-                        className="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
+                        className="shrink-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
                       >
                         <X size={12} />
                       </button>
-                    </span>
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -554,6 +638,17 @@ export default function FashionPage() {
         {/* ===== 右：道具選擇 ===== */}
         <div className="space-y-3">
           <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => changeTab("all")}
+              className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
+                tab === "all"
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
+                  : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+              }`}
+            >
+              全部
+              <span className="ml-1 opacity-60">{TOTAL_COUNT}</span>
+            </button>
             {SLOT_LABELS.map(({ slot: s, label }) => (
               <button
                 key={s}
@@ -608,28 +703,6 @@ export default function FashionPage() {
             </div>
           </div>
 
-          <div
-            className={`flex-wrap gap-1.5 ${tab === "effect" ? "hidden" : "flex"}`}
-          >
-            {GENDER_FILTERS.map(({ value, label }) => (
-              <button
-                key={String(value)}
-                onClick={() => {
-                  setGenderFilter(value);
-                  setPage(0);
-                }}
-                aria-pressed={genderFilter === value}
-                className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
-                  genderFilter === value
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
-                    : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
           {grouped && (
             <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
               <span className="text-xs text-[var(--text-muted)]">
@@ -663,17 +736,26 @@ export default function FashionPage() {
             {list.length} {grouped ? "款造型" : "件"}
           </div> */}
 
-          {slot !== null && (
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+          {tab !== "effect" && (
+            <div className={`grid gap-2 ${gridCols}`}>
               {shown.map((entry) => {
-                const equipped = look.equips[slot];
+                // 「全部」分頁各部位混在一起，部位要看格子自己的
+                const entrySlot = entry.item.slot;
+                const equipped = look.equips[entrySlot];
                 // 髮型／臉型：身上那件是同組任一顏色就算選中（換色前後都亮）
-                const active = grouped
+                const active = GROUPED_SLOTS.has(entrySlot)
                   ? equipped !== undefined &&
-                    styleBaseId(slot, equipped.id) === entry.key
+                    styleBaseId(entrySlot, equipped.id) === entry.key
                   : equipped?.id === entry.item.id;
-                const fits = genderFits(entry.gender, charGender);
-                const blank = entry.item.preview === "blank";
+                // 名稱底下那行小字。「全部」分頁多標一個部位——不然分不出是帽子還是飾品
+                const notes = [
+                  tab === "all" && SLOT_NAMES.get(entrySlot),
+                  // 透明帽、技能效果這類：遊戲裡它本來就什麼都不畫，
+                  // 不先講的話點了沒反應會以為壞掉
+                  entry.item.preview === "blank" && "穿上不會顯示",
+                  entry.colorMissing && "無此色，以現有色代替",
+                  entry.unavailable && "無法預覽",
+                ].filter(Boolean);
                 if (entry.unavailable) {
                   return (
                     <div
@@ -694,8 +776,8 @@ export default function FashionPage() {
                         <span className="block truncate text-xs">
                           {entry.name}
                         </span>
-                        <span className="mt-0.5 block text-[10px] text-[var(--text-muted)]">
-                          無法預覽
+                        <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
+                          {notes.join("・")}
                         </span>
                       </span>
                     </div>
@@ -705,16 +787,12 @@ export default function FashionPage() {
                   <button
                     key={entry.key}
                     onClick={() => equip(entry.item)}
-                    title={
-                      fits
-                        ? entry.name
-                        : `${entry.name}（此造型限${entry.gender === 0 ? "男" : "女"}性角色）`
-                    }
+                    title={entry.name}
                     className={`cursor-pointer flex items-center gap-2 rounded-lg border p-2 text-left transition-colors ${
                       active
                         ? "border-[var(--accent)] bg-[var(--accent-soft)]"
                         : "border-[var(--border)] hover:border-[var(--accent)]"
-                    } ${fits ? "" : "opacity-45"}`}
+                    }`}
                   >
                     <ItemIcon
                       key={entry.item.id}
@@ -729,25 +807,9 @@ export default function FashionPage() {
                       <span className="block truncate text-xs">
                         {entry.name}
                       </span>
-                      {(entry.colorMissing || !fits || blank) && (
-                        <span className="mt-0.5 flex items-center gap-1">
-                          {blank && (
-                            // 透明帽、技能效果這類：遊戲裡它本來就什麼都不畫，
-                            // 不先講的話點了沒反應會以為壞掉
-                            <span className="text-[10px] text-[var(--text-muted)]">
-                              穿上不會顯示
-                            </span>
-                          )}
-                          {entry.colorMissing && (
-                            <span className="text-[10px] text-[var(--text-muted)]">
-                              無此色，以現有色代替
-                            </span>
-                          )}
-                          {!fits && (
-                            <span className="text-[10px] text-[var(--text-muted)]">
-                              限{entry.gender === 0 ? "男" : "女"}
-                            </span>
-                          )}
+                      {notes.length > 0 && (
+                        <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
+                          {notes.join("・")}
                         </span>
                       )}
                     </span>
@@ -758,7 +820,7 @@ export default function FashionPage() {
           )}
 
           {tab === "effect" && (
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+            <div className={`grid gap-2 ${gridCols}`}>
               {effectList.map((effect) => (
                 <button
                   key={effect.id}

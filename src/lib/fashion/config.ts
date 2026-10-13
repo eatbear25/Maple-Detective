@@ -97,6 +97,20 @@ export const EXPRESSIONS: { id: string; label: string }[] = [
   { id: "dam", label: "不滿" },
 ];
 
+/**
+ * 預覽舞台的底色。只影響畫面，不會進「下載 PNG」（那張維持去背）。
+ * 第一個是預設值，吃主題的 --bg；色票以外的顏色走頁面上的自訂選色器。
+ */
+export const BACKGROUNDS: { id: string; label: string; value: string }[] = [
+  { id: "default", label: "預設", value: "var(--bg)" },
+  { id: "white", label: "白色", value: "#ffffff" },
+  { id: "black", label: "黑色", value: "#1f1f23" },
+  { id: "sky", label: "天空藍", value: "#bfe1f6" },
+  { id: "grass", label: "草地綠", value: "#c5e3ad" },
+  { id: "pink", label: "櫻花粉", value: "#f8d3de" },
+  { id: "lilac", label: "薰衣草紫", value: "#dcd2f3" },
+];
+
 /** 開頁時的造型：最基本的黑髮＋挑戰的臉型（客戶端 MakeCharInfo 的預設值之一） */
 export const DEFAULT_LOOK: CharacterLook = {
   skinId: 2000,
