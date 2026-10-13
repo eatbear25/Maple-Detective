@@ -10,7 +10,15 @@ import {
   useSyncExternalStore,
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Check, Copy, Disc3, Lock, RotateCcw, Warehouse } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Disc3,
+  Lock,
+  RotateCcw,
+  TriangleAlert,
+  Warehouse,
+} from "lucide-react";
 import { loungeRecords } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
 import { GameIcon } from "../../monsters/game-icon";
@@ -253,8 +261,40 @@ function LoungeTab() {
 
 /* ------------------------------- 封印房 ------------------------------- */
 
+const SLOTS = [
+  ["left", "左"],
+  ["mid", "中"],
+  ["right", "右"],
+] as const;
+
+// 每種站法裡，那 1 個人站在第幾個平台（null = 沒人站），畫列首的小示意用
+const STAND_AT: Record<ProbeKey, number | null> = {
+  empty: null,
+  left: 0,
+  mid: 1,
+  right: 2,
+};
+
+/** 三個平台的小示意：實心那格＝這次有人站的位置 */
+function StandGlyph({ at }: { at: number | null }) {
+  return (
+    <span aria-hidden className="flex gap-[3px]">
+      {SLOTS.map(([key], i) => (
+        <span
+          key={key}
+          className={`h-2.5 w-2.5 rounded-[3px] border ${
+            i === at
+              ? "border-[var(--text)] bg-[var(--text)]"
+              : "border-[var(--text-muted)]/50"
+          }`}
+        />
+      ))}
+    </span>
+  );
+}
+
 // 玩家多半把視窗縮到遊戲旁邊看，所以整個工具鎖在一張窄卡片裡，
-// 排版由上而下：答案 → 圖例 → 四列回應 → 狀態，不用左右掃視。
+// 排版由上而下：答案（三個平台各站幾人）→ 四列回應 → 狀態，不用左右掃視。
 function SealedRoomTab() {
   const [answers, setAnswers] = useState<Answers>({});
 
@@ -271,39 +311,60 @@ function SealedRoomTab() {
     }));
 
   return (
-    <div className="max-w-sm overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+    <div className="w-full max-w-xs rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
       <div
-        className={`border-b border-[var(--border)] px-4 py-3 text-center transition-colors ${
-          solved ? "bg-[var(--accent-soft)]" : ""
-        }`}
+        className="grid grid-cols-3 gap-2 p-4"
+        aria-live="polite"
+        aria-label={
+          solved ? `答案 ${formatSolution(solved)}` : "答案還沒確定"
+        }
       >
-        <div
-          className={`text-4xl font-bold tabular-nums leading-none ${
-            solved ? "text-[var(--accent)]" : "text-[var(--text-muted)]/40"
-          }`}
-        >
-          {solved ? formatSolution(solved) : "?-?-?"}
-        </div>
-        <div className="mt-1.5 text-[11px] text-[var(--text-muted)]">
-          左 - 中 - 右　共 {TOTAL_PEOPLE} 人
-        </div>
+        {SLOTS.map(([key, label]) => (
+          <div
+            key={key}
+            className={`rounded-xl border py-2.5 text-center transition-colors ${
+              solved
+                ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                : "border-dashed border-[var(--border)] bg-[var(--bg)]"
+            }`}
+          >
+            <div className="text-xs text-[var(--text-muted)]">{label}</div>
+            <div className="mt-1 flex items-baseline justify-center gap-1">
+              <span
+                className={`text-4xl font-bold leading-none tabular-nums ${
+                  solved
+                    ? "text-[var(--accent)]"
+                    : "text-[var(--text-muted)]/35"
+                }`}
+              >
+                {solved ? solved[key] : "?"}
+              </span>
+              <span className="text-xs text-[var(--text-muted)]">人</span>
+            </div>
+          </div>
+        ))}
+        <p className="col-span-3 text-center text-xs text-[var(--text-muted)]">
+          三個平台合計 {TOTAL_PEOPLE} 人
+        </p>
       </div>
 
-      <div className="flex items-baseline gap-2 px-4 pt-3 text-[11px] text-[var(--text-muted)]">
-        <span className="font-medium text-[var(--text)]">NPC 回應</span>
-        <span>0 沒對 · 1 對一個 · 2 對兩個</span>
-      </div>
-
-      <div className="divide-y divide-[var(--border)] px-4">
+      <div className="border-t border-[var(--border)] px-4 pb-2.5 pt-3">
+        <div className="mb-1 flex justify-between text-xs text-[var(--text-muted)]">
+          <span>怎麼站</span>
+          <span>NPC 說對幾個</span>
+        </div>
         {PROBES.map((probe) => {
           const feasible = feasibleResponses(answers, probe.key);
           return (
             <div
               key={probe.key}
-              className="flex items-center justify-between gap-3 py-2"
+              className="flex items-center justify-between gap-3 py-1.5"
             >
-              <div className="text-sm font-medium">{probe.label}</div>
-              <div className="flex gap-1.5">
+              <div className="flex items-center gap-2.5 text-sm font-medium">
+                <StandGlyph at={STAND_AT[probe.key]} />
+                {probe.label}
+              </div>
+              <div className="flex rounded-lg border border-[var(--border)] bg-[var(--bg)]">
                 {RESPONSES.map((v) => {
                   const active = answers[probe.key] === v;
                   const impossible = !active && !feasible.has(v);
@@ -312,12 +373,12 @@ function SealedRoomTab() {
                       key={v}
                       onClick={() => pick(probe.key, v)}
                       aria-pressed={active}
-                      className={`h-9 w-9 cursor-pointer rounded-md border text-base font-bold tabular-nums transition-colors ${
+                      className={`h-9 w-11 cursor-pointer border-l border-[var(--border)] text-base font-bold tabular-nums transition-colors first:rounded-l-[7px] first:border-l-0 last:rounded-r-[7px] focus-visible:relative ${
                         active
-                          ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                          ? "bg-[var(--accent)] text-[var(--bg)]"
                           : impossible
-                            ? "border-[var(--border)] text-[var(--text-muted)] opacity-25 hover:opacity-60"
-                            : "border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]"
+                            ? "text-[var(--text-muted)]/30 hover:text-[var(--text-muted)]"
+                            : "hover:bg-[var(--accent-soft)]"
                       }`}
                     >
                       {v}
@@ -330,22 +391,27 @@ function SealedRoomTab() {
         })}
       </div>
 
-      <div className="flex items-center justify-between gap-2 border-t border-[var(--border)] px-4 py-2 text-[11px]">
-        <span
-          className={contradiction ? "font-medium" : "text-[var(--text-muted)]"}
-        >
-          {contradiction
-            ? "回應兜不起來，請檢查有沒有點錯"
-            : solved
-              ? filled < PROBES.length
-                ? `已確定`
-                : "已確定"
-              : `還剩 ${pool.length} 種可能`}
-        </span>
+      <div className="flex min-h-10 items-center justify-between gap-2 border-t border-[var(--border)] py-1.5 pl-4 pr-2.5 text-xs">
+        {contradiction ? (
+          <span className="flex items-center gap-1.5 font-medium">
+            <TriangleAlert size={13} className="shrink-0 text-red-400" />
+            回應兜不起來，檢查有沒有點錯
+          </span>
+        ) : (
+          <span
+            className={
+              solved
+                ? "font-medium text-[var(--accent)]"
+                : "text-[var(--text-muted)]"
+            }
+          >
+            {solved ? "答案確定了" : `還剩 ${pool.length} 種可能`}
+          </span>
+        )}
         <button
           onClick={() => setAnswers({})}
           disabled={filled === 0}
-          className="flex cursor-pointer items-center gap-1 rounded px-1.5 py-1 text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:pointer-events-none disabled:opacity-0"
+          className={TEXT_BUTTON}
         >
           <RotateCcw size={12} />
           重設
@@ -355,11 +421,18 @@ function SealedRoomTab() {
   );
 }
 
+// 卡片底部的小文字鈕（重設／複製）。沒得按的時候留在原位變淡，
+// 不要整顆消失——消失的話旁邊的鈕會跟著位移。
+const TEXT_BUTTON =
+  "flex shrink-0 cursor-pointer items-center gap-1 rounded-md px-1.5 py-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:pointer-events-none disabled:opacity-40";
+
 /* -------------------------------- 倉庫 -------------------------------- */
 
 // 一樣鎖成窄卡片（玩家把視窗縮在遊戲旁邊看）。平台位置照參考圖畫成左右交錯
 // 兩排，最下面那格是第 1 隻——玩家是從底下往上爬（見 storage.ts 註解）。
-// 選中狀態一律用「內描邊 ring-inset」，往外長的 ring 會被外層裁掉。
+// 每格跨兩列、左右排差一列，疊起來像磚牆：同一排的格子上下相連，交錯關係
+// 還在但中間不會留一堆空洞。擊殺順序一律靠中線放（左排靠右、右排靠左），
+// 15 個數字集中在中間一條，眼睛不用左右掃。
 function StorageTab() {
   const [done, setDone] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -377,112 +450,111 @@ function StorageTab() {
   };
 
   return (
-    <div className="max-w-[280px] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-      <div
-        className={`flex items-center justify-between gap-2 border-b border-[var(--border)] px-3 py-2 transition-colors ${
-          next ? "" : "bg-[var(--accent-soft)]"
-        }`}
-      >
-        {next ? (
-          <>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-[11px] text-[var(--text-muted)]">
-                下一隻
-              </span>
-              <span className="text-xl font-bold leading-none tabular-nums text-[var(--accent)]">
-                {next.order}
-              </span>
-              <span className="text-sm font-medium">{next.label}</span>
-            </div>
-            <button
-              onClick={() => setDone((n) => n + 1)}
-              className="shrink-0 cursor-pointer rounded-md bg-[var(--accent)] px-2.5 py-1 text-[11px] font-medium text-white transition-opacity hover:opacity-90"
-            >
-              打掉了
+    <div className="w-full max-w-xs">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+        <div
+          className={`flex min-h-[4.25rem] items-center justify-between gap-3 rounded-t-[15px] px-4 py-3 transition-colors ${
+            next ? "" : "bg-[var(--accent-soft)]"
+          }`}
+        >
+          {next ? (
+            <>
+              <div>
+                <div className="text-xs text-[var(--text-muted)]">下一隻</div>
+                <div className="text-2xl font-bold leading-tight">
+                  {next.label}
+                </div>
+              </div>
+              <button
+                onClick={() => setDone((n) => n + 1)}
+                className="h-10 shrink-0 cursor-pointer rounded-lg bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--bg)] transition-opacity hover:opacity-90"
+              >
+                打掉了
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="text-lg font-bold">15 隻清完了</span>
+              <button
+                onClick={() => setDone(0)}
+                className="h-10 shrink-0 cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface)] px-5 text-sm font-medium transition-colors hover:border-[var(--accent)]"
+              >
+                再一輪
+              </button>
+            </>
+          )}
+        </div>
+
+        <div
+          className="grid grid-cols-2 gap-x-1.5 gap-y-1 border-y border-[var(--border)] p-3"
+          style={{ gridAutoRows: "1rem" }}
+        >
+          {STORAGE_PLATFORMS.map((p) => {
+            const killed = p.order <= done;
+            const isNext = next?.order === p.order;
+            const left = p.col === "left";
+            return (
+              <button
+                key={p.index}
+                style={{
+                  gridColumn: left ? 1 : 2,
+                  gridRow: `${p.index + 1} / span 2`,
+                }}
+                onClick={() =>
+                  setDone(isNext ? p.order : killed ? p.order - 1 : done)
+                }
+                disabled={!killed && !isNext}
+                aria-label={`第 ${p.order} 隻，位置 ${p.label}`}
+                className={`flex items-center justify-between rounded-lg border px-2.5 transition-colors ${
+                  left ? "flex-row-reverse" : ""
+                } ${
+                  isNext
+                    ? "cursor-pointer border-[var(--accent)] bg-[var(--accent)] text-[var(--bg)]"
+                    : killed
+                      ? "cursor-pointer border-transparent text-[var(--text-muted)] opacity-45 hover:opacity-80"
+                      : "cursor-default border-[var(--border)] bg-[var(--bg)]"
+                }`}
+              >
+                <span className="w-6 text-center text-lg font-bold leading-none tabular-nums">
+                  {p.order}
+                </span>
+                <span
+                  className={`text-xs leading-none ${
+                    isNext ? "opacity-80" : "text-[var(--text-muted)]"
+                  }`}
+                >
+                  {p.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center justify-between py-1.5 pl-4 pr-2.5 text-xs text-[var(--text-muted)]">
+          <span>
+            已打{" "}
+            <b className="tabular-nums text-[var(--text)]">{done}</b> /{" "}
+            {STORAGE_TOTAL}
+          </span>
+          <div className="flex items-center gap-0.5">
+            <button onClick={copy} className={TEXT_BUTTON}>
+              {copied ? <Check size={12} /> : <Copy size={12} />}
+              {copied ? "已複製" : "複製順序"}
             </button>
-          </>
-        ) : (
-          <>
-            <span className="text-sm font-medium">15 隻清完了 🎉</span>
             <button
               onClick={() => setDone(0)}
-              className="shrink-0 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[11px] transition-colors hover:border-[var(--accent)]"
+              disabled={done === 0}
+              className={TEXT_BUTTON}
             >
-              再一輪
+              <RotateCcw size={12} />
+              重設
             </button>
-          </>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between border-b border-[var(--border)] px-3 py-1 text-[11px] text-[var(--text-muted)]">
-        <span>
-          <b className="tabular-nums text-[var(--text)]">{done}</b> /{" "}
-          {STORAGE_TOTAL} 隻獨角獅
-        </span>
-        <div className="flex items-center gap-0.5">
-          <button
-            onClick={copy}
-            className="flex cursor-pointer items-center gap-1 rounded px-1.5 py-1 transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)]"
-          >
-            {copied ? <Check size={11} /> : <Copy size={11} />}
-            {copied ? "已複製" : "複製"}
-          </button>
-          <button
-            onClick={() => setDone(0)}
-            disabled={done === 0}
-            className="flex cursor-pointer items-center gap-1 rounded px-1.5 py-1 transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:pointer-events-none disabled:opacity-0"
-          >
-            <RotateCcw size={11} />
-            重設
-          </button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-1.5 px-2.5 py-2">
-        {STORAGE_PLATFORMS.map((p) => {
-          const killed = p.order <= done;
-          const isNext = next?.order === p.order;
-          return (
-            <button
-              key={p.index}
-              style={{
-                gridColumn: p.col === "left" ? 1 : 2,
-                gridRow: p.index + 1,
-              }}
-              onClick={() =>
-                setDone(isNext ? p.order : killed ? p.order - 1 : done)
-              }
-              disabled={!killed && !isNext}
-              aria-label={`第 ${p.order} 隻，位置 ${p.label}`}
-              className={`my-[2px] flex items-center justify-center gap-1.5 rounded-md border py-0.5 transition-colors ${
-                isNext
-                  ? "cursor-pointer border-[var(--accent)] bg-[var(--accent-soft)] ring-2 ring-inset ring-[var(--accent)]/45"
-                  : killed
-                    ? "cursor-pointer border-transparent opacity-30 hover:opacity-60"
-                    : "cursor-default border-[var(--border)]"
-              }`}
-            >
-              <span
-                className={`text-sm font-bold leading-none tabular-nums ${
-                  isNext
-                    ? "text-[var(--accent)]"
-                    : killed
-                      ? "text-[var(--text-muted)] line-through"
-                      : ""
-                }`}
-              >
-                {p.order}
-              </span>
-              <span className="text-[10px] leading-none text-[var(--text-muted)]">
-                {p.label}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <p className="border-t border-[var(--border)] px-3 py-1.5 text-[10px] leading-snug text-[var(--text-muted)]">
-        最下面是第 1 隻，由下往上爬。點劃掉的可退回。
+      <p className="mt-2 px-1 text-xs leading-relaxed text-[var(--text-muted)]">
+        從最下面那格開始往上爬。點已經打掉的格子可以退回。
       </p>
     </div>
   );
