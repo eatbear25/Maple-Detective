@@ -64,6 +64,17 @@ body {
   }
 }
 
+/* 時裝搭配（/fashion）：換裝時角落的小載入點。素材是靜態檔、多半 0.1 秒內就好，
+   延遲 0.25 秒才淡入，免得每點一件就閃一下 */
+.fashion-busy {
+  animation: fashion-busy-in 0.2s 0.25s both;
+}
+@keyframes fashion-busy-in {
+  from {
+    opacity: 0;
+  }
+}
+
 /* 轉蛋模擬器（/gacha）：自動模式快轉時的放射光旋轉與機台晃動 */
 .animate-spin-slow {
   animation: gacha-spin 6s linear infinite;

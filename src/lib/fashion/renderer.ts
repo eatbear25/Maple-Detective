@@ -8,9 +8,10 @@
  * - 部位遮蔽：smap.json + 各道具的 islot/vslot 建 lock 表（帽子蓋住哪幾層頭髮…）
  * - 臉／臉飾：依表情而非動作取部件，錨定在身體 frame 的 brow
  *
- * 與 maple-runway 的差異：這裡只有單一素材來源（maplestory.io），且個別裝備
- * 抓不到時不會讓整隻角色渲染失敗——會跳過該件並回報在 missing 裡，讓 UI 顯示
- * 「這件無法預覽」。約 6% 的點裝兩個版本都查不到，這是常態不是例外。
+ * 與 maple-runway 的差異：時裝的圖是預先烤好的圖集（見 ./baked.ts），一個部件是
+ * 圖集裡的一塊而不是一張獨立的圖；且個別裝備載入失敗時不會讓整隻角色渲染失敗——
+ * 會跳過該件並回報在 missing 裡。沒有圖的時裝 catalog 早就知道、UI 不會讓人穿上，
+ * 所以 missing 只會是網路問題。
  *
  * 特效（點裝 0501 段）走另一條路：它不佔部位、不參與遮蔽、也不吃錨點傳播，
  * 就是一組貼在角色身上的圖，用 z 決定畫在角色前面還是後面。
@@ -30,10 +31,16 @@ interface Vec2 {
 
 type AnchorMap = Record<string, Vec2>;
 
-/** WZ canvas 節點（帶 path 與 origin 的葉節點） */
+/** 圖集裡的一塊：[x, y, w, h] */
+type Rect = [number, number, number, number];
+
+/** WZ canvas 節點（帶圖與 origin 的葉節點） */
 interface WzCanvas {
   _outlink?: string;
   path?: string;
+  /** 烤好的時裝：圖集已經解碼，rect 是這個部件在圖集裡的位置 */
+  image?: HTMLImageElement;
+  rect?: Rect;
   origin?: Vec2;
   map?: AnchorMap;
   z?: string | number;
@@ -57,7 +64,10 @@ interface LoadedItem {
 
 interface Piece {
   name: string;
-  url: string;
+  /** 身體／頭是一張張獨立的檔案（url），時裝是圖集裡的一塊（image + rect），兩者擇一 */
+  url?: string;
+  image?: HTMLImageElement;
+  rect?: Rect;
   origin: Vec2;
   map: AnchorMap;
   layer: string;
@@ -75,7 +85,22 @@ export interface DrawOp {
   img: HTMLImageElement;
   x: number;
   y: number;
+  /** 要畫的是 img 裡的哪一塊（整張圖就是 0, 0, 原尺寸） */
+  sx: number;
+  sy: number;
+  w: number;
+  h: number;
 }
+
+const wholeImage = (img: HTMLImageElement, x: number, y: number): DrawOp => ({
+  img,
+  x,
+  y,
+  sx: 0,
+  sy: 0,
+  w: img.naturalWidth,
+  h: img.naturalHeight,
+});
 
 export interface PreparedFrame {
   ops: DrawOp[];
@@ -103,7 +128,7 @@ export interface PreparedAnimation {
   /** 世界座標 → 畫布座標的位移 */
   offsetX: number;
   offsetY: number;
-  /** 素材庫查不到、這次沒畫上去的裝備 id */
+  /** 載入失敗、這次沒畫上去的裝備 id */
   missing: number[];
 }
 
@@ -274,7 +299,8 @@ function getZmapIndex() {
 const isCanvas = (node: unknown): node is WzCanvas =>
   !!node &&
   typeof node === "object" &&
-  typeof ((node as WzCanvas)._outlink || (node as WzCanvas).path) === "string";
+  (typeof ((node as WzCanvas)._outlink || (node as WzCanvas).path) === "string" ||
+    !!(node as WzCanvas).image);
 
 const pad8 = (id: number) => String(id).padStart(8, "0");
 
@@ -388,7 +414,9 @@ function getPieceGroups(
         }
         group.frames[frame] = {
           name: pieceName,
-          url: (node._outlink || node.path)!,
+          url: node._outlink || node.path,
+          image: node.image,
+          rect: node.rect,
           origin: node.origin ?? { x: 0, y: 0 },
           map: node.map ?? { navel: { x: 0, y: 0 } },
           layer,
@@ -660,7 +688,7 @@ function resolveStance(action: string, items: LoadedItem[]): string {
 
 /**
  * 合成一個動作的所有 frame，回傳可直接畫上 canvas 的部件序列與共用邊界。
- * 個別裝備素材庫查不到時會跳過並記在 missing，不會讓整隻角色渲染失敗。
+ * 個別裝備載入失敗時會跳過並記在 missing，不會讓整隻角色渲染失敗。
  */
 export async function prepareCharacterFrames({
   look,
@@ -672,19 +700,18 @@ export async function prepareCharacterFrames({
   const bodyId = look.skinId;
   const headId = look.skinId + 10000;
 
-  // 身體與頭是必要的（走自家 /wz-static，正常不會失敗）
-  const [body, head] = await Promise.all([
+  // 透明道具（透明帽那類）沒有圖也不遮任何東西，連抓都不用抓
+  const equips = Object.values(look.equips).filter(
+    (equip): equip is NonNullable<typeof equip> => equip !== undefined && !equip.blank,
+  );
+
+  // 身體與頭是必要的（走自家 /wz-static，正常不會失敗）；裝備逐件載入，失敗的跳過。
+  // 兩邊一起發，不要等身體回來才開始抓裝備
+  const [body, head, settled] = await Promise.all([
     loadItem(bodyId, `Character/${pad8(bodyId)}.img`),
     loadItem(headId, `Character/${pad8(headId)}.img`),
+    Promise.allSettled(equips.map((equip) => loadItem(equip.id, equip.path))),
   ]);
-
-  // 裝備逐件載入，缺的跳過
-  const equips = Object.values(look.equips).filter(
-    (equip): equip is NonNullable<typeof equip> => equip !== undefined,
-  );
-  const settled = await Promise.allSettled(
-    equips.map((equip) => loadItem(equip.id, equip.path)),
-  );
   const items: LoadedItem[] = [body, head];
   const missing: number[] = [];
   settled.forEach((result, i) => {
@@ -794,7 +821,7 @@ export async function prepareCharacterFrames({
   // 載圖 + 計算聯集邊界
   const urls = new Set<string>(effectTrack.urls);
   for (const { placed } of rawFrames) {
-    for (const { piece } of placed) urls.add(piece.url);
+    for (const { piece } of placed) if (piece.url) urls.add(piece.url);
   }
   const images = new Map<string, HTMLImageElement>();
   await Promise.all(
@@ -814,15 +841,18 @@ export async function prepareCharacterFrames({
   const frames: PreparedFrame[] = rawFrames.map(({ placed, delay, navel }) => {
     const ops: DrawOp[] = [];
     for (const { piece, world } of placed) {
-      const img = images.get(piece.url);
+      const img = piece.image ?? (piece.url ? images.get(piece.url) : undefined);
       if (!img) continue;
       const x = world.x - piece.origin.x;
       const y = world.y - piece.origin.y;
+      const op: DrawOp = piece.rect
+        ? { img, x, y, sx: piece.rect[0], sy: piece.rect[1], w: piece.rect[2], h: piece.rect[3] }
+        : wholeImage(img, x, y);
       minX = Math.min(minX, x);
       minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x + img.naturalWidth);
-      maxY = Math.max(maxY, y + img.naturalHeight);
-      ops.push({ img, x, y });
+      maxX = Math.max(maxX, x + op.w);
+      maxY = Math.max(maxY, y + op.h);
+      ops.push(op);
     }
     return { ops, delay, navel };
   });
@@ -853,7 +883,7 @@ export async function prepareCharacterFrames({
       minY = Math.min(minY, y + navelRange.minY);
       maxX = Math.max(maxX, x + navelRange.maxX + img.naturalWidth);
       maxY = Math.max(maxY, y + navelRange.maxY + img.naturalHeight);
-      (op.front ? front : back).push({ img, x, y });
+      (op.front ? front : back).push(wholeImage(img, x, y));
     }
     return { back, front, delay };
   });
@@ -901,20 +931,13 @@ export function drawFrame(
     ctx.translate(prepared.width, 0);
     ctx.scale(-1, 1);
   }
-  const draw = (op: DrawOp) =>
-    ctx.drawImage(
-      op.img,
-      Math.round(op.x + prepared.offsetX),
-      Math.round(op.y + prepared.offsetY),
-    );
+  const blit = (op: DrawOp, dx: number, dy: number) =>
+    ctx.drawImage(op.img, op.sx, op.sy, op.w, op.h, Math.round(dx), Math.round(dy), op.w, op.h);
+  const draw = (op: DrawOp) => blit(op, op.x + prepared.offsetX, op.y + prepared.offsetY);
   // 跟隨隊列黏在肚臍上，會跟著角色這一格的呼吸／步伐上下
   const anchor = prepared.effectFollowsNavel ? frame.navel : { x: 0, y: 0 };
   const drawEffect = (op: DrawOp) =>
-    ctx.drawImage(
-      op.img,
-      Math.round(op.x + anchor.x + prepared.offsetX),
-      Math.round(op.y + anchor.y + prepared.offsetY),
-    );
+    blit(op, op.x + anchor.x + prepared.offsetX, op.y + anchor.y + prepared.offsetY);
   effect?.back.forEach(drawEffect);
   frame.ops.forEach(draw);
   effect?.front.forEach(drawEffect);

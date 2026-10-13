@@ -109,7 +109,7 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 
 1. `python tools/extract-monster-book.py` → `reference-data/monster-book.json`（從客戶端抽掉落+地圖）
 2. `python tools/extract-mob-stats.py` → `reference-data/mob-stats.json`（從客戶端 `Mob/` 包抽全部 1232 隻的 level/maxHP/exp/攻防/命中/迴避等數值）
-3. （名稱表 `reference-data/name-tables/` 若遊戲有新增內容也要重抽——目前還沒有獨立腳本，是當初手動從 `json_a2909ccd...` 包抽的，見「已經拿到的東西」）
+3. `python tools/extract-name-tables.py` → `reference-data/name-tables/`（六份 ID→中文名對照表，來源是 `String/TW/<表名>.json`；可指定表名只抽一份，`--check` 只印差異不寫檔）。遊戲出新內容後這步要先跑，後面的 build 才查得到名字。**Map.json／Mob.json 有沒有名字是其他頁面的實裝判斷依據**，重抽這兩份之後 7、9 要跟著重跑。**2026-10-13 只重抽了 Item.json**（時裝要用）；當時 `--check` 顯示 Map +34、Mob +3、Npc +9、Skill +7／內容變更 310 還沒抽，怪物／任務／技能那幾條管線也還沒跟著客戶端 1.15.3 重跑
 4. `python tools/fetch-missing-names.py` → `reference-data/name-supplement.json`（maplestory.io 補未實裝 mob/item 中文名；**未來視分頁的名稱靠這份**，缺了會顯示 `#id`）
 5. `python tools/fetch-map-names.py` → `reference-data/map-supplement.json`（maplestory.io 補客戶端 Map.json 沒有的地圖名；**未實裝判斷與未來視地圖名靠這份**；已查過的會跳過）
 6. `python tools/extract-worldmap.py` → `reference-data/worldmap.json` + `public/worldmap/*.png`（從客戶端抽 16 張世界地圖底圖與各地圖在圖上的點位座標；`Etc/WorldMap.json` 是純 JSON TextAsset，底圖藏在 spriteset 包的 `BaseImg.asset`，混淆 MonoBehaviour 的解法見腳本 docstring）
@@ -147,17 +147,77 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 
 ### 時裝與特效（`/fashion`，跟上面那串各自獨立）
 
-1. `python tools/extract-cash-items.py` → `reference-data/cash-items.json` ＋ 當期商城快照
+1. `python tools/extract-name-tables.py Item`（新點裝的名字；見上面資料管線第 3 步）
+2. `python tools/extract-cash-items.py` → `reference-data/cash-items.json` ＋ 當期商城快照
    `reference-data/commodity-history/<日期>.json`（**每次跑都要留檔**：商城換檔後下架的時裝
    會從 Commodity.json 完全消失，今天不存之後補不回來）
-2. `python tools/extract-effects.py` → `reference-data/effects.json`（點裝特效，`Item/Cash/0501`）
-3. `python tools/build-fashion-data.py` → `src/data/generated/fashion-catalog.json`（5099 件時裝 ＋ 45 件特效）
+3. `python tools/extract-effects.py` → `reference-data/effects.json`（點裝特效，`Item/Cash/0501`）
+4. `python tools/fetch-fashion-assets.py`（**要連網**；第一次全抓約一小時，之後只補新的，中斷了
+   重跑會接著抓）→ `public/wz-static/fashion/v1/<id>.json`（烤好的圖）＋
+   `public/icons/fashion/<id>.png`（縮圖）＋ `reference-data/fashion-coverage.json`
+   （每件的來源版本、吻合分數，或「透明」「找不到」）
+5. `python tools/build-fashion-data.py` → `src/data/generated/fashion-catalog.json`
+   （2026-10-13：7220 件時裝 ＋ 46 件特效。7194 件有圖、17 件透明道具、9 件找不到）
 
-**圖不在我們這邊**：紙娃娃與特效的圖都是執行期打 maplestory.io（TMS/209 優先，見
-`src/lib/fashion/msio.ts`）。客戶端的圖鎖在 `.wzspritesheet` 裡出不來。
+**時裝的圖是預先烤好的靜態檔（2026-10-13 改，原本是瀏覽器執行期直接打 maplestory.io）**。
+改的理由是量出來的，不是感覺：
+
+- **慢**：那個 API 單次中位數 1.3 秒、4.6% 的請求超過 10 秒、最長卡 60 秒，程式沒設逾時，
+  缺件還要依序問 5 個版本——試衣間因此常常停在「合成中」。
+- **肥**：每個影格各帶一份 base64，髮型 284KB、最大的武器 26MB。烤的時候把重複的圖去掉、
+  併成一張 lossless WebP 圖集，髮型剩 2KB、那把武器 90KB，全部 7194 件共 40MB。
+- **會畫錯**：各服的道具 ID 會撞（30570 黑色都會雅痞造型在 GMS/270 是另一顆完全不同的頭），
+  執行期備援是「有東西就用」。
+
+現在的做法（細節都在 `tools/fetch-fashion-assets.py` 的 docstring，那是唯一一份）：
+
+- **借圖要驗指紋**。客戶端 wzjson 有每張圖的 origin 與 map，拿這組數字跟 maplestory.io
+  回來的比：同一件是 100% 吻合、撞 ID 的是 0%，所以門檻取 0.6 就分得開。
+- **版本順序是 TMS/209 → TWMS → 一批舊版本（GMS/83 那個年代）→ 各服最新版**，
+  100% 吻合就收工，否則問完全部挑最吻合的。**經典版的圖是大改版以前的畫法**：有些道具連
+  TMS/209 都已經是重畫過的新圖（黑色蘑菇頭 30190、唇印 1012009 指紋 0% 吻合），要回到
+  GMS/83 才對得上。反過來，**不要為了快把 GMS/KMS 最新版挪到前面**——它們有 CDN 快取
+  回得快，但抽 58 件指紋吻合的逐張比，22 件跟 TMS/209 有出入，其中 6 件連像素都改過。
+  實際結果：7194 件裡 6450 件來自台服（TMS/209、TWMS/256）、81 件來自舊版本、663 件來自
+  各服最新版；指紋 100% 吻合的 7131 件、部分吻合的 28 件、走 WZ 的 35 件。
+- **單件端點回 null 不代表沒圖**。它要該版本的 String.wz 有這件的名字才回東西；婚紗、泳裝、
+  救生衣、棒球手套這批各版本都沒登記名字（經典版自己補的），但圖好好的在 WZ 裡，
+  `/api/wz/<版本>/Character/<資料夾>/<id>.img/<路徑>` 問得到（`walk_wz`）。這條路
+  **只跟它要像素，結構與座標全用客戶端的**，因為那個端點穿過連結節點讀兩層以下的值會讀錯
+  （`stand1/0/default/map/brow` 回來的是 map 資料夾而不是座標）。
+- **只烤頁面選得到的動作與表情**（讀 `src/lib/fashion/config.ts` 的 `ACTIONS`／`EXPRESSIONS`，
+  全烤會大三倍）。那邊加動作之後要把工具裡的 `FORMAT` 加 1、`baked.ts` 的 `DIR` 跟著改，
+  再 `--rebake`——這批檔案掛一年的 immutable 快取，同網址換內容訪客拿不到新的。
+  `build-fashion-data.py` 會比對清單，不一致就擋下來。
+- **放 `public/wz-static/fashion/` 不放 `public/fashion/`**：後者跟 `/fashion` 頁面的路由同名，
+  `next.config.ts` 那條長快取 header 規則會連頁面一起套到。
+- **CDN 沒有就退回本站**（`baked.ts` 的 `SOURCES`、`fashion.ts` 的 `fashionIconSrcs`）：
+  jsDelivr 把 `@main` 解析成哪個 commit 會快取 12 小時，新烤的檔案推上去之後 CDN 可能
+  半天都還回 404。沒有這層的話，每次補新時裝上線試衣間就會壞到 CDN 更新為止。
+- **repo 體積**：這批素材讓 `public/` 多了 47MB（烤好的圖 40MB、縮圖 7MB，共一萬四千多個
+  小檔），`public/` 變成 68MB、整個 repo 工作樹約 87MB。jsDelivr 的上限是整個套件 150MB、
+  GitHub 來源單檔 20MB（它的 README 寫的），目前還有餘裕，但再加大包素材前要先算一下。
+
+**WZJS 的連結節點（這次才看懂，`tools/wzjs.py` 的註解原本把 12 跟 18 記反了）**：Character 包裡
+一個部件有三種長相——**type 18 是真正的圖**（底下掛 origin／map／z）、**type 12 是連結**
+（舊 wz 的 UOL，沒有子節點，valIdx 指到字串值池裡的相對路徑，例 `../../default/default`，
+相對於它的上一層）、還有**帶 `$inlink` 的目錄**（自己有 origin／map／z，像素借同一個 img 裡的
+另一張，武器大量用）。`decode(..., links=True)` 會把這些都交出來。也就是說**客戶端的結構是
+完整的，缺的只有像素**。
+
+**還是拿不到的 9 件**：「瞭望的臉型」8 個顏色（57068~57768，哪個版本的 WZ 都沒有這個 img）
+與「鷸巢穴」1002822（各版本同 ID 的帽子是另一種畫法，指紋 0%）。要補只剩客戶端
+`.wzspritesheet` 那條被 128-bit 雜湊索引擋住的路（見 `.scratch/gacha-sim/research-item-icons.md`）。
+另外**髮際陰影（hairShade）沒畫**：單件端點不給這張圖，但 WZ 瀏覽端點問得到
+`default/hairShade/<膚色碼>`（0~4、9~11，剛好對上 8 種膚色），想補的話走 `walk_wz` 那條路。
+
+**特效還是執行期打 maplestory.io**（`src/lib/fashion/msio.ts`，現在只剩這個在用它）。特效分頁
+目前在 `fashion-client.tsx` 是註解掉的，所以沒有跟著搬；要重新開放的話建議照時裝的做法一起烤。
 
 **特效（2026-08-20 上線）**：客戶端 `Item/Cash/0501.wzjson` 有 46 件，45 件在
 maplestory.io 找得到圖（只有「殘像效果」沒有——它本來就不是圖，是 alpha 濾鏡）。
+（2026-10-13 重掃多了一件 5010111，變成 47 件、其中 46 件有幀；新的那件在 maplestory.io
+有沒有圖還沒查，分頁目前關著所以沒影響。）
 只有客戶端知道的是三件事：有哪些特效、`z`（畫在角色前面還是後面）、`loose`（跟隨隊列
 每一隻落後幾 px，沒有它玩具小鴨家族會五隻疊在同一點）。圖的 origin 客戶端與
 maplestory.io 逐幀比對完全一致，所以借圖不會跑位。錨點就是角色原點 (0,0)，跟 body
@@ -230,7 +290,7 @@ python tools/download-icons.py                      （已擴充，一併抓轉�
 - `/gacha` **轉蛋模擬**（2026-08-20 上線）：官方轉蛋活動的模擬器。上半部是遊戲風的轉蛋機視窗（CSS 仿製遊戲 UI：銀灰視窗框＋放射光背景＋`public/icons/npc/9110011.png` 那台機器，**沒有挖客戶端 UI 圖集**），三顆鈕＝單抽／十連／自動；下半部是站內簡約風的分析區。刻意的視覺斷層：上面是爽度、下面是真相。版面由上到下＝遊戲視窗 → 目標設定 → 統計面板 → 官方機率表。內建目標「神秘任務」＝ 6 種怪物橡皮擦 ＋（六角水晶項鍊 OR 水女神的衣料），目標模型是 `AND of OR-groups`（`src/data/gacha.ts`），但 UI 只暴露「勾選＋數量」不讓使用者組 OR。連抽是**直接設次數**（預設 100，快捷 10/100/500，旁邊顯示約略花費；原本設計的「預算上限＋抽到達成為止」在 2026-08-20 實測後因為太複雜而廢除），另有 10,000 抽的 session 上限；引擎一次算完再由 UI 快轉播放 3.5 秒。官方機率表與獲得進度連動（抽到的打勾／×N）。**純 session，重整歸零**，不寫 localStorage——數字是假的，跨 session 累積花費是假成就。
   - **明確不做機率計算**（2026-08-20 定案，不是待辦）：沒有期望值、達成抽數分佈、運氣百分位。理由是使用者不想背書可能算錯的數字。未來要加回來的話，驗證方法是容斥閉式 `P(n)=Σ(-1)^|S|(1-Σp)ⁿ` 對照 10 萬次蒙地卡羅，小數點後三位一致即證明兩邊都對。參考量級（**不要放進網站**）：集齊神秘任務蒙地卡羅 300 次實測平均 692 抽、中位數 617、最多 2527，約 NT$12,449。
   - 規格與 issue 在 `.scratch/gacha-sim/`。
-- `/fashion` **時裝搭配**：紙娃娃試衣間。右欄分頁預設停在**髮型**，最後一個分頁是**特效**（45 件，同時只能開一個，再點一次關掉）。特效不佔部位、沒有性別限制，所以跟 `equips` 分開放在 `CharacterLook.effect`。渲染見 `src/lib/fashion/renderer.ts`：特效不參與遮蔽也不吃錨點傳播，就是畫在角色原點的一組圖，`z` 決定畫在角色前面還是後面（`drawFrame` 的後方那疊→角色→前方那疊）。
+- `/fashion` **時裝搭配**：紙娃娃試衣間。時裝的圖吃預先烤好的靜態檔（`src/lib/fashion/baked.ts`，來龍去脈見上面「時裝與特效」），換一件約 0.1 秒。每件時裝有 `preview` 三態：`ok` 有圖、`blank` 透明道具（透明帽那類，穿得上但本來就不畫東西，renderer 直接跳過不抓）、`none` 素材庫沒有——**`none` 的在清單上直接標「無法預覽」、不能點、排在該分頁最後面**，不會像以前讓人點了等十幾秒才知道畫不出來；髮型／臉型某個顏色沒圖時會改挑同造型有圖的顏色。換裝時**舊的那隻留在畫面上**，只在角落亮一個延遲 0.25 秒才淡入的小載入點（素材是靜態檔，整片蓋住的「合成中」只會變成每點一下就閃一次）。左欄的警示現在只剩「這幾件沒載入成功」（網路問題），不再有「素材庫沒有」這種情況。右欄分頁預設停在**髮型**，最後一個分頁是**特效**（**目前在程式裡是註解掉的**；同時只能開一個，再點一次關掉）。特效不佔部位、沒有性別限制，所以跟 `equips` 分開放在 `CharacterLook.effect`。渲染見 `src/lib/fashion/renderer.ts`：特效不參與遮蔽也不吃錨點傳播，就是畫在角色原點的一組圖，`z` 決定畫在角色前面還是後面（`drawFrame` 的後方那疊→角色→前方那疊）。
 - `/party/*` **組隊工具**（2026-09-07 併入 dev）：各組隊任務一頁，**沒有 `/party` 這個 landing page**——選單上是 `nav.ts` 的「組隊」`NavGroup`，下拉本身就在做「列出三個工具」這件事，再放一頁一模一樣的入口是重複的（分支原本自帶一套 `NavItem.children` 兩層選單，dev 這邊已有 `NavGroup`，合併時丟掉分支那套）。`first-time-together`（第一次同行）是第一階段克魯特 9 題題庫，題目字串出自客戶端 `String/TW/ScriptString/party.wzjson`、答案是交叉比對來的（見 `src/data/party-quests.ts` 註解）；`moon-bunny`（月妙的年糕）是在真實地圖底圖上把 14 叢草＋6 朵花標成一張攻略圖（SVG 疊在圖上、共用底圖像素座標）；`tower-of-goddess`（女神之塔）三個分頁小工具。
 - **NPC 對話／關卡說明文字**都在 `json_a2909ccd…` 包的 `Assets/WzAssets/Json/String/TW/ScriptString/*.wzjson`（126 檔，`party`~`party6` 是六個組隊任務、`job`/`job2` 轉職…），格式就是 WZJS，`tools/wzjs.py` 直接解得開。- `/monsters` 吃真資料（`src/data/drops.ts` → `generated/monster-drops.json`，見上面資料管線）。搜尋支援怪物名/道具名（反查誰掉某道具）/地圖名；放大鏡旁的漏斗按鈕開進階篩選（屬性弱點多選、等級範圍）。分「現行版本／未來視」分頁：現行 70 隻（有實裝地圖的怪）＋人工補充掉落；未來視 273 隻（未實裝怪與帶未實裝掉落的怪）。**出沒地圖 chip 點了會開世界地圖彈窗**，在拆包出的遊戲世界地圖上標出該地圖位置（同張圖上這隻怪的其他出沒點也會標小點，可點切換）；不在遊戲世界地圖上的隱藏圖/迷你地城借「ID 最接近的鄰居」標約略位置（顯示「約略位置」徽章）。原本的「地區分類」已移除（2026-08-16）——ID 前綴推地區在維多利亞整個對不上（101030xxx 遺跡發掘地其實在勇士之村、100040xxx 其實是魔法森林南部），改用世界地圖標點一勞永逸。詳情面板有怪物數值（HP/攻防/命中/迴避）與屬性抗性（elemAttr：F火 I冰 L雷 S毒 H聖 D暗；1=免疫 2=抗性 3=弱點）。UI 無掉落機率欄位（拿不到真值）。
 

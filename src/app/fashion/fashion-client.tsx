@@ -15,6 +15,7 @@ import {
   fashionItem,
   fashionEffects,
   fashionEffect,
+  fashionIconSrcs,
   itemImgPath,
   SLOT_LABELS,
   SLOT_CONFLICTS,
@@ -36,8 +37,9 @@ import {
   SKINS,
   DEFAULT_LOOK,
   type CharacterLook,
+  type EquippedItem,
 } from "@/lib/fashion/config";
-import { itemIconUrls } from "@/lib/fashion/msio";
+import { effectIconUrl } from "@/lib/fashion/msio";
 import CharacterCanvas, {
   type CharacterCanvasHandle,
 } from "./character-canvas";
@@ -90,7 +92,22 @@ interface GridEntry {
   item: FashionItem;
   /** 這組造型沒有目前選的顏色（退回其他色） */
   colorMissing?: boolean;
+  /** 素材庫沒有圖，畫不出來（清單上照樣列出，但不能穿） */
+  unavailable: boolean;
 }
+
+/** 畫不出來的排到最後面（穩定排序，其餘維持 id 順序），翻頁時不會整頁都是灰的 */
+const availableFirst = (entries: GridEntry[]) => [
+  ...entries.filter((e) => !e.unavailable),
+  ...entries.filter((e) => e.unavailable),
+];
+
+const toEquipped = (item: FashionItem): EquippedItem => ({
+  id: item.id,
+  name: item.name,
+  path: itemImgPath(item),
+  ...(item.preview === "blank" ? { blank: true } : {}),
+});
 
 /** 角色性別 vs 道具性別限制：2=共用、-1=不明都算穿得下 */
 const genderFits = (gender: Gender, charGender: 0 | 1) =>
@@ -113,11 +130,10 @@ function pageNumbers(current: number, count: number): (number | "…")[] {
   return result;
 }
 
-function ItemIcon({ id, alt }: { id: number; alt: string }) {
-  // 依 REGIONS 順序逐一退，全部失敗才顯示空位；呼叫端用 key={id} 讓換色時重置
-  const [srcIndex, setSrcIndex] = useState(0);
-  const urls = itemIconUrls(id);
-  if (srcIndex >= urls.length) {
+function ItemIcon({ srcs, alt }: { srcs: string[]; alt: string }) {
+  // 依序試候選網址，全部失敗（或根本沒有縮圖）才顯示空位；呼叫端用 key 讓換色時重置
+  const [index, setIndex] = useState(0);
+  if (index >= srcs.length) {
     return (
       <div
         className="h-8 w-8 shrink-0 rounded bg-[var(--accent-soft)]"
@@ -126,15 +142,15 @@ function ItemIcon({ id, alt }: { id: number; alt: string }) {
     );
   }
   return (
-    // 素材來自 maplestory.io（尺寸不定），用原生 img 免去 next/image 的網域設定
+    // 縮圖尺寸不定又是像素圖，用原生 img 免去 next/image 的最佳化
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={urls[srcIndex]}
+      src={srcs[index]}
       alt={alt}
       className="h-8 w-8 shrink-0 object-contain"
       style={{ imageRendering: "pixelated" }}
       loading="lazy"
-      onError={() => setSrcIndex((i) => i + 1)}
+      onError={() => setIndex((i) => i + 1)}
     />
   );
 }
@@ -160,12 +176,16 @@ export default function FashionPage() {
   );
   const [error, setError] = useState<unknown>(null);
   const [missing, setMissing] = useState<number[]>([]);
+  // 畫出過第一隻之後，換裝時舊的那隻會留在畫面上，不必再整片蓋住
+  const [hasDrawn, setHasDrawn] = useState(false);
   const canvasRef = useRef<CharacterCanvasHandle>(null);
 
   const onStatusChange = useCallback(
     (s: "loading" | "ready" | "error", err?: unknown) => {
       setStatus(s);
       setError(err ?? null);
+      if (s === "ready") setHasDrawn(true);
+      if (s === "error") setHasDrawn(false);
     },
     [],
   );
@@ -194,28 +214,36 @@ export default function FashionPage() {
         ) {
           continue;
         }
+        // 只在畫得出來的顏色裡挑；整組都沒圖才標成無法預覽
+        const usable = g.variants.filter((v) => v.item.preview !== "none");
         const variant =
-          g.variants.find((v) => v.color === selectedColor) ?? g.variants[0];
+          usable.find((v) => v.color === selectedColor) ??
+          usable[0] ??
+          g.variants[0];
         entries.push({
           key: g.key,
           name: g.name,
           gender: g.gender,
           item: variant.item,
-          colorMissing: variant.color !== selectedColor,
+          colorMissing: usable.length > 0 && variant.color !== selectedColor,
+          unavailable: usable.length === 0,
         });
       }
-      return entries;
+      return availableFirst(entries);
     }
     const all = BY_SLOT.get(slot) ?? [];
-    return all
-      .filter((it) => genderFilter === "all" || it.gender === genderFilter)
-      .filter((it) => !q || it.name.includes(q) || String(it.id) === q)
-      .map((it) => ({
-        key: it.id,
-        name: it.name,
-        gender: it.gender,
-        item: it,
-      }));
+    return availableFirst(
+      all
+        .filter((it) => genderFilter === "all" || it.gender === genderFilter)
+        .filter((it) => !q || it.name.includes(q) || String(it.id) === q)
+        .map((it) => ({
+          key: it.id,
+          name: it.name,
+          gender: it.gender,
+          item: it,
+          unavailable: it.preview === "none",
+        })),
+    );
   }, [slot, q, grouped, selectedColor, genderFilter]);
 
   const effectList = useMemo(
@@ -244,24 +272,18 @@ export default function FashionPage() {
       const current = prev.equips[slot];
       if (!current) return prev;
       const variant = styleGroupOf(slot, current.id)?.variants.find(
-        (v) => v.color === digit,
+        (v) => v.color === digit && v.item.preview !== "none",
       );
       if (!variant || variant.item.id === current.id) return prev;
       return {
         ...prev,
-        equips: {
-          ...prev.equips,
-          [slot]: {
-            id: variant.item.id,
-            name: variant.item.name,
-            path: itemImgPath(variant.item),
-          },
-        },
+        equips: { ...prev.equips, [slot]: toEquipped(variant.item) },
       };
     });
   };
 
   const equip = (item: FashionItem) => {
+    if (item.preview === "none") return;
     setLook((prev) => {
       const equips = { ...prev.equips };
       if (equips[item.slot]?.id === item.id) {
@@ -270,11 +292,7 @@ export default function FashionPage() {
       }
       for (const conflict of SLOT_CONFLICTS[item.slot] ?? [])
         delete equips[conflict];
-      equips[item.slot] = {
-        id: item.id,
-        name: item.name,
-        path: itemImgPath(item),
-      };
+      equips[item.slot] = toEquipped(item);
       return { ...prev, equips };
     });
   };
@@ -321,7 +339,7 @@ export default function FashionPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">時裝搭配</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          圖與動作由 maplestory.io 提供，少數道具素材庫查不到、無法預覽。
+          圖取自 maplestory.io，少數道具素材庫沒有、無法預覽（排在清單最後）。
         </p>
       </div>
 
@@ -341,14 +359,24 @@ export default function FashionPage() {
                 onStatusChange={onStatusChange}
                 onMissing={onMissing}
               />
-              {status === "loading" && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--bg)]/80">
-                  <div className="maple-loader" />
-                  <span className="text-sm text-[var(--text-muted)]">
-                    合成中…
-                  </span>
-                </div>
-              )}
+              {status === "loading" &&
+                (hasDrawn ? (
+                  // 換裝：舊的那隻留著，角落亮個小點就好（素材是靜態檔，通常一閃就過）
+                  <div
+                    className="fashion-busy absolute right-2 top-2"
+                    role="status"
+                    aria-label="載入中"
+                  >
+                    <div className="maple-loader" style={{ width: 30 }} />
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                    <div className="maple-loader" />
+                    <span className="text-sm text-[var(--text-muted)]">
+                      載入中…
+                    </span>
+                  </div>
+                ))}
               {status === "error" && (
                 <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-sm text-[var(--text-muted)]">
                   {error instanceof Error ? error.message : "這個組合畫不出來"}
@@ -457,7 +485,7 @@ export default function FashionPage() {
                 className="mt-0.5 shrink-0 text-[var(--accent)]"
               />
               <div>
-                <div className="font-medium">這幾件無法預覽</div>
+                <div className="font-medium">這幾件沒載入成功</div>
                 <div className="mt-0.5 text-[var(--text-muted)]">
                   {missing
                     .map(
@@ -467,7 +495,7 @@ export default function FashionPage() {
                         `#${id}`,
                     )
                     .join("、")}
-                  —— 素材庫沒有它們的動作資料，仍然穿在身上，只是畫不出來。
+                  —— 多半是網路不穩，重新整理再試一次。
                 </div>
               </div>
             </div>
@@ -645,6 +673,34 @@ export default function FashionPage() {
                     styleBaseId(slot, equipped.id) === entry.key
                   : equipped?.id === entry.item.id;
                 const fits = genderFits(entry.gender, charGender);
+                const blank = entry.item.preview === "blank";
+                if (entry.unavailable) {
+                  return (
+                    <div
+                      key={entry.key}
+                      title={`${entry.name}（素材庫沒有這件的圖，無法預覽）`}
+                      className="flex items-center gap-2 rounded-lg border border-dashed border-[var(--border)] p-2 opacity-45"
+                    >
+                      <ItemIcon
+                        key={entry.item.id}
+                        srcs={
+                          entry.item.hasIcon
+                            ? fashionIconSrcs(entry.item.id)
+                            : []
+                        }
+                        alt=""
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-xs">
+                          {entry.name}
+                        </span>
+                        <span className="mt-0.5 block text-[10px] text-[var(--text-muted)]">
+                          無法預覽
+                        </span>
+                      </span>
+                    </div>
+                  );
+                }
                 return (
                   <button
                     key={entry.key}
@@ -662,15 +718,26 @@ export default function FashionPage() {
                   >
                     <ItemIcon
                       key={entry.item.id}
-                      id={entry.item.id}
+                      srcs={
+                        entry.item.hasIcon
+                          ? fashionIconSrcs(entry.item.id)
+                          : []
+                      }
                       alt={entry.name}
                     />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-xs">
                         {entry.name}
                       </span>
-                      {(entry.colorMissing || !fits) && (
+                      {(entry.colorMissing || !fits || blank) && (
                         <span className="mt-0.5 flex items-center gap-1">
+                          {blank && (
+                            // 透明帽、技能效果這類：遊戲裡它本來就什麼都不畫，
+                            // 不先講的話點了沒反應會以為壞掉
+                            <span className="text-[10px] text-[var(--text-muted)]">
+                              穿上不會顯示
+                            </span>
+                          )}
                           {entry.colorMissing && (
                             <span className="text-[10px] text-[var(--text-muted)]">
                               無此色，以現有色代替
@@ -703,7 +770,10 @@ export default function FashionPage() {
                       : "border-[var(--border)] hover:border-[var(--accent)]"
                   }`}
                 >
-                  <ItemIcon id={effect.id} alt={effect.name} />
+                  <ItemIcon
+                    srcs={[effectIconUrl(effect.id)]}
+                    alt={effect.name}
+                  />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs">
                       {effect.name}

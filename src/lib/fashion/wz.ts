@@ -1,17 +1,15 @@
 /**
  * 素材資料層 facade：renderer 只跟這裡講話。
  *
- * 兩個來源：
+ * 三個來源：
  * - 身體/頭、zmap（圖層順序）、smap（部位遮蔽）走 /wz-static/（隨站部署，1.3MB）。
  *   maplestory.io **沒有**身體與頭的原始資料（實測 TMS/209、TWMS/256、GMS/62 打
  *   item/2000 一律回 null），所以這一小包非自己帶不可。
- * - 其餘道具走 maplestory.io（見 ./msio.ts）。
+ * - 時裝走預先烤好的靜態檔 /wz-static/fashion/v1/（見 ./baked.ts）。
+ * - 特效還是執行期打 maplestory.io（見 ./msio.ts）。
  */
-import {
-  fetchItemWz as fetchFromMsio,
-  fetchEffectBooks as fetchEffectFromMsio,
-  type EffectBooks,
-} from "./msio";
+import { fetchBakedItemWz } from "./baked";
+import { fetchEffectBooks as fetchEffectFromMsio, type EffectBooks } from "./msio";
 import { ASSET_BASE_URL } from "@/lib/asset-base";
 
 const STATIC_BASE = `${ASSET_BASE_URL}/wz-static`;
@@ -71,9 +69,9 @@ export function fetchMappings() {
 }
 
 const bodyHeadCache = new Map<string, Promise<unknown>>();
-// maplestory.io 的單件 JSON 內嵌 base64 圖，很肥（中位數 132KB，武器可到數 MB），
-// 快取上限開小一點免得吃爆記憶體
+// 烤過的時裝一件只有幾 KB（去重後的圖集），留多一點，換來換去才不用重抓
 const itemCache = new Map<string, Promise<unknown>>();
+const ITEM_ID_RE = /(\d{8})\.img$/;
 
 /** 道具 .img 結構（動作/frame/部件） */
 export function fetchItemWz(imgPath: string): Promise<unknown> {
@@ -82,7 +80,9 @@ export function fetchItemWz(imgPath: string): Promise<unknown> {
       fetchStaticJson(`${STATIC_BASE}/json/${pathToFile(imgPath)}.json`),
     );
   }
-  return cachedPromise(itemCache, imgPath, 40, () => fetchFromMsio(imgPath));
+  const id = ITEM_ID_RE.exec(imgPath);
+  if (!id) return Promise.reject(new Error(`無法從路徑取得道具 id：${imgPath}`));
+  return cachedPromise(itemCache, imgPath, 300, () => fetchBakedItemWz(Number(id[1])));
 }
 
 const effectCache = new Map<string, Promise<EffectBooks>>();
@@ -94,7 +94,7 @@ export function fetchEffectBooks(effectId: number): Promise<EffectBooks> {
   );
 }
 
-/** 部件圖網址。maplestory.io 的部件圖已經是 data: URI，原樣回傳 */
+/** 部件圖網址（身體／頭、特效用；時裝的圖是圖集裡的一塊，不走這裡）。data: URI 原樣回傳 */
 export function imageUrl(nodePath: string): string {
   if (nodePath.startsWith("data:")) return nodePath;
   if (BODY_HEAD_IMAGE_RE.test(nodePath)) {

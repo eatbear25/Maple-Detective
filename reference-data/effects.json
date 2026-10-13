@@ -1,8 +1,8 @@
 {
  "meta": {
-  "source": "json_4f0192b4db49dca312b7c5d0d6d30555.bundle -> Assets/WzAssets/Json/Item/Cash/0501.wzjson",
-  "extractedAt": "2026-08-20T20:10:20+08:00",
-  "effects": 45
+  "source": "json_4f0192b4db49dca30e5ade817eb8111e.bundle -> Assets/WzAssets/Json/Item/Cash/0501.wzjson",
+  "extractedAt": "2026-10-13T23:01:00+08:00",
+  "effects": 46
  },
  "effects": {
   "5010000": {
@@ -908,6 +908,14 @@
     "stand2"
    ],
    "frames": 3
+  },
+  "5010111": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 16
   },
   "5010999": {
    "kind": "simple",

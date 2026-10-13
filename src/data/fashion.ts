@@ -1,10 +1,12 @@
 // 點裝清單（來源：遊戲用戶端 Character/ 的 info.cash=1，tools/ 底下的腳本產生）。
-// 產生流程：extract-cash-items.py → build-fashion-data.py → generated/fashion-catalog.json
+// 產生流程：extract-cash-items.py → fetch-fashion-assets.py → build-fashion-data.py
+//           → generated/fashion-catalog.json
 //
-// 圖與渲染資料不在這裡：那些是執行期向 maplestory.io 抓的（見 src/lib/fashion/msio.ts）。
-// 這份只負責回答「有哪些點裝、叫什麼、哪個部位、限不限性別」——
-// 那是 maplestory.io 給不了、只有客戶端知道的事。
+// 圖與渲染資料不在這裡：那些是預先烤好的靜態檔（public/wz-static/fashion/v1/，
+// 見 src/lib/fashion/baked.ts）。這份負責回答「有哪些點裝、叫什麼、哪個部位、
+// 限不限性別、有沒有圖可以預覽」。
 import raw from "./generated/fashion-catalog.json";
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 
 /** 部位代號＝客戶端 Character/ 底下的子目錄（小寫），也直接對應 WZ 資料夾 */
 export type FashionSlot =
@@ -24,11 +26,22 @@ export type FashionSlot =
 /** 性別限制：0=男限 1=女限 2=共用 -1=不明（延伸髮型臉型推不出來） */
 export type Gender = 0 | 1 | 2 | -1;
 
+/**
+ * 能不能預覽（烤素材的時候就決定了，見 tools/fetch-fashion-assets.py）：
+ * - ok    有圖
+ * - blank 透明道具（透明帽那類）——客戶端裡它本來就什麼都不畫，穿得上、只是看不出差別
+ * - none  素材庫各版本都沒有這件（或同 ID 的是另一件道具），畫不出來
+ */
+export type PreviewState = "ok" | "blank" | "none";
+
 export interface FashionItem {
   id: number;
   name: string;
   slot: FashionSlot;
   gender: Gender;
+  preview: PreviewState;
+  /** 有沒有縮圖（none 的多半沒有，免得清單對著不存在的檔案發請求） */
+  hasIcon: boolean;
 }
 
 /**
@@ -51,6 +64,10 @@ interface RawRow {
   n: string;
   s: string;
   g: number;
+  /** 預覽狀態：省略＝有圖、0＝畫不出來、2＝透明道具 */
+  v?: 0 | 2;
+  /** 0＝沒有縮圖（省略＝有） */
+  ic?: 0;
 }
 
 interface RawEffectRow {
@@ -73,6 +90,8 @@ export const fashionItems: FashionItem[] = data.items.map((r) => ({
   name: r.n,
   slot: r.s as FashionSlot,
   gender: r.g as Gender,
+  preview: r.v === 0 ? "none" : r.v === 2 ? "blank" : "ok",
+  hasIcon: r.ic !== 0,
 }));
 
 const byId = new Map(fashionItems.map((it) => [it.id, it]));
@@ -138,6 +157,16 @@ const pad8 = (id: number) => String(id).padStart(8, "0");
 export const itemImgPath = (item: FashionItem) =>
   `Character/${WZ_FOLDER[item.slot]}/${pad8(item.id)}.img`;
 
+/**
+ * 清單用的縮圖（跟素材一起烤好的，見 tools/fetch-fashion-assets.py）。
+ * 回傳候選清單：CDN 優先、本站同一路徑墊後——新烤的檔案推上去之後 CDN 可能
+ * 半天都還沒有（理由同 src/lib/fashion/baked.ts 的 SOURCES）。
+ */
+export const fashionIconSrcs = (id: number): string[] => {
+  const path = `/icons/fashion/${id}.png`;
+  return ASSET_BASE_URL ? [`${ASSET_BASE_URL}${path}`, path] : [path];
+};
+
 export const GENDER_LABELS: Record<string, string> = {
   "0": "男",
   "1": "女",
@@ -151,7 +180,7 @@ export const catalogBuiltAt = data.meta.builtAt;
 //
 // 遊戲的 ID 編碼：髮型「個位數」是顏色（0黑 1紅 2橘 3黃 4綠 5藍 6紫 7棕）、
 // 臉型「百位數」是顏色（名稱完全相同，只有瞳色不同）。
-// 全 catalog 驗證過：髮型 1938 件收成 246 組、臉型 1267 件收成 159 組，
+// 全 catalog 驗證過（2026-10-13 重掃後）：髮型 3050 件收成 385 組、臉型 2034 件收成 254 組，
 // 同組內性別一致。臉型另有 2 件 digit-8 的灰白色特例，不進色票
 // （選不到，但也只是同臉型的重複色）。
 

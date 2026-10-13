@@ -6,6 +6,8 @@ export interface EquippedItem {
   name: string;
   /** renderer 用的 .img 路徑，見 data/fashion.ts 的 itemImgPath */
   path: string;
+  /** 透明道具（透明帽那類）：佔著部位但沒有圖，renderer 直接跳過 */
+  blank?: boolean;
 }
 
 /**
@@ -48,7 +50,13 @@ export const SKINS: { id: number; name: string }[] = [
   { id: 2011, name: "華麗皮膚" },
 ];
 
-/** 可選動作（對應身體 img 的動作名稱） */
+/**
+ * 可選動作（對應身體 img 的動作名稱）。
+ *
+ * **加減動作或表情之後要重烤時裝素材**：tools/fetch-fashion-assets.py 讀這兩份清單、
+ * 只烤頁面選得到的（`--rebake`）。沒重烤的話新動作底下的衣服會是空的，
+ * build-fashion-data.py 會比對清單擋下來。
+ */
 export const ACTIONS: { id: string; label: string }[] = [
   { id: "stand1", label: "站立" },
   { id: "walk1", label: "走路" },

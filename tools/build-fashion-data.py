@@ -1,17 +1,24 @@
 """把點裝清單 join 成網站用的時裝 catalog。
 
 用法：
-    python tools/extract-cash-items.py   # 先跑這兩個
+    python tools/extract-name-tables.py Item   # 新點裝的名字在這
+    python tools/extract-cash-items.py
     python tools/extract-effects.py
+    python tools/fetch-fashion-assets.py       # 烤圖（要連網），產生 fashion-coverage.json
     python tools/build-fashion-data.py
 
-輸入 reference-data/cash-items.json + effects.json + name-tables/Item.json
-（+ name-supplement 補漏）
+輸入 reference-data/cash-items.json + effects.json + fashion-coverage.json
+     + name-tables/Item.json（+ name-supplement 補漏）
 輸出 src/data/generated/fashion-catalog.json：
     { "meta": {...},
-      "items":   [ { "i": id, "n": 名稱, "s": 部位, "g": 性別 }, ... ],
+      "items":   [ { "i": id, "n": 名稱, "s": 部位, "g": 性別,
+                     "v": 預覽狀態, "ic": 縮圖 }, ... ],
       "effects": [ { "i": id, "n": 名稱, "k": 類型, "z": 前後,
                      "t": 跟隨隊列, "zo": z 例外 }, ... ] }
+
+預覽狀態 v 來自 fashion-coverage.json：省略＝有烤好的圖、0＝畫不出來（素材庫沒有，
+或還沒烤）、2＝透明道具（客戶端裡它本來就什麼都不畫）。前端靠它在清單上直接標
+「無法預覽」，不必等使用者點了才知道。ic=0 是沒有縮圖檔。
 
 不輸出商城「現售」旗標：Commodity.json 快照跟實際商城對不上（2026-08-16 確認
 不準），網站只承諾「客戶端有的點裝」，不承諾商城買不買得到。
@@ -30,11 +37,14 @@ frameBooks 命中 0/14），列進去只會讓使用者點了發現沒反應。
 
 import json
 import os
+import re
 from datetime import datetime, timezone, timedelta
 
 PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(PROJECT, "reference-data")
 OUT_PATH = os.path.join(PROJECT, "src", "data", "generated", "fashion-catalog.json")
+CONFIG_TS = os.path.join(PROJECT, "src", "lib", "fashion", "config.ts")
+ICON_DIR = os.path.join(PROJECT, "public", "icons", "fashion")
 
 # 紙娃娃畫不出來的部位，不進 catalog
 EXCLUDE_SLOTS = {"ring"}
@@ -49,9 +59,30 @@ def load(path, default=None):
         return json.load(f)
 
 
+def check_actions(baked):
+    """頁面選得到的動作／表情，烤素材時都要有烤到，不然穿上去會是空的。"""
+    with open(CONFIG_TS, encoding="utf-8") as f:
+        src = f.read()
+    wanted = []
+    for const in ("ACTIONS", "EXPRESSIONS"):
+        block = re.search(rf"export const {const}\b[^=]*=\s*\[(.*?)\n\];", src, re.S)
+        if not block:
+            raise SystemExit(f"在 {CONFIG_TS} 找不到 {const}")
+        wanted += re.findall(r'\bid:\s*"(\w+)"', block.group(1))
+    lacking = [a for a in wanted if a not in baked]
+    if lacking:
+        raise SystemExit(
+            f"config.ts 有、但素材沒烤到的動作／表情：{lacking}\n"
+            "先照 tools/fetch-fashion-assets.py 開頭的說明把 FORMAT 加 1，再跑它的 --rebake"
+        )
+
+
 def main():
     cash = load(os.path.join(REF, "cash-items.json"))["items"]
     effects_raw = load(os.path.join(REF, "effects.json"))["effects"]
+    coverage = load(os.path.join(REF, "fashion-coverage.json"))
+    check_actions(coverage["meta"]["actions"])
+    covered = coverage["items"]
     names = load(os.path.join(REF, "name-tables", "Item.json"))
     supp = load(os.path.join(REF, "name-supplement.json"), {})
     supp_names = supp.get("items", supp) if isinstance(supp, dict) else {}
@@ -69,6 +100,7 @@ def main():
 
     items = []
     unnamed = 0
+    states = {}
     for item_id, entry in cash.items():
         slot = entry["slot"]
         if slot in EXCLUDE_SLOTS:
@@ -77,6 +109,15 @@ def main():
         if name.startswith("#"):
             unnamed += 1
         row = {"i": int(item_id), "n": name, "s": slot, "g": entry.get("gender", -1)}
+        # 沒在 coverage 裡 = 新點裝還沒烤；error = 上次網路沒問成功。都先當畫不出來
+        state = covered.get(item_id, {}).get("state", "unbaked")
+        states[state] = states.get(state, 0) + 1
+        if state == "transparent":
+            row["v"] = 2
+        elif state != "ok":
+            row["v"] = 0
+        if not os.path.exists(os.path.join(ICON_DIR, f"{item_id}.png")):
+            row["ic"] = 0
         items.append(row)
 
     items.sort(key=lambda r: (r["s"], r["i"]))
@@ -96,10 +137,20 @@ def main():
     print(f"時裝 catalog：{len(items)} 件（無中文名 {unnamed} 件）＋特效 {len(effects)} 件")
     print("部位分布：", dict(sorted(by_slot.items(), key=lambda kv: -kv[1])))
     print("性別不明：", sum(1 for r in items if r["g"] == -1))
+    print("預覽狀態：", states)
+    no_preview = {}
+    for r in items:
+        if r.get("v") == 0:
+            no_preview[r["s"]] = no_preview.get(r["s"], 0) + 1
+    print("畫不出來的（依部位）：", dict(sorted(no_preview.items(), key=lambda kv: -kv[1])))
+    print("沒有縮圖：", sum(1 for r in items if r.get("ic") == 0))
+    pending = states.get("unbaked", 0) + states.get("error", 0)
+    if pending:
+        print(f"!! 有 {pending} 件還沒烤或上次沒問成功，先跑 python tools/fetch-fashion-assets.py 再重跑這支")
 
     out = {
         "meta": {
-            "source": "reference-data/cash-items.json + effects.json + name-tables/Item.json",
+            "source": "reference-data/cash-items.json + effects.json + fashion-coverage.json + name-tables/Item.json",
             "builtAt": datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds"),
             "items": len(items),
             "effects": len(effects),
