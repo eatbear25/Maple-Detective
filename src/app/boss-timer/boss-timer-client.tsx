@@ -10,6 +10,7 @@ import {
   RotateCcw,
   Share2,
   Trash2,
+  Undo2,
   X,
 } from "lucide-react";
 import { bossList, type BossDef } from "@/data/bosses";
@@ -35,6 +36,16 @@ import {
 const bossById: Record<string, BossDef> = Object.fromEntries(
   bossList.map((b) => [b.id, b]),
 );
+
+/** 「重新擊殺」「移除追蹤」都是一按就蓋掉舊記錄，按完這段時間內可以復原 */
+const UNDO_WINDOW_MS = 8000;
+
+interface UndoState {
+  /** 被蓋掉／刪掉之前的那筆記錄，復原就是把它寫回去 */
+  record: KillRecord;
+  action: "rekill" | "remove";
+  expiresAt: number;
+}
 
 /** 按 Esc 關閉彈窗，所有彈窗共用 */
 function useEscapeToClose(onClose: () => void) {
@@ -75,6 +86,15 @@ function BossTimerApp() {
 
   const [addingBoss, setAddingBoss] = useState<BossDef | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+
+  // 過期不另外開計時器清掉，直接跟每秒跳一次的 now 比
+  const [undo, setUndo] = useState<UndoState | null>(null);
+  const activeUndo = undo && now < undo.expiresAt ? undo : null;
+  const armUndo = (
+    record: KillRecord,
+    action: UndoState["action"],
+    at: number,
+  ) => setUndo({ record, action, expiresAt: at + UNDO_WINDOW_MS });
 
   // 分享連結匯入：解析出來但還沒套用，等使用者在確認彈窗按下確定
   const shareParam = searchParams.get("share");
@@ -175,16 +195,23 @@ function BossTimerApp() {
             還沒有追蹤中的 BOSS，點上面的 BOSS 卡片新增擊殺記錄。
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          // 欄數挑到每張卡至少 290px 寬：再窄的話頻道、擊殺時間、倒數都會被擠到換行。
+          // 手機單欄還有一個好處——清單依重生時間排序，由上往下讀就是先後順序
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {rows.map((r) => (
               <TrackedRow
                 key={killKey(r.record.bossId, r.record.channel)}
                 {...r}
                 now={now}
-                onRekillNow={() =>
-                  upsertKill(r.record.bossId, r.record.channel, Date.now())
-                }
-                onRemove={() => removeKill(r.record.bossId, r.record.channel)}
+                onRekillNow={() => {
+                  const at = Date.now();
+                  armUndo(r.record, "rekill", at);
+                  upsertKill(r.record.bossId, r.record.channel, at);
+                }}
+                onRemove={() => {
+                  armUndo(r.record, "remove", Date.now());
+                  removeKill(r.record.bossId, r.record.channel);
+                }}
               />
             ))}
           </div>
@@ -226,6 +253,50 @@ function BossTimerApp() {
           }}
         />
       )}
+
+      {activeUndo && (
+        <UndoToast
+          undo={activeUndo}
+          now={now}
+          onUndo={() => {
+            const { bossId, channel, killedAt } = activeUndo.record;
+            upsertKill(bossId, channel, killedAt);
+            setUndo(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function UndoToast({
+  undo,
+  now,
+  onUndo,
+}: {
+  undo: UndoState;
+  now: number;
+  onUndo: () => void;
+}) {
+  const name = bossById[undo.record.bossId]?.name ?? "BOSS";
+  const secondsLeft = Math.max(1, Math.ceil((undo.expiresAt - now) / 1000));
+  return (
+    <div
+      role="status"
+      className="fixed bottom-4 left-1/2 z-40 flex w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--surface)] py-2 pl-4 pr-2 text-sm shadow-xl"
+    >
+      <span className="min-w-0 truncate">
+        {undo.action === "rekill" ? "已重新計時" : "已移除"}・{name}{" "}
+        {undo.record.channel} 頻
+      </span>
+      <button
+        onClick={onUndo}
+        className="cursor-pointer flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium tabular-nums transition-colors"
+        style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+      >
+        <Undo2 size={13} />
+        復原（{secondsLeft}）
+      </button>
     </div>
   );
 }
@@ -320,14 +391,17 @@ function TrackedRow({
 }) {
   const passed = now >= maxTime;
   const inRange = !passed && now >= minTime;
+  // 最快重生時間一到 BOSS 就可能已經出來了，從這一刻起就要能記下一次擊殺，
+  // 不能等到最晚時間（45~60 分的 BOSS 在 45 分重生的話，會白等 15 分鐘按不到）
+  const canRekill = passed || inRange;
 
   let statusLabel: string;
   let countdown: string | null = null;
   if (passed) {
     statusLabel = "應該已重生";
   } else if (inRange) {
-    statusLabel = "最快重生時間已過，最晚";
-    countdown = formatCountdown(maxTime - now);
+    statusLabel = "可能已重生";
+    countdown = `最晚還要 ${formatCountdown(maxTime - now)}`;
   } else {
     statusLabel = "距最快重生時間";
     countdown = formatCountdown(minTime - now);
@@ -335,13 +409,26 @@ function TrackedRow({
 
   return (
     <div
-      className={`rounded-xl border p-3 transition-colors ${
+      className={`relative rounded-xl border p-3 transition-colors ${
         passed
           ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-          : "border-[var(--border)] bg-[var(--surface)]"
+          : inRange
+            ? "border-[var(--accent)] bg-[var(--surface)]"
+            : "border-[var(--border)] bg-[var(--surface)]"
       }`}
     >
-      <div className="flex items-center gap-2.5">
+      {/* 卡片在手機兩欄時只有 160~200px：名字那一列只放名字，頻道與擊殺時間放第二列，
+          放不下就整塊換行，不會把一句話從中間切斷。垃圾桶釘在卡片右上角、吃卡片的 padding，
+          少佔一點名字的寬度（不然「殭屍蘑菇王」在 375px 的手機上會被截斷） */}
+      <button
+        onClick={onRemove}
+        title="移除追蹤"
+        aria-label="移除追蹤"
+        className="cursor-pointer absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:text-red-400"
+      >
+        <Trash2 size={14} />
+      </button>
+      <div className="flex items-start gap-2">
         <GameIcon
           src={mobIconSrc(boss.id)}
           alt={boss.name}
@@ -349,33 +436,39 @@ function TrackedRow({
           className="h-9 w-9 shrink-0"
         />
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 text-sm font-medium">
-            <span className="truncate">{boss.name}</span>
-            <span className="shrink-0 rounded-full border border-[var(--border)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">
+          <div className="truncate pr-4 text-sm font-medium" title={boss.name}>
+            {boss.name}
+          </div>
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-[var(--text-muted)]">
+            {/* 頻道是「要去哪一頻」的關鍵資訊，用強調色；底色固定用 surface，
+                這樣在「應該已重生」那張 accent-soft 底的卡片上也不會融進去 */}
+            <span className="shrink-0 whitespace-nowrap rounded-full border border-[var(--accent)] bg-[var(--surface)] px-2 py-0.5 text-xs font-semibold tabular-nums text-[var(--accent)]">
               {record.channel} 頻
             </span>
-          </div>
-          <div className="text-xs text-[var(--text-muted)]">
-            擊殺於 {formatClock(record.killedAt)}
+            <span className="whitespace-nowrap">
+              擊殺於 {formatClock(record.killedAt)}
+            </span>
           </div>
         </div>
-        <button
-          onClick={onRemove}
-          title="移除追蹤"
-          aria-label="移除追蹤"
-          className="cursor-pointer flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:text-red-400"
-        >
-          <Trash2 size={14} />
-        </button>
       </div>
 
       <div className="mt-2.5 border-t border-[var(--border)] pt-2.5">
         <div
-          className="text-sm font-semibold tabular-nums"
-          style={{ color: passed ? "var(--accent)" : undefined }}
+          className="flex flex-wrap items-baseline gap-x-1.5 text-sm font-semibold tabular-nums"
+          style={{ color: canRekill ? "var(--accent)" : undefined }}
         >
-          {statusLabel}
-          {countdown && <span className="ml-1.5">{countdown}</span>}
+          <span className="whitespace-nowrap">{statusLabel}</span>
+          {countdown && (
+            <span
+              className={
+                inRange
+                  ? "whitespace-nowrap text-xs font-normal text-[var(--text-muted)]"
+                  : "whitespace-nowrap"
+              }
+            >
+              {countdown}
+            </span>
+          )}
         </div>
         <div className="text-xs text-[var(--text-muted)]">
           {minTime === maxTime
@@ -384,11 +477,16 @@ function TrackedRow({
         </div>
       </div>
 
-      {passed && (
+      {canRekill && (
         <button
           onClick={onRekillNow}
           className="cursor-pointer mt-2.5 flex w-full items-center justify-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
-          style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+          // 已過最晚時間的卡片整張是 accent-soft 底，按鈕再用同色會融進去看不出是按鈕
+          style={
+            passed
+              ? { background: "var(--accent)", color: "#fff" }
+              : { background: "var(--accent-soft)", color: "var(--accent)" }
+          }
         >
           <RotateCcw size={13} />
           重新擊殺
