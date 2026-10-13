@@ -15,6 +15,7 @@ export type KillMap = Record<string, KillRecord>;
 
 const KILLS_KEY = "boss-timer-kills";
 const INTERVALS_KEY = "boss-timer-intervals";
+const PINNED_KEY = "boss-timer-pinned";
 
 export function killKey(bossId: string, channel: number) {
   return `${bossId}:${channel}`;
@@ -33,11 +34,15 @@ function safeParse<T>(raw: string | null, fallback: T): T {
 export function useBossTimerState() {
   const [kills, setKills] = useState<KillMap>({});
   const [intervals, setIntervals] = useState<IntervalMap>({});
+  /** 釘選的 bossId，照釘選先後排；釘選是個人偏好，不進分享連結 */
+  const [pinned, setPinned] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setKills(safeParse(localStorage.getItem(KILLS_KEY), {}));
     setIntervals(safeParse(localStorage.getItem(INTERVALS_KEY), {}));
+    const savedPinned = safeParse<unknown>(localStorage.getItem(PINNED_KEY), []);
+    setPinned(Array.isArray(savedPinned) ? savedPinned.map(String) : []);
     setLoaded(true);
   }, []);
 
@@ -63,13 +68,35 @@ export function useBossTimerState() {
     [],
   );
 
-  /** 清掉使用者自訂的重生間隔（只有沒有官方固定值的 BOSS 才需要這個，清掉後卡片會變回「重生時間未設定」）
+  /** 單獨設定某隻 BOSS 的重生間隔（不用先記一筆擊殺）；會套用到這隻 BOSS 所有頻道 */
+  const setIntervalOverride = useCallback(
+    (bossId: string, interval: Interval) => {
+      setIntervals((prev) => {
+        const next = { ...prev, [bossId]: interval };
+        localStorage.setItem(INTERVALS_KEY, JSON.stringify(next));
+        return next;
+      });
+    },
+    [],
+  );
+
+  /** 清掉使用者自訂的重生間隔：有預設值的 BOSS 會回到預設值，沒有的會變回「未設定」
    *  命名避開 window.clearInterval，不然在元件裡解構出來會把倒數計時用的那個蓋掉 */
   const clearIntervalOverride = useCallback((bossId: string) => {
     setIntervals((prev) => {
       const next = { ...prev };
       delete next[bossId];
       localStorage.setItem(INTERVALS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const togglePin = useCallback((bossId: string) => {
+    setPinned((prev) => {
+      const next = prev.includes(bossId)
+        ? prev.filter((id) => id !== bossId)
+        : [...prev, bossId];
+      localStorage.setItem(PINNED_KEY, JSON.stringify(next));
       return next;
     });
   }, []);
@@ -81,6 +108,12 @@ export function useBossTimerState() {
       localStorage.setItem(KILLS_KEY, JSON.stringify(next));
       return next;
     });
+  }, []);
+
+  /** 清掉全部擊殺記錄；重生間隔設定與釘選不動 */
+  const clearKills = useCallback(() => {
+    setKills({});
+    localStorage.setItem(KILLS_KEY, JSON.stringify({}));
   }, []);
 
   /** 匯入分享連結帶來的整包清單：以分享方資料覆蓋同筆(bossId+channel / bossId)記錄 */
@@ -105,10 +138,14 @@ export function useBossTimerState() {
   return {
     kills,
     intervals,
+    pinned,
     loaded,
     upsertKill,
+    togglePin,
     removeKill,
+    clearKills,
     importShared,
+    setIntervalOverride,
     clearIntervalOverride,
   };
 }

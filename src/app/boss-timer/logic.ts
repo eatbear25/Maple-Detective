@@ -24,6 +24,16 @@ export function effectiveInterval(
   return null;
 }
 
+/** 重生時間能不能讓使用者改：有固定重生時間的 BOSS 不開放（畫面上不出現筆）。
+ *  例外是舊版留下、跟預設值不一樣的自訂值——要留一條路讓人按「恢復預設」，不然會卡死在舊值 */
+export function canEditInterval(boss: BossDef, intervals: IntervalMap): boolean {
+  if (boss.defaultRespawnMin == null) return true;
+  const override = intervals[boss.id];
+  if (!override) return false;
+  const defaultMax = boss.defaultRespawnMax ?? boss.defaultRespawnMin;
+  return override.min !== boss.defaultRespawnMin || override.max !== defaultMax;
+}
+
 export function respawnRange(killedAt: number, interval: Interval) {
   return {
     minTime: killedAt + interval.min * 60_000,
