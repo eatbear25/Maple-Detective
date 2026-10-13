@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
+  Check,
+  ChevronDown,
   Download,
   FlipHorizontal2,
+  Link2,
   Play,
   Search,
   Square,
+  Star,
   X,
 } from "lucide-react";
 import {
@@ -26,6 +30,7 @@ import {
   faceGroups,
   styleGroupOf,
   styleBaseId,
+  colorDigitOf,
   type FashionItem,
   type FashionEffect,
   type FashionSlot,
@@ -40,15 +45,34 @@ import {
   type EquippedItem,
 } from "@/lib/fashion/config";
 import { effectIconUrl } from "@/lib/fashion/msio";
+import {
+  DEFAULT_ACTION,
+  DEFAULT_EXPRESSION,
+  decodeLook,
+  encodeLook,
+} from "@/lib/fashion/share";
+import { copyText } from "@/lib/copy-text";
 import CharacterCanvas, {
   type CharacterCanvasHandle,
 } from "./character-canvas";
 import PreviewStage from "./preview-stage";
+import { FAVORITES_KEY, PAGE_SIZE_KEY, useStored } from "./storage";
 
-const PAGE_SIZE = 60;
+/** 每頁幾件的選項。都是 2、3、4 的倍數，清單不管排幾欄最後一列都是滿的 */
+const PAGE_SIZES = [24, 60, 120, 240];
+const DEFAULT_PAGE_SIZE = 60;
+const parsePageSize = (v: unknown) =>
+  typeof v === "number" && PAGE_SIZES.includes(v) ? v : null;
 
-/** 右欄分頁：「全部」＋ 12 個部位，外加不佔部位的「特效」 */
-type Tab = FashionSlot | "all" | "effect";
+/** 最愛存的是道具 id（髮型／臉型是「某個顏色的那一件」，不是整組造型） */
+const NO_FAVORITES: number[] = [];
+const parseFavorites = (v: unknown) =>
+  Array.isArray(v)
+    ? v.filter((id): id is number => Number.isInteger(id))
+    : null;
+
+/** 右欄分頁：「全部」＋ 12 個部位＋「最愛」，外加不佔部位的「特效」 */
+type Tab = FashionSlot | "all" | "favorites" | "effect";
 
 /** 特效分頁卡片上的一行說明 */
 const EFFECT_KIND_LABELS: Record<FashionEffect["kind"], string> = {
@@ -120,7 +144,9 @@ function slotEntries(slot: FashionSlot, q: string, color: number): GridEntry[] {
     if (
       q &&
       !g.name.includes(q) &&
-      !g.variants.some((v) => v.item.name.includes(q) || String(v.item.id) === q)
+      !g.variants.some(
+        (v) => v.item.name.includes(q) || String(v.item.id) === q,
+      )
     ) {
       continue;
     }
@@ -197,6 +223,190 @@ function ItemIcon({
   );
 }
 
+/**
+ * 下拉選單。原生的箭頭會貼在右邊框上、位置又調不了（圓角一大更擠），
+ * 所以關掉原生外觀自己畫一個；className 只需要給圓角、底色與左側留白。
+ */
+function Select({
+  className = "",
+  children,
+  ...props
+}: React.ComponentProps<"select">) {
+  return (
+    <span className="relative block">
+      <select
+        {...props}
+        className={`w-full cursor-pointer appearance-none border border-[var(--border)] pr-8 outline-none focus:border-[var(--accent)] ${className}`}
+      >
+        {children}
+      </select>
+      <ChevronDown
+        size={14}
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+      />
+    </span>
+  );
+}
+
+/** 清單上的一格：點卡片試穿，右邊的星星收進最愛 */
+function EntryCard({
+  entry,
+  active,
+  notes,
+  favorite,
+  onEquip,
+  onToggleFavorite,
+}: {
+  entry: GridEntry;
+  active: boolean;
+  /** 名稱底下那行小字 */
+  notes: string[];
+  favorite: boolean;
+  onEquip: () => void;
+  onToggleFavorite: () => void;
+}) {
+  const icon = (
+    <ItemIcon
+      key={entry.item.id}
+      srcs={entry.item.hasIcon ? fashionIconSrcs(entry.item.id) : []}
+      alt=""
+    />
+  );
+  const text = (
+    <span className="min-w-0 flex-1">
+      <span className="block truncate text-xs">{entry.name}</span>
+      {notes.length > 0 && (
+        <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
+          {notes.join("・")}
+        </span>
+      )}
+    </span>
+  );
+  if (entry.unavailable) {
+    return (
+      <div
+        title={`${entry.name}（素材庫沒有這件的圖，無法預覽）`}
+        className="flex items-center gap-2 rounded-lg border border-dashed border-[var(--border)] p-2 opacity-45"
+      >
+        {icon}
+        {text}
+      </div>
+    );
+  }
+  return (
+    // 星星不能包在卡片的 button 裡（button 不能巢狀），所以兩顆並排、星星疊在右邊
+    <div className="relative">
+      <button
+        onClick={onEquip}
+        title={entry.name}
+        className={`flex w-full cursor-pointer items-center gap-2 rounded-lg border p-2 pr-8 text-left transition-colors ${
+          active
+            ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+            : "border-[var(--border)] hover:border-[var(--accent)]"
+        }`}
+      >
+        {icon}
+        {text}
+      </button>
+      <button
+        onClick={onToggleFavorite}
+        title={favorite ? "從最愛移除" : "加入最愛"}
+        aria-label={`${favorite ? "從最愛移除" : "加入最愛"}：${entry.name}`}
+        aria-pressed={favorite}
+        className={`absolute right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-colors ${
+          favorite
+            ? "text-[var(--accent)]"
+            : "text-[var(--border)] hover:text-[var(--accent)]"
+        }`}
+      >
+        <Star size={15} fill={favorite ? "currentColor" : "none"} />
+      </button>
+    </div>
+  );
+}
+
+/** 頁碼列：上一頁／頁碼／下一頁，外加直接輸入頁碼跳頁 */
+function Pagination({
+  page,
+  pageCount,
+  onChange,
+}: {
+  page: number;
+  pageCount: number;
+  onChange: (page: number) => void;
+}) {
+  /** 輸入框送出：超出範圍就夾到頭尾，不是數字就當沒輸入 */
+  const jump = (input: HTMLInputElement) => {
+    const n = Math.round(Number(input.value));
+    if (!input.value.trim() || !Number.isFinite(n)) {
+      input.value = String(page + 1);
+      return;
+    }
+    const target = Math.min(pageCount, Math.max(1, n)) - 1;
+    input.value = String(target + 1);
+    if (target !== page) onChange(target);
+  };
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2 text-xs">
+      <button
+        onClick={() => onChange(page - 1)}
+        disabled={page === 0}
+        className="cursor-pointer rounded-full border border-[var(--border)] px-3 py-1 transition-colors hover:border-[var(--accent)] disabled:opacity-40"
+      >
+        上一頁
+      </button>
+      {pageNumbers(page, pageCount).map((n, i) =>
+        n === "…" ? (
+          <span key={`dots-${i}`} className="px-1 text-[var(--text-muted)]">
+            …
+          </span>
+        ) : (
+          <button
+            key={n}
+            onClick={() => onChange(n)}
+            aria-current={page === n ? "page" : undefined}
+            className={`cursor-pointer min-w-[1.75rem] rounded-full border px-2 py-1 transition-colors ${
+              page === n
+                ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
+                : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+            }`}
+          >
+            {n + 1}
+          </button>
+        ),
+      )}
+      <button
+        onClick={() => onChange(page + 1)}
+        disabled={page >= pageCount - 1}
+        className="cursor-pointer rounded-full border border-[var(--border)] px-3 py-1 transition-colors hover:border-[var(--accent)] disabled:opacity-40"
+      >
+        下一頁
+      </button>
+      <label className="ml-2 flex items-center gap-1.5 text-[var(--text-muted)]">
+        跳到第
+        <input
+          // 換頁之後用 key 重掛，輸入框才會跟著顯示新的頁碼
+          key={page}
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={pageCount}
+          defaultValue={page + 1}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") jump(e.currentTarget);
+          }}
+          onBlur={(e) => jump(e.currentTarget)}
+          onFocus={(e) => e.currentTarget.select()}
+          aria-label={`跳到第幾頁（共 ${pageCount} 頁）`}
+          className="w-14 rounded-full border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-center text-[var(--text)] outline-none focus:border-[var(--accent)]"
+        />
+        頁
+      </label>
+    </div>
+  );
+}
+
 export default function FashionPage() {
   const [look, setLook] = useState<CharacterLook>(DEFAULT_LOOK);
   const [tab, setTab] = useState<Tab>("hair");
@@ -205,9 +415,23 @@ export default function FashionPage() {
   const [hairColor, setHairColor] = useState(0);
   const [faceColor, setFaceColor] = useState(0);
   const [page, setPage] = useState(0);
+  // 這兩樣存在瀏覽器裡，下次開還在（換瀏覽器或清資料就沒了，最愛分頁上有寫）
+  const [pageSize, setPageSize] = useStored(
+    PAGE_SIZE_KEY,
+    DEFAULT_PAGE_SIZE,
+    parsePageSize,
+  );
+  const [favorites, setFavorites] = useStored(
+    FAVORITES_KEY,
+    NO_FAVORITES,
+    parseFavorites,
+  );
+  const [copied, setCopied] = useState(false);
+  /** 右欄最上面，換頁之後捲回這裡 */
+  const listTopRef = useRef<HTMLDivElement>(null);
 
-  const [action, setAction] = useState("stand1");
-  const [expression, setExpression] = useState("default");
+  const [action, setAction] = useState(DEFAULT_ACTION);
+  const [expression, setExpression] = useState(DEFAULT_EXPRESSION);
   const [animated, setAnimated] = useState(true);
   const [flipX, setFlipX] = useState(false);
   // 舞台底色：存 CSS 值本身，色票與自訂選色器共用同一個 state
@@ -235,16 +459,37 @@ export default function FashionPage() {
   );
   const onMissing = useCallback((ids: number[]) => setMissing(ids), []);
 
-  /** 「全部」與特效分頁沒有「目前部位」，底下用到部位的地方都要先擋掉 */
+  // 分享連結帶造型進來時套上去。網址只有瀏覽器讀得到，SSR 階段拿不到，
+  // 所以只能掛載後才設 state（提前讀會 hydration 不一致）——做法同技能配點頁。
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const shared = decodeLook(window.location.search);
+    if (!shared) return;
+    const equips: CharacterLook["equips"] = {};
+    for (const id of shared.itemIds) {
+      // 網址是別人給的：catalog 沒有的、畫不出來的直接略過
+      const item = fashionItem(id);
+      if (item && item.preview !== "none") equips[item.slot] = toEquipped(item);
+    }
+    setLook({ skinId: shared.skinId, equips });
+    setAction(shared.action);
+    setExpression(shared.expression);
+    // 色票跟著身上的顏色走，不然接著點別的髮型會跳回黑色
+    if (equips.hair) setHairColor(colorDigitOf("hair", equips.hair.id));
+    if (equips.face) setFaceColor(colorDigitOf("face", equips.face.id));
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  /** 「全部」「最愛」與特效分頁沒有「目前部位」，底下用到部位的地方都要先擋掉 */
   const slot: FashionSlot | null =
-    tab === "effect" || tab === "all" ? null : tab;
+    tab === "effect" || tab === "all" || tab === "favorites" ? null : tab;
   const grouped = slot !== null && GROUPED_SLOTS.has(slot);
   const palette = slot === "hair" ? HAIR_COLORS : FACE_COLORS;
   const selectedColor = slot === "hair" ? hairColor : faceColor;
 
   const q = query.trim();
   const list = useMemo<GridEntry[]>(() => {
-    if (tab === "effect") return [];
+    if (tab === "effect" || tab === "favorites") return [];
     // 「全部」照分頁順序把每個部位接起來；髮型／臉型沿用各自記住的顏色
     const slots = tab === "all" ? SLOT_LABELS.map((l) => l.slot) : [tab];
     return availableFirst(
@@ -254,6 +499,47 @@ export default function FashionPage() {
     );
   }, [tab, q, hairColor, faceColor]);
 
+  const favoriteSet = useMemo(() => new Set(favorites), [favorites]);
+  /** 最愛分頁：照部位分區，一件一格（髮型／臉型不收成造型組，存的就是那個顏色） */
+  const favoriteSections = useMemo(
+    () =>
+      SLOT_LABELS.map(({ slot: s, label }) => ({
+        slot: s,
+        label,
+        entries: (BY_SLOT.get(s) ?? [])
+          .filter((it) => favoriteSet.has(it.id))
+          .map(
+            (it): GridEntry => ({
+              key: it.id,
+              name: it.name,
+              item: it,
+              unavailable: it.preview === "none",
+            }),
+          ),
+      })).filter((section) => section.entries.length > 0),
+    [favoriteSet],
+  );
+  // chip 上的數字只算 catalog 裡還有的（存過的 id 之後被下架也不會多算）
+  const favoriteCount = favoriteSections.reduce(
+    (n, section) => n + section.entries.length,
+    0,
+  );
+  const shownFavoriteSections = favoriteSections
+    .map((section) => ({
+      ...section,
+      entries: section.entries.filter(
+        (e) => !q || e.name.includes(q) || String(e.item.id) === q,
+      ),
+    }))
+    .filter((section) => section.entries.length > 0);
+
+  const toggleFavorite = (id: number) =>
+    setFavorites(
+      favoriteSet.has(id)
+        ? favorites.filter((x) => x !== id)
+        : [...favorites, id],
+    );
+
   const effectList = useMemo(
     () =>
       fashionEffects.filter(
@@ -262,9 +548,22 @@ export default function FashionPage() {
     [q],
   );
 
-  const pageCount = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  const pageCount = Math.max(1, Math.ceil(list.length / pageSize));
   const safePage = Math.min(page, pageCount - 1);
-  const shown = list.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+  const shown = list.slice(safePage * pageSize, (safePage + 1) * pageSize);
+
+  /** 頁碼列換頁：順便捲回清單最上面，不然人還停在上一頁的底部 */
+  const goToPage = (n: number) => {
+    setPage(Math.min(pageCount - 1, Math.max(0, n)));
+    // 系統設定「減少動態效果」的人直接到位，不滑
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    listTopRef.current?.scrollIntoView({
+      block: "start",
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  };
 
   const changeTab = (t: Tab) => {
     setTab(t);
@@ -341,6 +640,70 @@ export default function FashionPage() {
   };
 
   const equippedRows = SLOT_LABELS.filter(({ slot: s }) => look.equips[s]);
+
+  /** 把目前這身造型編進網址、複製到剪貼簿 */
+  const share = async () => {
+    const query = encodeLook({
+      skinId: look.skinId,
+      itemIds: equippedRows.map(({ slot: s }) => look.equips[s]!.id),
+      action,
+      expression,
+    });
+    await copyText(`${window.location.origin}/fashion?${query}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  /** 身上有沒有穿這一格。exact＝要同一個顏色才算（最愛分頁存的是特定顏色） */
+  const isWorn = (entry: GridEntry, exact: boolean) => {
+    const worn = look.equips[entry.item.slot];
+    if (!worn) return false;
+    // 髮型／臉型的清單一格是一組造型：身上是同組任一顏色就算選中（換色前後都亮）
+    return !exact && GROUPED_SLOTS.has(entry.item.slot)
+      ? styleBaseId(entry.item.slot, worn.id) === entry.key
+      : worn.id === entry.item.id;
+  };
+
+  /** 卡片名稱底下那行小字 */
+  const notesOf = (entry: GridEntry) => {
+    const s = entry.item.slot;
+    const eyeColor = FACE_COLORS.find(
+      (c) => c.digit === colorDigitOf("face", entry.item.id),
+    )?.label;
+    return [
+      // 「全部」分頁各部位混在一起，多標一個部位——不然分不出是帽子還是飾品
+      tab === "all" && SLOT_NAMES.get(s),
+      // 臉型各色同名，最愛分頁要靠瞳色分辨（髮型的顏色本來就寫在名字裡）
+      tab === "favorites" && s === "face" && eyeColor && `${eyeColor}瞳孔`,
+      // 透明帽、技能效果這類：遊戲裡它本來就什麼都不畫，
+      // 不先講的話點了沒反應會以為壞掉
+      entry.item.preview === "blank" && "穿上不會顯示",
+      entry.colorMissing && "無此色，以現有色代替",
+      entry.unavailable && "無法預覽",
+    ].filter((note): note is string => Boolean(note));
+  };
+
+  const renderCard = (entry: GridEntry) => (
+    <EntryCard
+      key={entry.key}
+      entry={entry}
+      active={isWorn(entry, tab === "favorites")}
+      notes={notesOf(entry)}
+      favorite={favoriteSet.has(entry.item.id)}
+      onEquip={() => equip(entry.item)}
+      onToggleFavorite={() => toggleFavorite(entry.item.id)}
+    />
+  );
+
+  const emptyMessage =
+    tab === "favorites"
+      ? favoriteCount === 0
+        ? "還沒有加入最愛，點卡片右上角的星星就能加入收藏"
+        : shownFavoriteSections.length === 0 && "沒有符合的最愛"
+      : tab === "effect"
+        ? effectList.length === 0 && "沒有符合的特效"
+        : list.length === 0 && "沒有符合的道具";
+
   const customBackground = !BACKGROUNDS.some((b) => b.value === background);
   // 放大模式左欄吃掉 160px，清單少排一欄，卡片才不會窄到名稱只剩三個字
   const gridCols = expanded
@@ -447,47 +810,47 @@ export default function FashionPage() {
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
               <label className="space-y-1">
                 <span className="text-[var(--text-muted)]">動作</span>
-                <select
+                <Select
                   value={action}
                   onChange={(e) => setAction(e.target.value)}
-                  className="w-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 outline-none focus:border-[var(--accent)]"
+                  className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
                 >
                   {ACTIONS.map((a) => (
                     <option key={a.id} value={a.id}>
                       {a.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
               <label className="space-y-1">
                 <span className="text-[var(--text-muted)]">表情</span>
-                <select
+                <Select
                   value={expression}
                   onChange={(e) => setExpression(e.target.value)}
-                  className="w-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 outline-none focus:border-[var(--accent)]"
+                  className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
                 >
                   {EXPRESSIONS.map((e) => (
                     <option key={e.id} value={e.id}>
                       {e.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
               <label className="col-span-2 space-y-1">
                 <span className="text-[var(--text-muted)]">膚色</span>
-                <select
+                <Select
                   value={look.skinId}
                   onChange={(e) =>
                     setLook((p) => ({ ...p, skinId: Number(e.target.value) }))
                   }
-                  className="w-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 outline-none focus:border-[var(--accent)]"
+                  className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
                 >
                   {SKINS.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
               <div className="col-span-2">
                 <span className="text-[var(--text-muted)]">背景</span>
@@ -559,8 +922,22 @@ export default function FashionPage() {
           )}
 
           <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <div className="mb-2 text-xs font-semibold text-[var(--text-muted)]">
-              目前穿著
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-[var(--text-muted)]">
+                目前穿著
+              </span>
+              <button
+                onClick={share}
+                title="把這身造型編進網址，複製後貼給朋友或自己留著"
+                className={`flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors ${
+                  copied
+                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                    : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+                }`}
+              >
+                {copied ? <Check size={12} /> : <Link2 size={12} />}
+                {copied ? "已複製連結" : "分享造型"}
+              </button>
             </div>
             {equippedRows.length === 0 && !look.effect ? (
               <div className="text-xs text-[var(--text-muted)]">
@@ -636,7 +1013,8 @@ export default function FashionPage() {
         </div>
 
         {/* ===== 右：道具選擇 ===== */}
-        <div className="space-y-3">
+        {/* scroll-mt：換頁捲回這裡時上面留一點空，不要貼齊視窗邊緣 */}
+        <div ref={listTopRef} className="scroll-mt-4 space-y-3">
           <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => changeTab("all")}
@@ -663,6 +1041,22 @@ export default function FashionPage() {
                 <span className="ml-1 opacity-60">{SLOT_COUNTS.get(s)}</span>
               </button>
             ))}
+            <button
+              onClick={() => changeTab("favorites")}
+              className={`flex cursor-pointer items-center rounded-full border px-3 py-1 text-xs transition-colors ${
+                tab === "favorites"
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
+                  : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+              }`}
+            >
+              <Star
+                size={11}
+                className="mr-1 text-[var(--accent)]"
+                fill="currentColor"
+              />
+              最愛
+              <span className="ml-1 opacity-60">{favoriteCount}</span>
+            </button>
             {/* <button
               onClick={() => changeTab("effect")}
               className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
@@ -701,6 +1095,25 @@ export default function FashionPage() {
                 </button>
               )}
             </div>
+            {tab !== "favorites" && tab !== "effect" && (
+              <label className="flex shrink-0 items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                每頁
+                <Select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setPage(0);
+                  }}
+                  className="rounded-full bg-[var(--surface)] py-2 pl-3.5 text-[var(--text)]"
+                >
+                  {PAGE_SIZES.map((n) => (
+                    <option key={n} value={n}>
+                      {n} 件
+                    </option>
+                  ))}
+                </Select>
+              </label>
+            )}
           </div>
 
           {grouped && (
@@ -736,87 +1149,32 @@ export default function FashionPage() {
             {list.length} {grouped ? "款造型" : "件"}
           </div> */}
 
-          {tab !== "effect" && (
+          {tab !== "effect" && tab !== "favorites" && (
             <div className={`grid gap-2 ${gridCols}`}>
-              {shown.map((entry) => {
-                // 「全部」分頁各部位混在一起，部位要看格子自己的
-                const entrySlot = entry.item.slot;
-                const equipped = look.equips[entrySlot];
-                // 髮型／臉型：身上那件是同組任一顏色就算選中（換色前後都亮）
-                const active = GROUPED_SLOTS.has(entrySlot)
-                  ? equipped !== undefined &&
-                    styleBaseId(entrySlot, equipped.id) === entry.key
-                  : equipped?.id === entry.item.id;
-                // 名稱底下那行小字。「全部」分頁多標一個部位——不然分不出是帽子還是飾品
-                const notes = [
-                  tab === "all" && SLOT_NAMES.get(entrySlot),
-                  // 透明帽、技能效果這類：遊戲裡它本來就什麼都不畫，
-                  // 不先講的話點了沒反應會以為壞掉
-                  entry.item.preview === "blank" && "穿上不會顯示",
-                  entry.colorMissing && "無此色，以現有色代替",
-                  entry.unavailable && "無法預覽",
-                ].filter(Boolean);
-                if (entry.unavailable) {
-                  return (
-                    <div
-                      key={entry.key}
-                      title={`${entry.name}（素材庫沒有這件的圖，無法預覽）`}
-                      className="flex items-center gap-2 rounded-lg border border-dashed border-[var(--border)] p-2 opacity-45"
-                    >
-                      <ItemIcon
-                        key={entry.item.id}
-                        srcs={
-                          entry.item.hasIcon
-                            ? fashionIconSrcs(entry.item.id)
-                            : []
-                        }
-                        alt=""
-                      />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-xs">
-                          {entry.name}
-                        </span>
-                        <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
-                          {notes.join("・")}
-                        </span>
-                      </span>
-                    </div>
-                  );
-                }
-                return (
-                  <button
-                    key={entry.key}
-                    onClick={() => equip(entry.item)}
-                    title={entry.name}
-                    className={`cursor-pointer flex items-center gap-2 rounded-lg border p-2 text-left transition-colors ${
-                      active
-                        ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                        : "border-[var(--border)] hover:border-[var(--accent)]"
-                    }`}
-                  >
-                    <ItemIcon
-                      key={entry.item.id}
-                      srcs={
-                        entry.item.hasIcon
-                          ? fashionIconSrcs(entry.item.id)
-                          : []
-                      }
-                      alt={entry.name}
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs">
-                        {entry.name}
-                      </span>
-                      {notes.length > 0 && (
-                        <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
-                          {notes.join("・")}
-                        </span>
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
+              {shown.map(renderCard)}
             </div>
+          )}
+
+          {tab === "favorites" && (
+            <>
+              {/* 純文字一行、不包框：上面是搜尋框、下面是清單或空狀態，再多一個框就三層疊在一起 */}
+              <p className="text-xs leading-relaxed text-[var(--text-muted)]">
+                最愛只存在這個瀏覽器，換瀏覽器或裝置、清除瀏覽資料、太久沒來都可能不見。
+              </p>
+              {shownFavoriteSections.map((section) => (
+                <section key={section.slot} className="space-y-2">
+                  <h2 className="text-xs font-semibold text-[var(--text-muted)]">
+                    {section.label}
+                    <span className="ml-1 font-normal opacity-60">
+                      {section.entries.length}
+                    </span>
+                  </h2>
+                  <div className={`grid gap-2 ${gridCols}`}>
+                    {section.entries.map(renderCard)}
+                  </div>
+                </section>
+              ))}
+            </>
           )}
 
           {tab === "effect" && (
@@ -849,52 +1207,18 @@ export default function FashionPage() {
             </div>
           )}
 
-          {(tab === "effect" ? effectList.length : list.length) === 0 && (
+          {emptyMessage && (
             <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center text-sm text-[var(--text-muted)]">
-              沒有符合的{tab === "effect" ? "特效" : "道具"}
+              {emptyMessage}
             </div>
           )}
 
           {pageCount > 1 && (
-            <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2 text-xs">
-              <button
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={safePage === 0}
-                className="cursor-pointer rounded-full border border-[var(--border)] px-3 py-1 transition-colors hover:border-[var(--accent)] disabled:opacity-40"
-              >
-                上一頁
-              </button>
-              {pageNumbers(safePage, pageCount).map((n, i) =>
-                n === "…" ? (
-                  <span
-                    key={`dots-${i}`}
-                    className="px-1 text-[var(--text-muted)]"
-                  >
-                    …
-                  </span>
-                ) : (
-                  <button
-                    key={n}
-                    onClick={() => setPage(n)}
-                    aria-current={safePage === n ? "page" : undefined}
-                    className={`cursor-pointer min-w-[1.75rem] rounded-full border px-2 py-1 transition-colors ${
-                      safePage === n
-                        ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
-                        : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                    }`}
-                  >
-                    {n + 1}
-                  </button>
-                ),
-              )}
-              <button
-                onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
-                disabled={safePage >= pageCount - 1}
-                className="cursor-pointer rounded-full border border-[var(--border)] px-3 py-1 transition-colors hover:border-[var(--accent)] disabled:opacity-40"
-              >
-                下一頁
-              </button>
-            </div>
+            <Pagination
+              page={safePage}
+              pageCount={pageCount}
+              onChange={goToPage}
+            />
           )}
         </div>
       </div>

@@ -31,9 +31,9 @@ import { GameIcon } from "./game-icon";
 import { ItemTooltip, useItemTooltip } from "./item-tooltip";
 import { StatsPanel, ElemPanel } from "./panels";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
+import { copyText } from "@/lib/copy-text";
 
 type Tab = "current" | "future";
-
 
 const ELEM_OPTIONS = ["火", "冰", "雷", "毒", "聖", "暗"];
 
@@ -58,22 +58,6 @@ function placeLabel(m: DropMonster) {
     if (info) return info.street || info.name;
   }
   return "出沒地不明";
-}
-
-/** 複製分享連結：優先用 Clipboard API，非安全環境（如區網 http）退回 execCommand */
-async function copyText(text: string) {
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-  const el = document.createElement("textarea");
-  el.value = text;
-  el.style.position = "fixed";
-  el.style.opacity = "0";
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand("copy");
-  document.body.removeChild(el);
 }
 
 /** 進站瞬間的骨架畫面：避免帶 ?q= 進來時先閃過未篩選的全部清單 */
