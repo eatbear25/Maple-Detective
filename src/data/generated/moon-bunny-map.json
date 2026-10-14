@@ -1,17 +1,17 @@
 {
  "meta": {
-  "source": "客戶端 Map/910010000.wzjson + Reactor/9102002-9108005",
-  "generatedAt": "2026-08-19T20:09:49+08:00",
+  "source": "客戶端 Map/910010000.wzjson + Reactor/9101000-9108005 ＋ maplestory.io TMS/209/GMS/83 的圖",
+  "generatedAt": "2026-10-14T21:46:12+08:00",
   "script": "tools/extract-moonbunny-map.py"
  },
  "mapId": 910010000,
  "mapName": "迎月花山丘",
  "image": {
   "src": "/maps/910010000.webp",
-  "width": 1829,
-  "height": 1310,
-  "originX": 1013,
-  "originY": 863
+  "width": 1800,
+  "height": 1280,
+  "originX": 990,
+  "originY": 840
  },
  "seedNames": {
   "4001095": "淺綠色迎月花種子",
