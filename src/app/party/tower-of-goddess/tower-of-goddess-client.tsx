@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Check,
@@ -77,9 +69,6 @@ function TowerOfGoddessApp() {
 
   const urlTab = searchParams.get("tab");
   const [tab, setTab] = useState<Tab>(isTab(urlTab) ? urlTab : DEFAULT_TAB);
-  // 切換方向：往右的分頁從右邊滑進來，往左的從左邊
-  const [dir, setDir] = useState(1);
-  const tabIndex = TABS.findIndex(([k]) => k === tab);
 
   // 網址上的 ?tab= 是分享連結用的來源之一：直接改網址列（含瀏覽器上一頁）
   // 也要能切分頁，所以跟著同步過來。
@@ -88,27 +77,8 @@ function TowerOfGoddessApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 只跟著網址走，不要讓 tab 自己觸發它
   }, [urlTab]);
 
-  // 滑動指示器：量出目前分頁按鈕的位置寬度，讓底色滑過去而不是直接跳
-  const barRef = useRef<HTMLDivElement>(null);
-  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [pill, setPill] = useState({ left: 0, width: 0, ready: false });
-
-  const measure = useCallback(() => {
-    const el = btnRefs.current[tabIndex];
-    if (el) setPill({ left: el.offsetLeft, width: el.offsetWidth, ready: true });
-  }, [tabIndex]);
-
-  useLayoutEffect(measure, [measure]);
-  useEffect(() => {
-    // 字型載入完 / 視窗縮放後按鈕寬度會變，指示器要跟著重量
-    window.addEventListener("resize", measure);
-    document.fonts?.ready.then(measure).catch(() => {});
-    return () => window.removeEventListener("resize", measure);
-  }, [measure]);
-
-  const select = (key: Tab, index: number) => {
+  const select = (key: Tab) => {
     if (key === tab) return;
-    setDir(index > tabIndex ? 1 : -1);
     setTab(key);
     router.replace(`${pathname}?tab=${key}`, { scroll: false });
   };
@@ -123,57 +93,33 @@ function TowerOfGoddessApp() {
           組隊任務小工具，切換分頁使用
         </p>
 
+        {/* 分頁樣式跟怪物掉落頁一致：選中的直接換底色，不做滑動 */}
         <div
-          ref={barRef}
           role="tablist"
-          className="relative mt-4 inline-flex rounded-full border border-[var(--border)] p-0.5 text-sm"
+          className="mt-4 inline-flex rounded-full border border-[var(--border)] p-0.5 text-sm"
         >
-          <span
-            aria-hidden
-            className={`absolute inset-y-0.5 left-0 rounded-full bg-[var(--accent-soft)] ${
-              pill.ready
-                ? "transition-[transform,width] duration-300 ease-out motion-reduce:transition-none"
-                : "opacity-0"
-            }`}
-            style={{
-              transform: `translateX(${pill.left}px)`,
-              width: `${pill.width}px`,
-            }}
-          />
-          {/* 四個分頁在 390px 寬的手機上，px-4 會差一點點放不下、字被擠成直的，所以窄螢幕縮成 px-3 */}
-          {TABS.map(([key, label, Icon], i) => (
+          {/* 窄螢幕（玩家常把視窗縮在遊戲旁邊）四顆帶圖示的按鈕會超出去，
+              所以 sm 以下只留文字、內距縮成 px-3，300px 寬也放得下 */}
+          {TABS.map(([key, label, Icon]) => (
             <button
               key={key}
-              ref={(el) => {
-                btnRefs.current[i] = el;
-              }}
               role="tab"
               aria-selected={tab === key}
-              onClick={() => select(key, i)}
-              className={`relative z-10 cursor-pointer flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 transition-colors sm:px-4 ${
+              onClick={() => select(key)}
+              className={`cursor-pointer flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 transition-colors sm:px-4 ${
                 tab === key
-                  ? "font-medium text-[var(--text)]"
+                  ? "bg-[var(--accent-soft)] font-medium text-[var(--text)]"
                   : "text-[var(--text-muted)] hover:text-[var(--text)]"
               }`}
             >
-              <Icon size={14} />
+              <Icon size={14} className="hidden sm:block" />
               {label}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="overflow-x-clip">
-        <div
-          key={tab}
-          className="tab-panel"
-          style={
-            { "--slide-from": `${dir * 28}px` } as React.CSSProperties
-          }
-        >
-          <Panel />
-        </div>
-      </div>
+      <Panel />
     </div>
   );
 }
