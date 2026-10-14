@@ -1,0 +1,73 @@
+{
+ "meta": {
+  "source": "客戶端 Reactor/2008000-2008005、2006001 ＋ maplestory.io GMS/83 的 920010100 地圖與圖",
+  "generatedAt": "2026-10-14T21:14:01+08:00",
+  "script": "tools/extract-goddess-statue.py"
+ },
+ "mapId": 920010100,
+ "image": {
+  "src": "/maps/920010100.webp",
+  "width": 440,
+  "height": 473,
+  "originX": 268,
+  "originY": 1195
+ },
+ "spots": [
+  {
+   "reactorId": 2008003,
+   "itemId": 4001044,
+   "name": "女神像的第一個碎片",
+   "order": 1,
+   "x": -157,
+   "y": -789
+  },
+  {
+   "reactorId": 2008005,
+   "itemId": 4001045,
+   "name": "女神像的第二個碎片",
+   "order": 2,
+   "x": -119,
+   "y": -897
+  },
+  {
+   "reactorId": 2008000,
+   "itemId": 4001046,
+   "name": "女神像的第三個碎片",
+   "order": 3,
+   "x": -164,
+   "y": -1040
+  },
+  {
+   "reactorId": 2008002,
+   "itemId": 4001047,
+   "name": "女神像的第四個碎片",
+   "order": 4,
+   "x": 82,
+   "y": -755
+  },
+  {
+   "reactorId": 2008004,
+   "itemId": 4001048,
+   "name": "女神像的第五個碎片",
+   "order": 5,
+   "x": 0,
+   "y": -969
+  },
+  {
+   "reactorId": 2008001,
+   "itemId": 4001049,
+   "name": "女神像的第六個碎片",
+   "order": 6,
+   "x": 96,
+   "y": -971
+  },
+  {
+   "reactorId": 2006001,
+   "itemId": 4001055,
+   "name": "生命草",
+   "order": null,
+   "x": -52,
+   "y": -897
+  }
+ ]
+}

@@ -15,12 +15,14 @@ import {
   Copy,
   Disc3,
   Lock,
+  Puzzle,
   RotateCcw,
   TriangleAlert,
   Warehouse,
 } from "lucide-react";
 import { loungeRecords } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
+import { goddessStatue, type StatueSpot } from "@/data/goddess-statue";
 import { GameIcon } from "../../monsters/game-icon";
 import {
   candidates,
@@ -40,12 +42,13 @@ import {
   STORAGE_TOTAL,
 } from "./storage";
 
-type Tab = "lounge" | "sealed" | "storage";
+type Tab = "lounge" | "sealed" | "storage" | "statue";
 
 const TABS: [Tab, string, typeof Disc3][] = [
   ["lounge", "休息室", Disc3],
   ["sealed", "封印房", Lock],
   ["storage", "倉庫", Warehouse],
+  ["statue", "女神像", Puzzle],
 ];
 
 const DEFAULT_TAB: Tab = "lounge";
@@ -56,6 +59,7 @@ const PANELS: Record<Tab, () => React.JSX.Element> = {
   lounge: LoungeTab,
   sealed: SealedRoomTab,
   storage: StorageTab,
+  statue: StatueTab,
 };
 
 export default function TowerOfGoddessPage() {
@@ -136,6 +140,7 @@ function TowerOfGoddessApp() {
               width: `${pill.width}px`,
             }}
           />
+          {/* 四個分頁在 390px 寬的手機上，px-4 會差一點點放不下、字被擠成直的，所以窄螢幕縮成 px-3 */}
           {TABS.map(([key, label, Icon], i) => (
             <button
               key={key}
@@ -145,7 +150,7 @@ function TowerOfGoddessApp() {
               role="tab"
               aria-selected={tab === key}
               onClick={() => select(key, i)}
-              className={`relative z-10 cursor-pointer flex items-center gap-1.5 rounded-full px-4 py-1.5 transition-colors ${
+              className={`relative z-10 cursor-pointer flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 transition-colors sm:px-4 ${
                 tab === key
                   ? "font-medium text-[var(--text)]"
                   : "text-[var(--text-muted)] hover:text-[var(--text)]"
@@ -555,6 +560,121 @@ function StorageTab() {
 
       <p className="mt-2 px-1 text-xs leading-relaxed text-[var(--text-muted)]">
         從最下面那格開始往上爬。點已經打掉的格子可以退回。
+      </p>
+    </div>
+  );
+}
+
+/* ------------------------------- 女神像 ------------------------------- */
+
+const { image: STATUE_IMAGE, spots: STATUE_SPOTS } = goddessStatue;
+
+// 泡泡畫在平台正上方：平台的圖從地形線往上長約 20px，泡泡底部再留 4px 空隙。
+const BUBBLE_R = 21;
+const BUBBLE_LIFT = 20 + 4 + BUBBLE_R;
+const BUBBLE_ICON = 30;
+
+/**
+ * 一個放置點的泡泡：白底圓裡放道具圖示，右上角小圓標第幾個碎片；生命草是最後
+ * 一步，改用綠框、不標數字。座標單位是底圖像素（SVG 疊在圖上、共用同一個
+ * viewBox），顏色一律寫死不吃主題——它們貼在遊戲畫面上，跟著頁面明暗換色反而
+ * 會看不清。
+ */
+function StatueBubble({ spot }: { spot: StatueSpot }) {
+  const cx = spot.x + STATUE_IMAGE.originX;
+  const cy = spot.y + STATUE_IMAGE.originY - BUBBLE_LIFT;
+  const grass = spot.order === null;
+  const badge = BUBBLE_R * Math.SQRT1_2; // 圓周上 45° 那一點
+  return (
+    <g>
+      <title>{spot.name}</title>
+      <circle
+        cx={cx}
+        cy={cy}
+        r={BUBBLE_R}
+        fill="#FFFFFF"
+        stroke={grass ? "#6DBE45" : "#11131F"}
+        strokeOpacity={grass ? 1 : 0.2}
+        strokeWidth={grass ? 3 : 1}
+        filter="url(#statue-bubble-shadow)"
+      />
+      <image
+        href={itemIconSrc(spot.itemId)}
+        x={cx - BUBBLE_ICON / 2}
+        y={cy - BUBBLE_ICON / 2}
+        width={BUBBLE_ICON}
+        height={BUBBLE_ICON}
+      />
+      {!grass && (
+        <>
+          <circle
+            cx={cx + badge}
+            cy={cy - badge}
+            r={8}
+            fill="#1F2430"
+            stroke="#FFFFFF"
+            strokeWidth={1.5}
+          />
+          <text
+            x={cx + badge}
+            y={cy - badge}
+            dy="0.36em"
+            textAnchor="middle"
+            fontSize={11}
+            fontWeight={700}
+            fill="#FFFFFF"
+          >
+            {spot.order}
+          </text>
+        </>
+      )}
+    </g>
+  );
+}
+
+// 底圖照原尺寸顯示（點陣美術，放大會糊），窄螢幕才等比縮小。
+function StatueTab() {
+  return (
+    <div className="w-full" style={{ maxWidth: STATUE_IMAGE.width }}>
+      <div
+        className="relative overflow-hidden rounded-2xl border border-[var(--border)]"
+        style={{ aspectRatio: `${STATUE_IMAGE.width} / ${STATUE_IMAGE.height}` }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- 拆包底圖，尺寸固定不需要 next/image */}
+        <img
+          src={STATUE_IMAGE.src}
+          alt="中央塔的女神像與六個放碎片的平台"
+          className="h-full w-full"
+        />
+        <svg
+          viewBox={`0 0 ${STATUE_IMAGE.width} ${STATUE_IMAGE.height}`}
+          className="absolute inset-0 h-full w-full"
+        >
+          <defs>
+            <filter
+              id="statue-bubble-shadow"
+              x="-40%"
+              y="-40%"
+              width="180%"
+              height="180%"
+            >
+              <feDropShadow
+                dx="0"
+                dy="2"
+                stdDeviation="2.5"
+                floodColor="#05070F"
+                floodOpacity="0.55"
+              />
+            </filter>
+          </defs>
+          {STATUE_SPOTS.map((s) => (
+            <StatueBubble key={s.reactorId} spot={s} />
+          ))}
+        </svg>
+      </div>
+
+      <p className="mt-2 px-1 text-xs leading-relaxed text-[var(--text-muted)]">
+        站上平台把碎片丟下去，數字是「女神像的第幾個碎片」。
       </p>
     </div>
   );
