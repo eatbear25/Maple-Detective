@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { ChevronRight, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  Megaphone,
+  X,
+} from "lucide-react";
 import type { Announcement } from "@/lib/announcements";
 import { useStored } from "./fashion/storage";
 
@@ -15,24 +22,39 @@ import { useStored } from "./fashion/storage";
  * 頁面是純靜態的，公告在瀏覽器載入後才去 /api/announcements 拿，所以會晚一拍才
  * 從 header 底下滑出來；沒有公告或讀不到試算表就整條不出現。
  *
- * 只有內容塞不下才會跑：一則短公告放在那邊不動，沒必要讓它一直晃。
- * 滑鼠移上去（或用 Tab 走到連結上）會停住，方便點；系統開了「減少動態效果」就不跑，
- * 改成可以手動左右捲。
+ * 多則公告一次只顯示一則、輪流換（並排的話兩則擠在一條裡很亂）。單則塞不下時，
+ * 輪到它的那段時間會先停一下、慢慢往左捲到結尾、再停一下才換下一則——窄視窗
+ * 也看得完整句。滑鼠移上去或用 Tab 走進來就停住；系統開了「減少動態效果」就
+ * 不滑動也不自動捲，塞不下的改成手動左右捲。
  *
- * 按 × 收起來之後，同一批公告不再出現；試算表內容一改（新增、改字、改連結）就會再跳出來。
+ * 多則時右邊有上一則／下一則兩個小箭頭。使用者打槍過、別加回來的：箭頭中間的
+ * 「1/2」頁碼（佔寬度、擋路）、捲動時左右兩端的淡出遮罩（手機上字會糊掉看不清楚）。
+ *
+ * 按 × 收起之後，header 右上角會出現大聲公按鈕可以再打開。收起是記在瀏覽器裡、
+ * 綁定「這一批公告」：試算表內容一改（新增、改字、改連結）就會自動再打開。
  */
 
 const DISMISSED_KEY = "announcement-dismissed";
 const parseString = (v: unknown) => (typeof v === "string" ? v : null);
 const NOT_DISMISSED = "";
 
-/** 跑馬燈速度（px／秒） */
+/** 塞得下的公告每則停多久（ms） */
+const DWELL = 5000;
+/** 塞不下的公告捲動前、捲完後各停多久（ms） */
+const HOLD = 1500;
+/** 捲動速度（px／秒） */
 const SPEED = 45;
-/** 公告之間、以及頭尾接起來的間距（px），要跟下面的 gap-8／pr-8 一致 */
-const GAP = 32;
 
-export default function AnnouncementBar() {
-  const [items, setItems] = useState<Announcement[] | null>(null);
+export interface AnnouncementsState {
+  items: Announcement[];
+  collapsed: boolean;
+  collapse: () => void;
+  expand: () => void;
+}
+
+/** 公告列與 header 上的「打開公告」按鈕共用同一份狀態，由 SiteShell 呼叫一次再分給兩邊 */
+export function useAnnouncements(): AnnouncementsState {
+  const [items, setItems] = useState<Announcement[]>([]);
   const [dismissed, setDismissed] = useStored(
     DISMISSED_KEY,
     NOT_DISMISSED,
@@ -54,12 +76,40 @@ export default function AnnouncementBar() {
     };
   }, []);
 
-  if (!items?.length) return null;
-  const signature = items
-    .map((a) => `${a.date}|${a.text}|${a.href ?? ""}`)
-    .join("\n");
-  if (dismissed === signature) return null;
+  const signature = useMemo(
+    () => items.map((a) => `${a.date}|${a.text}|${a.href ?? ""}`).join("\n"),
+    [items],
+  );
 
+  return {
+    items,
+    collapsed: items.length > 0 && dismissed === signature,
+    collapse: () => setDismissed(signature),
+    expand: () => setDismissed(NOT_DISMISSED),
+  };
+}
+
+/** header 第一列的按鈕：公告收起來時才出現，按了再打開 */
+export function AnnouncementToggle({ state }: { state: AnnouncementsState }) {
+  if (!state.collapsed) return null;
+  return (
+    <button
+      onClick={state.expand}
+      aria-label="打開公告"
+      title="打開公告"
+      className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors"
+    >
+      <Megaphone size={16} />
+    </button>
+  );
+}
+
+export default function AnnouncementBar({
+  state,
+}: {
+  state: AnnouncementsState;
+}) {
+  if (!state.items.length || state.collapsed) return null;
   return (
     <div
       role="region"
@@ -71,9 +121,9 @@ export default function AnnouncementBar() {
         <span className="shrink-0 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--accent)]">
           公告
         </span>
-        <Ticker items={items} />
+        <Rotator items={state.items} />
         <button
-          onClick={() => setDismissed(signature)}
+          onClick={state.collapse}
           aria-label="收起公告"
           title="收起公告"
           className="cursor-pointer shrink-0 flex h-7 w-8 items-center justify-center rounded-md text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--text)] transition-colors"
@@ -85,82 +135,150 @@ export default function AnnouncementBar() {
   );
 }
 
-function Ticker({ items }: { items: Announcement[] }) {
+function Rotator({ items }: { items: Announcement[] }) {
+  const count = items.length;
+  const [index, setIndex] = useState(0);
+  /** 每換一次 +1，拿來當 key 讓新的那則重新掛載、播一次滑入動畫（只有一則時也靠它重播捲動） */
+  const [cycle, setCycle] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [boxWidth, setBoxWidth] = useState(0);
   const boxRef = useRef<HTMLDivElement>(null);
-  const copyRef = useRef<HTMLDivElement>(null);
-  /** 一份公告（含尾端間距）的寬度；0 = 塞得下，不用跑 */
-  const [loopWidth, setLoopWidth] = useState(0);
+  const textRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef<Animation | null>(null);
+  const pausedRef = useRef(false);
+  const paused = hovered || focused;
 
-  // ResizeObserver 一開始觀察就會先回報一次，視窗縮放、字型載入完也會再報
+  const go = (delta: number) => {
+    setIndex((i) => (((i + delta) % count) + count) % count);
+    setCycle((c) => c + 1);
+  };
+
+  // ResizeObserver 一開始觀察就會先回報一次；視窗縮放時重算這則要不要捲
   useEffect(() => {
     const box = boxRef.current;
-    const copy = copyRef.current;
-    if (!box || !copy) return;
-    const ro = new ResizeObserver(() => {
-      const w = copy.scrollWidth;
-      setLoopWidth(w - GAP > box.clientWidth ? w : 0);
-    });
+    if (!box) return;
+    const ro = new ResizeObserver(() => setBoxWidth(box.clientWidth));
     ro.observe(box);
-    ro.observe(copy);
     return () => ro.disconnect();
-  }, [items]);
+  }, []);
 
-  const moving = loopWidth > 0;
+  // 這則公告的「停留＋捲動」用一支 Web Animation 表示：暫停／繼續就是 pause()／play()，
+  // 不用自己記計時器剩多少；播完（onfinish）就換下一則。
+  useEffect(() => {
+    const box = boxRef.current;
+    const text = textRef.current;
+    if (!box || !text || !boxWidth) return;
+
+    // 減少動態效果：照樣輪流換（每則停 DWELL），但塞不下時不自動捲，改成手動左右捲
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const overflow = reduced ? 0 : text.scrollWidth - box.clientWidth;
+    if (overflow <= 0 && count === 1) return;
+
+    let anim: Animation;
+    if (overflow > 0) {
+      const scroll = (overflow / SPEED) * 1000;
+      const total = HOLD + scroll + HOLD;
+      const end = `translateX(${-overflow}px)`;
+      anim = text.animate(
+        [
+          { transform: "translateX(0)" },
+          { transform: "translateX(0)", offset: HOLD / total },
+          { transform: end, offset: (HOLD + scroll) / total },
+          { transform: end },
+        ],
+        { duration: total, fill: "forwards" },
+      );
+    } else {
+      anim = text.animate([{ opacity: 1 }, { opacity: 1 }], { duration: DWELL });
+    }
+    if (pausedRef.current) anim.pause();
+    anim.onfinish = () => {
+      setIndex((i) => (i + 1) % count);
+      setCycle((c) => c + 1);
+    };
+    animRef.current = anim;
+    return () => {
+      anim.cancel();
+      animRef.current = null;
+    };
+  }, [index, cycle, boxWidth, count]);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    const anim = animRef.current;
+    if (!anim) return;
+    if (paused) anim.pause();
+    else if (anim.playState === "paused") anim.play();
+  }, [paused]);
+
+  const a = items[index];
 
   return (
     <div
-      ref={boxRef}
-      className="announcement-box flex-1 min-w-0 h-full overflow-hidden"
-      style={
-        moving
-          ? {
-              maskImage:
-                "linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent)",
-            }
-          : undefined
-      }
+      className="flex flex-1 min-w-0 h-full items-center gap-1"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      // 只認鍵盤的 focus：滑鼠點完箭頭，焦點會一直留在按鈕上，算進去的話滑鼠移開了也不會再自動換
+      onFocus={(e) => {
+        if (e.target.matches(":focus-visible")) setFocused(true);
+      }}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
+      }}
     >
       <div
-        className={`flex h-full w-max ${moving ? "announcement-track" : ""}`}
-        style={
-          moving
-            ? { animationDuration: `${loopWidth / SPEED}s` }
-            : undefined
-        }
+        ref={boxRef}
+        className="announcement-box flex-1 min-w-0 h-full overflow-hidden"
       >
-        <div ref={copyRef} className="flex shrink-0 items-center gap-8 pr-8">
-          {items.map((a, i) => (
-            <Item key={i} a={a} />
-          ))}
-        </div>
-        {/* 第二份是為了讓跑馬燈頭尾接起來，讀屏與 Tab 都跳過它 */}
-        {moving && (
-          <div
-            aria-hidden="true"
-            className="announcement-dup flex shrink-0 items-center gap-8 pr-8"
-          >
-            {items.map((a, i) => (
-              <Item key={i} a={a} tabbable={false} />
-            ))}
+        <div
+          key={cycle}
+          className={`h-full flex items-center ${cycle > 0 ? "announcement-swap" : ""}`}
+        >
+          <div ref={textRef} className="w-max">
+            <Item a={a} />
           </div>
-        )}
+        </div>
       </div>
+      {count > 1 && (
+        <div className="flex shrink-0 items-center text-[var(--text-muted)]">
+          <button
+            onClick={() => go(-1)}
+            aria-label="上一則公告"
+            title="上一則"
+            className="cursor-pointer flex h-7 w-6 items-center justify-center rounded-md hover:bg-[var(--accent-soft)] hover:text-[var(--text)] transition-colors"
+          >
+            <ChevronLeft size={15} />
+          </button>
+          <button
+            onClick={() => go(1)}
+            aria-label="下一則公告"
+            title="下一則"
+            className="cursor-pointer flex h-7 w-6 items-center justify-center rounded-md hover:bg-[var(--accent-soft)] hover:text-[var(--text)] transition-colors"
+          >
+            <ChevronRight size={15} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
-function Item({ a, tabbable = true }: { a: Announcement; tabbable?: boolean }) {
+function Item({ a }: { a: Announcement }) {
+  const external = !!a.href && !a.href.startsWith("/");
+  const LinkIcon = external ? ArrowUpRight : ArrowRight;
   const body = (
     <>
       {a.date && (
         <span className="tabular-nums text-[var(--text-muted)]">{a.date}</span>
       )}
       <span>{a.text}</span>
+      {/* 不用 › ：會跟右邊切換上下則的箭頭長得一樣 */}
       {a.href && (
-        <ChevronRight
+        <LinkIcon
           size={13}
           aria-hidden="true"
-          className="text-[var(--accent)]"
+          className="shrink-0 text-[var(--accent)]"
         />
       )}
     </>
@@ -169,10 +287,9 @@ function Item({ a, tabbable = true }: { a: Announcement; tabbable?: boolean }) {
   if (!a.href) return <span className={cls}>{body}</span>;
 
   const linkCls = `${cls} rounded hover:text-[var(--accent)] hover:underline underline-offset-2`;
-  const tabIndex = tabbable ? undefined : -1;
-  if (a.href.startsWith("/")) {
+  if (!external) {
     return (
-      <Link href={a.href} tabIndex={tabIndex} className={linkCls}>
+      <Link href={a.href} className={linkCls}>
         {body}
       </Link>
     );
@@ -182,7 +299,6 @@ function Item({ a, tabbable = true }: { a: Announcement; tabbable?: boolean }) {
       href={a.href}
       target="_blank"
       rel="noopener noreferrer"
-      tabIndex={tabIndex}
       className={linkCls}
     >
       {body}

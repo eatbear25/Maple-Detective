@@ -25,7 +25,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Sparkles, ChevronsUp, RotateCcw, Link2, Check } from "lucide-react";
+import {
+  Sparkles,
+  ChevronsUp,
+  RotateCcw,
+  Link2,
+  Check,
+  ArrowRight,
+} from "lucide-react";
 import {
   jobs,
   jobById,
@@ -53,6 +60,19 @@ const STORAGE_KEY = "maple-detective-skill-build";
 type Build = Record<string, number>;
 
 const secondJobs = jobs.filter((j) => j.tier === 2);
+
+/**
+ * 職業按鈕的「2 轉 → 3 轉」兩段文字。按鈕原本只寫 2 轉名字，玩家會以為只能配到 2 轉
+ * （2026-10-17 回報）；左邊的職業群小標（劍士）接上按鈕剛好讀成整條線。
+ * 兩段結尾的括號一樣時只留後面那個：「巫師 → 魔導士（火、毒）」。
+ */
+function lineLabel(second: Job): [string, string] {
+  const third = jobs.find((j) => j.from === second.id)?.name ?? "";
+  const tail = second.name.match(/（[^）]*）$/)?.[0];
+  return tail && third.endsWith(tail)
+    ? [second.name.slice(0, -tail.length), third]
+    : [second.name, third];
+}
 
 function isMage(job: Job) {
   return job.group === "magician";
@@ -142,7 +162,11 @@ export default function SkillBuildPage() {
           from = k;
         }
       }
-      return { room, from, budget: from === 1 ? maxSp : maxSp - capOf(job, from - 2) };
+      return {
+        room,
+        from,
+        budget: from === 1 ? maxSp : maxSp - capOf(job, from - 2),
+      };
     },
     [left, maxSp, job, usedByTier],
   );
@@ -237,27 +261,36 @@ export default function SkillBuildPage() {
         {["warrior", "magician", "bowman", "thief", "pirate"].map((g) => {
           const list = secondJobs.filter((j) => j.group === g);
           return (
-            <div key={g} className="flex flex-wrap items-center gap-1.5">
-              <span className="w-14 shrink-0 text-xs text-[var(--text-muted)]">
+            // 小標一欄、按鈕一欄：窄螢幕按鈕換行時才會對齊在按鈕區，不會鑽到小標底下
+            <div key={g} className="flex items-start gap-1.5">
+              <span className="w-14 shrink-0 pt-1 text-xs text-[var(--text-muted)]">
                 {list[0]?.groupName}
               </span>
-              {list.map((j) => (
-                <button
-                  key={j.id}
-                  onClick={() => {
-                    setJobId(j.id);
-                    setBuild({});
-                    setWhy(null);
-                  }}
-                  className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
-                    jobId === j.id
-                      ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                      : "border-[var(--border)] hover:border-[var(--accent)]"
-                  }`}
-                >
-                  {j.name}
-                </button>
-              ))}
+              <div className="flex min-w-0 flex-wrap gap-1.5">
+                {list.map((j) => {
+                  const [second, third] = lineLabel(j);
+                  return (
+                    <button
+                      key={j.id}
+                      onClick={() => {
+                        setJobId(j.id);
+                        setBuild({});
+                        setWhy(null);
+                      }}
+                      aria-label={`${j.name} → ${jobs.find((t) => t.from === j.id)?.name}`}
+                      className={`cursor-pointer inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
+                        jobId === j.id
+                          ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                          : "border-[var(--border)] hover:border-[var(--accent)]"
+                      }`}
+                    >
+                      {second}
+                      <ArrowRight size={11} className="shrink-0 opacity-60" />
+                      {third}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           );
         })}
@@ -283,7 +316,10 @@ export default function SkillBuildPage() {
 
             <div className="space-y-1 border-t border-[var(--border)] pt-2 text-xs">
               {[firstJob, job, thirdJob].map((j, i) => (
-                <div key={j.id} className="flex items-baseline justify-between gap-2">
+                <div
+                  key={j.id}
+                  className="flex items-baseline justify-between gap-2"
+                >
                   <span className="min-w-0 truncate text-[var(--text-muted)]">
                     {i + 1} 轉 {j.name}
                   </span>
@@ -305,8 +341,12 @@ export default function SkillBuildPage() {
               {POOLS.map((p, i) => {
                 const cap = capOf(job, i);
                 // 30 級前只算 1 轉技能、70 級前算 1+2 轉、最後一條算全部
-                const spent = usedByTier.slice(0, i + 1).reduce((a, n) => a + n, 0);
-                const later = usedByTier.slice(i + 1).reduce((a, n) => a + n, 0);
+                const spent = usedByTier
+                  .slice(0, i + 1)
+                  .reduce((a, n) => a + n, 0);
+                const later = usedByTier
+                  .slice(i + 1)
+                  .reduce((a, n) => a + n, 0);
                 const short = i < POOLS.length - 1 && later > 0 && spent < cap;
                 return (
                   <PoolMeter
@@ -314,13 +354,18 @@ export default function SkillBuildPage() {
                     label={p.label}
                     cap={cap}
                     used={spent}
-                    warn={short ? `還差 ${cap - spent} 點才能 ${i + 2} 轉` : undefined}
+                    warn={
+                      short
+                        ? `還差 ${cap - spent} 點才能 ${i + 2} 轉`
+                        : undefined
+                    }
                   />
                 );
               })}
               <p className="text-[10px] leading-relaxed text-[var(--text-muted)]">
                 轉職教官會檢查：之前拿到的 SP 要先點完才能轉職，所以 3
-                轉技能只能用 70 級之後的點數；之後拿到的點數則可以回頭補前面的技能。
+                轉技能只能用 70
+                級之後的點數；之後拿到的點數則可以回頭補前面的技能。
               </p>
             </div>
 

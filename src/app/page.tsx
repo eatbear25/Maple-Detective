@@ -13,6 +13,7 @@ import {
   MoonStar,
   ListChecks,
   TowerControl,
+  Flame,
   type LucideIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -56,7 +57,8 @@ const WEBSITE_JSONLD = {
  *
  * 刻意不做的兩件事（原型階段試過又拿掉）：
  *   1. 工具名旁邊標 GA 觸及率——那是挑版型用的註記，長得卻像 UI，
- *      而且只有四頁有數據，其餘七個會被誤讀成「沒人用」
+ *      而且只有四頁有數據，其餘七個會被誤讀成「沒人用」。
+ *      （2026-10-17 改成只標「常用」不標數字，見 TOOL_META 的 hot）
  *   2. 搜尋框下面放「試試：嫩寶／綠水靈…」的範例查詢
  */
 
@@ -112,28 +114,45 @@ function buildSections() {
  *
  * 圖示與 site-shell.tsx 的 NAV_ICONS 是兩份（那份還要吃 NavGroup 的 key），
  * 新增工具兩邊都要加。
+ *
+ * hot = 名稱旁掛「常用」標記，給比較多人用的工具（站長指定，2026-10-17：
+ * 怪物掉落／時裝搭配／BOSS 計時器）。只標有沒有、不標數字。
  */
-const TOOL_META: Record<string, { label?: string; desc: string; icon: LucideIcon }> =
-  {
-    monsters: { desc: "查怪物掉落物，包含未來視", icon: Search },
-    map: {
-      label: "地圖導覽",
-      desc: "在世界地圖上找位置與出沒怪物",
-      icon: MapIcon,
-    },
-    skills: { label: "技能查詢", desc: "各職業技能與每一級的數值", icon: Sparkles },
-    quests: { label: "任務查詢", desc: "任務需求、獎勵查詢", icon: ScrollText },
-    gacha: { desc: "用官方機率表模擬抽獎", icon: Dices },
-    fashion: { desc: "紙娃娃試穿，包含客戶端未加入點裝", icon: Shirt },
-    "skill-build": { desc: "1～3 轉 SP 怎麼分配的試算", icon: Target },
-    "boss-timer": { desc: "記下擊殺時間，自動算下次重生", icon: Timer },
-    "moon-bunny": { desc: "第一階段種子放置位置", icon: MoonStar },
-    "first-time-together": { desc: "第一階段克魯特題庫", icon: ListChecks },
-    "tower-of-goddess": {
-      desc: "唱盤對照、封印房站位、倉庫擊殺順序",
-      icon: TowerControl,
-    },
-  };
+const TOOL_META: Record<
+  string,
+  { label?: string; desc: string; icon: LucideIcon; hot?: boolean }
+> = {
+  monsters: { desc: "查怪物掉落物，包含未來視", icon: Search, hot: true },
+  map: {
+    label: "地圖導覽",
+    desc: "在世界地圖上找位置與出沒怪物",
+    icon: MapIcon,
+  },
+  skills: {
+    label: "技能查詢",
+    desc: "各職業技能與每一級的數值",
+    icon: Sparkles,
+  },
+  quests: { label: "任務查詢", desc: "任務需求、獎勵查詢", icon: ScrollText },
+  gacha: { desc: "用官方機率表模擬抽獎", icon: Dices },
+  fashion: {
+    desc: "紙娃娃試穿，包含客戶端未加入點裝",
+    icon: Shirt,
+    hot: true,
+  },
+  "skill-build": { desc: "1～3 轉 SP 怎麼分配的試算", icon: Target },
+  "boss-timer": {
+    desc: "記下擊殺時間，自動算下次重生",
+    icon: Timer,
+    hot: true,
+  },
+  "moon-bunny": { desc: "第一階段種子放置位置", icon: MoonStar },
+  "first-time-together": { desc: "第一階段克魯特題庫", icon: ListChecks },
+  "tower-of-goddess": {
+    desc: "唱盤對照、封印房站位、倉庫擊殺順序",
+    icon: TowerControl,
+  },
+};
 
 const FALLBACK_META = { desc: "", icon: Search };
 const metaOf = (i: NavItem) => TOOL_META[i.key] ?? FALLBACK_META;
@@ -253,7 +272,7 @@ export default function Home() {
 }
 
 function ToolLink({ item }: { item: NavItem }) {
-  const { label, desc, icon: Icon } = metaOf(item);
+  const { label, desc, icon: Icon, hot } = metaOf(item);
 
   const inner = (
     <>
@@ -264,6 +283,12 @@ function ToolLink({ item }: { item: NavItem }) {
       <span className="min-w-0">
         <span className="text-sm font-medium">
           {label ?? item.label}
+          {hot && item.enabled && (
+            <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full border border-[var(--accent)]/40 px-1.5 py-px align-[1px] text-[10px] font-semibold text-[var(--accent)]">
+              <Flame size={10} aria-hidden />
+              常用
+            </span>
+          )}
           {!item.enabled && (
             <span className="ml-1.5 rounded-full bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10px] font-normal text-[var(--text-muted)]">
               籌備中

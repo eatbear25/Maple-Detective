@@ -27,7 +27,10 @@ import {
 } from "lucide-react";
 import { navTree, isNavGroup, navHref, type NavItem } from "@/nav";
 import { LIGHT_TOKENS, DARK_TOKENS, useDarkMode, themeVars } from "./theme";
-import AnnouncementBar from "./announcement-bar";
+import AnnouncementBar, {
+  AnnouncementToggle,
+  useAnnouncements,
+} from "./announcement-bar";
 
 // nav 圖示對照表。鍵可以是 NavItem 的 key，也可以是 NavGroup 的 key
 // （群組在桌機主列上也要有圖示，不然同一排只有單項有會看起來歪掉）。
@@ -307,6 +310,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
   const { isDark, toggle } = useDarkMode();
   const tokens = isDark ? DARK_TOKENS : LIGHT_TOKENS;
   const [menuOpen, setMenuOpen] = useState(false);
+  const announcements = useAnnouncements();
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -358,6 +362,8 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
 
           <div className="flex-1 md:hidden" />
 
+          <AnnouncementToggle state={announcements} />
+
           <button
             onClick={toggle}
             aria-label="切換深色模式"
@@ -376,7 +382,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        <AnnouncementBar />
+        <AnnouncementBar state={announcements} />
       </header>
 
       <div

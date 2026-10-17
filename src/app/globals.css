@@ -101,7 +101,7 @@ body {
 }
 
 /* 全站公告列（announcement-bar.tsx，header 的第二列）：載入後從 header 底下滑出來；
-   內容塞不下時兩份公告接成一條往左跑，跑完一份（-50%）剛好接回開頭 */
+   換下一則時新的那則從下面滑上來（塞不下時的左右捲動是程式用 Web Animations 做的） */
 .announcement-bar {
   animation: announcement-in 0.25s ease-out;
 }
@@ -111,18 +111,13 @@ body {
     opacity: 0;
   }
 }
-.announcement-track {
-  animation-name: announcement-marquee;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+.announcement-swap {
+  animation: announcement-swap 0.35s ease-out;
 }
-.announcement-box:hover .announcement-track,
-.announcement-box:focus-within .announcement-track {
-  animation-play-state: paused;
-}
-@keyframes announcement-marquee {
-  to {
-    transform: translateX(-50%);
+@keyframes announcement-swap {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
   }
 }
 
@@ -130,15 +125,12 @@ body {
   .animate-spin-slow,
   .animate-machine-shake,
   .announcement-bar,
-  .announcement-track {
+  .announcement-swap {
     animation: none;
   }
-  /* 不跑就改成手動左右捲，接尾巴用的第二份也不需要了 */
+  /* 不自動捲，塞不下的公告改成手動左右捲 */
   .announcement-box {
     overflow-x: auto;
     scrollbar-width: none;
-  }
-  .announcement-dup {
-    display: none;
   }
 }
