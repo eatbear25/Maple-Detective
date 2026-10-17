@@ -270,6 +270,9 @@ function BossTimerApp() {
       {addingBoss && !editingIntervalBoss && (
         <KillFormModal
           boss={addingBoss}
+          tracked={Object.values(kills)
+            .filter((k) => k.bossId === addingBoss.id)
+            .sort((a, b) => a.channel - b.channel)}
           interval={effectiveInterval(addingBoss.id, intervals, bossById)}
           onEditInterval={
             canEditInterval(addingBoss, intervals)
@@ -786,12 +789,15 @@ function ModalHeader({
 
 function KillFormModal({
   boss,
+  tracked,
   interval,
   onEditInterval,
   onClose,
   onSubmit,
 }: {
   boss: BossDef;
+  /** 這隻 BOSS 已經在追蹤清單裡的記錄（依頻道排序） */
+  tracked: KillRecord[];
   /** 這隻 BOSS 目前的重生間隔；null = 還沒設定過，這時才在彈窗裡一併問 */
   interval: Interval | null;
   /** 沒給＝這隻的重生時間是固定的、不能改 */
@@ -809,9 +815,15 @@ function KillFormModal({
   const channelNum = parseInt(channel, 10);
   const channelValid =
     Number.isInteger(channelNum) && channelNum >= 1 && channelNum <= 60;
+  // 同 BOSS 同頻道已經在追蹤就不給新增：記錄是以 BOSS＋頻道為鍵，送出會直接蓋掉舊的擊殺時間，
+  // 沒注意到就重複按的話舊記錄默默不見。真的要重新計時走清單卡片上的「重新擊殺」（有復原）
+  const duplicate = channelValid
+    ? tracked.find((k) => k.channel === channelNum)
+    : undefined;
   // 已經有重生間隔的 BOSS 只要填頻道就能送出，間隔要改按下面那顆「修改」
   const newInterval = interval ? undefined : fields.value;
-  const valid = channelValid && (interval !== null || newInterval != null);
+  const valid =
+    channelValid && !duplicate && (interval !== null || newInterval != null);
 
   return (
     <div
@@ -841,16 +853,22 @@ function KillFormModal({
               value={channel}
               onChange={(e) => setChannel(e.target.value)}
               aria-label="頻道"
+              aria-invalid={duplicate ? true : undefined}
+              aria-describedby={duplicate ? "kill-channel-dup" : undefined}
               autoFocus
-              className={INPUT_CLASS}
+              className={`${INPUT_CLASS} ${duplicate ? "!border-red-400" : ""}`}
             />
+            {duplicate && (
+              <p id="kill-channel-dup" className="mt-1 text-xs text-red-400">
+                同頻道已經在追蹤了
+              </p>
+            )}
           </div>
 
           {interval === null && <IntervalFields fields={fields} />}
 
-          <div className="space-y-1 text-xs text-[var(--text-muted)]">
-            <p>擊殺時間記為現在（{formatClock(killedAt)}）</p>
-            {interval && (
+          {interval && (
+            <div className="text-xs text-[var(--text-muted)]">
               <p className="flex items-center gap-2">
                 重生間隔 {formatInterval(interval)}
                 {onEditInterval && (
@@ -864,8 +882,8 @@ function KillFormModal({
                   </button>
                 )}
               </p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3">
