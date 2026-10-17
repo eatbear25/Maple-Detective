@@ -430,7 +430,9 @@ function MonsterExplorer() {
               </div>
               {selected.drops.length === 0 ? (
                 <div className="text-sm text-[var(--text-muted)] py-4">
-                  圖鑑內沒有這隻怪物的掉落記錄。
+                  {selected.futureDrops.length > 0
+                    ? "圖鑑記錄的掉落物目前版本都還沒開放，可以到「未來視」查看。"
+                    : "圖鑑內沒有這隻怪物的掉落記錄。"}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">

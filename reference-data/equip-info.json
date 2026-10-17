@@ -1,10 +1,10 @@
 {
  "meta": {
   "source": [
-   "json_c32a59ee3c932de55e86771676afba45.bundle -> Assets/WzAssets/Json/Character/"
+   "json_c32a59ee3c932de5a701d0a99da05c7d.bundle -> Assets/WzAssets/Json/Character/"
   ],
-  "extractedAt": "2026-08-14T22:26:06+08:00",
-  "equips": 4587
+  "extractedAt": "2026-10-17T12:46:11+08:00",
+  "equips": 5259
  },
  "equips": {
   "1000000": {
@@ -198,6 +198,38 @@
   "1000042": {
    "reqJob": 0,
    "reqLevel": 0
+  },
+  "1000062": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1000072": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1000074": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1000093": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1000161": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1000162": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
   },
   "1001000": {
    "reqDEX": 0,
@@ -504,6 +536,22 @@
    "reqLevel": 0
   },
   "1001061": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1001089": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1001095": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1001097": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1001115": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -5403,6 +5451,14 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1002512": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
   "1002513": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -5553,6 +5609,14 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1002542": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002544": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1002547": {
    "incDEX": 6,
    "incMHP": 20,
@@ -5565,6 +5629,14 @@
    "reqLevel": 110,
    "reqSTR": 0,
    "tuc": 7
+  },
+  "1002548": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002549": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002550": {
    "incDEX": 3,
@@ -5613,6 +5685,10 @@
    "reqLevel": 60,
    "reqSTR": 0,
    "tuc": 7
+  },
+  "1002555": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002556": {
    "reqDEX": 0,
@@ -6008,6 +6084,10 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1002654": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1002660": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -6050,6 +6130,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1002678": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1002691": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -6057,6 +6141,18 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1002692": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002693": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002694": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002698": {
    "reqDEX": 0,
@@ -6075,6 +6171,30 @@
    "reqLUK": 0,
    "reqLevel": 10,
    "reqSTR": 0
+  },
+  "1002700": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002701": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002703": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002704": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002705": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002706": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002707": {
    "incDEX": 4,
@@ -6111,6 +6231,14 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1002711": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002712": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002713": {
    "reqDEX": 0,
@@ -6159,6 +6287,10 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1002727": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002728": {
    "incDEX": 4,
@@ -6230,6 +6362,10 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1002754": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002755": {
    "reqDEX": 0,
@@ -6583,6 +6719,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1002823": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1002839": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -6658,6 +6798,10 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1002885": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002907": {
    "reqDEX": 0,
@@ -6765,6 +6909,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1002942": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1002943": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -6800,6 +6948,14 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1002956": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1002960": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1002970": {
    "reqDEX": 0,
@@ -6955,7 +7111,19 @@
    "reqSTR": 0,
    "tuc": 10
   },
+  "1003050": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1003079": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003082": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003083": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -6982,7 +7150,23 @@
    "reqSTR": 0,
    "tuc": 10
   },
+  "1003122": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1003203": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003210": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003214": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003215": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -6994,7 +7178,19 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1003239": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003241": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1003265": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003509": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7002,8 +7198,32 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1003536": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1003588": {
    "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003649": {
+   "reqJob": 1,
+   "reqLevel": 0
+  },
+  "1003650": {
+   "reqJob": 4,
+   "reqLevel": 0
+  },
+  "1003651": {
+   "reqJob": 8,
+   "reqLevel": 0
+  },
+  "1003652": {
+   "reqJob": 2,
+   "reqLevel": 0
+  },
+  "1003653": {
+   "reqJob": 16,
    "reqLevel": 0
   },
   "1003692": {
@@ -7021,11 +7241,110 @@
    "reqLevel": 50,
    "tuc": 3
   },
+  "1003713": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003714": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003829": {
+   "reqJob": 0
+  },
+  "1003859": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1003861": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1003865": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003892": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003917": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1003934": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003950": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003965": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003967": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003968": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003975": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003983": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003992": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003993": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003994": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003995": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003996": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1003997": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004003": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004004": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004060": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004073": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004074": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004092": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7036,11 +7355,31 @@
   "1004095": {
    "reqJob": 0
   },
+  "1004113": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004122": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004123": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1004124": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1004126": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004162": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004165": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7052,7 +7391,15 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1004170": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1004190": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004211": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7060,7 +7407,23 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1004284": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1004285": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004294": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004300": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004328": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7069,6 +7432,14 @@
    "reqLevel": 0
   },
   "1004331": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004338": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004385": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7084,7 +7455,19 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1004466": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004470": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1004480": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004491": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7096,7 +7479,15 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1004526": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1004535": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004547": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7105,6 +7496,46 @@
    "reqLevel": 0
   },
   "1004571": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004590": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004659": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004689": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004690": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004720": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004724": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004728": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004729": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004730": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004731": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7128,6 +7559,14 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1004791": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004792": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1004794": {
    "reqJob": 0,
    "reqLevel": 0
@@ -7140,7 +7579,55 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1004828": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004829": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004830": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004831": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1004834": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004842": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004843": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004844": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004845": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004846": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004862": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004863": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004876": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7156,6 +7643,26 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1004912": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004913": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004914": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004930": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1004945": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1005004": {
    "reqJob": 0,
    "reqLevel": 0
@@ -7168,7 +7675,27 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1005041": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005060": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005065": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005066": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1005073": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005089": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7177,6 +7704,14 @@
    "reqLevel": 0
   },
   "1005222": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005269": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005274": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7197,6 +7732,14 @@
    "reqLevel": 0
   },
   "1005352": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005576": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1005577": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -7248,7 +7791,10 @@
    "reqJob": 0,
    "reqLevel": 0
   },
-  "1006497": {},
+  "1006497": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1006498": {
    "reqJob": 0,
    "reqLevel": 0
@@ -7285,6 +7831,43 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1006900": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1006901": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1006910": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1006911": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1006912": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1007131": {
+   "incJump": 5,
+   "incMHP": 35,
+   "incPDD": 20,
+   "incSpeed": 5,
+   "reqJob": 0,
+   "reqLevel": 20,
+   "tuc": 0
+  },
   "1010000": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -7316,6 +7899,10 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1010005": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1010006": {
    "reqDEX": 0,
@@ -7593,6 +8180,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1012029": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1012030": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -7648,6 +8239,10 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1012049": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1012050": {
    "reqDEX": 0,
@@ -8070,7 +8665,35 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1012413": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1012450": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012462": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012485": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012519": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012521": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012522": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012523": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -8082,11 +8705,27 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1012611": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012612": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1012633": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1012661": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012677": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012678": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -8111,6 +8750,29 @@
    "reqLevel": 0
   },
   "1012835": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012875": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1012923": {
+   "incJump": 5,
+   "incSpeed": 5,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1012939": {
+   "reqJob": 0,
+   "reqLevel": 0,
+   "tuc": 5
+  },
+  "1012940": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -8558,6 +9220,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1022057": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1022059": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -8597,6 +9263,10 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1022065": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1022068": {
    "reqDEX": 0,
@@ -8723,6 +9393,22 @@
    "tuc": 5
   },
   "1022110": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1022122": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1022173": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1022248": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1022259": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -9225,6 +9911,22 @@
    "reqLevel": 50,
    "reqSTR": 0,
    "tuc": 5
+  },
+  "1032145": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1032262": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1032264": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1032360": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1040000": {
    "incDEX": 3,
@@ -10728,6 +11430,14 @@
    "reqLevel": 35,
    "reqSTR": 0,
    "tuc": 7
+  },
+  "1040192": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1040194": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1041000": {
    "reqDEX": 0,
@@ -12264,6 +12974,14 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1041194": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1041196": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1042000": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -13388,6 +14106,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1042159": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1042160": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -13509,7 +14231,23 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1042193": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1042194": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1042212": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1042213": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1042218": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -13529,6 +14267,10 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1042330": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1042333": {
    "reqJob": 0,
    "reqLevel": 0
@@ -13537,7 +14279,31 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1042337": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1042340": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1042347": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1042361": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1048001": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1048002": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1049000": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -13598,6 +14364,41 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1050005": {
+   "incMHP": 5,
+   "incPDD": 36,
+   "incSTR": 1,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 1,
+   "reqLUK": 0,
+   "reqLevel": 20,
+   "reqSTR": 65,
+   "tuc": 10
+  },
+  "1050006": {
+   "incMHP": 15,
+   "incPDD": 36,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 1,
+   "reqLUK": 0,
+   "reqLevel": 20,
+   "reqSTR": 65,
+   "tuc": 10
+  },
+  "1050007": {
+   "incDEX": 1,
+   "incMMP": 5,
+   "incPDD": 36,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 1,
+   "reqLUK": 0,
+   "reqLevel": 20,
+   "reqSTR": 65,
+   "tuc": 10
   },
   "1050008": {
    "incINT": 1,
@@ -14998,11 +15799,35 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1050161": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1050170": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1050180": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050243": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050244": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050248": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050284": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050285": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -15014,11 +15839,35 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1050310": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1050314": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1050319": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050342": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1050358": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050386": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050414": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050425": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -15030,11 +15879,19 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1050435": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1050444": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1050472": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1050479": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -16667,7 +17524,31 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1051200": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1051211": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051298": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051299": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051304": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051350": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051352": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -16679,11 +17560,35 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1051382": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1051385": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1051390": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051414": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1051428": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051456": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051483": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051493": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -16695,11 +17600,19 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1051503": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1051512": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1051539": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1051546": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -17139,6 +18052,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1052069": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052071": {
    "incDEX": 8,
    "incEVA": 3,
@@ -17223,6 +18140,14 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1052085": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052086": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1052087": {
    "reqDEX": 0,
@@ -17447,6 +18372,10 @@
    "reqLevel": 110,
    "reqSTR": 110,
    "tuc": 10
+  },
+  "1052135": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1052142": {
    "reqDEX": 0,
@@ -17810,6 +18739,10 @@
    "reqSTR": 0,
    "tuc": 0
   },
+  "1052192": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052195": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -17889,6 +18822,10 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1052225": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052245": {
    "reqJob": 0,
    "reqLevel": 0
@@ -17901,6 +18838,14 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1052330": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052331": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052338": {
    "reqJob": 0,
    "reqLevel": 0
@@ -17909,11 +18854,39 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1052346": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052347": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052426": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1052449": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052455": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052458": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052550": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052602": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052634": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -17925,7 +18898,55 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1052655": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052661": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052666": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052667": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052668": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052709": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052713": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052724": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052726": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052746": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052747": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052841": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052844": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -17937,11 +18958,35 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1052854": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052875": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1052894": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1052895": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052907": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052908": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052912": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052919": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -17962,6 +19007,30 @@
    "reqLevel": 0
   },
   "1052965": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052977": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052995": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052996": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1052999": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053022": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053023": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -17989,7 +19058,51 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1053054": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053087": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053088": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053089": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053090": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1053091": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053093": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053094": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053095": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053109": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053110": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053115": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -18001,6 +19114,38 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1053126": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053127": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053133": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053134": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053135": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053136": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053143": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053157": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1053221": {
    "reqJob": 0,
    "reqLevel": 0
@@ -18009,11 +19154,35 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1053239": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053250": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053251": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053257": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1053315": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1053346": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053373": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053374": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -18026,6 +19195,14 @@
    "reqLevel": 0
   },
   "1053434": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053610": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1053611": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -18054,6 +19231,70 @@
    "reqLevel": 0
   },
   "1054373": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054542": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1054543": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1054555": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054556": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054557": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054558": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054559": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054560": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054561": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054562": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054563": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054564": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054565": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1054595": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -19418,6 +20659,14 @@
    "reqLevel": 0,
    "reqSTR": 0,
    "tuc": 7
+  },
+  "1060180": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1060187": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1061000": {
    "reqDEX": 0,
@@ -20983,6 +22232,14 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1061203": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1061211": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1062000": {
    "incMMP": 3,
    "incPDD": 13,
@@ -21855,6 +23112,26 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1062121": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1062122": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1062123": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1062124": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1062138": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1062139": {
    "reqJob": 0,
    "reqLevel": 0
@@ -21875,11 +23152,19 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1062185": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1062204": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1062210": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1062213": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -21891,7 +23176,19 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1062224": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1062229": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1062235": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1062236": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -21956,6 +23253,22 @@
    "reqSTR": 0
   },
   "1070019": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1070026": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1070027": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1070059": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1070063": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -22135,6 +23448,22 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1071042": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1071043": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1071076": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1071079": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1071099": {
    "reqJob": 0,
    "reqLevel": 0
@@ -22198,6 +23527,17 @@
    "reqLUK": 0,
    "reqLevel": 30,
    "reqSTR": 95,
+   "tuc": 5
+  },
+  "1072004": {
+   "incPDD": 4,
+   "incSpeed": 2,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 11,
+   "reqSTR": 0,
    "tuc": 5
   },
   "1072005": {
@@ -22433,6 +23773,46 @@
    "reqLUK": 0,
    "reqLevel": 25,
    "reqSTR": 25,
+   "tuc": 5
+  },
+  "1072028": {
+   "incPDD": 7,
+   "reqDEX": 30,
+   "reqINT": 0,
+   "reqJob": 8,
+   "reqLUK": 35,
+   "reqLevel": 15,
+   "reqSTR": 0,
+   "tuc": 5
+  },
+  "1072029": {
+   "incPDD": 7,
+   "reqDEX": 30,
+   "reqINT": 0,
+   "reqJob": 8,
+   "reqLUK": 35,
+   "reqLevel": 15,
+   "reqSTR": 0,
+   "tuc": 5
+  },
+  "1072030": {
+   "incPDD": 7,
+   "reqDEX": 30,
+   "reqINT": 0,
+   "reqJob": 8,
+   "reqLUK": 35,
+   "reqLevel": 15,
+   "reqSTR": 0,
+   "tuc": 5
+  },
+  "1072031": {
+   "incPDD": 7,
+   "reqDEX": 30,
+   "reqINT": 0,
+   "reqJob": 8,
+   "reqLUK": 35,
+   "reqLevel": 15,
+   "reqSTR": 0,
    "tuc": 5
   },
   "1072032": {
@@ -25649,6 +27029,10 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1072378": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1072379": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -25692,6 +27076,18 @@
    "reqSTR": 0
   },
   "1072386": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072387": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072391": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072392": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25775,6 +27171,10 @@
    "reqSTR": 35,
    "tuc": 5
   },
+  "1072404": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1072407": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -25809,11 +27209,27 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1072468": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1072507": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1072509": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072515": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072517": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072632": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25833,11 +27249,47 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1072662": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072760": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1072820": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1072821": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072831": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1072848": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072856": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072862": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072866": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072867": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072869": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25849,7 +27301,31 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1072914": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072917": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072920": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072922": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072923": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1072926": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1072930": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25857,7 +27333,19 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1073008": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073009": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1073012": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073023": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25866,6 +27354,14 @@
    "reqLevel": 0
   },
   "1073043": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073048": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073049": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25891,6 +27387,26 @@
    "reqLevel": 0,
    "tuc": 0
   },
+  "1073088": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073106": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073127": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073132": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073133": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1073139": {
    "reqJob": 0,
    "reqLevel": 0
@@ -25903,7 +27419,39 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1073151": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073157": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1073167": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073169": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073170": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073171": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073181": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073182": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073185": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25915,7 +27463,31 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1073195": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073196": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073197": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073202": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073254": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1073282": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073320": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25928,6 +27500,14 @@
    "reqLevel": 0
   },
   "1073354": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073460": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1073461": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -25993,6 +27573,58 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1074225": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1074226": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1074234": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074235": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074236": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074237": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074238": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074239": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074240": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074241": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1074263": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1080000": {
    "reqDEX": 0,
    "reqJob": 0,
@@ -26006,6 +27638,14 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1080003": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1080004": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1080009": {
    "reqJob": 0,
@@ -26052,6 +27692,14 @@
    "reqSTR": 0
   },
   "1081006": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1081009": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1081010": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -27677,7 +29325,7 @@
   },
   "1082143": {
    "incDEX": 3,
-   "incLUk": 3,
+   "incLUK": 3,
    "incPDD": 30,
    "reqDEX": 130,
    "reqINT": 0,
@@ -27987,12 +29635,8 @@
    "reqSTR": 0
   },
   "1082173": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1082180": {
    "incPDD": 4,
@@ -28467,6 +30111,18 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1082549": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1082551": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1082552": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1082581": {
    "reqJob": 0,
    "reqLevel": 0
@@ -28562,6 +30218,34 @@
   "1082741": {
    "reqJob": 0,
    "reqLevel": 0
+  },
+  "1082877": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1082878": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1082879": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1082882": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
   },
   "1092000": {
    "incPDD": 15,
@@ -28925,6 +30609,14 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1092034": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
   "1092036": {
    "incDEX": 3,
    "incMDD": 25,
@@ -29103,6 +30795,14 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1092064": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1092108": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1100001": {
    "reqJob": 0,
@@ -29611,6 +31311,36 @@
    "reqJob": 0,
    "reqLUK": 0,
    "reqLevel": 25,
+   "reqSTR": 0,
+   "tuc": 5
+  },
+  "1102054": {
+   "incEVA": 15,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 42,
+   "reqSTR": 0,
+   "tuc": 5
+  },
+  "1102055": {
+   "incSpeed": 10,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 42,
+   "reqSTR": 0,
+   "tuc": 5
+  },
+  "1102056": {
+   "incJump": 5,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 42,
    "reqSTR": 0,
    "tuc": 5
   },
@@ -30290,7 +32020,27 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102232": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102240": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1102245": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102258": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102261": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102267": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30298,10 +32048,24 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102274": {},
   "1102290": {
    "reqJob": 0,
    "reqLevel": 0,
    "tuc": 0
+  },
+  "1102291": {},
+  "1102292": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102293": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102300": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1102349": {
    "reqJob": 0,
@@ -30311,7 +32075,52 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102419": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102508": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102513": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102549": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102551": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102564": {
+   "reqJob": 0,
+   "reqLevel": 0,
+   "tuc": 0
+  },
+  "1102583": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1102605": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102615": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102622": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102667": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102669": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30319,11 +32128,39 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102673": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102690": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1102705": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102754": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102756": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102757": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1102761": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102768": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102772": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30335,11 +32172,46 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102814": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1102819": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1102835": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102842": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102857": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102859": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102864": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102865": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102884": {
+   "reqJob": 0
+  },
+  "1102900": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102912": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30351,11 +32223,35 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102937": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102939": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1102951": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1102954": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102955": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1102956": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102958": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102972": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30368,6 +32264,18 @@
    "reqLevel": 0
   },
   "1102992": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1102993": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1103002": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1103008": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30387,7 +32295,15 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1103067": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1103131": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1103150": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30400,6 +32316,18 @@
    "reqLevel": 0
   },
   "1103183": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1103275": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1103276": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1103426": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30451,6 +32379,26 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1103910": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1103918": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1104034": {
+   "incMDD": 5,
+   "incMHP": 25,
+   "incPDD": 5,
+   "reqJob": 0,
+   "reqLevel": 30,
+   "tuc": 0
+  },
   "1112000": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -30482,6 +32430,22 @@
    "reqLUK": 0,
    "reqLevel": 0,
    "reqSTR": 0
+  },
+  "1112012": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112013": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112014": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112025": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1112100": {
    "reqDEX": 0,
@@ -30651,6 +32615,18 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1112136": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112144": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112157": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1112159": {
    "reqJob": 0,
    "reqLevel": 0
@@ -30659,7 +32635,15 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1112166": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1112176": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112196": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -30919,11 +32903,23 @@
    "reqLevel": 0,
    "reqSTR": 0
   },
+  "1112256": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112269": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1112271": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1112273": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112278": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -31222,6 +33218,158 @@
    "incINT": 1,
    "incLUK": 1,
    "incSTR": 1,
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1112941": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1112957": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1113289": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1113372": {
+   "incMHP": 500,
+   "reqJob": 0,
+   "reqLevel": 30
+  },
+  "1113373": {
+   "incMMP": 500,
+   "reqJob": 0,
+   "reqLevel": 30
+  },
+  "1113374": {
+   "incMHP": 250,
+   "incMMP": 250,
+   "reqJob": 0,
+   "reqLevel": 30
+  },
+  "1115009": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115026": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115027": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115029": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115032": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115115": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115116": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115118": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115121": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115437": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115539": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1115651": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115658": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115659": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115660": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115661": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115754": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115761": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115762": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115763": {
+   "reqDEX": 0,
+   "reqINT": 0,
+   "reqJob": 0,
+   "reqLUK": 0,
+   "reqLevel": 0,
+   "reqSTR": 0
+  },
+  "1115764": {
    "reqDEX": 0,
    "reqINT": 0,
    "reqJob": 0,
@@ -31971,17 +34119,6 @@
    "reqSTR": 0,
    "tuc": 0
   },
-  "1142026": {
-   "incACC": 10,
-   "incMHP": 30,
-   "reqDEX": 0,
-   "reqINT": 0,
-   "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0,
-   "tuc": 0
-  },
   "1142027": {
    "incDEX": 5,
    "incEVA": 10,
@@ -32411,22 +34548,6 @@
    "incEVA": 7,
    "incMDD": 15,
    "incMHP": 50,
-   "incPDD": 15,
-   "reqDEX": 0,
-   "reqINT": 0,
-   "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0,
-   "tuc": 0
-  },
-  "1142064": {
-   "incACC": 7,
-   "incEVA": 7,
-   "incMAD": 5,
-   "incMDD": 15,
-   "incMHP": 50,
-   "incPAD": 5,
    "incPDD": 15,
    "reqDEX": 0,
    "reqINT": 0,
@@ -32953,17 +35074,6 @@
    "reqSTR": 0,
    "tuc": 0
   },
-  "1142116": {
-   "incMHP": 120,
-   "incMMP": 120,
-   "reqDEX": 0,
-   "reqINT": 0,
-   "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 50,
-   "reqSTR": 0,
-   "tuc": 0
-  },
   "1142117": {
    "incMHP": 150,
    "incMMP": 150,
@@ -33380,7 +35490,17 @@
    "reqSTR": 0,
    "tuc": 0
   },
+  "1143475": {
+   "reqJob": 0,
+   "reqLevel": 0,
+   "tuc": 0
+  },
   "1143605": {
+   "reqJob": 0,
+   "reqLevel": 0,
+   "tuc": 0
+  },
+  "1143609": {
    "reqJob": 0,
    "reqLevel": 0,
    "tuc": 0
@@ -34194,6 +36314,29 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1302378": {
+   "attackSpeed": 5,
+   "incPAD": 54,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1302387": {
+   "attackSpeed": 5,
+   "incACC": 20,
+   "incPAD": 48,
+   "reqJob": 0,
+   "reqLevel": 35,
+   "tuc": 7
+  },
+  "1302388": {
+   "attackSpeed": 5,
+   "incACC": 30,
+   "incPAD": 60,
+   "reqJob": 0,
+   "reqLevel": 43,
+   "tuc": 7
+  },
   "1312000": {
    "attackSpeed": 5,
    "incPAD": 27,
@@ -34644,6 +36787,13 @@
    "reqLevel": 35,
    "reqSTR": 110,
    "tuc": 7
+  },
+  "1312229": {
+   "attackSpeed": 5,
+   "incPAD": 54,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
   },
   "1322000": {
    "attackSpeed": 5,
@@ -35313,6 +37463,13 @@
    "reqLevel": 35,
    "reqSTR": 110,
    "tuc": 7
+  },
+  "1322284": {
+   "attackSpeed": 5,
+   "incPAD": 56,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
   },
   "1332000": {
    "attackSpeed": 4,
@@ -36078,6 +38235,22 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1332307": {
+   "attackSpeed": 4,
+   "incPAD": 52,
+   "reqJob": 8,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1332313": {
+   "attackSpeed": 4,
+   "incACC": 10,
+   "incEVA": 15,
+   "incPAD": 58,
+   "reqJob": 8,
+   "reqLevel": 43,
+   "tuc": 7
+  },
   "1342010": {
    "attackSpeed": 3,
    "incMHP": 400,
@@ -36575,6 +38748,14 @@
    "reqLevel": 50,
    "reqSTR": 0,
    "tuc": 7
+  },
+  "1372254": {
+   "attackSpeed": 6,
+   "incMAD": 52,
+   "incPAD": 30,
+   "reqJob": 2,
+   "reqLevel": 30,
+   "tuc": 0
   },
   "1382000": {
    "attackSpeed": 8,
@@ -37146,6 +39327,33 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1382291": {
+   "attackSpeed": 8,
+   "incMAD": 52,
+   "incPAD": 30,
+   "reqJob": 2,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1382295": {
+   "attackSpeed": 6,
+   "incMAD": 48,
+   "incMHP": 100,
+   "incPAD": 35,
+   "reqJob": 2,
+   "reqLevel": 35,
+   "tuc": 7
+  },
+  "1382296": {
+   "attackSpeed": 6,
+   "incMAD": 58,
+   "incMHP": 100,
+   "incMMP": 50,
+   "incPAD": 39,
+   "reqJob": 2,
+   "reqLevel": 43,
+   "tuc": 7
+  },
   "1392000": {
    "attackSpeed": 3,
    "reqDEX": 0,
@@ -37598,6 +39806,14 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1402044": {
+   "attackSpeed": 5,
+   "incMHP": 50,
+   "incPAD": 55,
+   "reqJob": 0,
+   "reqLevel": 30,
+   "tuc": 7
+  },
   "1402046": {
    "attackSpeed": 6,
    "incPAD": 112,
@@ -37685,6 +39901,13 @@
    "reqLevel": 35,
    "reqSTR": 115,
    "tuc": 7
+  },
+  "1402297": {
+   "attackSpeed": 6,
+   "incPAD": 57,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
   },
   "1412000": {
    "attackSpeed": 6,
@@ -38091,6 +40314,22 @@
    "reqLUK": 0,
    "reqLevel": 35,
    "reqSTR": 115,
+   "tuc": 7
+  },
+  "1412200": {
+   "attackSpeed": 6,
+   "incPAD": 59,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1412203": {
+   "attackSpeed": 6,
+   "incACC": 30,
+   "incPAD": 68,
+   "incSTR": 3,
+   "reqJob": 1,
+   "reqLevel": 43,
    "tuc": 7
   },
   "1422000": {
@@ -38520,6 +40759,29 @@
    "reqLUK": 0,
    "reqLevel": 35,
    "reqSTR": 115,
+   "tuc": 7
+  },
+  "1422212": {
+   "attackSpeed": 6,
+   "incPAD": 59,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1422216": {
+   "attackSpeed": 7,
+   "incACC": 30,
+   "incPAD": 68,
+   "incSTR": 5,
+   "reqJob": 1,
+   "reqLevel": 43,
+   "tuc": 7
+  },
+  "1422217": {
+   "attackSpeed": 5,
+   "incPAD": 32,
+   "reqJob": 0,
+   "reqLevel": 10,
    "tuc": 7
   },
   "1432000": {
@@ -39055,6 +41317,22 @@
    "reqLUK": 0,
    "reqLevel": 35,
    "reqSTR": 115,
+   "tuc": 7
+  },
+  "1432244": {
+   "attackSpeed": 6,
+   "incPAD": 59,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1432248": {
+   "attackSpeed": 5,
+   "incACC": 30,
+   "incPAD": 65,
+   "incSTR": 1,
+   "reqJob": 1,
+   "reqLevel": 43,
    "tuc": 7
   },
   "1442000": {
@@ -39816,6 +42094,22 @@
    "reqSTR": 20,
    "tuc": 7
   },
+  "1442303": {
+   "attackSpeed": 5,
+   "incPAD": 59,
+   "reqJob": 1,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1442308": {
+   "attackSpeed": 6,
+   "incACC": 30,
+   "incPAD": 68,
+   "incSTR": 2,
+   "reqJob": 1,
+   "reqLevel": 43,
+   "tuc": 7
+  },
   "1452000": {
    "attackSpeed": 5,
    "incPAD": 40,
@@ -40491,6 +42785,29 @@
    "reqSTR": 40,
    "tuc": 7
   },
+  "1452289": {
+   "attackSpeed": 6,
+   "incPAD": 52,
+   "reqJob": 4,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1452293": {
+   "attackSpeed": 5,
+   "incPAD": 48,
+   "incSpeed": 7,
+   "reqJob": 4,
+   "reqLevel": 35,
+   "tuc": 7
+  },
+  "1452294": {
+   "attackSpeed": 5,
+   "incPAD": 58,
+   "incSpeed": 7,
+   "reqJob": 4,
+   "reqLevel": 43,
+   "tuc": 7
+  },
   "1462000": {
    "attackSpeed": 6,
    "incPAD": 44,
@@ -41073,6 +43390,29 @@
    "reqLUK": 0,
    "reqLevel": 32,
    "reqSTR": 32,
+   "tuc": 7
+  },
+  "1462272": {
+   "attackSpeed": 6,
+   "incPAD": 54,
+   "reqJob": 4,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1462276": {
+   "attackSpeed": 5,
+   "incPAD": 52,
+   "incSpeed": 7,
+   "reqJob": 4,
+   "reqLevel": 35,
+   "tuc": 7
+  },
+  "1462277": {
+   "attackSpeed": 6,
+   "incPAD": 60,
+   "incSpeed": 7,
+   "reqJob": 4,
+   "reqLevel": 43,
    "tuc": 7
   },
   "1472000": {
@@ -41886,6 +44226,29 @@
    "reqSTR": 0,
    "tuc": 7
   },
+  "1472292": {
+   "attackSpeed": 4,
+   "incPAD": 25,
+   "reqJob": 8,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1472296": {
+   "attackSpeed": 3,
+   "incEVA": 10,
+   "incPAD": 20,
+   "reqJob": 8,
+   "reqLevel": 35,
+   "tuc": 7
+  },
+  "1472297": {
+   "attackSpeed": 3,
+   "incEVA": 20,
+   "incPAD": 23,
+   "reqJob": 8,
+   "reqLevel": 43,
+   "tuc": 7
+  },
   "1482000": {
    "attackSpeed": 5,
    "incPAD": 18,
@@ -42274,6 +44637,30 @@
    "reqLUK": 0,
    "reqLevel": 70,
    "reqSTR": 180,
+   "tuc": 7
+  },
+  "1482249": {
+   "attackSpeed": 5,
+   "incPAD": 41,
+   "reqJob": 16,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1482253": {
+   "attackSpeed": 5,
+   "incACC": 10,
+   "incPAD": 38,
+   "reqJob": 16,
+   "reqLevel": 35,
+   "tuc": 7
+  },
+  "1482254": {
+   "attackSpeed": 5,
+   "incACC": 20,
+   "incPAD": 46,
+   "incSTR": 3,
+   "reqJob": 16,
+   "reqLevel": 43,
    "tuc": 7
   },
   "1492000": {
@@ -42683,6 +45070,30 @@
    "reqSTR": 70,
    "tuc": 7
   },
+  "1492263": {
+   "attackSpeed": 5,
+   "incPAD": 38,
+   "reqJob": 16,
+   "reqLevel": 30,
+   "tuc": 0
+  },
+  "1492268": {
+   "attackSpeed": 5,
+   "incEVA": 10,
+   "incPAD": 36,
+   "reqJob": 16,
+   "reqLevel": 35,
+   "tuc": 7
+  },
+  "1492269": {
+   "attackSpeed": 5,
+   "incDEX": 3,
+   "incEVA": 20,
+   "incPAD": 44,
+   "reqJob": 16,
+   "reqLevel": 43,
+   "tuc": 7
+  },
   "1602000": {
    "reqDEX": 0,
    "reqINT": 0,
@@ -42748,40 +45159,24 @@
    "reqSTR": 0
   },
   "1702000": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702001": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1702002": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702003": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702004": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702005": {
    "reqJob": 0,
@@ -42796,1120 +45191,596 @@
    "reqLevel": 0
   },
   "1702008": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702009": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702010": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702011": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702012": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702013": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702014": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702015": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702016": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702017": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702018": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702019": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702020": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702021": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702022": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702023": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702024": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702025": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702026": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702027": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702028": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702029": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702030": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702031": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702032": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702033": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702034": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702035": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702036": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702037": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702038": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702039": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702040": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702041": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702042": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702043": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702044": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702045": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702046": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702047": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702048": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702049": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702050": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702055": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702056": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702057": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702058": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702059": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702060": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702061": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702062": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702063": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702064": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702065": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702066": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1702070": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702072": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702073": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702074": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702078": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702079": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702080": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702081": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702082": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702083": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702084": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702085": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702086": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702087": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702088": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
+  },
+  "1702089": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1702090": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702091": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702092": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702093": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702096": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702098": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702099": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702100": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702103": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702104": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1702106": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702107": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702108": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
+  },
+  "1702109": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1702112": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702114": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702115": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702118": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702119": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702120": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702121": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702122": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702123": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702124": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702125": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702127": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702133": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702134": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702136": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702141": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702142": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702144": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702145": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702146": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702147": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702149": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702150": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702151": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702154": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702155": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702158": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702159": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702160": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702162": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
+  },
+  "1702163": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1702165": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702166": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702167": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702168": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702169": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702170": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702172": {
    "reqJob": 0,
    "reqLevel": 0
   },
   "1702173": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702174": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702177": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702179": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702180": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702181": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702182": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702188": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702190": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702191": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
+  },
+  "1702194": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1702195": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702196": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702202": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702203": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702207": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702211": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702212": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702216": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
   },
   "1702217": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
+  },
+  "1702230": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1702233": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
+  },
+  "1702237": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1702238": {
-   "reqDEX": 0,
-   "reqINT": 0,
    "reqJob": 0,
-   "reqLUK": 0,
-   "reqLevel": 0,
-   "reqSTR": 0
+   "reqLevel": 0
+  },
+  "1702253": {
+   "reqJob": 0,
+   "reqLevel": 0
   },
   "1702261": {
    "reqJob": 0,
@@ -43931,6 +45802,18 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702293": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702301": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702304": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702305": {
    "reqJob": 0,
    "reqLevel": 0
@@ -43939,7 +45822,71 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702308": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702310": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702317": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702318": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702319": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702320": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702321": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702322": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702323": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702324": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702340": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702361": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702363": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702378": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702382": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702390": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702401": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -43947,7 +45894,39 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702423": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702433": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702443": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702444": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702454": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702461": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702469": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702480": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702485": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -43959,7 +45938,35 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702503": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702506": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702507": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702509": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702524": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702534": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702547": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702548": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -43971,6 +45978,14 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702573": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702576": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702587": {
    "reqJob": 0,
    "reqLevel": 0
@@ -43979,11 +45994,63 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702600": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702601": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702602": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702603": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702604": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702605": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702606": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702608": {
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702625": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702627": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702628": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702632": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702654": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702679": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702680": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -44003,7 +46070,39 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702711": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702712": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702713": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702715": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702722": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702735": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702740": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702741": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702753": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -44012,6 +46111,22 @@
    "reqLevel": 0
   },
   "1702786": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702793": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702801": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702804": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1702809": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -44027,6 +46142,10 @@
    "reqJob": 0,
    "reqLevel": 0
   },
+  "1702878": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
   "1702884": {
    "reqJob": 0,
    "reqLevel": 0
@@ -44036,6 +46155,14 @@
    "reqLevel": 0
   },
   "1702915": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703019": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703020": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -44084,6 +46211,30 @@
    "reqLevel": 0
   },
   "1703622": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703722": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703723": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703724": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703725": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703726": {
+   "reqJob": 0,
+   "reqLevel": 0
+  },
+  "1703727": {
    "reqJob": 0,
    "reqLevel": 0
   },
@@ -44243,6 +46394,10 @@
    "reqLevel": 0,
    "tuc": 10
   },
+  "1802039": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
   "1802042": {
    "reqLevel": 0,
    "tuc": 10
@@ -44267,6 +46422,18 @@
    "reqLevel": 0,
    "tuc": 10
   },
+  "1802065": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802067": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802068": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
   "1802082": {
    "reqLevel": 0,
    "tuc": 10
@@ -44281,6 +46448,242 @@
   },
   "1802100": {
    "reqLevel": 0
+  },
+  "1802369": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802370": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802371": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802418": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802419": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802420": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802433": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802434": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802435": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802450": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802451": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802452": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802464": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802465": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802466": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802520": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802521": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802522": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802578": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802579": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802580": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802584": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802609": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802610": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802611": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802616": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802617": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802618": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802623": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802624": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802645": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802646": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802647": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802653": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802683": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802684": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802685": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802695": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802696": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802697": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802703": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802704": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802705": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802757": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802758": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802759": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802822": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802921": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802922": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802923": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802953": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802954": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802955": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802967": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1802987": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1803148": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1803149": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1803150": {
+   "reqLevel": 0,
+   "tuc": 10
+  },
+  "1803151": {
+   "reqLevel": 0,
+   "tuc": 10
   },
   "1902000": {
    "reqJob": 0,
@@ -44523,6 +46926,10 @@
    "reqLevel": 120,
    "reqSTR": 0,
    "tuc": 3
-  }
+  },
+  "1983035": {},
+  "1983645": {},
+  "1983863": {},
+  "1984065": {}
  }
 }

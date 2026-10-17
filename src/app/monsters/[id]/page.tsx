@@ -156,7 +156,11 @@ export default async function Page({
       <DropSection
         title={`${m.name} 的掉落物`}
         ids={m.drops}
-        empty="遊戲內圖鑑沒有記錄這隻怪的掉落物。"
+        empty={
+          m.futureDrops.length > 0
+            ? "圖鑑記錄的掉落物目前版本都還沒開放，見下方未實裝掉落。"
+            : "遊戲內圖鑑沒有記錄這隻怪的掉落物。"
+        }
       />
 
       {m.futureDrops.length > 0 && (

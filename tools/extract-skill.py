@@ -11,7 +11,8 @@
           "maxLevel": 20,               # = level 節點筆數
           "masterLevel": 10,            # 出廠上限（只有 4 轉的精通技能有；沒有就省略）
           "req": { "1100000": 5 },      # 前置技能 → 需要的等級
-          "levels": { "1": { "mpCon": 8, ... }, ... }   # 每級數值（白名單欄位）
+          "levels": { "1": { "mpCon": 8, "rb": [110, 83], ... }, ... }
+                                        # 每級數值：全部數字欄位 + 範圍向量 rb
       } } }
 
 定位方式：掃 json_*.bundle 的 container path 找 /Json/Skill/，不寫死 bundle 檔名
@@ -43,15 +44,11 @@ OUT_PATH = os.path.join(PROJECT, "reference-data", "skill.json")
 
 SKILL_DIR = "/Json/Skill/"
 
-# 每級數值只留網站會顯示或可能顯示的欄位。全部欄位有 30 幾種，但中文敘述
-# (LevelDesc) 本來就把數字寫進去了，全留只是同一件事講兩遍。
-LEVEL_FIELDS = {
-    "mpCon", "hpCon", "damage", "attackCount", "mobCount", "bulletCount",
-    "time", "cooltime", "prop", "mastery", "range",
-    "pad", "mad", "pdd", "mdd", "acc", "eva", "speed", "jump",
-    "hp", "mp", "x", "y", "z", "criticalDamage", "fixdamage",
-    "itemCon", "itemConNo", "moneyCon",
-}
+# 每級數值：數字欄位全留，向量只留 rb（範圍框右下角，敘述模板的 #rb 會用到）。
+# 2026-10-15 那次更新客戶端拿掉了逐級敘述 (LevelDesc)，改成只給帶 #x 佔位符的
+# 模板 H，由 build-skill-data.py 代入這裡的數值——模板引用哪個欄位都有可能
+# （subTime、bulletConsume…），所以不能再用白名單。
+VECTOR_FIELDS = {"rb"}
 
 
 def find_skill_bundle():
@@ -68,12 +65,13 @@ def find_skill_bundle():
 
 
 def scalars(node):
-    """取一層純量欄位（略過 None 與巢狀結構）。"""
+    """取一層數字欄位與 VECTOR_FIELDS（略過字串與巢狀結構）。"""
     if not isinstance(node, dict):
         return {}
     return {
         k: v for k, v in node.items()
-        if k in LEVEL_FIELDS and isinstance(v, (int, float)) and not isinstance(v, bool)
+        if (isinstance(v, (int, float)) and not isinstance(v, bool))
+        or (k in VECTOR_FIELDS and isinstance(v, list))
     }
 
 

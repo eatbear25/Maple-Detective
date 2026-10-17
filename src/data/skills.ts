@@ -7,7 +7,7 @@ import { ASSET_BASE_URL } from "@/lib/asset-base";
 export interface Job {
   id: string;
   name: string;
-  /** 轉職階段：1~4。現行版本只到 2 轉，3/4 轉進「未來視」。 */
+  /** 轉職階段：1~4。不在 RELEASED_TIERS 裡的進「未來視」。 */
   tier: number;
   group: string;
   groupName: string;
@@ -34,7 +34,7 @@ export interface Skill {
   name: string;
   /** 技能總說明（含「[等級上限：N]」開頭那行） */
   desc: string;
-  /** 帶 #x 佔位符的效果總述，沒有逐級敘述時當備援 */
+  /** 帶 #x 佔位符的效果模板（levelDesc 就是拿它代入每級數值產生的），沒有逐級敘述時當備援 */
   h: string;
   maxLevel: number;
   /** 出廠上限（只有 4 轉精通技能有，要吃精通書才能點到 maxLevel） */
@@ -50,8 +50,14 @@ export interface Skill {
 export const jobs: Job[] = data.jobs;
 export const skills: Skill[] = data.skills as Skill[];
 
-/** 現行版本 = 1 轉與 2 轉（3 轉尚未開放，見 build-skill-data.py 的說明）。 */
-export const RELEASED_TIERS = [1, 2];
+/**
+ * 現行版本開放到幾轉。2026-10-15 的更新開了 3 轉（冰原雪域的 3 轉教官上了
+ * 實裝地圖），4 轉還在未來視。遊戲開 4 轉時改這裡就好，頁面文字會跟著變。
+ */
+export const RELEASED_TIERS = [1, 2, 3];
+
+/** 還沒開放的轉職階段（頁面副標題用）。 */
+export const FUTURE_TIERS = [1, 2, 3, 4].filter((t) => !RELEASED_TIERS.includes(t));
 
 export const jobById: Record<string, Job> = Object.fromEntries(
   jobs.map((j) => [j.id, j]),
@@ -105,5 +111,8 @@ export function levelText(skill: Skill, level: number) {
 
 /** 技能說明開頭的「[等級上限：N]」在 UI 另外用徽章顯示，本文不重複。 */
 export function cleanDesc(desc: string) {
-  return desc.replace(/^\[[^\]]*\]\s*/, "").trim();
+  return desc
+    .replace(/^\[[^\]]*\]\s*/, "")
+    .replace(/#c(.*?)#/g, "$1") // 遊戲的橘字標記（「需求技能：#c鬥氣集中1級以上#」）
+    .trim();
 }

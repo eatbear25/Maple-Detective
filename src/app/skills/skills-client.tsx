@@ -25,6 +25,8 @@ import {
   isReleased,
   cleanDesc,
   LEVEL_LABELS,
+  RELEASED_TIERS,
+  FUTURE_TIERS,
   type Job,
   type Skill,
 } from "@/data/skills";
@@ -33,8 +35,8 @@ import { SkillIcon } from "../skill-icon";
 type Tab = "released" | "future";
 
 /**
- * 未來視分頁**連 1、2 轉一起列**，只是把 3/4 轉標上望遠鏡——職業線是
- * 劍士→狂戰士→十字軍→英雄，只列 3/4 轉會看不出誰接在誰後面。
+ * 未來視分頁**連已開放的轉職一起列**，只是把未開放的標上望遠鏡——職業線是
+ * 劍士→狂戰士→十字軍→英雄，只列 4 轉會看不出誰接在誰後面。
  */
 const jobsOf = (tab: Tab) =>
   tab === "released" ? jobs.filter((j) => isReleased(j.id)) : jobs;
@@ -121,7 +123,9 @@ export default function SkillsPage() {
       <div>
         <h1 className="text-xl font-semibold">技能查詢</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">
-          {tab === "released" ? "1 轉與 2 轉技能一覽" : "3 轉與 4 轉尚未開放"}
+          {tab === "released"
+            ? `${RELEASED_TIERS.join("、")} 轉技能一覽`
+            : `${FUTURE_TIERS.join("、")} 轉尚未開放`}
         </p>
 
         {/* 分頁樣式跟怪物掉落頁一致（同一組 現行/未來視 的概念，不該長得不一樣） */}
