@@ -9,23 +9,24 @@ import {
   Lock,
   Puzzle,
   RotateCcw,
-  TriangleAlert,
+  Undo2,
   Warehouse,
+  X,
 } from "lucide-react";
 import { loungeRecords } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
 import { goddessStatue, type StatueSpot } from "@/data/goddess-statue";
 import { GameIcon } from "../../monsters/game-icon";
 import {
-  candidates,
-  feasibleResponses,
-  formatSolution,
-  PROBES,
-  RESPONSES,
-  TOTAL_PEOPLE,
-  type Answers,
-  type ProbeKey,
-  type Response,
+  ATTEMPT_LIMIT,
+  isAncestor,
+  MAX_STEPS,
+  PEOPLE,
+  PLATFORMS,
+  REPLIES,
+  ROOT,
+  type PlanNode,
+  type Reply,
 } from "./sealed-room";
 import {
   BY_ORDER,
@@ -212,161 +213,466 @@ function LoungeTab() {
 
 /* ------------------------------- 封印房 ------------------------------- */
 
-const SLOTS = [
-  ["left", "左"],
-  ["mid", "中"],
-  ["right", "右"],
-] as const;
-
-// 每種站法裡，那 1 個人站在第幾個平台（null = 沒人站），畫列首的小示意用
-const STAND_AT: Record<ProbeKey, number | null> = {
-  empty: null,
-  left: 0,
-  mid: 1,
-  right: 2,
+// 易克兩種回應在遊戲裡的字（客戶端原文太長，取能對得上的那一截）
+const REPLY_TEXT: Record<Reply, string> = {
+  0: "重量都不相同",
+  1: "1 個踏板正確",
 };
 
-/** 三個平台的小示意：實心那格＝這次有人站的位置 */
-function StandGlyph({ at }: { at: number | null }) {
+// 同一個畫面兩種用法：上面的卡片可以按（易克說什麼就按什麼，直接告訴你下一次
+// 怎麼站），下面的解法樹不按也能整張看（給不想切回網頁點的人）。兩邊共用同一個
+// 「目前站法」，有按的話樹上會亮出走過的路、淡掉已經不可能的分支。
+// 寬螢幕左右並排；窄螢幕（玩家常把視窗縮在遊戲旁邊）上下疊，卡片在上。
+function SealedRoomTab() {
+  const [current, setCurrent] = useState<PlanNode>(ROOT);
+
   return (
-    <span aria-hidden className="flex gap-[3px]">
-      {SLOTS.map(([key], i) => (
-        <span
-          key={key}
-          className={`h-2.5 w-2.5 rounded-[3px] border ${
-            i === at
-              ? "border-[var(--text)] bg-[var(--text)]"
-              : "border-[var(--text-muted)]/50"
-          }`}
-        />
-      ))}
-    </span>
+    <div className="flex flex-col gap-4 md:flex-row md:items-start">
+      <div className="w-full max-w-sm md:w-80 md:shrink-0">
+        <SealedStepper node={current} onMove={setCurrent} />
+        <p className="mt-2 px-1 text-xs leading-relaxed text-[var(--text-muted)]">
+          {PEOPLE} 人站踏板，隊長不站、負責跟易克講話。{ATTEMPT_LIMIT}{" "}
+          次內沒過會被趕出去、答案也會換。
+        </p>
+      </div>
+      <SealedTree current={current} onPick={setCurrent} />
+    </div>
   );
 }
 
-// 玩家多半把視窗縮到遊戲旁邊看，所以整個工具鎖在一張窄卡片裡，
-// 排版由上而下：答案（三個平台各站幾人）→ 四列回應 → 狀態，不用左右掃視。
-function SealedRoomTab() {
-  const [answers, setAnswers] = useState<Answers>({});
-
-  const pool = candidates(answers);
-  const solved = pool.length === 1 ? pool[0] : null;
-  const contradiction = pool.length === 0;
-  const filled = PROBES.filter((p) => answers[p.key] !== undefined).length;
-
-  const pick = (probe: ProbeKey, value: Response) =>
-    setAnswers((prev) => ({
-      ...prev,
-      // 再點同一顆＝取消，方便點錯時修正
-      [probe]: prev[probe] === value ? undefined : value,
-    }));
+function SealedStepper({
+  node,
+  onMove,
+}: {
+  node: PlanNode;
+  onMove: (n: PlanNode) => void;
+}) {
+  const sure = node.candidates.length === 1;
 
   return (
-    <div className="w-full max-w-xs rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
       <div
-        className="grid grid-cols-3 gap-2 p-4"
+        className="p-4"
         aria-live="polite"
-        aria-label={
-          solved ? `答案 ${formatSolution(solved)}` : "答案還沒確定"
-        }
+        aria-label={`第 ${node.step} 次：${PLATFORMS.map((p, i) => `${p} ${node.stand[i]} 人`).join("、")}`}
       >
-        {SLOTS.map(([key, label]) => (
-          <div
-            key={key}
-            className={`rounded-xl border py-2.5 text-center transition-colors ${
-              solved
-                ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                : "border-dashed border-[var(--border)] bg-[var(--bg)]"
-            }`}
-          >
-            <div className="text-xs text-[var(--text-muted)]">{label}</div>
-            <div className="mt-1 flex items-baseline justify-center gap-1">
-              <span
-                className={`text-4xl font-bold leading-none tabular-nums ${
-                  solved
-                    ? "text-[var(--accent)]"
-                    : "text-[var(--text-muted)]/35"
-                }`}
-              >
-                {solved ? solved[key] : "?"}
-              </span>
-              <span className="text-xs text-[var(--text-muted)]">人</span>
+        <div className="mb-2 text-xs text-[var(--text-muted)]">
+          <span>
+            第{" "}
+            <b className="text-base tabular-nums text-[var(--text)]">
+              {node.step}
+            </b>{" "}
+            次嘗試，這樣站
+          </span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {PLATFORMS.map((label, i) => (
+            <div
+              key={label}
+              className={`rounded-xl border py-2.5 text-center transition-colors ${
+                sure
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                  : "border-[var(--border)] bg-[var(--bg)]"
+              }`}
+            >
+              <div className="text-xs text-[var(--text-muted)]">{label}</div>
+              <div className="mt-1 flex items-baseline justify-center gap-1">
+                <span
+                  className={`text-4xl font-bold leading-none tabular-nums ${
+                    sure ? "text-[var(--accent)]" : ""
+                  }`}
+                >
+                  {node.stand[i]}
+                </span>
+                <span className="text-xs text-[var(--text-muted)]">人</span>
+              </div>
             </div>
-          </div>
-        ))}
-        <p className="col-span-3 text-center text-xs text-[var(--text-muted)]">
-          三個平台合計 {TOTAL_PEOPLE} 人
-        </p>
+          ))}
+        </div>
       </div>
 
-      <div className="border-t border-[var(--border)] px-4 pb-2.5 pt-3">
-        <div className="mb-1 flex justify-between text-xs text-[var(--text-muted)]">
-          <span>怎麼站</span>
-          <span>NPC 說對幾個</span>
-        </div>
-        {PROBES.map((probe) => {
-          const feasible = feasibleResponses(answers, probe.key);
-          return (
-            <div
-              key={probe.key}
-              className="flex items-center justify-between gap-3 py-1.5"
-            >
-              <div className="flex items-center gap-2.5 text-sm font-medium">
-                <StandGlyph at={STAND_AT[probe.key]} />
-                {probe.label}
-              </div>
-              <div className="flex rounded-lg border border-[var(--border)] bg-[var(--bg)]">
-                {RESPONSES.map((v) => {
-                  const active = answers[probe.key] === v;
-                  const impossible = !active && !feasible.has(v);
-                  return (
-                    <button
-                      key={v}
-                      onClick={() => pick(probe.key, v)}
-                      aria-pressed={active}
-                      className={`h-9 w-11 cursor-pointer border-l border-[var(--border)] text-base font-bold tabular-nums transition-colors first:rounded-l-[7px] first:border-l-0 last:rounded-r-[7px] focus-visible:relative ${
-                        active
-                          ? "bg-[var(--accent)] text-[var(--bg)]"
-                          : impossible
-                            ? "text-[var(--text-muted)]/30 hover:text-[var(--text-muted)]"
-                            : "hover:bg-[var(--accent-soft)]"
-                      }`}
-                    >
-                      {v}
-                    </button>
-                  );
-                })}
-              </div>
+      <div className="border-t border-[var(--border)] px-4 pb-4 pt-3">
+        {sure ? (
+          <p className="py-3 text-center text-sm font-semibold text-[var(--accent)]">
+            結束
+          </p>
+        ) : (
+          <>
+            {/* <div className="mb-2 text-xs text-[var(--text-muted)]">
+              易克說的是
+            </div> */}
+            <div className="grid grid-cols-2 gap-2">
+              {REPLIES.map((r) => {
+                const to = node.next[r];
+                return (
+                  <button
+                    key={r}
+                    onClick={() => to && onMove(to)}
+                    disabled={!to}
+                    className="flex cursor-pointer flex-col items-center gap-0.5 rounded-xl border border-[var(--border)] bg-[var(--bg)] py-2 transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] disabled:pointer-events-none disabled:opacity-40"
+                  >
+                    <span className="flex h-8 items-center text-2xl font-bold tabular-nums">
+                      {r === 0 ? (
+                        <X
+                          size={24}
+                          strokeWidth={3}
+                          className="text-rose-500"
+                        />
+                      ) : (
+                        r
+                      )}
+                    </span>
+                    <span className="text-[11px] text-[var(--text-muted)]">
+                      {to ? REPLY_TEXT[r] : "這步不會出現"}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
-          );
-        })}
+          </>
+        )}
       </div>
 
       <div className="flex min-h-10 items-center justify-between gap-2 border-t border-[var(--border)] py-1.5 pl-4 pr-2.5 text-xs">
-        {contradiction ? (
-          <span className="flex items-center gap-1.5 font-medium">
-            <TriangleAlert size={13} className="shrink-0 text-red-400" />
-            回應兜不起來，檢查有沒有點錯
-          </span>
-        ) : (
-          <span
+        <span
+          className={
+            sure
+              ? "font-medium text-[var(--accent)]"
+              : "text-[var(--text-muted)]"
+          }
+        >
+          {sure ? "答案確定了" : `還剩 ${node.candidates.length} 種可能`}
+        </span>
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={() => node.parent && onMove(node.parent)}
+            disabled={!node.parent}
+            className={TEXT_BUTTON}
+          >
+            <Undo2 size={12} />
+            上一步
+          </button>
+          <button
+            onClick={() => onMove(ROOT)}
+            disabled={node === ROOT}
+            className={TEXT_BUTTON}
+          >
+            <RotateCcw size={12} />
+            重設
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const childrenOf = (n: PlanNode) =>
+  REPLIES.flatMap((r) => (n.next[r] ? [n.next[r]] : []));
+
+type NodeState = "current" | "tried" | "ahead" | "gone";
+
+function stateOf(n: PlanNode, current: PlanNode): NodeState {
+  if (n === current) return "current";
+  if (isAncestor(n, current)) return "tried";
+  if (isAncestor(current, n)) return "ahead";
+  return "gone";
+}
+
+const isLit = (s: NodeState) => s === "current" || s === "tried";
+
+// 解法樹由上往下畫：一列＝第幾次嘗試。
+// 只有「分岔」的地方要看易克回什麼，所以記號只標在分岔的橫線上——往左那條一律是
+// ✕（所有踏板的重量都不相同）、往右那條一律是 1，跟上面卡片的兩顆按鈕同一個左右順序；
+// 一直線的地方沒得選，不標。
+// 橫向位置：每個終點佔一欄，其餘的格子放在第一個與最後一個子分支的正中間。
+const TREE_NODES: PlanNode[] = [];
+const COL_OF = new Map<PlanNode, number>();
+const TREE_COLS = (function place(n: PlanNode, col: number): number {
+  TREE_NODES.push(n);
+  const kids = childrenOf(n);
+  if (kids.length === 0) {
+    COL_OF.set(n, col);
+    return col + 1;
+  }
+  let next = col;
+  for (const k of kids) next = place(k, next);
+  COL_OF.set(
+    n,
+    (COL_OF.get(kids[0])! + COL_OF.get(kids[kids.length - 1])!) / 2,
+  );
+  return next;
+})(ROOT, 0);
+const TREE_EDGES = TREE_NODES.filter((n) => n.parent);
+
+interface TreeLayout {
+  /** 格子寬、相鄰兩欄的間距、上下兩次之間的距離、格子高、格子圓角、格子字級 */
+  col: number;
+  gap: number;
+  row: number;
+  chip: number;
+  radius: number;
+  font: number;
+  /** 左邊「第 N 次」那欄的寬，0 = 不畫 */
+  gutter: number;
+}
+
+// 座標是 SVG 單位，整張圖跟著卡片寬度縮放。窄視窗（玩家常把視窗縮在遊戲旁邊）
+// 把間距收到最緊、也不畫「第 N 次」，320px 寬的字才不會被縮到看不清。
+const NARROW: TreeLayout = {
+  col: 36,
+  gap: 4,
+  row: 38,
+  chip: 21,
+  radius: 7,
+  font: 12.5,
+  gutter: 0,
+};
+const WIDE: TreeLayout = {
+  col: 44,
+  gap: 8,
+  row: 44,
+  chip: 24,
+  radius: 12,
+  font: 14,
+  gutter: 34,
+};
+
+const CHIP_FILL: Record<NodeState, string> = {
+  current: "fill-[var(--accent)]",
+  tried: "fill-[var(--accent-soft)]",
+  ahead: "fill-[color-mix(in_srgb,var(--text)_7%,var(--surface))]",
+  gone: "fill-[color-mix(in_srgb,var(--text)_7%,var(--surface))]",
+};
+
+const CHIP_TEXT: Record<NodeState, string> = {
+  current: "fill-[var(--surface)] font-bold",
+  tried: "fill-[var(--accent)] font-semibold",
+  ahead: "fill-[var(--text)] font-semibold",
+  gone: "fill-[var(--text)] font-semibold",
+};
+
+function TreeSvg({
+  layout: L,
+  current,
+  onPick,
+  className,
+}: {
+  layout: TreeLayout;
+  current: PlanNode;
+  onPick: (n: PlanNode) => void;
+  className: string;
+}) {
+  const width = L.gutter + TREE_COLS * L.col + (TREE_COLS - 1) * L.gap;
+  const height = (MAX_STEPS - 1) * L.row + L.chip + 2;
+  // 格子中心
+  const cx = (n: PlanNode) =>
+    L.gutter + COL_OF.get(n)! * (L.col + L.gap) + L.col / 2;
+  const cy = (n: PlanNode) => 1 + L.chip / 2 + (n.step - 1) * L.row;
+
+  // 亮的線最後畫，才不會被共用同一段起點的暗線蓋住
+  const edges = TREE_EDGES.map((child) => ({
+    child,
+    state: stateOf(child, current),
+  })).sort((a, b) => Number(isLit(a.state)) - Number(isLit(b.state)));
+
+  return (
+    <svg
+      viewBox={`-2 0 ${width + 4} ${height}`}
+      className={`mx-auto h-auto w-full select-none ${className}`}
+      role="group"
+      aria-label="封印房完整解法"
+    >
+      {L.gutter > 0 &&
+        Array.from({ length: MAX_STEPS }, (_, i) => (
+          <text
+            key={i}
+            x={0}
+            y={1 + L.chip / 2 + i * L.row}
+            dy="0.35em"
+            fontSize={10}
             className={
-              solved
-                ? "font-medium text-[var(--accent)]"
-                : "text-[var(--text-muted)]"
+              i + 1 === current.step
+                ? "fill-[var(--accent)] font-bold"
+                : "fill-[var(--text-muted)]"
             }
           >
-            {solved ? "答案確定了" : `還剩 ${pool.length} 種可能`}
-          </span>
-        )}
-        <button
-          onClick={() => setAnswers({})}
-          disabled={filled === 0}
-          className={TEXT_BUTTON}
+            第{i + 1}次
+          </text>
+        ))}
+
+      {edges.map(({ child, state }) => {
+        const parent = child.parent!;
+        const px = cx(parent);
+        const qx = cx(child);
+        const y0 = cy(parent) + L.chip / 2;
+        const y1 = cy(child) - L.chip / 2;
+        const ym = (y0 + y1) / 2;
+        const fork = childrenOf(parent).length > 1;
+        const lit = isLit(state);
+        let d = `M${px} ${y0}V${y1}`;
+        if (fork) {
+          const r = 4;
+          const s = Math.sign(qx - px);
+          d = `M${px} ${y0}V${ym - r}Q${px} ${ym} ${px + s * r} ${ym}H${qx - s * r}Q${qx} ${ym} ${qx} ${ym + r}V${y1}`;
+        }
+        return (
+          <g
+            key={child.key}
+            className={`transition-opacity ${state === "gone" ? "opacity-25" : ""}`}
+          >
+            <path
+              d={d}
+              fill="none"
+              strokeWidth={lit ? 1.8 : 1.1}
+              strokeLinejoin="round"
+              className={
+                lit
+                  ? "stroke-[var(--accent)]"
+                  : "stroke-[color-mix(in_srgb,var(--text-muted)_55%,var(--surface))]"
+              }
+            />
+            {fork && (
+              <ForkMark
+                cx={(px + qx) / 2}
+                cy={ym}
+                reply={child.via!}
+                lit={lit}
+              />
+            )}
+          </g>
+        );
+      })}
+
+      {TREE_NODES.map((n) => {
+        const state = stateOf(n, current);
+        return (
+          <g
+            key={n.key}
+            role="button"
+            tabIndex={0}
+            aria-label={`第 ${n.step} 次站 ${n.key}`}
+            aria-current={state === "current" ? "step" : undefined}
+            onClick={() => onPick(n)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onPick(n);
+              }
+            }}
+            className={`cursor-pointer outline-none transition-opacity [&:focus-visible>rect]:stroke-[var(--accent)] [&:hover>rect]:stroke-[var(--accent)] ${
+              state === "gone" ? "opacity-25 hover:opacity-70" : ""
+            }`}
+          >
+            <rect
+              x={cx(n) - L.col / 2}
+              y={cy(n) - L.chip / 2}
+              width={L.col}
+              height={L.chip}
+              rx={L.radius}
+              strokeWidth={1.2}
+              className={`stroke-transparent ${CHIP_FILL[state]}`}
+            />
+            <text
+              x={cx(n)}
+              y={cy(n)}
+              dy="0.35em"
+              textAnchor="middle"
+              fontSize={L.font}
+              className={`tabular-nums ${CHIP_TEXT[state]}`}
+            >
+              {n.key}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** 分岔橫線上的記號：白底圓把線截斷，中間畫 ✕ 或 1 */
+function ForkMark({
+  cx,
+  cy,
+  reply,
+  lit,
+}: {
+  cx: number;
+  cy: number;
+  reply: Reply;
+  lit: boolean;
+}) {
+  const d = 2.7;
+  return (
+    <>
+      <circle cx={cx} cy={cy} r={6} className="fill-[var(--surface)]" />
+      {reply === 0 ? (
+        <path
+          d={`M${cx - d} ${cy - d}L${cx + d} ${cy + d}M${cx + d} ${cy - d}L${cx - d} ${cy + d}`}
+          strokeWidth={lit ? 2.2 : 1.8}
+          strokeLinecap="round"
+          className="stroke-rose-500"
+        />
+      ) : (
+        <text
+          x={cx}
+          y={cy}
+          dy="0.35em"
+          textAnchor="middle"
+          fontSize={11}
+          className={
+            lit
+              ? "fill-[var(--accent)] font-bold"
+              : "fill-[var(--text-muted)] font-bold"
+          }
         >
-          <RotateCcw size={12} />
-          重設
-        </button>
+          1
+        </text>
+      )}
+    </>
+  );
+}
+
+// 每一格都能點，點了就跳到那一步——按錯回應時直接點正確的那格就好，不用一直按上一步。
+// 有在按的話：走過的路亮起來、已經不可能的分支淡掉；完全不按就是一張完整的對照圖。
+function SealedTree({
+  current,
+  onPick,
+}: {
+  current: PlanNode;
+  onPick: (n: PlanNode) => void;
+}) {
+  return (
+    <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-2 pb-3 pt-3 sm:max-w-md sm:px-4">
+      <div className="mb-3 flex items-baseline justify-between px-1 text-xs text-[var(--text-muted)] sm:px-0">
+        <span className="text-sm font-semibold text-[var(--text)]">
+          完整解法
+        </span>
+        <span>左/中/右 各站幾人</span>
+      </div>
+
+      <TreeSvg
+        layout={NARROW}
+        current={current}
+        onPick={onPick}
+        className="block sm:hidden"
+      />
+      <TreeSvg
+        layout={WIDE}
+        current={current}
+        onPick={onPick}
+        className="hidden sm:block"
+      />
+
+      <div className="mx-1 mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-[var(--border)] pt-2.5 text-xs sm:mx-0 text-[var(--text-muted)]">
+        <span className="flex items-center gap-1.5">
+          <X size={13} strokeWidth={3} className="shrink-0 text-rose-500" />
+          重量都不相同
+        </span>
+        <span className="flex items-center gap-1.5">
+          <b className="w-[13px] text-center text-[var(--text-muted)]">1</b>
+          一個踏板正確
+        </span>
+        <span>一直線＝沒過就往下</span>
       </div>
     </div>
   );
@@ -483,8 +789,7 @@ function StorageTab() {
 
         <div className="flex items-center justify-between py-1.5 pl-4 pr-2.5 text-xs text-[var(--text-muted)]">
           <span>
-            已打{" "}
-            <b className="tabular-nums text-[var(--text)]">{done}</b> /{" "}
+            已打 <b className="tabular-nums text-[var(--text)]">{done}</b> /{" "}
             {STORAGE_TOTAL}
           </span>
           <div className="flex items-center gap-0.5">
@@ -584,7 +889,9 @@ function StatueTab() {
     <div className="w-full" style={{ maxWidth: STATUE_IMAGE.width }}>
       <div
         className="relative overflow-hidden rounded-2xl border border-[var(--border)]"
-        style={{ aspectRatio: `${STATUE_IMAGE.width} / ${STATUE_IMAGE.height}` }}
+        style={{
+          aspectRatio: `${STATUE_IMAGE.width} / ${STATUE_IMAGE.height}`,
+        }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- 拆包底圖，尺寸固定不需要 next/image */}
         <img
