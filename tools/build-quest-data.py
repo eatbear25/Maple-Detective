@@ -8,7 +8,7 @@
       "quests":   [ { id, name, series?, lv, npc?, npcId?, npcMap?, released,
                       region?, lvMax?, repeat?, need, kill?, have?, jobs?,
                       rewards, give?, exp?, money?, cost?, pop?, skill?,
-                      scripted?, sup?, prereq, c? } ],
+                      scripted?, sup?, prereq, needQ?, ev?, f? } ],
                   // kill     = 完成條件要打倒的怪 [{id,n}]（79 個任務）
                   // have     = 接任務時身上要先有的道具（87 個）
                   // jobs     = 職業限制（全職業都能接的就不寫）
@@ -19,8 +19,10 @@
                   //            資料留著但前端不顯示，玩家反映那是雜訊）
                   // scripted = 完成處理交給伺服器端腳本（獎勵客戶端查不到）
                   // sup      = 有吃到 quest-supplement.json 的人工補充
-                  // 依 lv 排序；need/rewards = [{ id, n }]；c = chains 索引
-      "chains":   [ [questId...] ],   // 任務鏈，已排好順序
+                  // needQ    = 交任務前要先完成的任務（母任務等子任務做完）
+                  // ev       = 活動期間 ["YYYY-MM-DDTHH:MM", ...]（有這欄的 region = 活動）
+                  // 依 lv 排序；need/rewards = [{ id, n }]；f = flows 索引
+      "flows":    [ [block...] ],   // 任務流程，格式見 build_flows()
       "items":    { itemId: { name, desc?, eq? } },   // 任務用到的全部道具
       "mobs":     { mobId: 中文名 },   // 完成條件要打的怪
       "skills":   { skillId: 中文名 },  // 技能獎勵
@@ -32,19 +34,22 @@
 ## 實裝判斷
 
 任務的 NPC 有沒有站在「客戶端 Map.json 有名字」的地圖上。
-released = 至少一個 NPC 查得到具名地圖。實測分佈：全部實裝 296、部分 28、
+released = 至少一個 NPC 查得到具名地圖。2026-08 的實測分佈：全部實裝 296、部分 28、
 完全沒有 166 —— 定案是「296+28 算現行版本，只有 166 掛未實裝徽章」，
-所以這裡用 any() 而不是 all()。
+所以這裡用 any() 而不是 all()。2026-10-17 重抽後變成 493／4／16：
+客戶端把還沒開放的 197 個任務（4 轉、菇菇王國、瑪加提亞…）整批拿掉了。
 
-## 任務鏈
+## 任務流程
 
-「系列」有兩個來源：QuestData 的 Info.parent（241 個任務有）與前後關聯
-（410 個任務有）。定案是**用關聯圖遍歷**，parent 只拿來當鏈的標題，
-這樣那 169 個「有前後關係但沒有系列名」的任務也看得到整條線。
+有前後關聯的任務整串排成一條「流程」（2026-10-17 改，原本叫任務鏈、而且照系列名切段，
+#2083 伊卡路斯的滑翔翼前後的任務都被切掉了）。邊怎麼來見 flow_edges()，
+怎麼排成「主線＋分岔框」見 build_flows()；排完存進 flows，任務只帶索引 f。
+tools/check-quest-data.py 會把流程攤平，確認每個前置都排在前面、沒有斷線。
 
-邊：Check["0"].quest 的每個 id → 本任務（前置）、Act 的 nextQuest（後續）。
-先用 union-find 分連通元件，元件內再做拓撲排序（同層用 id 小的優先），
-排好的順序存進 chains，任務只帶索引 c，避免 JSON 重複膨脹。
+## 系統任務
+
+客戶端有 57 個遊戲內看不到的任務（台詞旗標、菇菇通行證的確認用任務…），
+不輸出，規則見 is_hidden()。
 
 ## 道具資料
 
@@ -135,79 +140,248 @@ def mobs_of(node):
     ]
 
 
-def build_chains(quests):
-    """用前置/後續關聯把任務分組並排序，回傳 [[questId...]]（長度 >1 的才留）。
+# 職業轉職五選一：客戶端沒有寫互斥（靠「只限初心者」間接擋掉——轉完職就不是初心者了），
+# 流程上不標的話會被讀成「五個都可以做」
+EXCLUSIVE_SETS = [{"1049", "1050", "1051", "1052", "1053"}]
 
-    分組鍵：**有系列名的就用系列名本身**，沒有的才用關聯連通元件（且只走
-    「兩端都沒系列名」的邊）。這是因為遊戲的任務關聯會跨系列相連——
-    「泰實夫的秘密之書」最後一步的後續就是「妖精羅雯和詛咒的娃娃」第一步——
-    純靠連通元件會把三條線併成一條 14 步，標題只顯示其中一個系列名、
-    「第 N / M 步」也是錯的；而且這種串接還會透過中間沒系列名的任務間接發生，
-    所以光是「跳過跨系列的邊」擋不住，必須直接用系列名當分界。
-    無系列名的任務（例如 21 步的勇士之村主線）維持靠關聯相連，那本來就是同一條。
 
-    排序用拓撲排序（同層取 id 小的先，任務 id 大致就是流程順序），
-    邊只在同組內生效。
+def flow_edges(quests, end_req):
+    """任務之間「誰要排在誰前面」的邊，回傳 pred：{questId: {前一步 questId}}。
+
+    三種來源：
+    1. Check["0"].quest 的 state 1/2（前置；1 = 那個任務接了就行、2 = 要完成）
+    2. Act 的 nextQuest（86/87 筆跟 1 重複，自己指向自己的 #2066 丟掉）
+    3. **Check["1"].quest**：「交任務時要先完成別的任務」。兩種長相：
+       - 母任務＋子任務（謠言的真相、巨居蟹的祭品…）：子任務的前置是「母任務進行中」，
+         母任務要等子任務都做完才能交。這時不能畫「子任務 → 母任務」（會成環），
+         改成「子任務 → 接在母任務後面的任務」——少了這條，#2145 調查木妖會跟五個
+         子任務排在同一層，看起來像不用等子任務做完
+       - 單純要求（維多利亞探險者要先完成兩個探險家任務）：畫「要求的任務 → 本任務」
     """
     ids = {q["id"] for q in quests}
-    series_of = {q["id"]: q.get("series") for q in quests}
-
-    edges = set()
+    pred = {q["id"]: set() for q in quests}
+    after_done = defaultdict(set)  # 母任務 → 要等它「完成」才能接的任務
     for q in quests:
         for p in q["prereq"]:
-            if p in ids:
-                edges.add((p, q["id"]))
+            if p in ids and p != q["id"]:
+                pred[q["id"]].add(p)
+                if p not in q.get("inProg", ()):
+                    after_done[p].add(q["id"])
         for n in q["next"]:
-            if n in ids:
-                edges.add((q["id"], n))
+            if n in ids and n != q["id"]:
+                pred[n].add(q["id"])
+                after_done[q["id"]].add(n)
 
-    # 無系列名任務之間的連通元件
-    parent = {i: i for i in ids if not series_of.get(i)}
+    def reaches(a, b):
+        stack, seen = [a], {a}
+        while stack:
+            x = stack.pop()
+            if x == b:
+                return True
+            for y in ids:
+                if x in pred[y] and y not in seen:
+                    seen.add(y)
+                    stack.append(y)
+        return False
 
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for a, b in edges:
-        if a in parent and b in parent:
-            ra, rb = find(a), find(b)
-            if ra != rb:
-                parent[ra] = rb
-
-    groups = defaultdict(list)
-    for i in ids:
-        key = series_of.get(i) or ("\0comp", find(i))
-        groups[key].append(i)
-
-    chains = []
-    for members in groups.values():
-        if len(members) < 2:
+    for parent_q, reqs in end_req.items():
+        if parent_q not in ids:
             continue
-        member_set = set(members)
-        succ = defaultdict(set)
-        indeg = {m: 0 for m in members}
-        for a, b in edges:
-            if a in member_set and b in member_set and b not in succ[a]:
-                succ[a].add(b)
-                indeg[b] += 1
-        deg = dict(indeg)
-        ready = sorted((m for m in members if deg[m] == 0), key=int)
-        order = []
-        while ready:
-            cur = ready.pop(0)
-            order.append(cur)
-            for nxt in sorted(succ.get(cur, ()), key=int):
-                deg[nxt] -= 1
-                if deg[nxt] == 0:
-                    ready.append(nxt)
-            ready.sort(key=int)
-        # 有環（資料異常）時把剩下的接在後面，不要整條鏈消失
-        order += sorted(member_set - set(order), key=int)
-        chains.append(order)
-    chains.sort(key=lambda c: int(c[0]))
-    return chains
+        for r in reqs:
+            if r not in ids or r == parent_q or r in pred[parent_q]:
+                continue
+            if reaches(parent_q, r):
+                for s in after_done[parent_q]:
+                    if s != r:
+                        pred[s].add(r)
+            else:
+                pred[parent_q].add(r)
+    return pred
+
+
+def build_flows(quests, pred, excludes, end_req):
+    """把有關聯的任務排成「任務流程」，回傳 [blocks]（兩個任務以上的才留）。
+
+    以前的做法是「有系列名就照系列名切」，結果 #2083 伊卡路斯的滑翔翼（沒系列名）
+    跟它的前置「好無聊」（有系列名）、後續「伊卡路斯與飛天藥水」被切成三段，
+    玩家看不到整條線（2026-10-17 回報）。現在**整個連通元件就是一條流程**，
+    系列名只拿來當標題。
+
+    元件不一定是一直線（18/66 條有分岔），所以排成「主線＋框」：
+      block = "questId"                         主線上的一步
+            | {"k": "all"|"one"|"split", "lines": [[block...]...]}
+                  也算一步。all = 這幾條都要做完（順序不拘）、one = 擇一、
+                  split = 從這裡分成好幾條線，各走各的
+            | {"k": "also"|"side", "lines": [...]}
+                  不算一步，掛在主線旁邊。also = 另外也要先完成（匯進主線）、
+                  side = 從主線分出去的支線
+    分岔的幾條線裡有一條**明顯最長**的話（其他都比它短），它就升格成主線、
+    其他的進 also/side 框；一樣長（五個子任務、五條 XX 之路）就整組框起來：
+    - 會匯合、或全部是前一步的子任務（母任務要等它們做完才能交，#2208 巴勒圖的委託）→ all
+    - 兩兩互斥 → one
+    - 其他 → split
+    **互斥但長短不一的不算擇一**：#3069 遺失的食人花汁寫了「接過 #3048 就不能接」，
+    但它是道具弄丟時的補救任務，不是劇情分歧；標成擇一會被讀成「二選一的結局」。
+
+    做法：先做遞移化簡（#2201 打敗骷髏的前置寫了 2199 和 2200，但 2200 本來就接在
+    2199 後面，不化簡就會多出一個假分岔），再從起點往下走：
+    - 只有一個起點 → 主線一步
+    - 好幾個起點，而且會匯到同一個任務 J → J 之前的部分各自成一條線（all/also），J 接主線
+    - 好幾個起點、各走各的 → 各自成一條線（one/split/side），結束
+    """
+    ids = set(pred)
+    succ = defaultdict(set)
+    for q, ps in pred.items():
+        for p in ps:
+            succ[p].add(q)
+
+    # 拓撲序（同層取 id 小的先），順便確認沒有環
+    indeg = {q: len(pred[q]) for q in ids}
+    ready = sorted((q for q in ids if indeg[q] == 0), key=int)
+    topo = []
+    while ready:
+        cur = ready.pop(0)
+        topo.append(cur)
+        for nxt in succ[cur]:
+            indeg[nxt] -= 1
+            if indeg[nxt] == 0:
+                ready.append(nxt)
+        ready.sort(key=int)
+    if len(topo) != len(ids):
+        raise SystemExit(f"任務關聯有環：{sorted(ids - set(topo), key=int)}")
+    order = {q: i for i, q in enumerate(topo)}
+
+    def reach(x, within):
+        """x 自己＋在 within 裡走得到的全部任務"""
+        out, stack = {x}, [x]
+        while stack:
+            for y in succ[stack.pop()]:
+                if y in within and y not in out:
+                    out.add(y)
+                    stack.append(y)
+        return out
+
+    # 遞移化簡：p→q 若另有一條 p→…→q 的路就拿掉
+    for p in topo:
+        for q in list(succ[p]):
+            if any(q in reach(o, ids) for o in succ[p] if o != q):
+                succ[p].discard(q)
+                pred[q].discard(p)
+
+    def ancestors(x, within):
+        out, stack = set(), [x]
+        while stack:
+            for y in pred[stack.pop()]:
+                if y in within and y not in out:
+                    out.add(y)
+                    stack.append(y)
+        return out
+
+    def components(nodes):
+        nodes, out = set(nodes), []
+        while nodes:
+            comp, stack = set(), [min(nodes, key=order.get)]
+            while stack:
+                x = stack.pop()
+                if x in comp:
+                    continue
+                comp.add(x)
+                stack += [y for y in pred[x] | succ[x] if y in nodes and y not in comp]
+            nodes -= comp
+            out.append(comp)
+        return sorted(out, key=lambda c: min(order[x] for x in c))
+
+    def size(blocks):
+        return sum(1 if isinstance(b, str) else sum(size(l) for l in b["lines"]) for b in blocks)
+
+    def exclusive(heads):
+        def ex(a, b):
+            return b in excludes.get(a, ()) or a in excludes.get(b, ()) or any(
+                a in s and b in s for s in EXCLUSIVE_SETS
+            )
+        return all(ex(a, b) for i, a in enumerate(heads) for b in heads[i + 1 :])
+
+    def group(lines, merge, heads):
+        """多條線 → blocks。merge = 這些線之後會匯合。"""
+        if len(lines) == 1:
+            return lines[0]
+        sizes = sorted((size(l) for l in lines), reverse=True)
+        if sizes[0] > sizes[1]:
+            main = max(lines, key=size)
+            rest = [l for l in lines if l is not main]
+            # 匯合型：支線框放在匯合點前面；分岔型：放在分岔點後面
+            return main + [{"k": "also", "lines": rest}] if merge else [{"k": "side", "lines": rest}] + main
+        if merge:
+            return [{"k": "all", "lines": lines}]
+        # 全部是同一個母任務的子任務（母任務交件前要先做完的）
+        parents = set.intersection(*(pred[h] for h in heads))
+        members = {x for l in lines for x in flow_ids(l)}
+        if any(members <= set(end_req.get(p, ())) for p in parents):
+            return [{"k": "all", "lines": lines}]
+        if exclusive(heads):
+            return [{"k": "one", "lines": lines}]
+        return [{"k": "split", "lines": lines}]
+
+    def layout(nodes):
+        nodes, blocks = set(nodes), []
+        while nodes:
+            srcs = sorted((x for x in nodes if not (pred[x] & nodes)), key=order.get)
+            if len(srcs) == 1:
+                blocks.append(srcs[0])
+                nodes.discard(srcs[0])
+                continue
+            down = {s: reach(s, nodes) for s in srcs}
+            common = set.intersection(*down.values())
+            if common:
+                join = min(common, key=order.get)
+                rest = reach(join, nodes)
+                parts = components(nodes - rest)
+                lines = [layout(p) for p in parts]
+                heads = [min(p, key=order.get) for p in parts]
+                blocks += group(lines, True, heads)
+                nodes = rest
+                continue
+            # 各走各的：起點之間有共同後代的併成同一條線
+            clusters = []
+            for s in srcs:
+                hit = [c for c in clusters if any(down[s] & down[t] for t in c)]
+                merged = [s] + [t for c in hit for t in c]
+                clusters = [c for c in clusters if c not in hit] + [merged]
+            if len(clusters) == 1:
+                # 沒辦法乾淨拆開（目前資料沒有這種形狀）→ 照拓撲序平鋪，至少不漏
+                blocks += sorted(nodes, key=order.get)
+                break
+            regions = sorted(
+                (set().union(*(down[s] for s in c)) for c in clusters),
+                key=lambda r: min(order[x] for x in r),
+            )
+            lines = [layout(r) for r in regions]
+            heads = [min(r, key=order.get) for r in regions]
+            blocks += group(lines, False, heads)
+            break
+        return blocks
+
+    flows = [layout(c) for c in components(ids) if len(c) > 1]
+    flows.sort(key=lambda f: min(int(x) for x in flow_ids(f)))
+    return flows
+
+
+def walk_blocks(blocks):
+    """全部 block（含框裡面的），給統計與檢查用"""
+    for b in blocks:
+        yield b
+        if not isinstance(b, str):
+            for line in b["lines"]:
+                yield from walk_blocks(line)
+
+
+def flow_ids(blocks):
+    for b in blocks:
+        if isinstance(b, str):
+            yield b
+        else:
+            for line in b["lines"]:
+                yield from flow_ids(line)
 
 
 # 地區分類：給任務頁的地區篩選用。粒度要「弓箭手村 / 墮落城市 / 奇幻村」這種
@@ -244,7 +418,15 @@ TOWNS = {
     110000000: "黃金海岸",
     120000000: "鯨魚號",
     680000000: "結婚小鎮",
+    # 2026-10-15 開放。兩個主城畫在同一張「冰原雪域」大陸圖上，靠「離哪個近」自動分
+    200000000: "天空之城",
+    211000000: "冰原雪域",
 }
+
+# 活動任務（客戶端 Check["0"] 帶 start/end 日期的）不照地理分，獨立一個 chip：
+# 萬聖節那串 75 個任務的 NPC 散在冰原雪域、天空之城跟活動專用地圖上，
+# 照地理分會把冰原雪域的 chip 灌成三分之二都是活動任務
+EVENT_REGION = "活動"
 
 MAP_REGION_OVERRIDE = {
     # 詛咒之林：惡靈森林任務鏈的其他五步都在魔法森林（潘喜/艾溫/漢斯），
@@ -253,7 +435,50 @@ MAP_REGION_OVERRIDE = {
     910100001: "魔法森林",
     # 卡伊琳的訓練場：海盜轉職教官卡伊琳的地方，在鯨魚號上
     912010200: "鯨魚號",
+    # 隱藏研究室：「冒險家的戒指」的前一步（#69095）在魔法森林的 101020006 進去
+    876009611: "魔法森林",
+    # 艾利傑的庭園：天空之城史菲魯納那條線（#3111~3114）的最後兩步
+    920020000: "天空之城",
 }
+
+# 不上網站的任務。遊戲內也看不到，規則見 is_hidden()
+HIDDEN_IDS = {"9999"}  # 開發測試用
+
+
+def is_hidden(qid, name, start, info):
+    """遊戲內看不到的系統任務（2026-10-17 的客戶端多了 60 個）：
+    - 沒有中文名：#9250~9254、#506441 這種，客戶端 QuestData 沒登記
+    - 等級 9999：「萬聖節台詞顯示用任務」，給 NPC 換台詞用的旗標
+    - info.disableAtNPC：NPC 不會給（「菇菇通行證參與確認用」「楓葉商會硬幣(隱藏任務)」）
+    - info.disableAtStartTab 加 disableAtPerformTab：任務視窗的「可接」「進行中」都不顯示
+    """
+    return (
+        qid in HIDDEN_IDS
+        or not name
+        or (start.get("lvmin") or 0) >= 9999
+        or bool(info.get("disableAtNPC"))
+        or bool(info.get("disableAtStartTab") and info.get("disableAtPerformTab"))
+    )
+
+
+def event_period(start):
+    """活動任務的期間 [開始, 結束]（"YYYY-MM-DDTHH:MM"），不是活動就 None。
+
+    客戶端格式是 YYYYMMDDHH 或 YYYYMMDDHHMM（菇菇通行證的說明文字寫「10月14日下午11時59分」，
+    對應 end = 202610142359）。**2020 年以前的日期不算**：#2147、#2208 那批是舊版活動
+    （2007、2008 年元旦）殘留的設定，經典版不見得有在檢查，標上去只會讓人以為接不到。
+    """
+
+    def parse(v):
+        if not isinstance(v, str) or len(v) not in (10, 12) or not v.isdigit():
+            return None
+        v = v.ljust(12, "0")
+        return f"{v[0:4]}-{v[4:6]}-{v[6:8]}T{v[8:10]}:{v[10:12]}"
+
+    s, e = parse(start.get("start")), parse(start.get("end"))
+    if not (s or e) or (e or s) < "2020":
+        return None
+    return [s, e]
 
 
 def build_region_lookup(wm_sheets, map_tbl):
@@ -342,8 +567,10 @@ def main():
         return None
 
     quests = []
+    end_req = {}  # Check["1"].quest：交任務前要先完成的任務（建流程用）
     used_items, used_maps, used_mobs, used_skills = set(), set(), set(), set()
     full = partial = none = 0
+    hidden = []
 
     for qid in sorted(check_tbl, key=int):
         check = check_tbl[qid]
@@ -351,6 +578,9 @@ def main():
         meta = strings.get(qid, {})
         start = check.get("0") or {}
         end = check.get("1") or {}
+        if is_hidden(qid, (meta.get("name") or "").strip(), start, info_tbl.get(qid) or {}):
+            hidden.append(qid)
+            continue
 
         npc_ids = [
             b["npc"]
@@ -435,15 +665,27 @@ def main():
         #   0（或沒寫 state）= 那個任務「不能接過」→ **互斥**
         # 五條「XX 之路」轉職任務兩兩互斥（26 筆），全當前置的話會印成
         # 「要先完成盜賊之路才能接戰士之路」，任務鏈還會把五條併成一條 6 步。
-        prereq, exclude = [], []
+        prereq, exclude, in_prog = [], [], []
         for e in (start.get("quest") or {}).values():
             if isinstance(e, dict) and "id" in e:
                 (prereq if e.get("state") in (1, 2) else exclude).append(str(e["id"]))
+                if e.get("state") == 1:
+                    in_prog.append(str(e["id"]))
         nxt = [
             str(stage["nextQuest"])
             for stage in act.values()
             if isinstance(stage, dict) and isinstance(stage.get("nextQuest"), int)
         ]
+        # 交任務前要先完成的任務（Check["1"].quest，16 個任務）。state 1 的那筆
+        # （#2048 要求 #2047 進行中）不是先後關係，不收。跟前置重複的（瑞恩的測驗）也不顯示
+        done_first = [
+            str(e["id"])
+            for e in (end.get("quest") or {}).values()
+            if isinstance(e, dict) and "id" in e and e.get("state") == 2
+        ]
+        if done_first:
+            end_req[qid] = done_first
+        need_q = [x for x in done_first if x not in prereq]
 
         used_items.update(i["id"] for i in need + rewards + give + have)
         used_mobs.update(m["id"] for m in kill)
@@ -468,8 +710,13 @@ def main():
             **({"skills": skills} if skills else {}),
             **({"give": give} if give else {}),
             "prereq": prereq,
+            **({"inProg": in_prog} if in_prog else {}),
+            **({"needQ": need_q} if need_q else {}),
             "next": nxt,
         }
+        period = event_period(start)
+        if period:
+            entry["ev"] = period
         series = (meta.get("Info") or {}).get("parent")
         if series:
             entry["series"] = series.strip()
@@ -487,6 +734,8 @@ def main():
                 region = region_of(named_map_of(other))
                 if region:
                     break
+        if released and period:
+            region = EVENT_REGION
         if region:
             entry["region"] = region
         # 人工補充（quest-supplement.json）覆蓋客戶端資料
@@ -512,12 +761,14 @@ def main():
             entry["sup"] = 1
         quests.append(entry)
 
-    chains = build_chains(quests)
-    chain_of = {qid: idx for idx, chain in enumerate(chains) for qid in chain}
+    excludes = {q["id"]: set(q.get("exclude") or ()) for q in quests}
+    flows = build_flows(quests, flow_edges(quests, end_req), excludes, end_req)
+    flow_of = {qid: idx for idx, flow in enumerate(flows) for qid in flow_ids(flow)}
     for q in quests:
-        if q["id"] in chain_of:
-            q["c"] = chain_of[q["id"]]
-        del q["next"]  # 只是建鏈用的中間欄位，前端拿 chains 就好
+        if q["id"] in flow_of:
+            q["f"] = flow_of[q["id"]]
+        del q["next"]  # 只是建流程用的中間欄位，前端拿 flows 就好
+        q.pop("inProg", None)  # 同上
 
     quests.sort(key=lambda q: (q["lv"], int(q["id"])))
 
@@ -567,12 +818,13 @@ def main():
 
     # chips 的排列順序：TOWNS 的宣告順序（大致就是遊戲的地理／練功動線），
     # 不是任務數多寡——照數量排的話每次更新資料 chip 都會換位置，很難記
+    # 「活動」排在地理地區後面（前端再把「未實裝」接在最後）
     used_regions = {q.get("region") for q in quests}
-    regions = [r for r in dict.fromkeys(TOWNS.values()) if r in used_regions]
+    regions = [r for r in [*dict.fromkeys(TOWNS.values()), EVENT_REGION] if r in used_regions]
 
     out = {
         "quests": quests,
-        "chains": chains,
+        "flows": flows,
         "items": items,
         "mobs": mobs,
         "skills": skill_names,
@@ -587,8 +839,10 @@ def main():
     named_items = sum(1 for v in items.values() if not v["name"].startswith("#"))
     print(f"任務 {len(quests)}：NPC 全實裝 {full}、部分 {partial}、無 {none}")
     print(f"  → released {sum(1 for q in quests if q['released'])} / 未實裝 {sum(1 for q in quests if not q['released'])}")
-    print(f"任務鏈 {len(chains)} 條（最長 {max((len(c) for c in chains), default=0)} 步）、"
-          f"入鏈任務 {len(chain_of)}")
+    print(f"隱藏 {len(hidden)} 個系統任務（沒有中文名／等級 9999／NPC 不給／任務視窗不顯示）")
+    shapes = Counter(b["k"] for f in flows for b in walk_blocks(f) if not isinstance(b, str))
+    print(f"任務流程 {len(flows)} 條（最大 {max((len(list(flow_ids(f))) for f in flows), default=0)} 個任務）、"
+          f"入流程任務 {len(flow_of)}；分岔框 {dict(shapes)}")
     print(f"道具 {len(items)} 種（有中文名 {named_items}、有說明 {sum(1 for v in items.values() if 'desc' in v)}）")
     regions = Counter(q.get("region") or "（未實裝）" for q in quests)
     print(f"NPC 所在地圖 {len(maps)} 張、世界地圖 {len(worldmap)} 張、地區 {len(regions)} 個")

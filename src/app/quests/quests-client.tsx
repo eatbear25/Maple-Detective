@@ -1,13 +1,13 @@
 "use client";
 
 // 任務查詢：搜尋（任務名 / 獎勵道具名）→ 列表（依需求等級排序、分頁）→ 右側詳情。
-// 詳情最上面是系列鏈卡片（可收合），接著 NPC、接任務時拿到的道具、需求道具、獎勵。
+// 詳情最上面是任務流程卡片（可收合，見 quest-flow.tsx），接著 NPC、接取／完成條件、獎勵。
 // 道具只放 icon + 前兩字標籤 + 數量，沒有敘述文字；hover 才出道具彈窗。
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  ChevronDown,
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   Coins,
@@ -19,7 +19,7 @@ import {
   Zap,
 } from "lucide-react";
 import {
-  chainOf,
+  flowOf,
   npcIconSrc,
   questById,
   questItemName,
@@ -38,6 +38,7 @@ import { itemIconSrc, mobIconSrc, worldMapSrc } from "@/data/drops";
 import { GameIcon } from "../monsters/game-icon";
 import { ItemTooltip, useItemTooltip } from "../monsters/item-tooltip";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
+import { QuestFlowCard } from "./quest-flow";
 
 const PAGE_SIZE = 50;
 
@@ -61,6 +62,19 @@ const lvRangeLabel = (q: Quest) => {
 const repeatLabel = (min: number) =>
   min % 1440 === 0 ? `${min / 1440} 天` : min % 60 === 0 ? `${min / 60} 小時` : `${min} 分鐘`;
 
+/**
+ * 活動期間。開始時間是 00:00 就只寫日期；結束時間一律帶時間——
+ * 客戶端多半寫「11/12 00:00」，只寫 11/12 會被讀成那天整天還能接。
+ */
+const evLabel = ([s, e]: [string | null, string | null]) => {
+  const day = (v: string) => `${+v.slice(5, 7)}/${+v.slice(8, 10)}`;
+  const time = (v: string) => v.slice(11, 16);
+  const start = s && (time(s) === "00:00" ? day(s) : `${day(s)} ${time(s)}`);
+  const end = e && `${day(e)} ${time(e)}`;
+  if (start && end) return `活動 ${start} ～ ${end}`;
+  return end ? `活動・到 ${end}` : `活動・${start} 開始`;
+};
+
 /** 千分位：獎勵/花費動輒六七位數，不分隔根本讀不出來 */
 const num = (n: number) => n.toLocaleString("en-US");
 
@@ -69,6 +83,8 @@ const num = (n: number) => n.toLocaleString("en-US");
  * 所以這一類就等於未實裝任務（166 個），標題直接講白，不要留一個看不懂的「未知」。
  */
 const UNKNOWN_REGION = "未實裝";
+/** 活動任務的 chip（build-quest-data.py 的 EVENT_REGION） */
+const EVENT_REGION = "活動";
 
 /** 地區 chips：順序由 build-quest-data.py 給（大致依遊戲地理動線），「未實裝」擺最後 */
 const REGIONS: [string, number][] = (() => {
@@ -184,7 +200,13 @@ function QuestExplorer() {
               key={name}
               label={`${name} ${n}`}
               active={region === name}
-              icon={name === UNKNOWN_REGION}
+              icon={
+                name === UNKNOWN_REGION ? (
+                  <Telescope size={12} />
+                ) : name === EVENT_REGION ? (
+                  <CalendarDays size={12} />
+                ) : undefined
+              }
               onClick={() => {
                 setRegion(region === name ? null : name);
                 setPage(0);
@@ -232,7 +254,7 @@ function QuestExplorer() {
           />
         ) : (
           <div className="hidden text-sm text-[var(--text-muted)] lg:block">
-            從左邊挑一個任務，這裡會顯示 NPC、需求道具、獎勵與所屬任務鏈。
+            從左邊挑一個任務，這裡會顯示 NPC、需求道具、獎勵與前後的任務流程。
           </div>
         )}
       </div>
@@ -278,8 +300,8 @@ function RegionChip({
 }: {
   label: string;
   active: boolean;
-  /** 「未實裝」那顆掛望遠鏡，跟任務卡片上的未實裝徽章同一個符號 */
-  icon?: boolean;
+  /** 「未實裝」掛望遠鏡（跟任務卡片上的未實裝徽章同一個符號）、「活動」掛日曆 */
+  icon?: React.ReactNode;
   onClick: () => void;
 }) {
   return (
@@ -291,7 +313,7 @@ function RegionChip({
           : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
       }`}
     >
-      {icon && <Telescope size={12} />}
+      {icon}
       {label}
     </button>
   );
@@ -395,7 +417,7 @@ function QuestDetail({
   onPickReward: (i: QuestItem) => void;
   onOpenMap: () => void;
 }) {
-  const chain = chainOf(q);
+  const flow = flowOf(q);
   const mapInfo = q.npcMap != null ? questMapInfo(q.npcMap) : undefined;
   const hasReward = !!(q.rewards.length || q.exp || q.money || q.pop || q.skill);
   return (
@@ -414,12 +436,19 @@ function QuestDetail({
           <span>#{q.id}</span>
           <span>需求等級 {lvRangeLabel(q)}</span>
           {q.repeat ? <span>可重複（間隔 {repeatLabel(q.repeat)}）</span> : null}
+          {q.ev ? (
+            <span
+              title={q.ev.filter(Boolean).join(" ～ ").replaceAll("T", " ")}
+              className="flex items-center gap-1"
+            >
+              <CalendarDays size={13} />
+              {evLabel(q.ev)}
+            </span>
+          ) : null}
         </div>
       </div>
 
-      {chain.length > 1 && (
-        <QuestChainCard chain={chain} current={q.id} series={q.series} onPick={onPickQuest} />
-      )}
+      {flow && <QuestFlowCard flow={flow} q={q} onPick={onPickQuest} />}
 
       <Section title="任務 NPC">
         {q.npc ? (
@@ -437,7 +466,9 @@ function QuestDetail({
               )}
             </span>
             <span className="font-medium">{q.npc}</span>
-            {mapInfo ? (
+            {/* 隱藏地圖與活動地圖（詛咒之林、雪原的面具祭典現場…）在世界地圖上沒有點位，
+                也借不到鄰居，點了開不出地圖，所以只印名字不做成按鈕 */}
+            {mapInfo?.wm ? (
               <button
                 onClick={onOpenMap}
                 className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
@@ -445,6 +476,11 @@ function QuestDetail({
                 <MapPin size={12} />
                 {mapInfo.name}
               </button>
+            ) : mapInfo ? (
+              <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                <MapPin size={12} />
+                {mapInfo.name}
+              </span>
             ) : (
               <span className="text-xs text-[var(--text-muted)]">劇情中出現</span>
             )}
@@ -476,36 +512,19 @@ function QuestDetail({
             ) : null}
             {/* 互斥（Check["0"].quest 的 state 0）：五條「XX 之路」轉職任務只能挑一條 */}
             {q.exclude?.length ? (
-              <p className="text-xs text-[var(--text-muted)]">
-                接過這些就不能接：
-                {q.exclude.map((id, i) => {
-                  const other = questById(id);
-                  return (
-                    <span key={id}>
-                      {i > 0 && "、"}
-                      {other ? (
-                        <button
-                          onClick={() => onPickQuest(other.id)}
-                          className="cursor-pointer text-[var(--accent)] hover:underline"
-                        >
-                          {other.name}
-                        </button>
-                      ) : (
-                        `#${id}`
-                      )}
-                    </span>
-                  );
-                })}
-              </p>
+              <QuestLinks label="接過這些就不能接" ids={q.exclude} onPick={onPickQuest} />
             ) : null}
           </div>
         </Section>
       ) : null}
 
-      {/* 完成條件 = 打倒怪物（79 個任務，以前完全沒顯示）＋ 繳交道具 */}
+      {/* 完成條件 = 先做完的任務（母任務等子任務）＋ 打倒怪物 ＋ 繳交道具 */}
       <Section title="完成條件">
-        {q.kill?.length || q.need.length ? (
+        {q.needQ?.length || q.kill?.length || q.need.length ? (
           <div className="space-y-3">
+            {q.needQ?.length ? (
+              <QuestLinks label="要先完成" ids={q.needQ} onPick={onPickQuest} />
+            ) : null}
             {q.kill?.length ? <MobRow mobs={q.kill} /> : null}
             {q.need.length ? <ItemRow items={q.need} tip={tip} /> : null}
           </div>
@@ -568,6 +587,41 @@ function QuestDetail({
         </Section>
       ) : null}
     </div>
+  );
+}
+
+/** 一串可點的任務名（「接過這些就不能接」「要先完成」） */
+function QuestLinks({
+  label,
+  ids,
+  onPick,
+}: {
+  label: string;
+  ids: string[];
+  onPick: (id: string) => void;
+}) {
+  return (
+    <p className="text-xs text-[var(--text-muted)]">
+      {label}：
+      {ids.map((id, i) => {
+        const other = questById(id);
+        return (
+          <span key={id}>
+            {i > 0 && "、"}
+            {other ? (
+              <button
+                onClick={() => onPick(other.id)}
+                className="cursor-pointer text-[var(--accent)] hover:underline"
+              >
+                {other.name}
+              </button>
+            ) : (
+              `#${id}`
+            )}
+          </span>
+        );
+      })}
+    </p>
   );
 }
 
@@ -707,101 +761,6 @@ function ItemRow({
           </button>
         );
       })}
-    </div>
-  );
-}
-
-/* ---------- 系列鏈：置頂的可收合卡片 ---------- */
-
-/**
- * 擺在詳情最上面，因為「這條線有幾步、我在第幾步」是進來第一個要回答的問題。
- * 每個節點自己是一張小卡，目前這步用 accent 邊框＋底色拉出層次。
- * 長鏈（最長 21 步）可以收起來，收起時標題列仍寫「第 N / M 步」。
- */
-function QuestChainCard({
-  chain,
-  current,
-  series,
-  onPick,
-}: {
-  chain: Quest[];
-  current: string;
-  series?: string;
-  onPick: (id: string) => void;
-}) {
-  const [open, setOpen] = useState(true);
-  const idx = chain.findIndex((q) => q.id === current);
-  /* 互斥的分支（五條「XX 之路」）會落在同一條鏈上，編號印成 1→6 會被讀成先後順序。
-     標出跟目前這步互斥的那幾步，至少講清楚「只能挑一條」。 */
-  const alt = new Set(chain.find((q) => q.id === current)?.exclude ?? []);
-
-  return (
-    <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="cursor-pointer flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--accent-soft)]/30"
-      >
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold">{series ?? "任務鏈"}</span>
-          <span className="text-xs text-[var(--text-muted)]">
-            第 {idx + 1} / {chain.length} 步
-          </span>
-        </span>
-        <ChevronDown
-          size={16}
-          className={`shrink-0 text-[var(--text-muted)] transition-transform ${open ? "" : "-rotate-90"}`}
-        />
-      </button>
-
-      {open && (
-        <ol className="themed-scroll max-h-[45vh] space-y-1.5 overflow-y-auto border-t border-[var(--border)] p-3">
-          {chain.map((q, i) => {
-            const isCur = q.id === current;
-            return (
-              <li key={q.id} className="relative">
-                {i > 0 && (
-                  <span className="absolute -top-1.5 left-[22px] h-1.5 w-px bg-[var(--border)]" />
-                )}
-                <button
-                  onClick={() => onPick(q.id)}
-                  className={`cursor-pointer flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
-                    isCur
-                      ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                      : "border-[var(--border)] bg-[var(--bg)] hover:border-[var(--accent)]"
-                  }`}
-                >
-                  <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
-                    style={
-                      isCur
-                        ? { background: "var(--accent)", color: "#fff" }
-                        : { background: "var(--accent-soft)", color: "var(--accent)" }
-                    }
-                  >
-                    {i + 1}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span
-                      className={`flex items-center gap-1 truncate text-sm ${isCur ? "font-semibold" : ""}`}
-                    >
-                      <span className="truncate">{q.name}</span>
-                      {alt.has(q.id) && (
-                        <span className="shrink-0 rounded-full border border-[var(--border)] px-1.5 text-[10px] font-normal text-[var(--text-muted)]">
-                          擇一
-                        </span>
-                      )}
-                      {!q.released && (
-                        <Telescope size={11} className="shrink-0 text-[var(--text-muted)]" />
-                      )}
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-xs text-[var(--text-muted)]">{lvLabel(q.lv)}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-      )}
     </div>
   );
 }

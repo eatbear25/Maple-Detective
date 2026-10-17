@@ -78,14 +78,27 @@ export interface Quest {
   /** 1 = 有吃到 reference-data/quest-supplement.json 的人工補充 */
   sup?: number;
   prereq: string[];
-  /** chains 索引；沒有前後關聯的單發任務沒有這個欄位 */
-  c?: number;
+  /** 交任務前要先完成的任務（母任務等子任務做完，例：#2144 謠言的真相） */
+  needQ?: string[];
+  /** 活動期間 [開始, 結束]，"YYYY-MM-DDTHH:MM"；不是活動任務就沒有這欄 */
+  ev?: [string | null, string | null];
+  /** flows 索引；沒有前後關聯的單發任務沒有這個欄位 */
+  f?: number;
 }
+
+/**
+ * 任務流程的一塊（規則見 tools/build-quest-data.py 的 build_flows）：
+ * - 字串：主線上的一步（任務 id）
+ * - all／one／split：分岔框，整框算一步。all = 都要完成、one = 擇一、split = 各自獨立的後續
+ * - also／side：掛在主線旁的框，不算步數。also = 另外也要先完成、side = 分出去的支線
+ */
+export type FlowKind = "all" | "one" | "split" | "also" | "side";
+export type FlowBlock = string | { k: FlowKind; lines: FlowBlock[][] };
 
 const d = data as unknown as {
   quests: Quest[];
-  /** 每條任務鏈，已依流程排好序 */
-  chains: string[][];
+  /** 每條任務流程 */
+  flows: FlowBlock[][];
   items: Record<string, QuestItemInfo>;
   mobs: Record<string, string>;
   skills: Record<string, string>;
@@ -99,11 +112,9 @@ export const quests: Quest[] = d.quests;
 
 export const questById = (id: string) => d.quests.find((q) => q.id === id);
 
-/** 該任務所屬任務鏈的完整任務清單（依流程排序）；單發任務回空陣列 */
-export const chainOf = (q: Quest): Quest[] =>
-  q.c === undefined
-    ? []
-    : d.chains[q.c].map((id) => questById(id)).filter((x): x is Quest => !!x);
+/** 該任務所屬的任務流程；單發任務回 undefined */
+export const flowOf = (q: Quest): FlowBlock[] | undefined =>
+  q.f === undefined ? undefined : d.flows[q.f];
 
 /** 完成條件要打的怪的中文名 */
 export const questMobName = (id: number) => d.mobs[String(id)] ?? `#${id}`;

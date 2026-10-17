@@ -37,8 +37,14 @@ FIELD_USE = {
         "infoNumber": "不用：任務進度計數器的 UI 設定",
         "info": "不用：同上",
         "infoex": "不用：同上",
-        "end": "不用：活動任務的截止日",
-        "start": "不用：活動任務的開始日",
+        "end": "用：ev（活動期間，2020 年以前的舊版活動殘留不算）、活動 chip",
+        "start": "用：同上",
+        "end_t": "不用：只有 #505812 有，比 end 晚兩個月，對話寫的截止日跟 end 一致",
+        "dayByDay": "不用：萬聖節兩個任務有（1/2），猜是每日任務但沒有佐證",
+        "MushroomPassCharacter": "不用：菇菇通行證系統",
+        "QuestOrOption": "不用：菇菇通行證系統",
+        "petEquipAtLeastOne": "不用：寵物條件",
+        "subJobFlags": "不用：副職業旗標（1 個活動任務）",
         "fieldEnter": "不用：要站在某張地圖才能接",
         "pet": "不用：寵物任務條件",
         "pop": "不用：名聲門檻（1 個任務）",
@@ -49,7 +55,10 @@ FIELD_USE = {
         "item": "用：need（要繳交的道具）",
         "mob": "用：kill（要打倒的怪）",
         "endscript": "用：scripted 旗標",
-        "quest": "不用：完成時要求別的任務處於某狀態（16 筆）",
+        "quest": "用：state 2 → needQ（交任務前要先完成）＋任務流程的排序",
+        "order": "不用：菇菇通行證的 UI 排序",
+        "allPet": "不用：寵物條件",
+        "petEquipAll": "不用：寵物條件",
         "infoNumber": "不用：進度計數器",
         "info": "不用：同上",
         "infoex": "不用：同上",
@@ -61,7 +70,7 @@ FIELD_USE = {
         "item": "用：give（接任務時 NPC 先給的道具）",
         "money": "用：cost（負數＝接任務就收錢）",
         "npc": "不用：對話中切換 NPC 立繪",
-        "quest": "不用：連動改別的任務狀態",
+        "quest": "不用：接任務時把前置標成完成（7 筆，全部跟前置重複）",
         "lvmin": "不用：分支條件",
         "info": "不用：進度計數器",
         # 下面這些是對話文字的節點，Gamania 把字掏空搬去本地化了，值都是 "0_yes_0" 這種殼
@@ -95,6 +104,17 @@ FIELD_USE = {
         "dailyPlayTime": "不用：每日遊玩時間任務（1 個）",
         "selectedMob": "不用：指定怪物的 UI 設定（1 個）",
         "showLayerTag": "不用：畫面圖層標記（james1/2/3）",
+        "disableAtNPC": "用：隱藏的系統任務（NPC 不給）",
+        "disableAtStartTab": "用：隱藏的系統任務（跟 disableAtPerformTab 同時有）",
+        "disableAtPerformTab": "用：同上",
+        "disableAtCompleteTab": "不用：只影響「已完成」分頁",
+        "disableAtCompleteBalloon": "不用：完成時的頭上氣泡",
+        "guideQuest": "不用：引導任務旗標（菇菇通行證）",
+        "resignBlocked": "不用：不能放棄",
+        "category": "不用：活動任務分類（1 個）",
+        "demand": "不用：值被掏空了",
+        "recommend": "不用：值被掏空了",
+        "reward": "不用：只有 #505812，道具跟 Act 重複",
         "0": "不用：對話文字（客戶端已掏空）",
         "1": "不用：對話文字（客戶端已掏空）",
         "2": "不用：對話文字（客戶端已掏空）",
@@ -105,7 +125,7 @@ FIELD_USE = {
         "pop": "用：pop（名聲）",
         "item": "用：rewards（含職業/性別限制）",
         "skill": "用：skills（技能獎勵）",
-        "nextQuest": "用：任務鏈的後續邊",
+        "nextQuest": "用：任務流程的後續邊",
         "npcAct": "不用：完成動畫",
         "pettameness": "不用：寵物親密度獎勵（1 筆）",
     },
@@ -130,6 +150,77 @@ def out_items(rows):
     return sorted((r["id"], r["n"]) for r in rows or [])
 
 
+def system_quest(qid, raw):
+    """遊戲內看不到的系統任務（build 腳本的 is_hidden，這裡獨立再寫一次當斷言）"""
+    info = raw["info"].get(qid) or {}
+    name = ((raw["strings"].get(qid) or {}).get("name") or "").strip()
+    lv = (raw["check"][qid].get("0") or {}).get("lvmin") or 0
+    return (
+        qid == "9999"
+        or not name
+        or lv >= 9999
+        or bool(info.get("disableAtNPC"))
+        or bool(info.get("disableAtStartTab") and info.get("disableAtPerformTab"))
+    )
+
+
+def check_flows(raw, site, quests):
+    """任務流程的三個保證：
+    1. 每個任務最多出現在一條流程裡、而且只出現一次
+    2. 跟網站上其他任務有前後關聯的，一定在流程裡（不能有斷掉的線——2026-10-17 的問題）
+    3. 照畫面順序攤平後，前置一定排在前面（含 nextQuest、母任務／子任務的隱含順序）
+    """
+    out = []
+    seen = {}
+    order = {}
+
+    def walk(blocks, fi):
+        for b in blocks:
+            if isinstance(b, str):
+                if b in seen:
+                    out.append(f"#{b} 在流程 {seen[b]} 與 {fi} 重複出現")
+                seen[b] = fi
+                order[b] = len(order)
+            else:
+                assert b["k"] in ("all", "one", "split", "also", "side"), b["k"]
+                for line in b["lines"]:
+                    walk(line, fi)
+
+    for fi, flow in enumerate(site["flows"]):
+        walk(flow, fi)
+    for qid, q in quests.items():
+        if seen.get(qid, -1) != q.get("f", -1):
+            out.append(f"#{qid} {q['name']}｜所屬流程 f={q.get('f')}，但出現在流程 {seen.get(qid)}")
+
+    edges = []
+    for qid, q in quests.items():
+        edges += [(p, qid) for p in q["prereq"] if p in quests and p != qid]
+        for stage in (raw["act"].get(qid) or {}).values():
+            n = str(stage.get("nextQuest")) if isinstance(stage, dict) else None
+            if n in quests and n != qid:
+                edges.append((qid, n))
+    for a, b in edges:
+        if a not in seen or b not in seen:
+            out.append(f"#{a} → #{b} 有關聯但不在流程裡")
+        elif seen[a] != seen[b]:
+            out.append(f"#{a} → #{b} 有關聯但被拆到不同流程")
+        elif order[a] > order[b]:
+            out.append(f"#{a} {quests[a]['name']} 應該排在 #{b} {quests[b]['name']} 前面")
+    # 母任務要等子任務做完才能交 → 接在母任務完成之後的任務，要排在子任務後面
+    for parent_q, q in quests.items():
+        for sub in q.get("needQ") or []:
+            if sub not in order:
+                continue
+            for a, b in edges:
+                if a == parent_q and b != sub and b in order and sub not in quests[b].get("prereq", []):
+                    state = next(
+                        (e.get("state") for e in ((raw["check"][b].get("0") or {}).get("quest") or {}).values()
+                         if isinstance(e, dict) and str(e.get("id")) == parent_q), 2)
+                    if state == 2 and order[sub] > order[b]:
+                        out.append(f"#{sub} 是 #{parent_q} 交件前要做完的，應該排在 #{b} 前面")
+    return out
+
+
 def main():
     raw = load("quest.json")
     with open(OUT, encoding="utf-8") as f:
@@ -143,11 +234,17 @@ def main():
         name = quests.get(qid, {}).get("name", "?")
         problems.append(f"#{qid} {name}｜{what}：客戶端 {expect} / 網站 {got}")
 
+    hidden = 0
     for qid, check in raw["check"].items():
         q = quests.get(qid)
         if q is None:
-            problems.append(f"#{qid} 客戶端有這個任務，網站沒有輸出")
+            if system_quest(qid, raw):
+                hidden += 1
+            else:
+                problems.append(f"#{qid} 客戶端有這個任務，網站沒有輸出")
             continue
+        if system_quest(qid, raw):
+            problems.append(f"#{qid} {q['name']}｜系統任務不該出現在網站上")
         act = raw["act"].get(qid, {})
         start = check.get("0") or {}
         end = check.get("1") or {}
@@ -202,6 +299,15 @@ def main():
             bad(qid, "前置任務", want_pre, sorted(q["prereq"]))
         if sorted(q.get("exclude") or []) != want_ex:
             bad(qid, "互斥任務", want_ex, sorted(q.get("exclude") or []))
+        # 交任務前要先完成的任務（跟前置重複的不列）
+        want_need_q = sorted(
+            str(e["id"]) for e in (end.get("quest") or {}).values()
+            if isinstance(e, dict) and e.get("state") == 2 and str(e["id"]) not in want_pre
+        )
+        if sorted(q.get("needQ") or []) != want_need_q:
+            bad(qid, "交任務前要完成", want_need_q, sorted(q.get("needQ") or []))
+
+    problems += check_flows(raw, site, quests)
 
     # 名稱表要蓋得住所有引用（缺了畫面上會出現 #4031792 這種東西）
     for q in site["quests"]:
@@ -234,7 +340,7 @@ def main():
                 if isinstance(b, dict):
                     unknown += [f"{name}[{stage}].{k}" for k in b if k not in known]
 
-    print(f"逐筆比對 {len(raw['check'])} 個任務")
+    print(f"逐筆比對 {len(raw['check'])} 個任務（其中 {hidden} 個是不上網站的系統任務）")
     if problems:
         print(f"  ✗ {len(problems)} 個問題：")
         for line in problems[:40]:
