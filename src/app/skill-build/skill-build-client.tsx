@@ -1,12 +1,20 @@
 "use client";
 
 /**
- * 技能配點模擬。選一個 2 轉職業 → 同時攤開 1 轉 + 2 轉技能配點。
+ * 技能配點模擬。選一個 2 轉職業 → 同時攤開 1 轉 + 2 轉 + 3 轉技能配點
+ * （2 轉與 3 轉是一對一，選 2 轉就等於選了整條職業線）。
  *
- * 規則（2026-08-22 對話定案，數字來自玩家實測與 Artale Skill Simulator 對照）：
- * - SP 是**累計共用池**，不是各轉獨立：1 轉沒點完的會留到 2 轉，2 轉後也還能回頭
- *   加 1 轉技能。所以預算用「到某等級為止累計可得的 SP」表示。
- * - 兩個階段**並排顯示、不做切換**——配 2 轉時還看得到 1 轉的餘額。
+ * 規則（2026-08-22 對話定案，數字來自玩家實測與 Artale Skill Simulator 對照；
+ * 2026-10-17 開 3 轉時依客戶端轉職對白修正）：
+ * - 預算用「到某等級為止累計可得的 SP」表示（每升 1 級 +3、每次轉職 +1）。
+ * - **SP 只能往前補、不能往後留**：2／3／4 轉教官都會擋「SP 剩太多」，3 轉教官
+ *   講得最白——「至少必須消耗完到70級為止獲得的所有SP，我才能幫你進行3轉」
+ *   （ScriptString/job3.wzjson）。所以第 k 轉以後的技能，最多只能用第 k 轉之後
+ *   才拿到的 SP（3 轉技能 ≤ 151 點），這是滑桿的硬上限；反過來，轉職後拿到的
+ *   SP 可以回頭點前面的技能（沿用 2026-08-22 的定案）。
+ * - 「轉職前要點完」是下限，滑桿不擋（逼人先點滿 1 轉才能配 2 轉太難用），
+ *   改成里程碑條沒達標時提示。
+ * - 各階段**並排顯示、不做切換**——配後面的轉職時還看得到前面的餘額。
  * - **配點用滑桿，不用 +/- 按鈕**（2026-08-22 改）：要點滿 20 級得按 20 次加號，
  *   或想直接跳到 15 級也只能一下一下按，成本太高。改成拖滑桿直接到位，另外給
  *   「點滿」「歸零」兩個一鍵操作；鍵盤方向鍵仍可 ±1 微調。
@@ -29,10 +37,15 @@ import {
 } from "@/data/skills";
 import { SkillIcon } from "../skill-icon";
 
-/** 每升 1 級 +3 SP、每次轉職 +1 SP。法師 8 級轉職、其他 10 級。 */
+/**
+ * 每升 1 級 +3 SP、每次轉職 +1 SP。法師 8 級轉職、其他 10 級。
+ * POOLS[i] 是轉到第 i+2 轉之前累計拿到的 SP；最後一筆 = 模擬的總預算。
+ * 3 轉階段（70→120 級）每個職業都是 +1 + 50×3 = 151 點。
+ */
 const POOLS: { at: number; label: string; mage: number; other: number }[] = [
-  { at: 30, label: "30 級前（2 轉需求）", mage: 67, other: 61 },
-  { at: 70, label: "70 級前（3 轉需求）", mage: 188, other: 182 },
+  { at: 30, label: "30 級前（2 轉前要點完）", mage: 67, other: 61 },
+  { at: 70, label: "70 級前（3 轉前要點完）", mage: 188, other: 182 },
+  { at: 120, label: "120 級前（4 轉需求）", mage: 339, other: 333 },
 ];
 
 const STORAGE_KEY = "maple-detective-skill-build";
@@ -58,9 +71,20 @@ export default function SkillBuildPage() {
 
   const job = jobById[jobId];
   const firstJob = jobById[job.from!];
-  const tier1 = useMemo(() => skillsOf(firstJob.id), [firstJob.id]);
-  const tier2 = useMemo(() => skillsOf(jobId), [jobId]);
-  const pool = useMemo(() => [...tier1, ...tier2], [tier1, tier2]);
+  const thirdJob = jobs.find((j) => j.from === jobId)!;
+  /** tiers[0] = 1 轉技能、[1] = 2 轉、[2] = 3 轉 */
+  const tiers = useMemo(
+    () => [skillsOf(firstJob.id), skillsOf(jobId), skillsOf(thirdJob.id)],
+    [firstJob.id, jobId, thirdJob.id],
+  );
+  const pool = useMemo(() => tiers.flat(), [tiers]);
+  const tierOf = useMemo(
+    () =>
+      Object.fromEntries(
+        tiers.flatMap((list, i) => list.map((s) => [s.id, i + 1] as const)),
+      ) as Record<string, number>,
+    [tiers],
+  );
   const maxSp = capOf(job, POOLS.length - 1);
 
   // 網址帶配點時優先吃網址，否則吃 localStorage 草稿。
@@ -94,19 +118,34 @@ export default function SkillBuildPage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ job: jobId, build }));
   }, [jobId, build, loaded]);
 
-  const used = useMemo(
-    () => pool.reduce((a, s) => a + (build[s.id] ?? 0), 0),
-    [pool, build],
+  /** 每一轉各點了幾點，index 0 = 1 轉 */
+  const usedByTier = useMemo(
+    () => tiers.map((list) => list.reduce((a, s) => a + (build[s.id] ?? 0), 0)),
+    [tiers, build],
   );
-  const usedTier1 = useMemo(
-    () => tier1.reduce((a, s) => a + (build[s.id] ?? 0), 0),
-    [tier1, build],
-  );
-  const usedTier2 = useMemo(
-    () => tier2.reduce((a, s) => a + (build[s.id] ?? 0), 0),
-    [tier2, build],
-  );
+  const used = usedByTier.reduce((a, n) => a + n, 0);
   const left = maxSp - used;
+
+  /**
+   * 某一轉的技能還能再加幾點，以及是哪一條限制卡住（from = 1 是總預算，
+   * from = k 是「第 k 轉以後的技能只能用第 k 轉之後拿到的 SP」）。
+   */
+  const spRoom = useCallback(
+    (tier: number) => {
+      let room = left;
+      let from = 1;
+      for (let k = 2; k <= tier; k++) {
+        const budget = maxSp - capOf(job, k - 2);
+        const usedFrom = usedByTier.slice(k - 1).reduce((a, n) => a + n, 0);
+        if (budget - usedFrom < room) {
+          room = budget - usedFrom;
+          from = k;
+        }
+      }
+      return { room, from, budget: from === 1 ? maxSp : maxSp - capOf(job, from - 2) };
+    },
+    [left, maxSp, job, usedByTier],
+  );
 
   /** 最低能降到幾級：有別的技能拿它當前置、而且那個技能點著的話就降不下去。 */
   const minLevel = useCallback(
@@ -120,16 +159,16 @@ export default function SkillBuildPage() {
     [pool, build],
   );
 
-  /** 最高能點到幾級：受「前置技能」與「剩餘 SP」兩件事限制。 */
+  /** 最高能點到幾級：受「前置技能」與「剩餘 SP」（含各轉的額度）限制。 */
   const maxLevel = useCallback(
     (s: Skill) => {
       const cur = build[s.id] ?? 0;
       for (const [rid, need] of Object.entries(s.req ?? {})) {
         if ((build[rid] ?? 0) < need) return cur; // 前置不足：只能維持現況
       }
-      return Math.min(s.maxLevel, cur + left);
+      return Math.max(0, Math.min(s.maxLevel, cur + spRoom(tierOf[s.id]).room));
     },
-    [build, left],
+    [build, spRoom, tierOf],
   );
 
   /** 夾住的時候要說得出原因，不然使用者只會覺得滑桿壞了。 */
@@ -144,6 +183,11 @@ export default function SkillBuildPage() {
           }
         }
         if (hi >= s.maxLevel) return `〈${s.name}〉已經是上限 ${s.maxLevel} 級`;
+        const { from, budget } = spRoom(tierOf[s.id]);
+        if (from > 1) {
+          const tiersText = from === 3 ? "3 轉" : "2、3 轉";
+          return `${tiersText}技能只能用 ${POOLS[from - 2].at} 級之後拿到的 ${budget} 點（轉職前得先把之前的 SP 點完），只夠把〈${s.name}〉點到 ${hi} 級`;
+        }
         return `SP 只夠把〈${s.name}〉點到 ${hi} 級`;
       }
       if (target < lo) {
@@ -154,7 +198,7 @@ export default function SkillBuildPage() {
       }
       return null;
     },
-    [build, pool],
+    [build, pool, spRoom, tierOf],
   );
 
   /** 直接把技能設到某一級：滑桿、點滿、歸零共用這一條路。 */
@@ -238,36 +282,45 @@ export default function SkillBuildPage() {
             </div>
 
             <div className="space-y-1 border-t border-[var(--border)] pt-2 text-xs">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="min-w-0 truncate text-[var(--text-muted)]">
-                  1 轉 {firstJob.name}
-                </span>
-                <span className="shrink-0 font-semibold tabular-nums">
-                  {usedTier1} 點
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="min-w-0 truncate text-[var(--text-muted)]">
-                  2 轉 {job.name}
-                </span>
-                <span className="shrink-0 font-semibold tabular-nums">
-                  {usedTier2} 點
-                </span>
-              </div>
+              {[firstJob, job, thirdJob].map((j, i) => (
+                <div key={j.id} className="flex items-baseline justify-between gap-2">
+                  <span className="min-w-0 truncate text-[var(--text-muted)]">
+                    {i + 1} 轉 {j.name}
+                  </span>
+                  <span className="shrink-0 font-semibold tabular-nums">
+                    {usedByTier[i]} 點
+                    {/* 只有最後一轉有固定上限：前面的轉職可以用後面拿到的點數補 */}
+                    {i === 2 && (
+                      <span className="font-normal text-[var(--text-muted)]">
+                        {" "}
+                        / {maxSp - capOf(job, 1)}
+                      </span>
+                    )}
+                  </span>
+                </div>
+              ))}
             </div>
 
             <div className="space-y-2 border-t border-[var(--border)] pt-2">
-              {POOLS.map((pool, i) => (
-                <PoolMeter
-                  key={pool.at}
-                  label={pool.label}
-                  cap={capOf(job, i)}
-                  used={used}
-                />
-              ))}
+              {POOLS.map((p, i) => {
+                const cap = capOf(job, i);
+                // 30 級前只算 1 轉技能、70 級前算 1+2 轉、最後一條算全部
+                const spent = usedByTier.slice(0, i + 1).reduce((a, n) => a + n, 0);
+                const later = usedByTier.slice(i + 1).reduce((a, n) => a + n, 0);
+                const short = i < POOLS.length - 1 && later > 0 && spent < cap;
+                return (
+                  <PoolMeter
+                    key={p.at}
+                    label={p.label}
+                    cap={cap}
+                    used={spent}
+                    warn={short ? `還差 ${cap - spent} 點才能 ${i + 2} 轉` : undefined}
+                  />
+                );
+              })}
               <p className="text-[10px] leading-relaxed text-[var(--text-muted)]">
-                SP
-                是共用池：這是「配到這個等級為止總共拿得到幾點」，不是各轉各自的額度。
+                轉職教官會檢查：之前拿到的 SP 要先點完才能轉職，所以 3
+                轉技能只能用 70 級之後的點數；之後拿到的點數則可以回頭補前面的技能。
               </p>
             </div>
 
@@ -299,22 +352,17 @@ export default function SkillBuildPage() {
         </aside>
 
         <div className="min-w-0 space-y-6">
-          <SkillGrid
-            title={`1 轉・${firstJob.name}`}
-            list={tier1}
-            build={build}
-            minLevel={minLevel}
-            maxLevel={maxLevel}
-            setLevel={setLevel}
-          />
-          <SkillGrid
-            title={`2 轉・${job.name}`}
-            list={tier2}
-            build={build}
-            minLevel={minLevel}
-            maxLevel={maxLevel}
-            setLevel={setLevel}
-          />
+          {[firstJob, job, thirdJob].map((j, i) => (
+            <SkillGrid
+              key={j.id}
+              title={`${i + 1} 轉・${j.name}`}
+              list={tiers[i]}
+              build={build}
+              minLevel={minLevel}
+              maxLevel={maxLevel}
+              setLevel={setLevel}
+            />
+          ))}
         </div>
       </div>
     </div>
@@ -322,18 +370,22 @@ export default function SkillBuildPage() {
 }
 
 /**
- * 某個里程碑（30 級前／70 級前）的 SP 額度用掉多少。
- * **顯示值夾在額度內**：SP 是累計共用池，總共點了 188 點時第一條寫「188 / 67」
- * 只會讓人以為算錯（實際上是「30 級前拿得到的 67 點早就用完了」）。
+ * 某個里程碑（30 級前／70 級前／120 級前）點了多少：30 級前只算 1 轉技能、
+ * 70 級前算 1+2 轉——也就是「轉職前要點完的那些點數，夠不夠點在當時學得到的技能上」。
+ * **顯示值夾在額度內**：1 轉技能可以用後面拿到的點數補，點了 80 點時寫「80 / 61」
+ * 只會讓人以為算錯（實際意思是「30 級前的 61 點早就夠了」）。
+ * 後面的轉職有點數、這條卻沒達標時給 warn（例：1 轉只點 40 點卻點了 2 轉技能）。
  */
 function PoolMeter({
   label,
   cap,
   used,
+  warn,
 }: {
   label: string;
   cap: number;
   used: number;
+  warn?: string;
 }) {
   const shown = Math.min(used, cap);
   return (
@@ -353,6 +405,11 @@ function PoolMeter({
           style={{ width: `${(shown / cap) * 100}%` }}
         />
       </span>
+      {warn && (
+        <span className="mt-0.5 block text-[10px] font-medium text-[var(--accent)]">
+          {warn}
+        </span>
+      )}
     </div>
   );
 }

@@ -125,7 +125,7 @@ const TOOL_META: Record<string, { label?: string; desc: string; icon: LucideIcon
     quests: { label: "任務查詢", desc: "任務需求、獎勵查詢", icon: ScrollText },
     gacha: { desc: "用官方機率表模擬抽獎", icon: Dices },
     fashion: { desc: "紙娃娃試穿，包含客戶端未加入點裝", icon: Shirt },
-    "skill-build": { desc: "1、2 轉 SP 怎麼分配的試算", icon: Target },
+    "skill-build": { desc: "1～3 轉 SP 怎麼分配的試算", icon: Target },
     "boss-timer": { desc: "記下擊殺時間，自動算下次重生", icon: Timer },
     "moon-bunny": { desc: "第一階段種子放置位置", icon: MoonStar },
     "first-time-together": { desc: "第一階段克魯特題庫", icon: ListChecks },

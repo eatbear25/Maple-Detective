@@ -100,9 +100,45 @@ body {
   }
 }
 
+/* 全站公告列（announcement-bar.tsx，header 的第二列）：載入後從 header 底下滑出來；
+   內容塞不下時兩份公告接成一條往左跑，跑完一份（-50%）剛好接回開頭 */
+.announcement-bar {
+  animation: announcement-in 0.25s ease-out;
+}
+@keyframes announcement-in {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+}
+.announcement-track {
+  animation-name: announcement-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.announcement-box:hover .announcement-track,
+.announcement-box:focus-within .announcement-track {
+  animation-play-state: paused;
+}
+@keyframes announcement-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-spin-slow,
-  .animate-machine-shake {
+  .animate-machine-shake,
+  .announcement-bar,
+  .announcement-track {
     animation: none;
+  }
+  /* 不跑就改成手動左右捲，接尾巴用的第二份也不需要了 */
+  .announcement-box {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .announcement-dup {
+    display: none;
   }
 }
