@@ -178,7 +178,7 @@ export function ResultModal({
               <p className="text-[0.65rem] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                 這輪花了
               </p>
-              <p className="text-lg font-black tabular-nums text-rose-500">
+              <p className="text-lg font-black tabular-nums text-rose-500 dark:text-rose-400">
                 NT${r.spent.toLocaleString()}
               </p>
             </div>
@@ -270,7 +270,7 @@ export function AutoCountInput({
           }
           className={`cursor-pointer rounded-md px-1.5 py-0.5 font-bold transition-colors ${
             ctx.autoCount === n
-              ? "text-white"
+              ? "text-[var(--on-accent)]"
               : dark
                 ? "bg-white/10 hover:bg-white/20"
                 : "bg-[var(--accent-soft)] text-[var(--text-muted)] hover:text-[var(--text)]"

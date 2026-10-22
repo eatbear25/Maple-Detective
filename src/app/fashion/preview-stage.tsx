@@ -75,7 +75,7 @@ interface Props {
 }
 
 const TOOL_BUTTON =
-  "flex h-7 w-7 cursor-pointer items-center justify-center text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:cursor-default disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-[var(--text-muted)]";
+  "flex h-7 w-7 cursor-pointer items-center justify-center text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:cursor-default disabled:opacity-35 dark:disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-[var(--text-muted)]";
 
 /**
  * 試衣間的角色舞台：滾輪或右下角的放大鏡縮放（滾輪以游標所在位置為中心）、按住拖曳移動。

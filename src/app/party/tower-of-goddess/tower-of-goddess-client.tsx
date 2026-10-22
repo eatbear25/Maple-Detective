@@ -316,7 +316,7 @@ function SealedStepper({
                         <X
                           size={24}
                           strokeWidth={3}
-                          className="text-rose-500"
+                          className="text-rose-500 dark:text-rose-400"
                         />
                       ) : (
                         r
@@ -518,7 +518,7 @@ function TreeSvg({
         return (
           <g
             key={child.key}
-            className={`transition-opacity ${state === "gone" ? "opacity-25" : ""}`}
+            className={`transition-opacity ${state === "gone" ? "opacity-25 dark:opacity-40" : ""}`}
           >
             <path
               d={d}
@@ -560,7 +560,7 @@ function TreeSvg({
               }
             }}
             className={`cursor-pointer outline-none transition-opacity [&:focus-visible>rect]:stroke-[var(--accent)] [&:hover>rect]:stroke-[var(--accent)] ${
-              state === "gone" ? "opacity-25 hover:opacity-70" : ""
+              state === "gone" ? "opacity-25 hover:opacity-70 dark:opacity-40" : ""
             }`}
           >
             <rect
@@ -665,7 +665,7 @@ function SealedTree({
 
       <div className="mx-1 mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-[var(--border)] pt-2.5 text-xs sm:mx-0 text-[var(--text-muted)]">
         <span className="flex items-center gap-1.5">
-          <X size={13} strokeWidth={3} className="shrink-0 text-rose-500" />
+          <X size={13} strokeWidth={3} className="shrink-0 text-rose-500 dark:text-rose-400" />
           重量都不相同
         </span>
         <span className="flex items-center gap-1.5">
@@ -724,7 +724,7 @@ function StorageTab() {
               </div>
               <button
                 onClick={() => setDone((n) => n + 1)}
-                className="h-10 shrink-0 cursor-pointer rounded-lg bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--bg)] transition-opacity hover:opacity-90"
+                className="h-10 shrink-0 cursor-pointer rounded-lg bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--on-accent)] transition-opacity hover:opacity-90"
               >
                 打掉了
               </button>
@@ -766,7 +766,7 @@ function StorageTab() {
                   left ? "flex-row-reverse" : ""
                 } ${
                   isNext
-                    ? "cursor-pointer border-[var(--accent)] bg-[var(--accent)] text-[var(--bg)]"
+                    ? "cursor-pointer border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
                     : killed
                       ? "cursor-pointer border-transparent text-[var(--text-muted)] opacity-45 hover:opacity-80"
                       : "cursor-default border-[var(--border)] bg-[var(--bg)]"

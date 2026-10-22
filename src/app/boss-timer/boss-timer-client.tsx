@@ -432,7 +432,7 @@ function QuickAddButton({
           aria-label="快速記錄擊殺"
           aria-expanded={open}
           title="快速記錄擊殺"
-          className="cursor-pointer flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-105"
+          className="cursor-pointer flex h-12 w-12 items-center justify-center rounded-full text-[var(--on-accent)] shadow-lg transition-transform hover:scale-105"
           style={{ background: "var(--accent)" }}
         >
           <Plus
@@ -686,7 +686,7 @@ function TrackedRow({
           // 已過最晚時間的卡片整張是 accent-soft 底，按鈕再用同色會融進去看不出是按鈕
           style={
             passed
-              ? { background: "var(--accent)", color: "#fff" }
+              ? { background: "var(--accent)", color: "var(--on-accent)" }
               : { background: "var(--accent-soft)", color: "var(--accent)" }
           }
         >
@@ -907,7 +907,7 @@ function KillFormModal({
           <button
             type="submit"
             disabled={!valid}
-            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-[var(--on-accent)] transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
             style={{ background: "var(--accent)" }}
           >
             確定
@@ -974,7 +974,7 @@ function IntervalModal({
           <button
             type="submit"
             disabled={!fields.value}
-            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-[var(--on-accent)] transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
             style={{ background: "var(--accent)" }}
           >
             儲存
@@ -1045,7 +1045,7 @@ function ShareModal({
             />
             <button
               onClick={copy}
-              className="cursor-pointer flex shrink-0 items-center gap-1 rounded-full px-3 py-2 text-xs font-medium text-white"
+              className="cursor-pointer flex shrink-0 items-center gap-1 rounded-full px-3 py-2 text-xs font-medium text-[var(--on-accent)]"
               style={{ background: "var(--accent)" }}
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
@@ -1093,7 +1093,7 @@ function ClearConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-white"
+            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-[var(--on-accent)]"
             style={{ background: "var(--accent)" }}
           >
             全部清除
@@ -1148,7 +1148,7 @@ function ImportConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-white"
+            className="cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-[var(--on-accent)]"
             style={{ background: "var(--accent)" }}
           >
             確定匯入

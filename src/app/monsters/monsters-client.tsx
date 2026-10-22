@@ -224,7 +224,7 @@ function MonsterExplorer() {
             <Filter size={16} />
             {filterCount > 0 && (
               <span
-                className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold text-white"
+                className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold text-[var(--on-accent)]"
                 style={{ background: "var(--accent)" }}
               >
                 {filterCount}

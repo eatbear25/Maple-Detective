@@ -379,7 +379,7 @@ function Pager({
       <button
         disabled={page === 0}
         onClick={() => onPage(page - 1)}
-        className="cursor-pointer flex items-center gap-0.5 rounded-full px-2 py-1 text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text)] disabled:cursor-default disabled:opacity-30"
+        className="cursor-pointer flex items-center gap-0.5 rounded-full px-2 py-1 text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text)] disabled:cursor-default disabled:opacity-30 dark:disabled:opacity-45"
       >
         <ChevronLeft size={14} />
         上一頁
@@ -393,7 +393,7 @@ function Pager({
       <button
         disabled={page >= pageCount - 1}
         onClick={() => onPage(page + 1)}
-        className="cursor-pointer flex items-center gap-0.5 rounded-full px-2 py-1 text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text)] disabled:cursor-default disabled:opacity-30"
+        className="cursor-pointer flex items-center gap-0.5 rounded-full px-2 py-1 text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text)] disabled:cursor-default disabled:opacity-30 dark:disabled:opacity-45"
       >
         下一頁
         <ChevronRight size={14} />

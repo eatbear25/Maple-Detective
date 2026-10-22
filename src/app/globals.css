@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* `dark:` 改認站內的深色開關（theme.ts 在 <html> 掛 data-theme），不認系統的
+   prefers-color-scheme——兩者不同步時會出現「底是淺的、字也是淺的」。
+   顏色本身一律走 --bg／--text 這組變數，`dark:` 只拿來微調透明度這類變數管不到的東西 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 * {
   box-sizing: border-box;
 }

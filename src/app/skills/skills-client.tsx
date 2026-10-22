@@ -361,7 +361,7 @@ function JobRow({
         active
           ? "bg-[var(--accent-soft)] font-medium text-[var(--accent)]"
           : "hover:bg-[var(--accent-soft)]/50"
-      } ${dimmed ? "cursor-default opacity-35" : "cursor-pointer"}`}
+      } ${dimmed ? "cursor-default opacity-35 dark:opacity-50" : "cursor-pointer"}`}
     >
       <span
         className={`flex shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[9px] font-semibold text-[var(--accent)] ${

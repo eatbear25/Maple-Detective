@@ -37,7 +37,7 @@ export function PrizeTile({
   return (
     <span
       className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border transition ${
-        dimmed ? "opacity-30 saturate-50" : ""
+        dimmed ? "opacity-30 saturate-50 dark:opacity-50" : ""
       }`}
       style={{
         width: size,

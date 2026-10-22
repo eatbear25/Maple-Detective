@@ -132,7 +132,7 @@ function StepDot({ num, active }: { num: number; active: boolean }) {
       className="relative mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
       style={
         active
-          ? { background: "var(--accent)", color: "#fff" }
+          ? { background: "var(--accent)", color: "var(--on-accent)" }
           : { background: "var(--accent-soft)", color: "var(--accent)" }
       }
     >
@@ -188,7 +188,7 @@ function MainRow({
         className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
         style={
           isCur
-            ? { background: "var(--accent)", color: "#fff" }
+            ? { background: "var(--accent)", color: "var(--on-accent)" }
             : { background: "var(--accent-soft)", color: "var(--accent)" }
         }
       >

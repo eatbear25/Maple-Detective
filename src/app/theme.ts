@@ -13,6 +13,9 @@ export interface ColorTokens {
   border: string;
   accent: string;
   accentSoft: string;
+  /** 實心 accent 底上的字色（按鈕、選中的 chip、數字徽章）。淺色是白字；深色的
+   *  accent 比較亮，白字只有 2 左右的對比，要換成深色字 */
+  onAccent: string;
 }
 
 export const LIGHT_TOKENS: ColorTokens = {
@@ -23,16 +26,21 @@ export const LIGHT_TOKENS: ColorTokens = {
   border: "#EDE6D6",
   accent: "#B8791F",
   accentSoft: "#F6EDDC",
+  onAccent: "#FFFFFF",
 };
 
+// 2026-10-22 調高對比（使用者回報深色模式有些地方看不清楚）：底色壓深、卡片抬亮，
+// 卡片才分得出層次；邊框與次要文字調亮。目前的對比：text 17／textMuted 9.7（對 bg）、
+// 8.3（對 surface）、accent 10.5、border 對 surface 1.8（舊版分別是 15／6.5／6.0／7.7／1.3）
 export const DARK_TOKENS: ColorTokens = {
-  bg: "#1C1B1A",
-  surface: "#242220",
-  text: "#F5F1E8",
-  textMuted: "#A79E8E",
-  border: "#38352F",
-  accent: "#D9A45C",
-  accentSoft: "#3A2F1E",
+  bg: "#121110",
+  surface: "#23201D",
+  text: "#F8F4EC",
+  textMuted: "#C2B9A8",
+  border: "#4F4940",
+  accent: "#EDB86A",
+  accentSoft: "#46381F",
+  onAccent: "#1A1408",
 };
 
 const STORAGE_KEY = "maple-detective-theme-mode";
@@ -55,9 +63,14 @@ export function useDarkMode() {
   useEffect(() => {
     const tokens = isDark ? DARK_TOKENS : LIGHT_TOKENS;
     const vars = themeVars(tokens);
+    const root = document.documentElement;
     for (const [key, value] of Object.entries(vars)) {
-      document.documentElement.style.setProperty(key, value as string);
+      root.style.setProperty(key, value as string);
     }
+    // data-theme 給 globals.css 的 Tailwind `dark:` 變體用（跟這個開關同步，不認系統設定）；
+    // color-scheme 讓原生的下拉選單、捲軸、數字輸入框也跟著變深色
+    root.dataset.theme = isDark ? "dark" : "light";
+    root.style.colorScheme = isDark ? "dark" : "light";
   }, [isDark]);
 
   const toggle = () => {
@@ -80,5 +93,6 @@ export function themeVars(tokens: ColorTokens): React.CSSProperties {
     "--border": tokens.border,
     "--accent": tokens.accent,
     "--accent-soft": tokens.accentSoft,
+    "--on-accent": tokens.onAccent,
   } as React.CSSProperties;
 }

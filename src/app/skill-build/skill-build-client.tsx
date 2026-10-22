@@ -280,7 +280,7 @@ export default function SkillBuildPage() {
                       aria-label={`${j.name} → ${jobs.find((t) => t.from === j.id)?.name}`}
                       className={`cursor-pointer inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
                         jobId === j.id
-                          ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                          ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
                           : "border-[var(--border)] hover:border-[var(--accent)]"
                       }`}
                     >
@@ -601,7 +601,7 @@ function QuickBtn({
       aria-label={label}
       className={`flex items-center gap-0.5 rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] transition-colors ${
         disabled
-          ? "cursor-not-allowed opacity-30"
+          ? "cursor-not-allowed opacity-30 dark:opacity-50"
           : "cursor-pointer hover:border-[var(--accent)] hover:text-[var(--accent)]"
       }`}
     >

@@ -9,9 +9,10 @@
  *   抽的時候可以邊看邊對照，不用像整段收合那樣多一次點擊）。手機版退回單欄堆疊。
  *
  * 機台視窗與整頁其餘部分同一套站內主題（--bg/--surface/--text/--border/--accent，
- * 見 theme.ts）——不再用固定深色機殼；也不用 Tailwind dark: class，那個只認
- * 瀏覽器 prefers-color-scheme，跟站內自己的深色開關 (useDarkMode) 不連動，
- * 兩者不同步時文字會直接消失（2026-08-21 修過一次）。
+ * 見 theme.ts）——不再用固定深色機殼。當時 Tailwind dark: class 只認瀏覽器
+ * prefers-color-scheme，跟站內自己的深色開關 (useDarkMode) 不連動，兩者不同步時
+ * 文字會直接消失（2026-08-21 修過一次）；2026-10-22 起 globals.css 把 dark: 改成
+ * 認站內開關了，但顏色還是一律走主題變數。
  *
  * 邏輯在 engine.ts（純函式）與 use-gacha.ts（狀態），這裡只負責版面。
  */
@@ -155,7 +156,7 @@ export default function GachaPage() {
                             <PrizeTile prize={p} size={28} dimmed={n === 0} />
                             <span className="flex-1 truncate text-xs">{p.name}</span>
                             {n > 0 && (
-                              <span className="text-[0.7rem] font-bold text-emerald-600">
+                              <span className="text-[0.7rem] font-bold text-emerald-600 dark:text-emerald-400">
                                 ×{n}
                               </span>
                             )}
@@ -271,12 +272,12 @@ function MachineWindow({ ctx }: { ctx: GachaCtx }) {
           <p className="text-xs font-bold">
             已抽 <span style={{ color: "var(--accent)" }}>{ctx.view.pulls}</span> 次
             <span className="mx-1.5 opacity-30">・</span>
-            <span className="text-rose-500">NT${ctx.view.spent.toLocaleString()}</span>
+            <span className="text-rose-500 dark:text-rose-400">NT${ctx.view.spent.toLocaleString()}</span>
             <button
               type="button"
               onClick={ctx.handleReset}
               disabled={ctx.spinning || ctx.view.pulls === 0}
-              className="ml-2 inline-flex cursor-pointer items-center gap-0.5 rounded px-1.5 py-0.5 font-medium text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="ml-2 inline-flex cursor-pointer items-center gap-0.5 rounded px-1.5 py-0.5 font-medium text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40 dark:disabled:opacity-50"
             >
               <RotateCcw size={11} /> 重置
             </button>
@@ -295,7 +296,7 @@ function GoalChips({ ctx, onCustom }: { ctx: GachaCtx; onCustom: () => void }) {
   const chipClass = (active: boolean) =>
     `cursor-pointer rounded-full px-2.5 py-0.5 text-xs font-bold transition-colors ${
       active
-        ? "text-white"
+        ? "text-[var(--on-accent)]"
         : "bg-[var(--accent-soft)] text-[var(--text-muted)] hover:text-[var(--text)]"
     }`;
   return (
@@ -364,7 +365,7 @@ function Buttons({ ctx }: { ctx: GachaCtx }) {
         type="button"
         onClick={ctx.handleAuto}
         style={{ background: "var(--accent)" }}
-        className={`${base} text-white`}
+        className={`${base} text-[var(--on-accent)]`}
       >
         連抽 {ctx.autoCount.toLocaleString()} 次
       </button>
