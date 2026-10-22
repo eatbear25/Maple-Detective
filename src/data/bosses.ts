@@ -49,4 +49,6 @@ export const bossList: BossDef[] = [
     defaultRespawnMin: 45,
     defaultRespawnMax: 45,
   },
+  { id: "8220000", name: "艾利傑" },
+  { id: "8220001", name: "雪毛怪人" },
 ];
