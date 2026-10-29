@@ -80,7 +80,8 @@ body {
   }
 }
 
-/* 轉蛋模擬器（/gacha）：自動模式快轉時的放射光旋轉與機台晃動 */
+/* 神秘商人模擬（/merchant，前身是轉蛋模擬）：連續刷新快轉時商人晃動。
+   animate-spin-slow 是轉蛋機的放射光，目前沒有頁面在用，留著備用 */
 .animate-spin-slow {
   animation: gacha-spin 6s linear infinite;
 }

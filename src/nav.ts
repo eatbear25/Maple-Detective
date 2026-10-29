@@ -28,7 +28,7 @@ export function isNavGroup(node: NavNode): node is NavGroup {
  *   monsters 76.6% / 58 秒、boss-timer 35.5% / 22 秒、fashion 20.6% / 98 秒、map 19.2% / 56 秒。
  * 所以高頻的 monsters 與「開啟→掃一眼→關掉」的 boss-timer 放頂層直達，
  * 低頻但黏的 fashion 收進下拉（多一次點擊被 98 秒的停留稀釋掉）。
- * quests / skills / skill-build / gacha 在這份 GA 之後才上線、還沒有數據，
+ * quests / skills / skill-build / gacha（2026-10-29 改成 merchant 神秘商人模擬）在這份 GA 之後才上線、還沒有數據，
  * 目前是依性質歸類，兩週後要回頭用 GA 再確認一次。
  */
 const MONSTERS: NavItem = {
@@ -73,10 +73,10 @@ const SIMULATORS: NavGroup = {
   label: "模擬器",
   items: [
     {
-      key: "gacha",
-      label: "轉蛋模擬",
-      icon: "🎰",
-      path: "gacha",
+      key: "merchant",
+      label: "神秘商人模擬",
+      icon: "🏪",
+      path: "merchant",
       enabled: true,
     },
     {

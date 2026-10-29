@@ -7,7 +7,7 @@ import {
   Map as MapIcon,
   ScrollText,
   Sparkles,
-  Dices,
+  Store,
   Shirt,
   Target,
   MoonStar,
@@ -134,7 +134,7 @@ const TOOL_META: Record<
     icon: Sparkles,
   },
   quests: { label: "任務查詢", desc: "任務需求、獎勵查詢", icon: ScrollText },
-  gacha: { desc: "用官方機率表模擬抽獎", icon: Dices },
+  merchant: { desc: "用官方機率表模擬刷新貨架", icon: Store },
   fashion: {
     desc: "紙娃娃試穿，包含客戶端未加入點裝",
     icon: Shirt,

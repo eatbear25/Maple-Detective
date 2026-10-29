@@ -4,11 +4,11 @@
 已存在的檔案會跳過，可重複執行。來源優先 TMS/209，404 時退回 GMS/62。
 - 道具：public/icons/item/{itemId}.png
 - 怪物：public/icons/mob/{mobId}.gif（站立動圖）
-- 轉蛋機 NPC：public/icons/npc/{npcId}.png（轉蛋模擬器用）
+- 神秘商人 NPC：public/icons/npc/{npcId}.png（神秘商人模擬用）
 - 任務 NPC：public/icons/npc/{npcId}.gif（站立動圖）
 
 道具清單來自三處：monster-book.json（掉落查詢）、generated/quests.json（任務需求／獎勵／打怪）
-與 generated/gacha.json（轉蛋模擬）。
+與 generated/merchant.json（神秘商人模擬）。
 """
 
 import json
@@ -38,10 +38,10 @@ EXTRA_ITEMS = [
 
 MOB_STANCES = ["stand", "fly", "move"]  # 部分怪物（如純飛行怪）沒有 stand 動畫，依序退回
 
-# 轉蛋模擬器要用的轉蛋機 sprite。9110011 是遊戲截圖裡那台（機身有紅楓葉），
-# 其他城鎮版本外觀相同，只多抓一台超級轉蛋機備用。
-# 注意：遊戲內 UI 用的是高解析抗鋸齒版，跟這裡的 NPC sprite 不是同一張。
-GACHA_NPCS = [9110011, 9110015]
+# 神秘商人模擬要用的 NPC sprite。官方活動圖寫「神秘商人—麥吉」，畫的就是勇士之村那位
+# 戴斗笠、背著刀的麥吉（1022002），所以直接借他的站立圖。
+# （以前的轉蛋模擬用 9110011/9110015 轉蛋機，圖還留在 public/icons/npc/ 沒刪。）
+MERCHANT_NPCS = [1022002]
 
 
 def download(kind, oid, path_tpl, dest):
@@ -90,35 +90,25 @@ def main():
     q_items, q_npcs, q_mobs = quest_data()
     sup_items |= q_items
 
-    # 轉蛋獎品也要圖示；轉蛋資料還沒 build 過就跳過，不擋掉落查詢的圖
-    gacha_path = os.path.join(PROJECT, "src", "data", "generated", "gacha.json")
-    gacha_items, gacha_mobs = set(), set()
-    if os.path.exists(gacha_path):
-        with open(gacha_path, encoding="utf-8") as f:
+    # 神秘商人的商品也要圖示；還沒 build 過就跳過，不擋掉落查詢的圖
+    merchant_path = os.path.join(PROJECT, "src", "data", "generated", "merchant.json")
+    merchant_items = set()
+    if os.path.exists(merchant_path):
+        with open(merchant_path, encoding="utf-8") as f:
             for pool in json.load(f)["pools"]:
-                for p in pool["prizes"]:
-                    # 只抓「實際要顯示的圖」。61 個台服專屬獎品自己沒有圖，
-                    # 抓它們自己的 ID 只會每次重跑都失敗 61 次，所以走 icon 欄位就好。
-                    icon = p.get("icon")
-                    if not icon:
-                        continue
-                    # monster-book 的 mob key 是字串，統一成字串才能取聯集
-                    if icon["kind"] == "mob":
-                        gacha_mobs.add(str(icon["id"]))
-                    else:
-                        gacha_items.add(icon["id"])
+                merchant_items |= {p["itemId"] for p in pool["prizes"]}
 
     os.makedirs(os.path.join(PUB, "item"), exist_ok=True)
     os.makedirs(os.path.join(PUB, "mob"), exist_ok=True)
     os.makedirs(os.path.join(PUB, "npc"), exist_ok=True)
 
     jobs = []
-    for mob_id in sorted(set(mobs) | gacha_mobs | q_mobs):
+    for mob_id in sorted(set(mobs) | q_mobs):
         jobs.append(("mob", mob_id, "mob/{id}/render/{stance}", os.path.join(PUB, "mob", f"{mob_id}.gif")))
-    items = {i for v in mobs.values() for i in v["rewards"]} | sup_items | gacha_items | set(EXTRA_ITEMS)
+    items = {i for v in mobs.values() for i in v["rewards"]} | sup_items | merchant_items | set(EXTRA_ITEMS)
     for item_id in sorted(items):
         jobs.append(("item", item_id, "item/{id}/icon", os.path.join(PUB, "item", f"{item_id}.png")))
-    for npc_id in GACHA_NPCS:
+    for npc_id in MERCHANT_NPCS:
         jobs.append(("npc", npc_id, "npc/{id}/render/stand", os.path.join(PUB, "npc", f"{npc_id}.png")))
     for npc_id in sorted(q_npcs):
         jobs.append(("npc", npc_id, "npc/{id}/render/stand", os.path.join(PUB, "npc", f"{npc_id}.gif")))

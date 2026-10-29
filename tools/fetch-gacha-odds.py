@@ -1,4 +1,4 @@
-"""抓取轉蛋活動的官方機率表，存成快照。
+"""抓取官方活動（轉蛋、神秘商人）的機率表，存成快照。
 
 用法：
     python tools/fetch-gacha-odds.py "https://maplestoryclassic-event.beanfun.com/EventAd/EventAd?eventAdId=19046"
@@ -15,6 +15,15 @@
 活動頁本身是 Vue SPA，HTML 裡沒有資料，真資料在：
     GET /api/EventAd/GetDetail?EventADID=<id>
 回傳 data.event[0]（標題/起訖）與 data.topics[]（topicContent 是 HTML 表格）。
+
+兩種表格版面都吃得下：
+- 轉蛋（19046）：一列一組「名稱｜機率」
+- 神秘商人（20352）：一列三組「名稱｜機率｜名稱｜機率｜名稱｜機率」。官方的閱讀順序是
+  **一欄一欄由上往下**（第一欄開頭那串跟遊戲內「本季特別商品」的排列一模一樣），
+  所以存檔順序是先第一欄整欄、再第二欄、再第三欄，不是一列一列橫著讀。
+
+神秘商人是常駐系統，API 的起訖填的是 1900~2100 這種佔位值，真正的當期期間寫在
+機率說明的內文裡（「2026/10/29(四)維護後~2026/11/12(四)07:59」）。遇到佔位值就改讀內文。
 """
 
 import argparse
@@ -61,24 +70,53 @@ def strip_tags(s):
 
 
 def parse_prizes(topic_content):
-    """從機率說明的 HTML 表格解析出 [(名稱, 機率float), ...]。
+    """從機率說明的 HTML 表格解析出 [{name, rate}, ...]。
 
+    每列可以有好幾組「名稱｜機率」，輸出順序是一欄一欄由上往下（見模組 docstring）。
     表頭那列（機率欄不是 N% 格式）會自然被跳過，不必假設它固定在第一列。
     """
-    prizes = []
+    columns = []  # columns[k] = 第 k 組欄位由上往下的獎品
     for row in re.findall(r"<tr[^>]*>(.*?)</tr>", topic_content, re.S):
         cells = [strip_tags(c) for c in re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
-        if len(cells) < 2:
-            continue
-        name, rate = cells[0], cells[1]
-        m = re.fullmatch(r"([\d.]+)\s*%", rate)
-        if not name or not m:
-            continue
-        prizes.append({"name": name, "rate": float(m.group(1))})
-    return prizes
+        for k in range(len(cells) // 2):
+            name, rate = cells[2 * k], cells[2 * k + 1]
+            m = re.fullmatch(r"([\d.]+)\s*%", rate)
+            if not name or not m:
+                continue
+            while len(columns) <= k:
+                columns.append([])
+            columns[k].append({"name": name, "rate": float(m.group(1))})
+    return [p for col in columns for p in col]
+
+
+def is_placeholder(iso):
+    """常駐活動的起訖是 1900-01-01 / 2100-12-31 這種佔位值。"""
+    return not iso or not (2000 <= int(iso[:4]) <= 2090)
+
+
+PERIOD_RE = re.compile(
+    r"(\d{4})/(\d{1,2})/(\d{1,2})\([^)]*\)[^~～]*[~～]\s*"
+    r"(\d{4})/(\d{1,2})/(\d{1,2})\([^)]*\)\s*(\d{1,2}):(\d{2})"
+)
+
+
+def parse_period(text):
+    """從內文找「2026/10/29(四)維護後~2026/11/12(四)07:59」，回傳 (起, 訖, 原文)。
+
+    起始只寫到「維護後」沒有時刻，所以只取日期。
+    """
+    m = PERIOD_RE.search(text)
+    if not m:
+        return None
+    y1, m1, d1, y2, m2, d2, hh, mm = (int(x) for x in m.groups())
+    start = f"{y1:04d}-{m1:02d}-{d1:02d}T00:00:00"
+    end = f"{y2:04d}-{m2:02d}-{d2:02d}T{hh:02d}:{mm:02d}:00"
+    return start, end, m.group(0)
 
 
 def main():
+    # Windows 終端機預設 cp950，印 ⚠️ 會直接 UnicodeEncodeError
+    sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("event", help="活動網址或 eventAdId")
     ap.add_argument("--force", action="store_true", help="覆蓋已存在的快照")
@@ -108,12 +146,22 @@ def main():
         raise SystemExit(f"eventAdId={event_id} 機率表解析出 0 筆，HTML 結構可能變了")
 
     total = round(sum(p["rate"] for p in prizes), 4)
+    start, end, period_text = ev.get("startDate") or "", ev.get("endDate") or "", None
+    if is_placeholder(start) or is_placeholder(end):
+        found = parse_period(strip_tags(odds_topic.get("topicContent") or ""))
+        if found is None:
+            raise SystemExit(
+                f"eventAdId={event_id} 的起訖是佔位值（{start} ~ {end}），內文也找不到期間，請人工檢查"
+            )
+        start, end, period_text = found
     snapshot = {
         "meta": {
             "eventAdId": event_id,
             "title": ev.get("mainTitle") or "",
-            "startDate": ev.get("startDate") or "",
-            "endDate": ev.get("endDate") or "",
+            "startDate": start,
+            "endDate": end,
+            # 有值 = 起訖是從內文讀出來的（API 給的是佔位值）
+            "periodText": period_text,
             "capturedAt": datetime.now(TW).strftime("%Y-%m-%d"),
             "source": API.format(id=event_id),
             "prizeCount": len(prizes),
@@ -128,7 +176,7 @@ def main():
     with open(dest, "w", encoding="utf-8") as f:
         json.dump(snapshot, f, ensure_ascii=False, indent=1)
 
-    print(f"{ev.get('mainTitle')} | {ev.get('startDate')} ~ {ev.get('endDate')}")
+    print(f"{ev.get('mainTitle')} | {start} ~ {end}")
     print(f"獎品 {len(prizes)} 筆，機率總和 {total}%")
     if abs(total - 100) > 1:
         print(f"⚠️  機率總和偏離 100% 達 {abs(total - 100):.2f} 個百分點，可能解析漏列，請人工核對")
