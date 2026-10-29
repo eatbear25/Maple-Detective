@@ -1,0 +1,458 @@
+{
+ "meta": {
+  "format": 1,
+  "actions": [
+   "stand1",
+   "walk1",
+   "stand2",
+   "walk2",
+   "jump",
+   "alert",
+   "prone",
+   "sit",
+   "ladder",
+   "rope",
+   "fly",
+   "default",
+   "blink",
+   "smile",
+   "cheers",
+   "love",
+   "wink",
+   "chu",
+   "angry",
+   "cry",
+   "troubled",
+   "bewildered",
+   "stunned",
+   "shine",
+   "glitter",
+   "despair",
+   "oops",
+   "vomit",
+   "pain",
+   "hum",
+   "bowing",
+   "hot",
+   "dam",
+   "backDefault"
+  ],
+  "regions": [
+   "TMS/209",
+   "TWMS/256",
+   "GMS/83",
+   "GMS/270",
+   "KMS/389",
+   "JMS/444",
+   "CMS/202",
+   "SEA/220"
+  ],
+  "updatedAt": "2026-10-29T19:23:00+08:00"
+ },
+ "items": {
+  "1000093": {
+   "state": "ok",
+   "src": "CMS/202",
+   "bytes": 6734,
+   "books": 1,
+   "frames": 6
+  },
+  "1001115": {
+   "state": "ok",
+   "src": "CMS/202",
+   "bytes": 6734,
+   "books": 1,
+   "frames": 6
+  },
+  "1003965": {
+   "state": "ok",
+   "src": "CMS/202",
+   "bytes": 5618,
+   "books": 2,
+   "frames": 2
+  },
+  "1004122": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 1998,
+   "books": 3,
+   "frames": 23
+  },
+  "1004526": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 3667,
+   "books": 2,
+   "frames": 8
+  },
+  "1004818": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 2164,
+   "books": 1,
+   "frames": 6
+  },
+  "1004843": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 4806,
+   "books": 3,
+   "frames": 16
+  },
+  "1004845": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 1182,
+   "books": 2,
+   "frames": 8
+  },
+  "1005222": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 7401,
+   "books": 2,
+   "frames": 10
+  },
+  "1005277": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 1800,
+   "books": 2,
+   "frames": 12
+  },
+  "1005278": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 2437,
+   "books": 2,
+   "frames": 12
+  },
+  "1005576": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 15399,
+   "books": 2,
+   "frames": 16
+  },
+  "1005577": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 14799,
+   "books": 2,
+   "frames": 16
+  },
+  "1006185": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 2352,
+   "books": 2,
+   "frames": 8
+  },
+  "1006900": {
+   "state": "ok",
+   "src": "GMS/270",
+   "bytes": 1301,
+   "books": 3,
+   "frames": 8
+  },
+  "1012633": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 479,
+   "books": 3,
+   "frames": 7
+  },
+  "1042321": {
+   "state": "ok",
+   "src": "CMS/202",
+   "bytes": 3289,
+   "books": 2,
+   "frames": 5
+  },
+  "1048001": {
+   "state": "skipped",
+   "reason": "不是 effect（情侶特效那類）"
+  },
+  "1048002": {
+   "state": "skipped",
+   "reason": "不是 effect（情侶特效那類）"
+  },
+  "1049000": {
+   "state": "skipped",
+   "reason": "不是 effect（情侶特效那類）"
+  },
+  "1050414": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 6853,
+   "books": 1,
+   "frames": 6
+  },
+  "1051483": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 6853,
+   "books": 1,
+   "frames": 6
+  },
+  "1073202": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 12083,
+   "books": 11,
+   "frames": 21
+  },
+  "1082692": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 24206,
+   "books": 1,
+   "frames": 24
+  },
+  "1102095": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 38524,
+   "books": 1,
+   "frames": 12
+  },
+  "1102096": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 51249,
+   "books": 2,
+   "frames": 24
+  },
+  "1102097": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 47752,
+   "books": 1,
+   "frames": 12
+  },
+  "1102148": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 98998,
+   "books": 3,
+   "frames": 54
+  },
+  "1102149": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 155592,
+   "books": 1,
+   "frames": 18
+  },
+  "1102513": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 316531,
+   "books": 3,
+   "frames": 36
+  },
+  "1102551": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 304591,
+   "books": 3,
+   "frames": 32
+  },
+  "1102583": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 2203,
+   "books": 5,
+   "frames": 16
+  },
+  "1102667": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 30015,
+   "books": 1,
+   "frames": 8
+  },
+  "1102669": {
+   "state": "ok",
+   "src": "GMS/270",
+   "bytes": 6390,
+   "books": 6,
+   "frames": 34
+  },
+  "1102768": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 2195,
+   "books": 4,
+   "frames": 32
+  },
+  "1102772": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 4750,
+   "books": 4,
+   "frames": 32
+  },
+  "1102814": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 117023,
+   "books": 1,
+   "frames": 20
+  },
+  "1102857": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 24792,
+   "books": 6,
+   "frames": 41
+  },
+  "1102859": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 88251,
+   "books": 4,
+   "frames": 24
+  },
+  "1102864": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 15234,
+   "books": 1,
+   "frames": 6
+  },
+  "1102865": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 162604,
+   "books": 1,
+   "frames": 10
+  },
+  "1102900": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 49732,
+   "books": 1,
+   "frames": 16
+  },
+  "1102937": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 66578,
+   "books": 1,
+   "frames": 8
+  },
+  "1102939": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 3389,
+   "books": 2,
+   "frames": 16
+  },
+  "1102954": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 12068,
+   "books": 3,
+   "frames": 24
+  },
+  "1102955": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 10410,
+   "books": 1,
+   "frames": 4
+  },
+  "1102972": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 76875,
+   "books": 3,
+   "frames": 36
+  },
+  "1102992": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 19453,
+   "books": 1,
+   "frames": 8
+  },
+  "1102993": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 88348,
+   "books": 3,
+   "frames": 32
+  },
+  "1103002": {
+   "state": "ok",
+   "src": "CMS/202",
+   "bytes": 38736,
+   "books": 11,
+   "frames": 26
+  },
+  "1103008": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 17592,
+   "books": 1,
+   "frames": 6
+  },
+  "1103017": {
+   "state": "ok",
+   "src": "TMS/209",
+   "bytes": 45536,
+   "books": 1,
+   "frames": 6
+  },
+  "1103150": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 201696,
+   "books": 2,
+   "frames": 13
+  },
+  "1103155": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 341987,
+   "books": 1,
+   "frames": 12
+  },
+  "1103157": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 197051,
+   "books": 4,
+   "frames": 48
+  },
+  "1103426": {
+   "state": "ok",
+   "src": "TWMS/256",
+   "bytes": 54212,
+   "books": 4,
+   "frames": 64
+  },
+  "1103617": {
+   "state": "ok",
+   "src": "GMS/270",
+   "bytes": 78293,
+   "books": 7,
+   "frames": 73
+  },
+  "1103910": {
+   "state": "ok",
+   "src": "GMS/270",
+   "bytes": 62134,
+   "books": 7,
+   "frames": 73
+  },
+  "1103918": {
+   "state": "ok",
+   "src": "JMS/444",
+   "bytes": 4448,
+   "books": 1,
+   "frames": 1
+  }
+ }
+}

@@ -8,6 +8,8 @@ export interface EquippedItem {
   path: string;
   /** 透明道具（透明帽那類）：佔著部位但沒有圖，renderer 直接跳過 */
   blank?: boolean;
+  /** 另有道具特效層（Effect/ItemEff），renderer 要多抓一份來畫 */
+  fx?: boolean;
 }
 
 /**

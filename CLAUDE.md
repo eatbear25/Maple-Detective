@@ -162,8 +162,13 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
    重跑會接著抓）→ `public/wz-static/fashion/v1/<id>.json`（烤好的圖）＋
    `public/icons/fashion/<id>.png`（縮圖）＋ `reference-data/fashion-coverage.json`
    （每件的來源版本、吻合分數，或「透明」「找不到」）
+   4b. `python tools/fetch-item-effects.py`（**要連網**，約一分鐘）→ `public/wz-static/fashion/fx-v1/<id>.json`
+   ＋ `reference-data/fashion-fx-coverage.json`（道具特效層，見下面「道具特效層」）
 5. `python tools/build-fashion-data.py` → `src/data/generated/fashion-catalog.json`
    （2026-10-13：7220 件時裝 ＋ 46 件特效。7194 件有圖、17 件透明道具、9 件找不到）
+   （2026-10-29 跟著客戶端 10/22–23 更新重跑：8660 件時裝 ＋ 49 件特效。8632 件有圖、
+   18 件透明、10 件找不到；新增 1440 件、沒有任何一件下架。掉落表／怪物數值／地圖與怪物
+   名稱同時重抽比對過，內容沒變，所以怪物／任務／技能管線沒跟著跑）
 
 **時裝的圖是預先烤好的靜態檔（2026-10-13 改，原本是瀏覽器執行期直接打 maplestory.io）**。
 改的理由是量出來的，不是感覺：
@@ -201,7 +206,8 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
   jsDelivr 把 `@main` 解析成哪個 commit 會快取 12 小時，新烤的檔案推上去之後 CDN 可能
   半天都還回 404。沒有這層的話，每次補新時裝上線試衣間就會壞到 CDN 更新為止。
 - **repo 體積**：這批素材讓 `public/` 多了 47MB（烤好的圖 40MB、縮圖 7MB，共一萬四千多個
-  小檔），`public/` 變成 68MB、整個 repo 工作樹約 87MB。jsDelivr 的上限是整個套件 150MB、
+  小檔），`public/` 變成 68MB、整個 repo 工作樹約 87MB（2026-10-29 補完 1440 件新時裝後：
+  烤好的圖 47MB、縮圖 9MB，`public/` 75MB、工作樹 94MB）。jsDelivr 的上限是整個套件 150MB、
   GitHub 來源單檔 20MB（它的 README 寫的），目前還有餘裕，但再加大包素材前要先算一下。
 
 **WZJS 的連結節點（這次才看懂，`tools/wzjs.py` 的註解原本把 12 跟 18 記反了）**：Character 包裡
@@ -211,8 +217,9 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
 另一張，武器大量用）。`decode(..., links=True)` 會把這些都交出來。也就是說**客戶端的結構是
 完整的，缺的只有像素**。
 
-**還是拿不到的 9 件**：「瞭望的臉型」8 個顏色（57068~57768，哪個版本的 WZ 都沒有這個 img）
-與「鷸巢穴」1002822（各版本同 ID 的帽子是另一種畫法，指紋 0%）。要補只剩客戶端
+**還是拿不到的 10 件**：「瞭望的臉型」8 個顏色（57068~57768，哪個版本的 WZ 都沒有這個 img）
+與「鷸巢穴」1002822（各版本同 ID 的帽子是另一種畫法，指紋 0%），2026-10-29 再加「失神眼」
+26090（各版本同 ID 的臉指紋只有 4%，是別件；那次 `--retry-missing` 重問過舊的 9 件，結果不變）。要補只剩客戶端
 `.wzspritesheet` 那條被 128-bit 雜湊索引擋住的路（見 `.scratch/gacha-sim/research-item-icons.md`）。
 另外**髮際陰影（hairShade）沒畫**：單件端點不給這張圖，但 WZ 瀏覽端點問得到
 `default/hairShade/<膚色碼>`（0~4、9~11，剛好對上 8 種膚色），想補的話走 `walk_wz` 那條路。
@@ -232,6 +239,26 @@ maplestory.io 逐幀比對完全一致，所以借圖不會跑位。錨點就是
 順帶修好 `tools/wzjs.py` 兩個坑（之前沒有人讀到那層所以沒發現）：canvas 節點**有子節點**
 （origin/delay 掛在底下，`decode(..., expand_canvas=True)` 才展開）、vector 值池是
 **float32** 不是 int32（原本會讀成 1093664768 這種天文數字）。
+
+**道具特效層（ItemEff，2026-10-29 補上）**：玩家回報「森林護者帽子穿上去看不到」才發現，
+有些時裝的外觀不在 Character 包，而在 `Effect/ItemEff.wzjson`（客戶端在小包
+`json_6baa5b…`，跟 CharacterEff 同包）。catalog 裡有 59 件在這張表：**33 件本體只是
+1×1 空圖、外觀全在特效層**（多半是會動的披風，另有森林／黑夜護者帽子、獨眼死神），
+其餘是本體有圖、特效疊在上面的光效；3 件情侶 T 恤是「靠近另一半才出現」的，不畫。
+`tools/fetch-item-effects.py` 把它烤到 `public/wz-static/fashion/fx-v1/`（56 件、2.8MB），
+catalog 帶 `fx: 1`，試衣間多抓一份來畫。**另放資料夾**是因為本體那批掛一年的 immutable
+快取，併進去就得八千多件全部換網址重烤。三個坑：
+- **定位規則照 MapleSalon2**（`categorizedItem.resolveEffectFrames`，它註明沿用
+  MapleNecrocer）：錨在角色**每一格**的 brow，動作層 `pos` 1 不偏、0 往下 50、沒寫的
+  往右 10 往下 50；`z ≥ 2` 畫在整隻角色前面。拿 MapleSalon2 的截圖比過森林護者帽子，一致。
+- **maplestory.io 單件 JSON 的 `itemEffects` 不能用**：那是一串沒有動作名的清單、筆數還跟
+  客戶端對不上（37 vs 35），靠順序對會把爬繩配到正面那本。改成結構用客戶端、像素向
+  WZ 瀏覽端點一張一張要。
+- **WZ 端點穿過 `_inlink` 節點讀 origin 會讀到被借那張的**（破舊魔女披風的 proneStab：
+  客戶端 63,34、它回 39,-12），抽驗時要跳過這種節點，不然會誤判成撞 ID。
+
+另有 6 件披風（紅色刻印、泡泡小兔、春日之心、很高很高的樹、快樂海豚、球場上觀眾席）
+本體也是空圖、但不在 ItemEff，原因還沒查。
 
 **拿不到的**：裝備自帶的特效（`Effect/CharacterEff.wzjson` 19 件，如星星王子披風、
 各種發光戒指）——maplestory.io 的 item JSON 不含這層、也沒有 effect 端點，只剩客戶端

@@ -5,10 +5,10 @@
  * - 身體/頭、zmap（圖層順序）、smap（部位遮蔽）走 /wz-static/（隨站部署，1.3MB）。
  *   maplestory.io **沒有**身體與頭的原始資料（實測 TMS/209、TWMS/256、GMS/62 打
  *   item/2000 一律回 null），所以這一小包非自己帶不可。
- * - 時裝走預先烤好的靜態檔 /wz-static/fashion/v1/（見 ./baked.ts）。
+ * - 時裝走預先烤好的靜態檔 /wz-static/fashion/v1/，道具特效層在 fx-v1/（見 ./baked.ts）。
  * - 特效還是執行期打 maplestory.io（見 ./msio.ts）。
  */
-import { fetchBakedItemWz } from "./baked";
+import { fetchBakedItemWz, fetchItemEffect as fetchBakedItemEffect, type ItemEffect } from "./baked";
 import { fetchEffectBooks as fetchEffectFromMsio, type EffectBooks } from "./msio";
 import { ASSET_BASE_URL } from "@/lib/asset-base";
 
@@ -83,6 +83,13 @@ export function fetchItemWz(imgPath: string): Promise<unknown> {
   const id = ITEM_ID_RE.exec(imgPath);
   if (!id) return Promise.reject(new Error(`無法從路徑取得道具 id：${imgPath}`));
   return cachedPromise(itemCache, imgPath, 300, () => fetchBakedItemWz(Number(id[1])));
+}
+
+const itemEffectCache = new Map<string, Promise<ItemEffect>>();
+
+/** 時裝的道具特效層（只有 catalog 標了 fx 的才有） */
+export function fetchItemEffect(id: number): Promise<ItemEffect> {
+  return cachedPromise(itemEffectCache, String(id), 40, () => fetchBakedItemEffect(id));
 }
 
 const effectCache = new Map<string, Promise<EffectBooks>>();

@@ -42,6 +42,11 @@ export interface FashionItem {
   preview: PreviewState;
   /** 有沒有縮圖（none 的多半沒有，免得清單對著不存在的檔案發請求） */
   hasIcon: boolean;
+  /**
+   * 有道具特效層（Effect/ItemEff，見 tools/fetch-item-effects.py）。
+   * 有些時裝的外觀整個放在這一層、本體只是空圖（森林護者帽子、多數會動的披風）
+   */
+  hasEffect: boolean;
 }
 
 /**
@@ -68,6 +73,8 @@ interface RawRow {
   v?: 0 | 2;
   /** 0＝沒有縮圖（省略＝有） */
   ic?: 0;
+  /** 1＝有道具特效層（省略＝沒有） */
+  fx?: 1;
 }
 
 interface RawEffectRow {
@@ -92,6 +99,7 @@ export const fashionItems: FashionItem[] = data.items.map((r) => ({
   gender: r.g as Gender,
   preview: r.v === 0 ? "none" : r.v === 2 ? "blank" : "ok",
   hasIcon: r.ic !== 0,
+  hasEffect: r.fx === 1,
 }));
 
 const byId = new Map(fashionItems.map((it) => [it.id, it]));

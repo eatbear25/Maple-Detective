@@ -20,8 +20,12 @@
  *
  * 錨點分兩種（2026-08-20 以「圖本身該落在哪」驗出來的，見 buildEffectTrack）：
  * 一般特效錨在角色原點、跟隨隊列錨在 navel。
+ *
+ * 時裝自帶的道具特效層（Effect/ItemEff）也走特效這條路，錨在每一格的 brow，
+ * 一件一條時間軸（見 buildItemEffectTrack）。有些時裝的外觀整個在這一層。
  */
-import { fetchItemWz, fetchMappings, fetchEffectBooks, imageUrl } from "./wz";
+import { fetchItemWz, fetchMappings, fetchEffectBooks, fetchItemEffect, imageUrl } from "./wz";
+import type { ItemEffect } from "./baked";
 import type { CharacterLook, EffectSpec } from "./config";
 
 interface Vec2 {
@@ -107,6 +111,8 @@ export interface PreparedFrame {
   delay: number;
   /** 這一格的肚臍座標（跟隨隊列的特效錨在這裡，會隨呼吸／步伐上下） */
   navel: Vec2;
+  /** 這一格的眉心座標（道具特效層錨在這裡） */
+  brow: Vec2;
 }
 
 /** 特效的一格：畫在角色後方與前方的兩疊（角色本身夾在中間） */
@@ -116,12 +122,19 @@ export interface PreparedEffectFrame {
   delay: number;
 }
 
+/** 特效錨在哪：角色原點，或角色這一格的 navel／brow（會跟著呼吸、步伐動） */
+type EffectAnchor = "origin" | "navel" | "brow";
+
+/** 一條特效時間軸。特效各跑各的，跟角色動畫、跟彼此都不對齊 */
+export interface PreparedEffectTrack {
+  frames: PreparedEffectFrame[];
+  anchor: EffectAnchor;
+}
+
 export interface PreparedAnimation {
   frames: PreparedFrame[];
-  /** 特效的時間軸，跟角色動畫各跑各的 */
-  effectFrames: PreparedEffectFrame[];
-  /** 特效錨在 navel（跟隨隊列）而不是角色原點 */
-  effectFollowsNavel: boolean;
+  /** 特效的時間軸（開著的特效＋身上時裝的特效層），依 z 由後往前排 */
+  effects: PreparedEffectTrack[];
   /** 所有 frame 的聯集邊界，畫布共用避免動畫抖動 */
   width: number;
   height: number;
@@ -610,7 +623,7 @@ function pickEffectBook(books: Record<string, unknown>, action: string): string 
     ? [action, "backDefault", "default"]
     : [action, "default", "backDefault"];
   for (const key of candidates) {
-    if (books[key]) return key;
+    if (books[key] !== undefined) return key;
   }
   return Object.keys(books)[0];
 }
@@ -666,6 +679,50 @@ async function buildEffectTrack(
 }
 
 /**
+ * 道具特效層錨點的偏移。規則出自 MapleSalon2 的 categorizedItem.getEffectPos
+ * （它註明沿用 MapleNecrocer）：pos 1 不偏、pos 0 往下 50、沒寫的往右 10 往下 50。
+ */
+function itemEffectOffset(pos: number | null): Vec2 {
+  if (pos === 1) return { x: 0, y: 0 };
+  if (pos === 0) return { x: 0, y: 50 };
+  return { x: 10, y: 50 };
+}
+
+/**
+ * 時裝自帶的道具特效層（Effect/ItemEff）。有些時裝的外觀整個在這一層、本體只是
+ * 一張空圖（森林護者帽子、多數會動的披風），其餘是疊在本體上的光效。
+ *
+ * 畫法照 MapleSalon2 的 categorizedItem.resolveEffectFrames 與
+ * characterBodyFrame.updateEffectAncher：錨在角色**這一格**的 brow
+ * （所以會跟著呼吸、步伐上下），再加上 pos 決定的偏移；z ≥ 2 畫在整隻角色前面，
+ * 其餘畫在後面——門檻跟 0501 特效同一條。動作挑法也跟 0501 特效一樣
+ * （沒有這個動作就退回 default／背面動作退回 backDefault）。
+ */
+function buildItemEffectTrack(
+  effect: ItemEffect,
+  action: string,
+): { track: PreparedEffectTrack; z: number } | null {
+  const key = pickEffectBook(effect.act, action);
+  const book = key === undefined ? undefined : effect.books[effect.act[key]];
+  if (!book?.frames.length) return null;
+  const offset = itemEffectOffset(book.pos);
+  const front = book.z >= 2;
+  const frames = book.frames.map(({ image, rect, origin, delay }) => {
+    const op: DrawOp = {
+      img: image,
+      x: offset.x - origin.x,
+      y: offset.y - origin.y,
+      sx: rect[0],
+      sy: rect[1],
+      w: rect[2],
+      h: rect[3],
+    };
+    return { back: front ? [] : [op], front: front ? [op] : [], delay };
+  });
+  return { track: { frames, anchor: "brow" }, z: book.z };
+}
+
+/**
  * 站立／走路的 1（空手）、2（持武）姿勢由武器種類決定：
  * 單手武器只有 stand1、雙手只有 stand2。選到武器沒有的姿勢時，
  * 整隻角色改用武器支援的那個（遊戲內也是如此）。
@@ -706,17 +763,24 @@ export async function prepareCharacterFrames({
   );
 
   // 身體與頭是必要的（走自家 /wz-static，正常不會失敗）；裝備逐件載入，失敗的跳過。
-  // 兩邊一起發，不要等身體回來才開始抓裝備
-  const [body, head, settled] = await Promise.all([
+  // 全部一起發（含道具特效層），不要等身體回來才開始抓裝備
+  const fxEquips = equips.filter((equip) => equip.fx);
+  const [body, head, settled, fxSettled] = await Promise.all([
     loadItem(bodyId, `Character/${pad8(bodyId)}.img`),
     loadItem(headId, `Character/${pad8(headId)}.img`),
     Promise.allSettled(equips.map((equip) => loadItem(equip.id, equip.path))),
+    Promise.allSettled(fxEquips.map((equip) => fetchItemEffect(equip.id))),
   ]);
   const items: LoadedItem[] = [body, head];
   const missing: number[] = [];
   settled.forEach((result, i) => {
     if (result.status === "fulfilled") items.push(result.value);
     else missing.push(equips[i].id);
+  });
+  const itemEffects: ItemEffect[] = [];
+  fxSettled.forEach((result, i) => {
+    if (result.status === "fulfilled") itemEffects.push(result.value);
+    else if (!missing.includes(fxEquips[i].id)) missing.push(fxEquips[i].id);
   });
 
   const action = resolveStance(requestedAction, items);
@@ -741,7 +805,7 @@ export async function prepareCharacterFrames({
     (item) => item.isExpressionItem && !item.isBody && item.isOverrideFace,
   );
 
-  const rawFrames: { placed: PlacedPiece[]; delay: number; navel: Vec2 }[] = [];
+  const rawFrames: { placed: PlacedPiece[]; delay: number; navel: Vec2; brow: Vec2 }[] = [];
   for (let frame = 0; frame < frameCount; frame++) {
     const bodyFrame = bodyAction[frame] as Record<string, unknown> | undefined;
     const delay =
@@ -811,10 +875,13 @@ export async function prepareCharacterFrames({
 
     // 4. 圖層排序（sortKey 小的先畫 = 在後面）
     visible.sort((a, b) => a.piece.sortKey - b.piece.sortKey);
+    const navel = anchors.get("navel") ?? { x: 0, y: 0 };
     rawFrames.push({
       placed: visible,
       delay,
-      navel: anchors.get("navel") ?? { x: 0, y: 0 },
+      navel,
+      // brow 由頭登錄；萬一這格沒有頭（不該發生），退回 navel 免得特效飛到原點
+      brow: anchors.get("brow") ?? navel,
     });
   }
 
@@ -838,7 +905,7 @@ export async function prepareCharacterFrames({
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-  const frames: PreparedFrame[] = rawFrames.map(({ placed, delay, navel }) => {
+  const frames: PreparedFrame[] = rawFrames.map(({ placed, delay, navel, brow }) => {
     const ops: DrawOp[] = [];
     for (const { piece, world } of placed) {
       const img = piece.image ?? (piece.url ? images.get(piece.url) : undefined);
@@ -854,39 +921,59 @@ export async function prepareCharacterFrames({
       maxY = Math.max(maxY, y + op.h);
       ops.push(op);
     }
-    return { ops, delay, navel };
+    return { ops, delay, navel, brow };
   });
 
-  // 跟隨隊列錨在 navel，而 navel 每一格都在動（呼吸／步伐），
-  // 邊界要涵蓋整段動畫的擺動範圍，畫布才不會隨格數變大變小
-  const effectFollowsNavel = look.effect?.kind === "follow";
-  const navels = rawFrames.map((f) => f.navel);
-  const navelRange = effectFollowsNavel
-    ? {
-        minX: Math.min(...navels.map((n) => n.x)),
-        maxX: Math.max(...navels.map((n) => n.x)),
-        minY: Math.min(...navels.map((n) => n.y)),
-        maxY: Math.max(...navels.map((n) => n.y)),
+  // 開著的特效（0501）＋身上時裝的特效層，依 z 由後往前排
+  const tracks: { track: PreparedEffectTrack; z: number }[] = [];
+  if (effectTrack.frames.length > 0 && look.effect) {
+    const effectFrames: PreparedEffectFrame[] = effectTrack.frames.map(({ ops, delay }) => {
+      const back: DrawOp[] = [];
+      const front: DrawOp[] = [];
+      for (const op of ops) {
+        const img = images.get(op.url);
+        if (!img) continue;
+        (op.front ? front : back).push(wholeImage(img, op.dx - op.origin.x, -op.origin.y));
       }
-    : { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+      return { back, front, delay };
+    });
+    tracks.push({
+      track: { frames: effectFrames, anchor: look.effect.kind === "follow" ? "navel" : "origin" },
+      z: look.effect.z,
+    });
+  }
+  for (const effect of itemEffects) {
+    const built = buildItemEffectTrack(effect, action);
+    if (built) tracks.push(built);
+  }
+  tracks.sort((a, b) => a.z - b.z);
+  const effects = tracks.map(({ track }) => track);
+
+  // 錨在 navel／brow 的特效會跟著角色每一格的呼吸、步伐移動，
+  // 邊界要涵蓋整段動畫的擺動範圍，畫布才不會隨格數變大變小
+  const anchorRange = (anchor: EffectAnchor) => {
+    if (anchor === "origin") return { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+    const points = rawFrames.map((f) => f[anchor]);
+    return {
+      minX: Math.min(...points.map((p) => p.x)),
+      maxX: Math.max(...points.map((p) => p.x)),
+      minY: Math.min(...points.map((p) => p.y)),
+      maxY: Math.max(...points.map((p) => p.y)),
+    };
+  };
 
   // 特效的邊界一起算進來（畫布要放得下跟在身後的隊列與大張的翅膀）
-  const effectFrames: PreparedEffectFrame[] = effectTrack.frames.map(({ ops, delay }) => {
-    const back: DrawOp[] = [];
-    const front: DrawOp[] = [];
-    for (const op of ops) {
-      const img = images.get(op.url);
-      if (!img) continue;
-      const x = op.dx - op.origin.x;
-      const y = -op.origin.y;
-      minX = Math.min(minX, x + navelRange.minX);
-      minY = Math.min(minY, y + navelRange.minY);
-      maxX = Math.max(maxX, x + navelRange.maxX + img.naturalWidth);
-      maxY = Math.max(maxY, y + navelRange.maxY + img.naturalHeight);
-      (op.front ? front : back).push(wholeImage(img, x, y));
+  for (const { frames: effectFrames, anchor } of effects) {
+    const range = anchorRange(anchor);
+    for (const { back, front } of effectFrames) {
+      for (const op of [...back, ...front]) {
+        minX = Math.min(minX, op.x + range.minX);
+        minY = Math.min(minY, op.y + range.minY);
+        maxX = Math.max(maxX, op.x + range.maxX + op.w);
+        maxY = Math.max(maxY, op.y + range.maxY + op.h);
+      }
     }
-    return { back, front, delay };
-  });
+  }
 
   if (!Number.isFinite(minX)) throw new Error("此組合沒有任何可繪製的部件");
 
@@ -898,8 +985,7 @@ export async function prepareCharacterFrames({
   const PADDING = 4;
   return {
     frames,
-    effectFrames,
-    effectFollowsNavel,
+    effects,
     width: Math.ceil(maxX - minX) + PADDING * 2,
     height: Math.ceil(maxY - minY) + PADDING * 2,
     offsetX: -minX + PADDING,
@@ -910,20 +996,23 @@ export async function prepareCharacterFrames({
 
 /**
  * 把一個 frame 畫到 canvas 上（呼叫端負責清空與尺寸）。
- * 特效有自己的格數與節拍，所以 index 分開傳；後方那疊先畫、前方那疊最後畫。
+ * 每條特效有自己的格數與節拍，所以 index 分開傳（effectIndexes[i] 對應 effects[i]）；
+ * 所有特效的後方那疊先畫、角色、再畫前方那疊。
  */
 export function drawFrame(
   ctx: CanvasRenderingContext2D,
   prepared: PreparedAnimation,
   frameIndex: number,
   flipX: boolean,
-  effectIndex = 0,
+  effectIndexes: number[] = [],
 ) {
   const frame = prepared.frames[frameIndex % prepared.frames.length];
   if (!frame) return;
-  const effect = prepared.effectFrames.length
-    ? prepared.effectFrames[effectIndex % prepared.effectFrames.length]
-    : undefined;
+  const current = prepared.effects.map((track, i) => ({
+    effect: track.frames[(effectIndexes[i] ?? 0) % track.frames.length],
+    // 錨在 navel／brow 的特效黏在角色身上，會跟著這一格的呼吸／步伐上下
+    anchor: track.anchor === "origin" ? { x: 0, y: 0 } : frame[track.anchor],
+  }));
 
   ctx.save();
   ctx.imageSmoothingEnabled = false;
@@ -934,12 +1023,15 @@ export function drawFrame(
   const blit = (op: DrawOp, dx: number, dy: number) =>
     ctx.drawImage(op.img, op.sx, op.sy, op.w, op.h, Math.round(dx), Math.round(dy), op.w, op.h);
   const draw = (op: DrawOp) => blit(op, op.x + prepared.offsetX, op.y + prepared.offsetY);
-  // 跟隨隊列黏在肚臍上，會跟著角色這一格的呼吸／步伐上下
-  const anchor = prepared.effectFollowsNavel ? frame.navel : { x: 0, y: 0 };
-  const drawEffect = (op: DrawOp) =>
-    blit(op, op.x + anchor.x + prepared.offsetX, op.y + anchor.y + prepared.offsetY);
-  effect?.back.forEach(drawEffect);
+  const drawEffects = (side: "back" | "front") => {
+    for (const { effect, anchor } of current) {
+      for (const op of effect?.[side] ?? []) {
+        blit(op, op.x + anchor.x + prepared.offsetX, op.y + anchor.y + prepared.offsetY);
+      }
+    }
+  };
+  drawEffects("back");
   frame.ops.forEach(draw);
-  effect?.front.forEach(drawEffect);
+  drawEffects("front");
   ctx.restore();
 }

@@ -34,8 +34,8 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [prepared, setPrepared] = useState<PreparedAnimation | null>(null);
     const frameIndexRef = useRef(0);
-    // 特效的動畫跟角色動作各跑各的（遊戲裡也是），所以另外記一個索引
-    const effectIndexRef = useRef(0);
+    // 特效的動畫跟角色動作、跟彼此都各跑各的（遊戲裡也是），所以每條另外記一個索引
+    const effectIndexesRef = useRef<number[]>([]);
 
     useImperativeHandle(ref, () => ({
       toBlob: () =>
@@ -55,7 +55,7 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
         .then((result) => {
           if (cancelled) return;
           frameIndexRef.current = 0;
-          effectIndexRef.current = 0;
+          effectIndexesRef.current = result.effects.map(() => 0);
           setPrepared(result);
           onMissing?.(result.missing);
           onStatusChange?.("ready");
@@ -85,24 +85,29 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
 
       let stopped = false;
 
+      const effectIndexes = effectIndexesRef.current;
       const paint = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawFrame(ctx, prepared, frameIndexRef.current, flipX, effectIndexRef.current);
+        drawFrame(ctx, prepared, frameIndexRef.current, flipX, effectIndexes);
       };
 
       /**
-       * 角色與特效各跑一條時間軸：推進自己的索引後重畫整張
-       * （兩者疊在同一個 canvas，所以任一條動了都要整張重畫）。
+       * 角色與每條特效各跑一條時間軸：推進自己的索引後重畫整張
+       * （全部疊在同一個 canvas，所以任一條動了都要整張重畫）。
        */
-      const runTrack = (frames: { delay: number }[], indexRef: { current: number }) => {
+      const runTrack = (
+        frames: { delay: number }[],
+        get: () => number,
+        set: (index: number) => void,
+      ) => {
         let timer: ReturnType<typeof setTimeout> | null = null;
         const step = () => {
           if (stopped) return;
           paint();
           if (!animated || frames.length < 2) return;
-          const delay = frames[indexRef.current % frames.length].delay;
+          const delay = frames[get() % frames.length].delay;
           timer = setTimeout(() => {
-            indexRef.current = (indexRef.current + 1) % frames.length;
+            set((get() + 1) % frames.length);
             step();
           }, delay);
         };
@@ -114,12 +119,22 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
 
       if (!animated) {
         frameIndexRef.current = 0;
-        effectIndexRef.current = 0;
+        effectIndexes.fill(0);
       }
-      const stops = [runTrack(prepared.frames, frameIndexRef)];
-      if (prepared.effectFrames.length > 0) {
-        stops.push(runTrack(prepared.effectFrames, effectIndexRef));
-      }
+      const stops = [
+        runTrack(
+          prepared.frames,
+          () => frameIndexRef.current,
+          (i) => (frameIndexRef.current = i),
+        ),
+        ...prepared.effects.map((track, t) =>
+          runTrack(
+            track.frames,
+            () => effectIndexes[t] ?? 0,
+            (i) => (effectIndexes[t] = i),
+          ),
+        ),
+      ];
 
       return () => {
         stopped = true;

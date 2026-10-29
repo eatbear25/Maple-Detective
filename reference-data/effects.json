@@ -1,8 +1,8 @@
 {
  "meta": {
   "source": "json_4f0192b4db49dca30e5ade817eb8111e.bundle -> Assets/WzAssets/Json/Item/Cash/0501.wzjson",
-  "extractedAt": "2026-10-13T23:01:00+08:00",
-  "effects": 46
+  "extractedAt": "2026-10-29T18:40:54+08:00",
+  "effects": 49
  },
  "effects": {
   "5010000": {
@@ -909,6 +909,33 @@
    ],
    "frames": 3
   },
+  "5010080": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 10
+  },
+  "5010081": {
+   "kind": "action",
+   "z": 2,
+   "books": [
+    "default",
+    "ladder",
+    "ladder2",
+    "prone",
+    "proneStab",
+    "rope",
+    "rope2"
+   ],
+   "frames": 6,
+   "zOverride": {
+    "default": -1,
+    "prone": -1,
+    "proneStab": -1
+   }
+  },
   "5010111": {
    "kind": "simple",
    "z": 2,
@@ -916,6 +943,14 @@
     "default"
    ],
    "frames": 16
+  },
+  "5010157": {
+   "kind": "simple",
+   "z": 2,
+   "books": [
+    "default"
+   ],
+   "frames": 8
   },
   "5010999": {
    "kind": "simple",

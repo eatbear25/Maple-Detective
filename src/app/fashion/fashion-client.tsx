@@ -170,6 +170,7 @@ const toEquipped = (item: FashionItem): EquippedItem => ({
   name: item.name,
   path: itemImgPath(item),
   ...(item.preview === "blank" ? { blank: true } : {}),
+  ...(item.hasEffect ? { fx: true } : {}),
 });
 
 /** 頁碼列表：頁數多時只顯示目前頁附近＋首尾，中間用 "…" 省略 */

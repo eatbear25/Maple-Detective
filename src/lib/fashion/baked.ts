@@ -82,6 +82,71 @@ async function fetchBaked(id: number): Promise<BakedItem> {
   throw new Error(`時裝素材載入失敗（${reason}）：#${id}`);
 }
 
+/**
+ * 道具特效層（Effect/ItemEff）另放一個資料夾：`tools/fetch-item-effects.py` 烤的，
+ * 不併進本體的檔案——本體那批掛一年的 immutable 快取，併進去就得全部換網址重烤。
+ * 目錄名帶格式版本，跟 Python 那邊的 FORMAT 一起改。
+ */
+const FX_DIR = "/wz-static/fashion/fx-v1";
+
+interface BakedItemEffect {
+  atlas: string;
+  s: Rect[];
+  /** 一本 = 一組動畫格：pos（錨點偏移）、z（前後）、每格 [圖編號, origin.x, origin.y, delay] */
+  b: { pos: number | null; z: number; f: [number, number, number, number][] }[];
+  /** 動作 → 用哪一本（多數動作連到同一本 default／backDefault） */
+  act: Record<string, number>;
+}
+
+export interface ItemEffectFrame {
+  image: HTMLImageElement;
+  rect: Rect;
+  origin: { x: number; y: number };
+  delay: number;
+}
+
+export interface ItemEffectBook {
+  pos: number | null;
+  z: number;
+  frames: ItemEffectFrame[];
+}
+
+export interface ItemEffect {
+  books: ItemEffectBook[];
+  act: Record<string, number>;
+}
+
+/** 抓一件時裝的特效層（catalog 標了 fx 的才有檔案） */
+export async function fetchItemEffect(id: number): Promise<ItemEffect> {
+  let reason = "";
+  for (const base of SOURCES) {
+    try {
+      const res = await fetch(`${base}${FX_DIR}/${id}.json`);
+      if (res.ok) {
+        const baked = (await res.json()) as BakedItemEffect;
+        const image = await decodeAtlas(baked.atlas);
+        return {
+          act: baked.act,
+          books: baked.b.map(({ pos, z, f }) => ({
+            pos,
+            z,
+            frames: f.map(([sprite, x, y, delay]) => ({
+              image,
+              rect: baked.s[sprite],
+              origin: { x, y },
+              delay,
+            })),
+          })),
+        };
+      }
+      reason = `HTTP ${res.status}`;
+    } catch (err) {
+      reason = err instanceof Error ? err.message : String(err);
+    }
+  }
+  throw new Error(`時裝特效載入失敗（${reason}）：#${id}`);
+}
+
 export async function fetchBakedItemWz(id: number): Promise<unknown> {
   const baked = await fetchBaked(id);
   if (!baked.atlas) return { info: baked.info };

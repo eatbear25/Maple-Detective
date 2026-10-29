@@ -5,16 +5,20 @@
     python tools/extract-cash-items.py
     python tools/extract-effects.py
     python tools/fetch-fashion-assets.py       # 烤圖（要連網），產生 fashion-coverage.json
+    python tools/fetch-item-effects.py         # 烤道具特效層（要連網），產生 fashion-fx-coverage.json
     python tools/build-fashion-data.py
 
 輸入 reference-data/cash-items.json + effects.json + fashion-coverage.json
+     + fashion-fx-coverage.json
      + name-tables/Item.json（+ name-supplement 補漏）
 輸出 src/data/generated/fashion-catalog.json：
     { "meta": {...},
       "items":   [ { "i": id, "n": 名稱, "s": 部位, "g": 性別,
-                     "v": 預覽狀態, "ic": 縮圖 }, ... ],
+                     "v": 預覽狀態, "ic": 縮圖, "fx": 特效層 }, ... ],
       "effects": [ { "i": id, "n": 名稱, "k": 類型, "z": 前後,
                      "t": 跟隨隊列, "zo": z 例外 }, ... ] }
+
+fx=1 是另有道具特效層（Effect/ItemEff，見 fetch-item-effects.py），試衣間要多抓一份來畫。
 
 預覽狀態 v 來自 fashion-coverage.json：省略＝有烤好的圖、0＝畫不出來（素材庫沒有，
 或還沒烤）、2＝透明道具（客戶端裡它本來就什麼都不畫）。前端靠它在清單上直接標
@@ -83,6 +87,8 @@ def main():
     coverage = load(os.path.join(REF, "fashion-coverage.json"))
     check_actions(coverage["meta"]["actions"])
     covered = coverage["items"]
+    # 道具特效層（tools/fetch-item-effects.py）。還沒烤過就當沒有，不擋 build
+    fx_covered = load(os.path.join(REF, "fashion-fx-coverage.json"), {"items": {}})["items"]
     names = load(os.path.join(REF, "name-tables", "Item.json"))
     supp = load(os.path.join(REF, "name-supplement.json"), {})
     supp_names = supp.get("items", supp) if isinstance(supp, dict) else {}
@@ -118,6 +124,8 @@ def main():
             row["v"] = 0
         if not os.path.exists(os.path.join(ICON_DIR, f"{item_id}.png")):
             row["ic"] = 0
+        if fx_covered.get(item_id, {}).get("state") == "ok":
+            row["fx"] = 1
         items.append(row)
 
     items.sort(key=lambda r: (r["s"], r["i"]))
@@ -138,6 +146,7 @@ def main():
     print("部位分布：", dict(sorted(by_slot.items(), key=lambda kv: -kv[1])))
     print("性別不明：", sum(1 for r in items if r["g"] == -1))
     print("預覽狀態：", states)
+    print("有道具特效層：", sum(1 for r in items if r.get("fx")))
     no_preview = {}
     for r in items:
         if r.get("v") == 0:
