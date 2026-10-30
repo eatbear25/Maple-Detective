@@ -9,7 +9,7 @@
  * 沒有，那種薄頁對整站排名是扣分。
  */
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { notFound } from "next/navigation";
 import { Telescope, ArrowLeft } from "lucide-react";
 import {

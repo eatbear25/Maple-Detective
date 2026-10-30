@@ -9,7 +9,7 @@
  *   2. metadata 的 description 要塞真的掉落物名稱，那是被搜尋比對到的內容。
  */
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { notFound } from "next/navigation";
 import { Telescope, Crown, ArrowLeft, Search } from "lucide-react";
 import {
