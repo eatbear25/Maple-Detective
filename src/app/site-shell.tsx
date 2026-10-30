@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
@@ -337,7 +337,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
     <div
       style={{
         ...themeVars(tokens),
-        fontFamily: "var(--font-noto-tc), system-ui, sans-serif",
+        fontFamily: "'Noto Sans TC', system-ui, sans-serif",
       }}
       className="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text)] transition-colors"
     >

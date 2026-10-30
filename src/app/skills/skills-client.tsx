@@ -15,7 +15,7 @@
  */
 
 import { useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { Search, X, Telescope, Target, ChevronDown, Rows3 } from "lucide-react";
 import {
   jobs,

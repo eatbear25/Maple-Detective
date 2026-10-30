@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { useSearchParams } from "next/navigation";
 import {
   ArrowUpRight,

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
