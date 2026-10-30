@@ -317,13 +317,21 @@ const isCanvas = (node: unknown): node is WzCanvas =>
 
 const pad8 = (id: number) => String(id).padStart(8, "0");
 
-async function loadItem(id: number, path: string): Promise<LoadedItem> {
+/**
+ * slots：蓋過烤好的檔案裡（客戶端）的 islot／vslot。經典版客戶端把 92 件上衣標成
+ * 上衣＋褲子，照抄的話褲子會被蓋掉，遊戲裡其實不會（見 tools/fetch-slot-reference.py）
+ */
+async function loadItem(
+  id: number,
+  path: string,
+  slots?: { islot: string; vslot: string },
+): Promise<LoadedItem> {
   const wz = (await fetchItemWz(path)) as Record<string, unknown>;
   const info = (wz.info ?? {}) as Record<string, unknown>;
-  let islot: string[] =
-    (typeof info.islot === "string" && info.islot.match(/.{1,2}/g)) || [];
-  const vslot: string[] =
-    (typeof info.vslot === "string" && info.vslot.match(/.{1,2}/g)) || [];
+  const rawIslot = slots ? slots.islot : info.islot;
+  const rawVslot = slots ? slots.vslot : info.vslot;
+  let islot: string[] = (typeof rawIslot === "string" && rawIslot.match(/.{1,2}/g)) || [];
+  const vslot: string[] = (typeof rawVslot === "string" && rawVslot.match(/.{1,2}/g)) || [];
 
   // 鞋子偶爾帶著奇怪的 islot，強制修正（MapleSalon2 同樣處理）
   if (path.includes("/Shoes/") && !islot.includes("So")) islot = ["So"];
@@ -768,7 +776,7 @@ export async function prepareCharacterFrames({
   const [body, head, settled, fxSettled] = await Promise.all([
     loadItem(bodyId, `Character/${pad8(bodyId)}.img`),
     loadItem(headId, `Character/${pad8(headId)}.img`),
-    Promise.allSettled(equips.map((equip) => loadItem(equip.id, equip.path))),
+    Promise.allSettled(equips.map((equip) => loadItem(equip.id, equip.path, equip.slots))),
     Promise.allSettled(fxEquips.map((equip) => fetchItemEffect(equip.id))),
   ]);
   const items: LoadedItem[] = [body, head];

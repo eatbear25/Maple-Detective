@@ -164,6 +164,8 @@ public class d141beafd4e361b85e5b2d96f61e7a99920a73fa454cd8c389aecc039a71a9a : S
    （每件的來源版本、吻合分數，或「透明」「找不到」）
    4b. `python tools/fetch-item-effects.py`（**要連網**，約一分鐘）→ `public/wz-static/fashion/fx-v1/<id>.json`
    ＋ `reference-data/fashion-fx-coverage.json`（道具特效層，見下面「道具特效層」）
+   4c. `python tools/fetch-slot-reference.py`（**要連網**，第一次約四分鐘、之後只補新的）→
+   `reference-data/fashion-slot-reference.json`（佔格對照，見下面「佔格資料」）
 5. `python tools/build-fashion-data.py` → `src/data/generated/fashion-catalog.json`
    （2026-10-13：7220 件時裝 ＋ 46 件特效。7194 件有圖、17 件透明道具、9 件找不到）
    （2026-10-29 跟著客戶端 10/22–23 更新重跑：8660 件時裝 ＋ 49 件特效。8632 件有圖、
@@ -259,6 +261,31 @@ catalog 帶 `fx: 1`，試衣間多抓一份來畫。**另放資料夾**是因為
 
 另有 6 件披風（紅色刻印、泡泡小兔、春日之心、很高很高的樹、快樂海豚、球場上觀眾席）
 本體也是空圖、但不在 ItemEff，原因還沒查。
+
+**佔格資料（islot／vslot）以 MapleSalon2 為準，不照客戶端**（2026-10-30，玩家回報「穿了某些上衣
+褲子就不見」）：islot＝佔哪幾格、vslot＝蓋掉哪幾格，renderer 照它算誰遮住誰，規則跟
+MapleSalon2 一字不差（`buildLocks` 照反轉後的 zmap 排、後面的蓋前面的，MapleSalon2 的
+`ZmapIndex` 也有 `zmap.reverse()`）。問題出在資料：經典版客戶端把 92 件上衣標成 `MaPn`
+（上衣＋褲子），台服新舊版、美服新舊版同一件都是 `Ma`，圖也只畫到腰。**玩家在遊戲商城實測：
+褲子還在**，所以遊戲並不照這個欄位遮，定案照 MapleSalon2（其他版本的 WZ）走。
+`tools/fetch-slot-reference.py` 向借圖的那個版本問每件裝備的 `info/islot`、`info/vslot`，
+build 時不同的就輸出 catalog 的 `sl`，renderer 用它蓋過烤好檔案裡的值（**不改烤好的檔案**：
+掛一年 immutable 快取）。2026-10-30 修了 102 件：上衣 MaPn→Ma 85 件（另 7 件其他版本也是 MaPn，
+維持）、武器 WpSi→Wp 12 件（雙手→單手，之後能配盾牌）、帽子遮哪幾層頭髮 5 件（邪惡妖精頭套
+變成整顆頭都蓋掉，照客戶端的話臉會從頭套穿出來）。**參考版本自己也會錯**：天使玫瑰 1702694
+是武器，TWMS/256 寫 MaPn，照抄的話穿上它衣服褲子都不見——build 有防呆，參考值要包含這件本來的
+主格才採用。另外 63 件武器在各版本都是 WpSi（雙手武器外觀，例：花束），配盾牌時盾牌被蓋掉是
+正常的；夜之玫瑰這種大把的單手武器會把盾牌擋掉大半，看起來像沒畫，其實有。
+
+**飾品拆成臉飾／眼飾／耳環三格**（2026-10-30，玩家回報「眼鏡跟臉飾只能擇一」）：客戶端是同一個
+Accessory 資料夾，但遊戲裡三格可以同時戴（臉飾 81／眼飾 79／耳環 12 件）。**照道具編號前三碼拆
+（101／102／103），不照 islot**：遊戲決定穿哪一格看編號，透明眼鏡 1022048 的 islot 卻寫 Af
+（各版本都是），照 islot 會跑去臉飾。另外「透明臉飾」1012104 的縮圖是一個耳環：那是遊戲本身的
+資料（各版本與經典版客戶端都跟透明耳環共用同一張 icon），不是借錯圖。拆在
+`build-fashion-data.py` 的 `ACCESSORY_SLOTS`（catalog 的 `s` 變成 faceAccessory／eyeAccessory／
+earring，`cash-items.json` 不動），網站上是三個分頁（臉飾／眼飾／耳環，使用者指定；先做過
+「一個飾品分頁、卡片標種類」的版本，被換掉），「目前穿著」也分三列。
+遊戲加了新的飾品格（islot 不在表裡）build 會直接擋下來。
 
 **拿不到的**：裝備自帶的特效（`Effect/CharacterEff.wzjson` 19 件，如星星王子披風、
 各種發光戒指）——maplestory.io 的 item JSON 不含這層、也沒有 effect 端點，只剩客戶端

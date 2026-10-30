@@ -6,19 +6,24 @@
     python tools/extract-effects.py
     python tools/fetch-fashion-assets.py       # 烤圖（要連網），產生 fashion-coverage.json
     python tools/fetch-item-effects.py         # 烤道具特效層（要連網），產生 fashion-fx-coverage.json
+    python tools/fetch-slot-reference.py       # 佔格對照（要連網），產生 fashion-slot-reference.json
     python tools/build-fashion-data.py
 
 輸入 reference-data/cash-items.json + effects.json + fashion-coverage.json
-     + fashion-fx-coverage.json
+     + fashion-fx-coverage.json + fashion-slot-reference.json
      + name-tables/Item.json（+ name-supplement 補漏）
 輸出 src/data/generated/fashion-catalog.json：
     { "meta": {...},
       "items":   [ { "i": id, "n": 名稱, "s": 部位, "g": 性別,
-                     "v": 預覽狀態, "ic": 縮圖, "fx": 特效層 }, ... ],
+                     "v": 預覽狀態, "ic": 縮圖, "fx": 特效層, "sl": 佔格修正 }, ... ],
       "effects": [ { "i": id, "n": 名稱, "k": 類型, "z": 前後,
                      "t": 跟隨隊列, "zo": z 例外 }, ... ] }
 
 fx=1 是另有道具特效層（Effect/ItemEff，見 fetch-item-effects.py），試衣間要多抓一份來畫。
+
+sl=[islot, vslot] 是**蓋過客戶端的佔格資料**：經典版客戶端把 92 件上衣標成上衣＋褲子
+（MaPn），遊戲裡實際上褲子照樣看得到，所以照 MapleSalon2（其他版本的 WZ）的值走，
+來源見 fetch-slot-reference.py。放 catalog 不改烤好的檔案，是因為那批掛一年的 immutable 快取。
 
 預覽狀態 v 來自 fashion-coverage.json：省略＝有烤好的圖、0＝畫不出來（素材庫沒有，
 或還沒烤）、2＝透明道具（客戶端裡它本來就什麼都不畫）。前端靠它在清單上直接標
@@ -31,6 +36,9 @@ fx=1 是另有道具特效層（Effect/ItemEff，見 fetch-item-effects.py），
 
 不收戒指：經典版紙娃娃根本不畫戒指（抽樣 14 件戒指打 maplestory.io，
 frameBooks 命中 0/14），列進去只會讓使用者點了發現沒反應。
+
+部位 s 是「穿在哪一格」：飾品依編號拆成 faceAccessory／eyeAccessory／earring
+（見 ACCESSORY_SLOTS），其他就是 cash-items.json 的部位。
 
 性別 g：0=男限 1=女限 2=共用 -1=不明。判定規則見 extract-cash-items.py，
 延伸髮型臉型（4xxxx/5xxxx）推不出來，前端要有第三種顯示狀態。
@@ -52,6 +60,14 @@ ICON_DIR = os.path.join(PROJECT, "public", "icons", "fashion")
 
 # 紙娃娃畫不出來的部位，不進 catalog
 EXCLUDE_SLOTS = {"ring"}
+
+# 飾品在客戶端是同一個資料夾（Accessory），但遊戲裡分臉飾／眼飾／耳環三格、可以同時戴，
+# 拆成三個部位（2026-10-30 玩家回報「眼鏡跟臉飾只能擇一」）。
+# 網站上就是三個分頁（臉飾／眼飾／耳環），見 src/data/fashion.ts 的 SLOT_LABELS。
+# **照道具編號的前三碼拆，不照 islot**：遊戲決定穿在哪一格看的是編號（101 臉飾／102 眼飾／
+# 103 耳環），islot 只管圖層。兩者只有透明眼鏡 1022048 對不上——它是眼飾，islot 卻寫 Af
+# （客戶端與各版本都一樣），照 islot 拆的話會跑到臉飾分頁（玩家回報）
+ACCESSORY_SLOTS = {"101": "faceAccessory", "102": "eyeAccessory", "103": "earring"}
 
 
 def load(path, default=None):
@@ -89,6 +105,9 @@ def main():
     covered = coverage["items"]
     # 道具特效層（tools/fetch-item-effects.py）。還沒烤過就當沒有，不擋 build
     fx_covered = load(os.path.join(REF, "fashion-fx-coverage.json"), {"items": {}})["items"]
+    # 佔格對照（tools/fetch-slot-reference.py）。還沒抓過就全用客戶端的
+    slot_ref = load(os.path.join(REF, "fashion-slot-reference.json"), {"items": {}})["items"]
+    slot_fixed = {}
     names = load(os.path.join(REF, "name-tables", "Item.json"))
     supp = load(os.path.join(REF, "name-supplement.json"), {})
     supp_names = supp.get("items", supp) if isinstance(supp, dict) else {}
@@ -111,6 +130,13 @@ def main():
         slot = entry["slot"]
         if slot in EXCLUDE_SLOTS:
             continue
+        if slot == "accessory":
+            slot = ACCESSORY_SLOTS.get(item_id[:3])
+            if slot is None:
+                raise SystemExit(
+                    f"飾品 {item_id} 的編號不在臉飾／眼飾／耳環（101／102／103）的範圍裡。"
+                    "遊戲加了新的飾品格？先在 ACCESSORY_SLOTS 與 src/data/fashion.ts 補上"
+                )
         name = name_of(item_id)
         if name.startswith("#"):
             unnamed += 1
@@ -126,6 +152,17 @@ def main():
             row["ic"] = 0
         if fx_covered.get(item_id, {}).get("state") == "ok":
             row["fx"] = 1
+        ref = slot_ref.get(item_id)
+        # 參考版本自己也會標錯：天使玫瑰 1702694 是武器，TWMS/256 卻寫上衣＋褲子（MaPn），
+        # 照抄的話穿上它衣服褲子都會不見。所以參考值至少要包含這件本來的主格（武器要有 Wp…）
+        main_slot = entry["islot"][:2]
+        if ref and not ref.get("missing") and main_slot not in (ref["islot"][i : i + 2] for i in range(0, len(ref["islot"]), 2)):
+            print(f"  佔格對照不採用 {item_id} {name}：{slot} 的主格 {main_slot} 不在 {ref['islot']} 裡")
+            ref = None
+        if ref and not ref.get("missing") and (ref["islot"], ref["vslot"]) != (entry["islot"], entry["vslot"]):
+            row["sl"] = [ref["islot"], ref["vslot"]]
+            key = f'{slot}: {entry["islot"]}/{entry["vslot"]} → {ref["islot"]}/{ref["vslot"]}'
+            slot_fixed[key] = slot_fixed.get(key, 0) + 1
         items.append(row)
 
     items.sort(key=lambda r: (r["s"], r["i"]))
@@ -147,6 +184,9 @@ def main():
     print("性別不明：", sum(1 for r in items if r["g"] == -1))
     print("預覽狀態：", states)
     print("有道具特效層：", sum(1 for r in items if r.get("fx")))
+    print(f"佔格照 MapleSalon2 修正：{sum(slot_fixed.values())} 件")
+    for key, n in sorted(slot_fixed.items(), key=lambda kv: -kv[1]):
+        print(f"  {key}  ×{n}")
     no_preview = {}
     for r in items:
         if r.get("v") == 0:

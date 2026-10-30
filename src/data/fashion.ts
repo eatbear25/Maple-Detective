@@ -8,7 +8,11 @@
 import raw from "./generated/fashion-catalog.json";
 import { ASSET_BASE_URL } from "@/lib/asset-base";
 
-/** 部位代號＝客戶端 Character/ 底下的子目錄（小寫），也直接對應 WZ 資料夾 */
+/**
+ * 部位代號＝穿在哪一格。多半就是客戶端 Character/ 底下的子目錄（小寫）；
+ * 飾品例外：同一個 Accessory 資料夾在遊戲裡分臉飾／眼飾／耳環三格、可以同時戴，
+ * 所以拆成三個（catalog build 時依 islot 拆，見 tools/build-fashion-data.py）
+ */
 export type FashionSlot =
   | "hair"
   | "face"
@@ -19,7 +23,9 @@ export type FashionSlot =
   | "shoes"
   | "glove"
   | "cape"
-  | "accessory"
+  | "faceAccessory"
+  | "eyeAccessory"
+  | "earring"
   | "weapon"
   | "shield";
 
@@ -47,6 +53,12 @@ export interface FashionItem {
    * 有些時裝的外觀整個放在這一層、本體只是空圖（森林護者帽子、多數會動的披風）
    */
   hasEffect: boolean;
+  /**
+   * 蓋過客戶端的佔格資料（islot＝佔哪幾格、vslot＝蓋掉哪幾格）。經典版客戶端把
+   * 92 件上衣標成上衣＋褲子，遊戲裡褲子其實照樣看得到，所以照 MapleSalon2 的值走
+   * （見 tools/fetch-slot-reference.py）。沒有＝客戶端的就是對的
+   */
+  slots?: { islot: string; vslot: string };
 }
 
 /**
@@ -75,6 +87,8 @@ interface RawRow {
   ic?: 0;
   /** 1＝有道具特效層（省略＝沒有） */
   fx?: 1;
+  /** [islot, vslot]：蓋過客戶端的佔格資料（省略＝照客戶端） */
+  sl?: [string, string];
 }
 
 interface RawEffectRow {
@@ -100,6 +114,7 @@ export const fashionItems: FashionItem[] = data.items.map((r) => ({
   preview: r.v === 0 ? "none" : r.v === 2 ? "blank" : "ok",
   hasIcon: r.ic !== 0,
   hasEffect: r.fx === 1,
+  ...(r.sl ? { slots: { islot: r.sl[0], vslot: r.sl[1] } } : {}),
 }));
 
 const byId = new Map(fashionItems.map((it) => [it.id, it]));
@@ -117,7 +132,7 @@ export const fashionEffects: FashionEffect[] = data.effects.map((r) => ({
 const effectById = new Map(fashionEffects.map((e) => [e.id, e]));
 export const fashionEffect = (id: number) => effectById.get(id);
 
-/** 部位顯示名稱與排列順序（試衣間左欄的分頁順序） */
+/** 部位顯示名稱與排列順序（試衣間右欄的分頁順序） */
 export const SLOT_LABELS: { slot: FashionSlot; label: string }[] = [
   { slot: "hair", label: "髮型" },
   { slot: "face", label: "臉型" },
@@ -128,7 +143,9 @@ export const SLOT_LABELS: { slot: FashionSlot; label: string }[] = [
   { slot: "shoes", label: "鞋子" },
   { slot: "glove", label: "手套" },
   { slot: "cape", label: "披風" },
-  { slot: "accessory", label: "飾品" },
+  { slot: "faceAccessory", label: "臉飾" },
+  { slot: "eyeAccessory", label: "眼飾" },
+  { slot: "earring", label: "耳環" },
   { slot: "weapon", label: "武器" },
   { slot: "shield", label: "盾牌" },
 ];
@@ -143,7 +160,7 @@ export const SLOT_CONFLICTS: Partial<Record<FashionSlot, FashionSlot[]>> = {
   pants: ["longcoat"],
 };
 
-/** WZ 資料夾名（部位代號就是子目錄的小寫，這裡還原成渲染要的路徑） */
+/** WZ 資料夾名（部位代號多半就是子目錄的小寫，飾品三格同一個資料夾） */
 const WZ_FOLDER: Record<FashionSlot, string> = {
   hair: "Hair",
   face: "Face",
@@ -154,7 +171,9 @@ const WZ_FOLDER: Record<FashionSlot, string> = {
   shoes: "Shoes",
   glove: "Glove",
   cape: "Cape",
-  accessory: "Accessory",
+  faceAccessory: "Accessory",
+  eyeAccessory: "Accessory",
+  earring: "Accessory",
   weapon: "Weapon",
   shield: "Shield",
 };

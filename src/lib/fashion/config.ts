@@ -10,6 +10,8 @@ export interface EquippedItem {
   blank?: boolean;
   /** 另有道具特效層（Effect/ItemEff），renderer 要多抓一份來畫 */
   fx?: boolean;
+  /** 蓋過烤好的檔案裡（客戶端）的 islot／vslot，見 data/fashion.ts 的 FashionItem.slots */
+  slots?: { islot: string; vslot: string };
 }
 
 /**
