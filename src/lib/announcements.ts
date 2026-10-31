@@ -12,8 +12,11 @@
  * 公告列就整條不出現，不會讓頁面壞掉。
  *
  * 為什麼不在 layout 直接抓：layout 一抓，全站幾千個 /items/[id]、/monsters/[id] 靜態頁
- * 全部會變成每 5 分鐘重新產生一次。改成 /api/announcements 這一支小 API 自己快取，
- * 頁面維持純靜態，瀏覽器載入後再去拿（見 src/app/announcement-bar.tsx）。
+ * 全部會變成每 5 分鐘重新產生一次。所以頁面維持純靜態，瀏覽器載入後再直接向 Google 拿
+ * （見 src/app/announcement-bar.tsx；Google 的 CSV 匯出有開 CORS，跨網域讀得到）。
+ *
+ * 以前中間隔一支 /api/announcements 幫忙快取，2026-10-31 拿掉：每開一頁就打本站一次，
+ * 12 小時上千次 Vercel CDN Request，而 Hobby 一個月只有 100 萬次。
  */
 
 const SHEET_ID = "14Pbc61eMJj_goQ18XEAt6p95CC8w4CvQH9yxWPtx3vs";
