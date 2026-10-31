@@ -34,13 +34,6 @@ export interface Prize {
   icon: "fashion" | "item";
 }
 
-/** 內建目標：一組商品，全部都在貨架上出現過就算湊齊。 */
-export interface Goal {
-  id: string;
-  label: string;
-  keys: number[];
-}
-
 export interface Ticket {
   itemId: number;
   /** 刷新券單張價（樂豆點，與新台幣 1:1） */
@@ -61,7 +54,6 @@ export interface MerchantPool {
   slots: number;
   ticket: Ticket;
   prizes: Prize[];
-  goals: Goal[];
 }
 
 /** 依 endDate 由新到舊。 */
@@ -72,19 +64,14 @@ export function currentPool(): MerchantPool {
   return pools[0];
 }
 
-/** 「2026/10/29 ~ 11/12」。這是資料標籤不是免責聲明——多期並存時用來分辨哪張表是哪期的。 */
+/** 「10/29 – 11/12」。這是資料標籤不是免責聲明——每期都從資料算，頁面上不寫死日期。 */
 export function poolPeriod(pool: MerchantPool): string {
-  const fmt = (iso: string, withYear: boolean) => {
+  const fmt = (iso: string) => {
     const d = new Date(iso);
-    const md = `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
-    return withYear ? `${d.getFullYear()}/${md}` : md;
+    return `${d.getMonth() + 1}/${d.getDate()}`;
   };
-  return `${fmt(pool.startDate, true)} ~ ${fmt(pool.endDate, false)}`;
+  return `${fmt(pool.startDate)} – ${fmt(pool.endDate)}`;
 }
-
-/** 機率低於這個值（%）的商品在貨架上會發光。這是分類不是機率計算。 */
-export const RARE_BELOW = 0.1;
-export const isRare = (p: Prize) => p.rate < RARE_BELOW;
 
 /** 貨架與清單上顯示的名稱：「高效能喇叭 ×20」 */
 export const prizeLabel = (p: Prize) => (p.qty > 1 ? `${p.name} ×${p.qty}` : p.name);

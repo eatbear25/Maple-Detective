@@ -122,29 +122,38 @@ body {
   }
 }
 
-/* 神秘商人模擬（/merchant，前身是轉蛋模擬）：連續刷新快轉時商人晃動。
-   animate-spin-slow 是轉蛋機的放射光，目前沒有頁面在用，留著備用 */
-.animate-spin-slow {
-  animation: gacha-spin 6s linear infinite;
+/* 神秘商人模擬（/merchant）：刷 1 次時 6 格依序翻開（每格的 animation-delay 由程式給，
+   間隔 70ms，整批 0.5 秒內翻完）；刷 N 次後那行摘要停一下再淡出（長度對上 use-merchant.ts 的 FLASH_MS） */
+.merchant-flip {
+  animation: merchant-flip 0.14s ease-out both;
 }
-@keyframes gacha-spin {
-  to {
-    transform: rotate(360deg);
+@keyframes merchant-flip {
+  from {
+    opacity: 0;
+    transform: perspective(400px) rotateY(-75deg);
   }
 }
-.animate-machine-shake {
-  animation: gacha-shake 0.28s ease-in-out infinite;
+.merchant-flash {
+  animation: merchant-flash 2.6s ease-in both;
 }
-@keyframes gacha-shake {
-  0%,
-  100% {
-    transform: translateX(0) rotate(0deg);
+@keyframes merchant-flash {
+  0% {
+    opacity: 0;
   }
-  25% {
-    transform: translateX(-2px) rotate(-1.2deg);
-  }
+  8%,
   75% {
-    transform: translateX(2px) rotate(1.2deg);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* 神秘商人模擬（/merchant）的手機版操作列是 fixed 貼在畫面底部，頁尾要多留一塊那麼高的空間，
+   捲到最底時頁尾的字才不會被它蓋住（操作列約 7rem 高，再加 iPhone 底部的安全區） */
+@media (width < 64rem) {
+  body:has(.merchant-bar) .site-footer {
+    padding-bottom: calc(1.25rem + 7.5rem + env(safe-area-inset-bottom));
   }
 }
 
@@ -170,8 +179,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-spin-slow,
-  .animate-machine-shake,
+  .merchant-flip,
   .announcement-bar,
   .announcement-swap {
     animation: none;
