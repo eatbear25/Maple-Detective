@@ -1,6 +1,6 @@
 {
  "meta": {
-  "builtAt": "2026-10-29",
+  "builtAt": "2026-10-31",
   "poolCount": 1
  },
  "pools": [
@@ -2366,41 +2366,6 @@
      "rate": 0.12,
      "category": "potion",
      "icon": "item"
-    }
-   ],
-   "goals": [
-    {
-     "id": "judge",
-     "label": "裁決者套組",
-     "keys": [
-      6,
-      7,
-      8,
-      9,
-      10
-     ]
-    },
-    {
-     "id": "forest",
-     "label": "森林護者套組",
-     "keys": [
-      11,
-      12,
-      13,
-      14,
-      15
-     ]
-    },
-    {
-     "id": "night",
-     "label": "黑夜護者套組",
-     "keys": [
-      16,
-      17,
-      18,
-      19,
-      20
-     ]
     }
    ]
   }

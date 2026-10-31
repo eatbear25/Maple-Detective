@@ -70,13 +70,6 @@ CLUSTER_WINDOW = 50
 TICKET_ITEM_ID = 5066103  # 神秘商人刷新券
 SLOTS = 6  # 每一批上架幾個商品（官方說明第 5 點）
 
-# 內建目標：本季特別商品裡成套的三組。名稱對不到（下一期換了商品）就印警告、整組跳過。
-SET_GOALS = [
-    ("judge", "裁決者套組", ["裁決者頭罩", "裁決者套裝", "裁決者步伐", "裁決者白翼", "裁決者之光"]),
-    ("forest", "森林護者套組", ["森林護者帽子", "森林護者套服", "森林護者尾巴", "森林護者鞋子", "森林護者武器"]),
-    ("night", "黑夜護者套組", ["黑夜護者帽子", "黑夜護者套服", "黑夜護者尾巴", "黑夜護者鞋子", "黑夜護者武器"]),
-]
-
 QTY_RE = re.compile(r"(.+?)\s*\*\s*(\d+)")
 
 
@@ -223,17 +216,6 @@ def build_pool(snapshot, name_index, cash_ids, overrides, ticket):
             "icon": "fashion" if os.path.exists(os.path.join(FASHION_ICONS, f"{item_id}.png")) else "item",
         })
 
-    by_name = {}
-    for p in prizes:
-        by_name.setdefault(p["name"], p["key"])
-    goals = []
-    for gid, label, names in SET_GOALS:
-        missing = [n for n in names if n not in by_name]
-        if missing:
-            print(f"⚠️  目標「{label}」有 {len(missing)} 件不在這期的表裡 {missing}，整組跳過")
-            continue
-        goals.append({"id": gid, "label": label, "keys": [by_name[n] for n in names]})
-
     pool = {
         "eventAdId": meta["eventAdId"],
         "title": meta["title"],
@@ -243,7 +225,6 @@ def build_pool(snapshot, name_index, cash_ids, overrides, ticket):
         "slots": SLOTS,
         "ticket": ticket,
         "prizes": prizes,
-        "goals": goals,
     }
     return pool, report
 
@@ -286,7 +267,6 @@ def main():
                 print(f"   {name} → {chosen}  候選 {cands}  [{why}]")
         n_fashion = sum(1 for p in pool["prizes"] if p["icon"] == "fashion")
         print(f"圖示：時裝縮圖 {n_fashion}、道具圖 {len(pool['prizes']) - n_fashion}")
-        print("目標：" + "、".join(g["label"] for g in pool["goals"]))
     print(f"\n刷新券：單張 {ticket['single']}、10 張 {ticket['bundle10']}（{ticket['source']}）")
 
     # 依 endDate 由新到舊，前端取第一筆當「當期」

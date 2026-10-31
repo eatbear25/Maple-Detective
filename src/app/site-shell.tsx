@@ -430,7 +430,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <footer className="border-t border-[var(--border)] bg-[var(--surface)] px-4 py-5 text-center text-xs leading-relaxed text-[var(--text-muted)] md:py-6 md:text-[13px]">
+      <footer className="site-footer border-t border-[var(--border)] bg-[var(--surface)] px-4 py-5 text-center text-xs leading-relaxed text-[var(--text-muted)] md:py-6 md:text-[13px]">
         © 2026 楓探 Maple Detective
         <p className="mt-1.5">
           本站資料僅供參考，若有任何問題可至
