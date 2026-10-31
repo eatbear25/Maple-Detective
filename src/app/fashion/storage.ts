@@ -3,7 +3,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 
 /**
- * 試衣間存在瀏覽器裡的個人設定（每頁幾件、最愛清單）。
+ * 試衣間存在瀏覽器裡的個人設定（每頁幾件、最愛清單、存下來的整身搭配）。
  *
  * 用 useSyncExternalStore 而不是「掛載後在 effect 裡讀 localStorage 再 setState」：
  * 伺服器端與水合當下一律拿 fallback，水合完 React 自己會用真值重畫一次，
@@ -12,6 +12,7 @@ import { useCallback, useSyncExternalStore } from "react";
 
 export const PAGE_SIZE_KEY = "fashion-page-size";
 export const FAVORITES_KEY = "fashion-favorites";
+export const OUTFITS_KEY = "fashion-outfits";
 
 const listeners = new Set<() => void>();
 /** localStorage 不能用（被瀏覽器設定擋掉、容量滿了）時退而存在記憶體，至少這次瀏覽期間還能用 */

@@ -32,26 +32,37 @@ export function encodeLook(look: SharedLook): string {
 }
 
 /**
- * 從 location.search 解出造型；網址沒帶造型就回 null。
- * 網址是別人給的，每一欄都可能是亂填的：不認得的膚色／動作／表情退回預設值，
+ * 把來路不明的造型驗成 SharedLook（別人給的網址、存在瀏覽器裡的搭配都走這裡）。
+ * 每一欄都可能是亂填的或過時的：不認得的膚色／動作／表情退回預設值，
  * 道具 id 只保證是正整數——catalog 裡有沒有這件由呼叫端自己查。
  */
+export function normalizeLook(raw: {
+  skinId: unknown;
+  itemIds: unknown[];
+  action: unknown;
+  expression: unknown;
+}): SharedLook {
+  return {
+    skinId: SKINS.find((s) => s.id === raw.skinId)?.id ?? SKINS[0].id,
+    itemIds: raw.itemIds.filter(
+      (id): id is number => Number.isInteger(id) && (id as number) > 0,
+    ),
+    action: ACTIONS.find((a) => a.id === raw.action)?.id ?? DEFAULT_ACTION,
+    expression:
+      EXPRESSIONS.find((e) => e.id === raw.expression)?.id ??
+      DEFAULT_EXPRESSION,
+  };
+}
+
+/** 從 location.search 解出造型；網址沒帶造型就回 null */
 export function decodeLook(search: string): SharedLook | null {
   const params = new URLSearchParams(search);
   if (!params.has("items") && !params.has("skin")) return null;
 
-  const skin = Number(params.get("skin"));
-  const act = params.get("act");
-  const face = params.get("face");
-  return {
-    skinId: SKINS.some((s) => s.id === skin) ? skin : SKINS[0].id,
-    itemIds: (params.get("items") ?? "")
-      .split(".")
-      .map(Number)
-      .filter((id) => Number.isInteger(id) && id > 0),
-    action: ACTIONS.some((a) => a.id === act) ? act! : DEFAULT_ACTION,
-    expression: EXPRESSIONS.some((e) => e.id === face)
-      ? face!
-      : DEFAULT_EXPRESSION,
-  };
+  return normalizeLook({
+    skinId: Number(params.get("skin")),
+    itemIds: (params.get("items") ?? "").split(".").map(Number),
+    action: params.get("act"),
+    expression: params.get("face"),
+  });
 }

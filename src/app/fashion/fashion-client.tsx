@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
+  BookmarkPlus,
   Check,
   ChevronDown,
   Download,
   FlipHorizontal2,
   Link2,
   Play,
+  Save,
   Search,
   Square,
   Star,
@@ -50,13 +52,26 @@ import {
   DEFAULT_EXPRESSION,
   decodeLook,
   encodeLook,
+  type SharedLook,
 } from "@/lib/fashion/share";
 import { copyText } from "@/lib/copy-text";
 import CharacterCanvas, {
   type CharacterCanvasHandle,
 } from "./character-canvas";
 import PreviewStage from "./preview-stage";
-import { FAVORITES_KEY, PAGE_SIZE_KEY, useStored } from "./storage";
+import {
+  NO_OUTFITS,
+  OutfitCard,
+  makeOutfit,
+  parseOutfits,
+  sameLook,
+} from "./outfits";
+import {
+  FAVORITES_KEY,
+  OUTFITS_KEY,
+  PAGE_SIZE_KEY,
+  useStored,
+} from "./storage";
 
 /** 每頁幾件的選項。都是 2、3、4 的倍數，清單不管排幾欄最後一列都是滿的 */
 const PAGE_SIZES = [24, 60, 120, 240];
@@ -173,6 +188,19 @@ const toEquipped = (item: FashionItem): EquippedItem => ({
   ...(item.hasEffect ? { fx: true } : {}),
   ...(item.slots ? { slots: item.slots } : {}),
 });
+
+/**
+ * 分享連結或存下來的搭配 → 身上的裝備。網址是別人給的、存的那套也可能放了很久：
+ * catalog 沒有的、畫不出來的直接略過
+ */
+function equipsFromIds(itemIds: number[]): CharacterLook["equips"] {
+  const equips: CharacterLook["equips"] = {};
+  for (const id of itemIds) {
+    const item = fashionItem(id);
+    if (item && item.preview !== "none") equips[item.slot] = toEquipped(item);
+  }
+  return equips;
+}
 
 /** 頁碼列表：頁數多時只顯示目前頁附近＋首尾，中間用 "…" 省略 */
 function pageNumbers(current: number, count: number): (number | "…")[] {
@@ -428,7 +456,17 @@ export default function FashionPage() {
     NO_FAVORITES,
     parseFavorites,
   );
+  const [outfits, setOutfits] = useStored(
+    OUTFITS_KEY,
+    NO_OUTFITS,
+    parseOutfits,
+  );
   const [copied, setCopied] = useState(false);
+  /** 正在編輯哪一套：點搭配卡片穿上、或剛存好的那套。「更新這套」就是寫回它 */
+  const [editingId, setEditingId] = useState<number | null>(null);
+  // 「儲存搭配」「更新這套」按下去之後各自亮一下的提示
+  const [saved, setSaved] = useState(false);
+  const [updated, setUpdated] = useState(false);
   /** 右欄最上面，換頁之後捲回這裡 */
   const listTopRef = useRef<HTMLDivElement>(null);
 
@@ -461,18 +499,9 @@ export default function FashionPage() {
   );
   const onMissing = useCallback((ids: number[]) => setMissing(ids), []);
 
-  // 分享連結帶造型進來時套上去。網址只有瀏覽器讀得到，SSR 階段拿不到，
-  // 所以只能掛載後才設 state（提前讀會 hydration 不一致）——做法同技能配點頁。
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    const shared = decodeLook(window.location.search);
-    if (!shared) return;
-    const equips: CharacterLook["equips"] = {};
-    for (const id of shared.itemIds) {
-      // 網址是別人給的：catalog 沒有的、畫不出來的直接略過
-      const item = fashionItem(id);
-      if (item && item.preview !== "none") equips[item.slot] = toEquipped(item);
-    }
+  /** 整身換成某一套（分享連結、存下來的搭配） */
+  const wear = useCallback((shared: SharedLook) => {
+    const equips = equipsFromIds(shared.itemIds);
     setLook({ skinId: shared.skinId, equips });
     setAction(shared.action);
     setExpression(shared.expression);
@@ -480,6 +509,14 @@ export default function FashionPage() {
     if (equips.hair) setHairColor(colorDigitOf("hair", equips.hair.id));
     if (equips.face) setFaceColor(colorDigitOf("face", equips.face.id));
   }, []);
+
+  // 分享連結帶造型進來時套上去。網址只有瀏覽器讀得到，SSR 階段拿不到，
+  // 所以只能掛載後才設 state（提前讀會 hydration 不一致）——做法同技能配點頁。
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const shared = decodeLook(window.location.search);
+    if (shared) wear(shared);
+  }, [wear]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   /** 「全部」「最愛」與特效分頁沒有「目前部位」，底下用到部位的地方都要先擋掉 */
@@ -534,6 +571,30 @@ export default function FashionPage() {
       ),
     }))
     .filter((section) => section.entries.length > 0);
+
+  /** 搭配縮圖要畫的樣子：先 memo 起來，否則每次重畫都會丟新物件、縮圖整批重新合成 */
+  const outfitLooks = useMemo(
+    () =>
+      new Map(
+        outfits.map((o): [number, CharacterLook] => [
+          o.id,
+          { skinId: o.skinId, equips: equipsFromIds(o.itemIds) },
+        ]),
+      ),
+    [outfits],
+  );
+  // 搜尋也吃搭配裡的道具名：找「森林護者」會連穿著它的那幾套一起列出來
+  const shownOutfits = outfits.filter(
+    (o) =>
+      !q ||
+      o.name.includes(q) ||
+      o.itemIds.some((id) => fashionItem(id)?.name.includes(q)),
+  );
+
+  const renameOutfit = (id: number, name: string) =>
+    setOutfits(outfits.map((o) => (o.id === id ? { ...o, name } : o)));
+  const deleteOutfit = (id: number) =>
+    setOutfits(outfits.filter((o) => o.id !== id));
 
   const toggleFavorite = (id: number) =>
     setFavorites(
@@ -642,18 +703,47 @@ export default function FashionPage() {
   };
 
   const equippedRows = SLOT_LABELS.filter(({ slot: s }) => look.equips[s]);
+  /** 目前這身，分享連結與儲存搭配共用 */
+  const currentLook: SharedLook = {
+    skinId: look.skinId,
+    itemIds: equippedRows.map(({ slot: s }) => look.equips[s]!.id),
+    action,
+    expression,
+  };
 
   /** 把目前這身造型編進網址、複製到剪貼簿 */
   const share = async () => {
-    const query = encodeLook({
-      skinId: look.skinId,
-      itemIds: equippedRows.map(({ slot: s }) => look.equips[s]!.id),
-      action,
-      expression,
-    });
-    await copyText(`${window.location.origin}/fashion?${query}`);
+    await copyText(
+      `${window.location.origin}/fashion?${encodeLook(currentLook)}`,
+    );
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
+  };
+
+  // 被刪掉的話就找不到，「編輯中」那一列自己消失
+  const editingOutfit = outfits.find((o) => o.id === editingId);
+  const dirty =
+    editingOutfit !== undefined && !sameLook(editingOutfit, currentLook);
+
+  /**
+   * 存成新的一套，排在最愛分頁「整身搭配」的最前面。
+   * 一模一樣的也照存（想留兩份改成不同版本）；存完就算在編輯這套，接著改可以直接「更新這套」
+   */
+  const saveOutfit = () => {
+    const outfit = makeOutfit(currentLook, outfits);
+    setOutfits([outfit, ...outfits]);
+    setEditingId(outfit.id);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  };
+
+  /** 把目前這身寫回正在編輯的那套（名稱與排列位置不動） */
+  const updateOutfit = () => {
+    setOutfits(
+      outfits.map((o) => (o.id === editingId ? { ...o, ...currentLook } : o)),
+    );
+    setUpdated(true);
+    setTimeout(() => setUpdated(false), 1800);
   };
 
   /** 身上有沒有穿這一格。exact＝要同一個顏色才算（最愛分頁存的是特定顏色） */
@@ -699,9 +789,10 @@ export default function FashionPage() {
 
   const emptyMessage =
     tab === "favorites"
-      ? favoriteCount === 0
-        ? "還沒有加入最愛，點卡片右上角的星星就能加入收藏"
-        : shownFavoriteSections.length === 0 && "沒有符合的最愛"
+      ? favoriteCount + outfits.length === 0
+        ? "還沒有加入最愛：點卡片右邊的星星收藏單件，或按「儲存搭配」存下整身造型"
+        : shownOutfits.length + shownFavoriteSections.length === 0 &&
+          "沒有符合的最愛"
       : tab === "effect"
         ? effectList.length === 0 && "沒有符合的特效"
         : list.length === 0 && "沒有符合的道具";
@@ -714,12 +805,7 @@ export default function FashionPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">時裝搭配</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          圖取自 maplestory.io，少數道具素材庫沒有、無法預覽（排在清單最後）。
-        </p>
-      </div>
+      <h1 className="text-3xl font-bold tracking-tight">時裝搭配</h1>
 
       <div
         className={`grid grid-cols-1 gap-6 ${
@@ -924,23 +1010,78 @@ export default function FashionPage() {
           )}
 
           <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <div className="mb-2 flex items-center justify-between gap-2">
+            {/* 窄螢幕塞不下一列時，兩顆按鈕一起換到下一列、靠右 */}
+            <div className="mb-2 flex flex-wrap items-center gap-2">
               <span className="text-xs font-semibold text-[var(--text-muted)]">
                 目前穿著
               </span>
-              <button
-                onClick={share}
-                title="把這身造型編進網址，複製後貼給朋友或自己留著"
-                className={`flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors ${
-                  copied
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
-                    : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                }`}
-              >
-                {copied ? <Check size={12} /> : <Link2 size={12} />}
-                {copied ? "已複製連結" : "分享造型"}
-              </button>
+              <div className="ml-auto flex gap-1.5">
+                <button
+                  onClick={saveOutfit}
+                  disabled={equippedRows.length === 0}
+                  title={
+                    editingOutfit
+                      ? `存成新的一套，「${editingOutfit.name}」不會變`
+                      : "把這身存進「最愛」分頁，之後點一下就能整身穿回來"
+                  }
+                  className={`flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors disabled:cursor-default disabled:opacity-40 ${
+                    saved
+                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                      : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+                  }`}
+                >
+                  {saved ? <Check size={12} /> : <BookmarkPlus size={12} />}
+                  {saved
+                    ? "已存到最愛"
+                    : editingOutfit
+                      ? "另存新搭配"
+                      : "儲存搭配"}
+                </button>
+                <button
+                  onClick={share}
+                  title="把這身造型編進網址，複製後貼給朋友或自己留著"
+                  className={`flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors ${
+                    copied
+                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                      : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+                  }`}
+                >
+                  {copied ? <Check size={12} /> : <Link2 size={12} />}
+                  {copied ? "已複製連結" : "分享造型"}
+                </button>
+              </div>
             </div>
+            {/* 改了東西才出現「更新這套」；✕ 只是不再跟那套連動，已存的不會變 */}
+            {editingOutfit && (
+              <div className="mb-2 flex items-center gap-2 text-xs">
+                <span className="min-w-0 flex-1 truncate text-[var(--text-muted)]">
+                  編輯中：
+                  <span className="text-[var(--text)]">
+                    {editingOutfit.name}
+                  </span>
+                  {dirty && "・有改動"}
+                </span>
+                {(dirty || updated) && (
+                  <button
+                    onClick={updateOutfit}
+                    disabled={updated}
+                    title={`把目前這身寫回「${editingOutfit.name}」`}
+                    className="flex shrink-0 cursor-pointer items-center gap-1 rounded-full border border-[var(--accent)] bg-[var(--accent-soft)] px-2.5 py-0.5 text-[var(--text)] disabled:cursor-default"
+                  >
+                    {updated ? <Check size={12} /> : <Save size={12} />}
+                    {updated ? "已更新" : "更新這套"}
+                  </button>
+                )}
+                <button
+                  onClick={() => setEditingId(null)}
+                  title="不編輯這套了（已存的不會變）"
+                  aria-label={`不編輯「${editingOutfit.name}」了`}
+                  className="shrink-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            )}
             {equippedRows.length === 0 && !look.effect ? (
               <div className="text-xs text-[var(--text-muted)]">
                 還沒穿任何東西
@@ -1057,7 +1198,9 @@ export default function FashionPage() {
                 fill="currentColor"
               />
               最愛
-              <span className="ml-1 opacity-60">{favoriteCount}</span>
+              <span className="ml-1 opacity-60">
+                {favoriteCount + outfits.length}
+              </span>
             </button>
             {/* <button
               onClick={() => changeTab("effect")}
@@ -1163,6 +1306,33 @@ export default function FashionPage() {
               <p className="text-xs leading-relaxed text-[var(--text-muted)]">
                 最愛只存在這個瀏覽器，換瀏覽器或裝置、清除瀏覽資料、太久沒來都可能不見。
               </p>
+              {shownOutfits.length > 0 && (
+                <section className="space-y-2">
+                  <h2 className="text-xs font-semibold text-[var(--text-muted)]">
+                    整身搭配
+                    <span className="ml-1 font-normal opacity-60">
+                      {shownOutfits.length}
+                    </span>
+                  </h2>
+                  <div className={`grid gap-2 ${gridCols}`}>
+                    {shownOutfits.map((o) => (
+                      <OutfitCard
+                        key={o.id}
+                        outfit={o}
+                        look={outfitLooks.get(o.id)!}
+                        // 亮的是正在編輯的那套（同一身可以存好幾份，照樣子比會一起亮）
+                        active={o.id === editingId}
+                        onWear={() => {
+                          wear(o);
+                          setEditingId(o.id);
+                        }}
+                        onRename={(name) => renameOutfit(o.id, name)}
+                        onDelete={() => deleteOutfit(o.id)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
               {shownFavoriteSections.map((section) => (
                 <section key={section.slot} className="space-y-2">
                   <h2 className="text-xs font-semibold text-[var(--text-muted)]">
