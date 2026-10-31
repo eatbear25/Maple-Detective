@@ -26,6 +26,18 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // 分頁小圖示（src/app/icon.svg）。Next 預設給 max-age=0，瀏覽器每開一頁都要回來問一次，
+        // 12 小時就是上千次 CDN Request。頁面上的連結是 /icon.svg?icon.<內容雜湊>.svg，
+        // 換圖網址就會跟著變，所以可以長快取。
+        source: "/icon.svg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
 };

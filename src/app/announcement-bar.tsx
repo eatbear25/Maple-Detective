@@ -10,7 +10,11 @@ import {
   Megaphone,
   X,
 } from "lucide-react";
-import type { Announcement } from "@/lib/announcements";
+import {
+  SHEET_CSV_URL,
+  parseAnnouncements,
+  type Announcement,
+} from "@/lib/announcements";
 import { useStored } from "./fashion/storage";
 
 /**
@@ -19,7 +23,7 @@ import { useStored } from "./fashion/storage";
  * 併在 header 裡當第二列（同一個底色、細線隔開），不另外做一條有底色的橫幅：
  * 放在 header 上面加一條米色底的版本，畫面會變成三條顏色不同的帶子，像 cookie 提示。
  *
- * 頁面是純靜態的，公告在瀏覽器載入後才去 /api/announcements 拿，所以會晚一拍才
+ * 頁面是純靜態的，公告在瀏覽器載入後才去 Google 試算表拿，所以會晚一拍才
  * 從 header 底下滑出來；沒有公告或讀不到試算表就整條不出現。
  *
  * 多則公告一次只顯示一則、輪流換（並排的話兩則擠在一條裡很亂）。單則塞不下時，
@@ -63,10 +67,15 @@ export function useAnnouncements(): AnnouncementsState {
 
   useEffect(() => {
     let alive = true;
-    fetch("/api/announcements")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data: Announcement[]) => {
-        if (alive) setItems(data);
+    fetch(SHEET_CSV_URL)
+      // 試算表沒開共用時，Google 會導去登入頁（HTML），不能當 CSV 解出一堆亂碼公告
+      .then((r) =>
+        r.ok && r.headers.get("content-type")?.includes("text/csv")
+          ? r.text()
+          : "",
+      )
+      .then((csv) => {
+        if (alive && csv) setItems(parseAnnouncements(csv));
       })
       .catch(() => {
         /* 讀不到就不顯示公告 */
@@ -288,8 +297,11 @@ function Item({ a }: { a: Announcement }) {
 
   const linkCls = `${cls} rounded hover:text-[var(--accent-text)] hover:underline underline-offset-2`;
   if (!external) {
+    // 完全不預先載入。輪播每 5 秒就重新掛載一次這個連結，網站一重新部署，
+    // 舊分頁預先載入回來的資料版本對不上會被丟掉、10 秒後又重抓，永遠停不下來：
+    // 2026-10-31 查到 10/30 以前開著沒關的分頁，12 小時把這兩則公告的頁面各打了 2.3 萬次。
     return (
-      <Link href={a.href} className={linkCls}>
+      <Link href={a.href} prefetch={false} className={linkCls}>
         {body}
       </Link>
     );
