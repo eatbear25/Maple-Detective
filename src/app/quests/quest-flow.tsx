@@ -133,7 +133,7 @@ function StepDot({ num, active }: { num: number; active: boolean }) {
       style={
         active
           ? { background: "var(--accent)", color: "var(--on-accent)" }
-          : { background: "var(--accent-soft)", color: "var(--accent)" }
+          : { background: "var(--accent-soft)", color: "var(--accent-text)" }
       }
     >
       {num}
@@ -189,7 +189,7 @@ function MainRow({
         style={
           isCur
             ? { background: "var(--accent)", color: "var(--on-accent)" }
-            : { background: "var(--accent-soft)", color: "var(--accent)" }
+            : { background: "var(--accent-soft)", color: "var(--accent-text)" }
         }
       >
         {num}

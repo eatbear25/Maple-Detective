@@ -324,7 +324,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
     [
       "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors md:py-1.5 md:whitespace-nowrap",
       enabled ? "cursor-pointer" : "cursor-not-allowed opacity-50",
-      enabled && isActive && "bg-[var(--accent-soft)] text-[var(--accent)]",
+      enabled && isActive && "bg-[var(--accent-soft)] text-[var(--accent-text)]",
       enabled &&
         !isActive &&
         "text-[var(--text-muted)] hover:bg-[var(--accent-soft)]/60 hover:text-[var(--text)]",
@@ -345,7 +345,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3 sm:gap-6">
           <Link
             href={navHref("")}
-            className="flex items-center gap-2 font-bold text-[var(--accent)] shrink-0"
+            className="flex items-center gap-2 font-bold text-[var(--accent-text)] shrink-0"
           >
             <Logo size={28} />
             <span className="text-lg">楓探</span>
@@ -362,24 +362,28 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
 
           <div className="flex-1 md:hidden" />
 
-          <AnnouncementToggle state={announcements} />
+          {/* 右上角的按鈕手機版點擊區 44×44（手指點得到）、桌機 40×40；
+              按鈕本身已經有留白，彼此只隔 4px，最右邊那顆往外推讓圖示對齊頁面邊距 */}
+          <div className="-mr-2.5 flex shrink-0 items-center gap-1 md:mr-0">
+            <AnnouncementToggle state={announcements} />
 
-          <button
-            onClick={toggle}
-            aria-label="切換深色模式"
-            className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors"
-          >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
+            <button
+              onClick={toggle}
+              aria-label="切換深色模式"
+              className="cursor-pointer size-11 rounded-lg flex items-center justify-center shrink-0 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent-text)] transition-colors md:size-10"
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
 
-          <button
-            onClick={() => setMenuOpen(true)}
-            aria-label="開啟選單"
-            aria-expanded={menuOpen}
-            className="cursor-pointer -mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors md:hidden"
-          >
-            <Menu size={19} />
-          </button>
+            <button
+              onClick={() => setMenuOpen(true)}
+              aria-label="開啟選單"
+              aria-expanded={menuOpen}
+              className="cursor-pointer flex size-11 shrink-0 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent-text)] transition-colors md:hidden"
+            >
+              <Menu size={20} />
+            </button>
+          </div>
         </div>
 
         <AnnouncementBar state={announcements} />
@@ -400,9 +404,9 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             <button
               onClick={() => setMenuOpen(false)}
               aria-label="關閉選單"
-              className="cursor-pointer -mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors"
+              className="cursor-pointer -mr-2.5 flex size-11 shrink-0 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent-text)] transition-colors"
             >
-              <X size={19} />
+              <X size={20} />
             </button>
           </div>
           <NavList
@@ -414,19 +418,27 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
+      {/* 首頁的主視覺要整條滿版（點點底紋、底線拉到兩邊），所以首頁的 main 不套寬度與內距，
+          由首頁每一段自己置中。用 100vw 從框裡撐出去會多算捲軸寬度，跟頁首的左緣對不齊 */}
+      <main
+        className={
+          pathname === "/"
+            ? "flex-1"
+            : "flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8"
+        }
+      >
         {children}
       </main>
 
-      <footer className="border-t border-[var(--border)] px-6 py-4 text-center text-[11px] text-[var(--text-muted)]">
+      <footer className="border-t border-[var(--border)] bg-[var(--surface)] px-4 py-5 text-center text-xs leading-relaxed text-[var(--text-muted)] md:py-6 md:text-[13px]">
         © 2026 楓探 Maple Detective
-        <p className="mt-1">
+        <p className="mt-1.5">
           本站資料僅供參考，若有任何問題可至
           <a
             href="https://forum.gamer.com.tw/Co.php?bsn=85994&sn=5193"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[var(--accent)] hover:underline"
+            className="text-[var(--accent-text)] hover:underline"
           >
             巴哈討論區
           </a>

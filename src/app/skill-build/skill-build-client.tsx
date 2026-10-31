@@ -43,6 +43,7 @@ import {
   type Skill,
 } from "@/data/skills";
 import { SkillIcon } from "../skill-icon";
+import { PageHeader } from "@/app/page-header";
 
 /**
  * 每升 1 級 +3 SP、每次轉職 +1 SP。法師 8 級轉職、其他 10 級。
@@ -243,18 +244,20 @@ export default function SkillBuildPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">技能配點模擬</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          分配好技能點後也可以按下分享，複製網址給朋友或自己收藏。
-          <Link
-            href="/skills"
-            className="ml-2 inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
-          >
-            <Sparkles size={12} /> 技能查詢
-          </Link>
-        </p>
-      </div>
+      <PageHeader
+        title="技能配點模擬"
+        description={
+          <>
+            分配好技能點後也可以按下分享，複製網址給朋友或自己收藏。
+            <Link
+              href="/skills"
+              className="ml-2 inline-flex items-center gap-1 text-[var(--accent-text)] hover:underline"
+            >
+              <Sparkles size={12} /> 技能查詢
+            </Link>
+          </>
+        }
+      />
 
       {/* 職業選擇：依職業群分列 */}
       <div className="space-y-2">
@@ -375,13 +378,13 @@ export default function SkillBuildPage() {
                   setBuild({});
                   setWhy(null);
                 }}
-                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
               >
                 <RotateCcw size={12} /> 重置
               </button>
               <button
                 onClick={share}
-                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
               >
                 {copied ? <Check size={12} /> : <Link2 size={12} />}
                 {copied ? "已複製" : "分享"}
@@ -451,7 +454,7 @@ function PoolMeter({
         />
       </span>
       {warn && (
-        <span className="mt-0.5 block text-[10px] font-medium text-[var(--accent)]">
+        <span className="mt-0.5 block text-[10px] font-medium text-[var(--accent-text)]">
           {warn}
         </span>
       )}
@@ -602,7 +605,7 @@ function QuickBtn({
       className={`flex items-center gap-0.5 rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] transition-colors ${
         disabled
           ? "cursor-not-allowed opacity-30 dark:opacity-50"
-          : "cursor-pointer hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          : "cursor-pointer hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
       }`}
     >
       {children}

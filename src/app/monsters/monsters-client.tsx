@@ -28,6 +28,7 @@ import {
   type MapInfo,
 } from "@/data/drops";
 import { GameIcon } from "./game-icon";
+import { PageHeader } from "@/app/page-header";
 import { ItemTooltip, useItemTooltip } from "./item-tooltip";
 import { StatsPanel, ElemPanel } from "./panels";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
@@ -70,9 +71,25 @@ function MonsterPageSkeleton() {
   );
 }
 
+const TITLE = "怪物掉落查詢";
+const TAB_DESC: Record<Tab, string> = {
+  current:
+    "從遊戲用戶端圖鑑整理的掉落資訊，與實際情況可能存在出入，僅供參考",
+  future:
+    "資料裡存在，但目前版本尚未開放的怪物與掉落（不確定未來是否實裝，僅供參考）",
+};
+
 export default function MonsterPage() {
+  // fallback 也要有標題：靜態輸出時這頁只會產出 fallback，見 PageHeader 的註解
   return (
-    <Suspense fallback={<MonsterPageSkeleton />}>
+    <Suspense
+      fallback={
+        <div className="space-y-8">
+          <PageHeader title={TITLE} description={TAB_DESC.current} />
+          <MonsterPageSkeleton />
+        </div>
+      }
+    >
       <MonsterExplorer />
     </Suspense>
   );
@@ -161,12 +178,7 @@ function MonsterExplorer() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">怪物掉落查詢</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          {tab === "current"
-            ? `從遊戲用戶端圖鑑整理的掉落資訊，與實際情況可能存在出入，僅供參考`
-            : "資料裡存在，但目前版本尚未開放的怪物與掉落（不確定未來是否實裝，僅供參考）"}
-        </p>
+        <PageHeader title={TITLE} description={TAB_DESC[tab]} />
 
         <div className="mt-4 inline-flex rounded-full border border-[var(--border)] p-0.5 text-sm">
           {(
@@ -217,7 +229,7 @@ function MonsterExplorer() {
             aria-label="進階篩選"
             className={`cursor-pointer relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors ${
               filterOpen || filterCount > 0
-                ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-text)]"
                 : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
             }`}
           >
@@ -361,7 +373,7 @@ function MonsterExplorer() {
                   {selected.stats.boss ? (
                     <span
                       className="text-xs font-semibold rounded-full px-2 py-0.5 bg-[var(--accent-soft)]"
-                      style={{ color: "var(--accent)" }}
+                      style={{ color: "var(--accent-text)" }}
                     >
                       BOSS
                     </span>
@@ -424,7 +436,7 @@ function MonsterExplorer() {
             <div className="mt-6">
               <div
                 className="text-sm font-semibold mb-3"
-                style={{ color: "var(--accent)" }}
+                style={{ color: "var(--accent-text)" }}
               >
                 掉落物品
               </div>
@@ -468,7 +480,7 @@ function MonsterExplorer() {
               <div className="mt-6">
                 <div
                   className="flex items-center gap-1.5 text-sm font-semibold mb-1"
-                  style={{ color: "var(--accent)" }}
+                  style={{ color: "var(--accent-text)" }}
                 >
                   <Telescope size={15} />
                   未實裝掉落
@@ -546,7 +558,7 @@ function MapChips({ monster }: { monster: DropMonster }) {
       <button
         onClick={() => setOpen((v) => !v)}
         className="cursor-pointer flex w-full items-center gap-1.5 text-sm font-semibold lg:pointer-events-none lg:cursor-default"
-        style={{ color: "var(--accent)" }}
+        style={{ color: "var(--accent-text)" }}
       >
         出沒地圖
         <span className="font-normal text-[var(--text-muted)]">
@@ -678,7 +690,7 @@ function WorldMapModal({
           <MapPin
             size={16}
             className="shrink-0"
-            style={{ color: "var(--accent)" }}
+            style={{ color: "var(--accent-text)" }}
           />
           <span className="shrink-0 text-sm font-semibold">{sheet.title}</span>
           <span className="min-w-0 truncate text-sm text-[var(--text-muted)]">

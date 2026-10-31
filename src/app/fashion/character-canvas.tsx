@@ -21,6 +21,8 @@ interface Props {
   flipX: boolean;
   /** 顯示倍率（維持像素風，用 CSS 放大而不是重繪） */
   scale?: number;
+  /** 縮圖用：放大後比這個高（px）就等比縮回來，戴大帽子的才塞得進固定高度的格子 */
+  maxHeight?: number;
   onStatusChange?: (status: "loading" | "ready" | "error", error?: unknown) => void;
   /** 這次合成時素材庫查不到、沒畫上去的裝備 id */
   onMissing?: (ids: number[]) => void;
@@ -28,7 +30,17 @@ interface Props {
 
 const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
   function CharacterCanvas(
-    { look, action, expression, animated, flipX, scale = 2, onStatusChange, onMissing },
+    {
+      look,
+      action,
+      expression,
+      animated,
+      flipX,
+      scale = 2,
+      maxHeight,
+      onStatusChange,
+      onMissing,
+    },
     ref,
   ) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -147,13 +159,16 @@ const CharacterCanvas = forwardRef<CharacterCanvasHandle, Props>(
       return <div style={{ width: 96, height: 96 }} />;
     }
 
+    const shownScale = maxHeight
+      ? Math.min(scale, maxHeight / prepared.height)
+      : scale;
     return (
       <canvas
         ref={canvasRef}
         style={{
           // 大張的特效（翅膀類寬到 183px）放大兩倍會超出預覽欄，
           // maxWidth + height:auto 讓瀏覽器等比縮回來，像素風不受影響
-          width: prepared.width * scale,
+          width: prepared.width * shownScale,
           height: "auto",
           maxWidth: "100%",
           imageRendering: "pixelated",

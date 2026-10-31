@@ -45,7 +45,7 @@ export function ElemPanel({ stats }: { stats: MobStats }) {
   if (groups.every(([, list]) => list.length === 0)) return null;
   return (
     <div className="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
-      <span className="font-semibold" style={{ color: "var(--accent)" }}>
+      <span className="font-semibold" style={{ color: "var(--accent-text)" }}>
         屬性
       </span>
       {groups.map(([label, list]) =>

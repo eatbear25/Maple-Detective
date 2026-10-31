@@ -14,7 +14,7 @@ const NOTO_SANS_TC_CSS =
 const SITE_URL = "https://maple-detective.vercel.app";
 const SITE_TITLE = "楓探 | 新楓之谷：經典版工具箱";
 const SITE_DESCRIPTION =
-  "新楓之谷經典版攻略工具箱：怪物掉落查詢、地圖導覽、技能查詢與配點模擬、任務查詢、BOSS 計時器、轉蛋模擬、時裝搭配，資料取自遊戲用戶端拆包整理。";
+  "新楓之谷經典版攻略工具箱：怪物掉落查詢、地圖導覽、技能查詢與配點模擬、任務查詢、BOSS 計時器、神秘商人模擬、時裝搭配，資料取自遊戲用戶端拆包整理。";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

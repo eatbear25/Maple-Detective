@@ -105,7 +105,7 @@ export default async function Page({
     <div className="space-y-6">
       <Link
         href="/monsters"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--accent)]"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--accent-text)]"
       >
         <ArrowLeft size={15} />
         怪物掉落查詢
@@ -122,7 +122,7 @@ export default async function Page({
           <h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight">
             <span className="break-words">{m.name}</span>
             {m.stats.boss ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--accent)]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--accent-text)]">
                 <Crown size={12} />
                 BOSS
               </span>
@@ -183,7 +183,7 @@ export default async function Page({
               <li key={mp.id}>
                 <Link
                   href={`/monsters?q=${encodeURIComponent(mp.name)}`}
-                  className="inline-block rounded-full border border-[var(--border)] px-3 py-1 text-xs hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  className="inline-block rounded-full border border-[var(--border)] px-3 py-1 text-xs hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
                 >
                   {mp.name}
                 </Link>
@@ -196,7 +196,7 @@ export default async function Page({
       <div className="border-t border-[var(--border)] pt-5">
         <Link
           href={`/monsters?id=${m.id}`}
-          className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-soft)] px-4 py-2 text-sm font-medium text-[var(--accent)] hover:brightness-95"
+          className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-soft)] px-4 py-2 text-sm font-medium text-[var(--accent-text)] hover:brightness-95"
         >
           <Search size={15} />
           在查詢工具中開啟（看世界地圖位置、篩選其他怪物）

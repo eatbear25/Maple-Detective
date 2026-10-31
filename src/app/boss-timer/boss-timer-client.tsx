@@ -18,6 +18,7 @@ import {
 import { bossList, type BossDef } from "@/data/bosses";
 import { mobIconSrc } from "@/data/drops";
 import { GameIcon } from "../monsters/game-icon";
+import { PageHeader } from "@/app/page-header";
 import {
   decodeShare,
   encodeShare,
@@ -59,9 +60,17 @@ function useEscapeToClose(onClose: () => void) {
   }, [onClose]);
 }
 
+const HEADER = (
+  <PageHeader
+    title="BOSS 計時器"
+    description="記錄擊殺時間，自動推算下次重生時間。資料存在你的瀏覽器裡，重生時間為玩家回報，僅供參考。"
+  />
+);
+
 export default function BossTimerPage() {
+  // fallback 也要有標題：靜態輸出時這頁只會產出 fallback，見 PageHeader 的註解
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={HEADER}>
       <BossTimerApp />
     </Suspense>
   );
@@ -165,12 +174,7 @@ function BossTimerApp() {
   return (
     <>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">BOSS 計時器</h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
-            記錄擊殺時間，自動推算下次重生時間。資料存在你的瀏覽器裡，重生時間為玩家回報，僅供參考。
-          </p>
-        </div>
+        {HEADER}
 
         {/* BOSS 區刻意做成小圖示格、放最上面：這頁兩件事都很常做——看倒數、記新的擊殺。
             大卡片版不管放上面（手機要捲 700px 才看得到清單）還是放下面（清單一長就要捲很久才能加）
@@ -178,7 +182,7 @@ function BossTimerApp() {
         <div>
           <h2
             className="mb-3 text-sm font-semibold"
-            style={{ color: "var(--accent)" }}
+            style={{ color: "var(--accent-text)" }}
           >
             選擇 BOSS
           </h2>
@@ -205,7 +209,7 @@ function BossTimerApp() {
           <div className="mb-3 flex items-center gap-2">
             <h2
               className="text-sm font-semibold"
-              style={{ color: "var(--accent)" }}
+              style={{ color: "var(--accent-text)" }}
             >
               我的追蹤清單
             </h2>
@@ -475,7 +479,7 @@ function UndoToast({
       <button
         onClick={onUndo}
         className="cursor-pointer flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium tabular-nums transition-colors"
-        style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+        style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
       >
         <Undo2 size={13} />
         復原（{secondsLeft}）
@@ -532,8 +536,8 @@ function BossTile({
           onClick={onEditInterval}
           title="設定重生時間"
           aria-label={`設定${boss.name}的重生時間`}
-          className={`cursor-pointer flex max-w-full items-center justify-center gap-0.5 py-0.5 text-[11px] underline decoration-dotted underline-offset-2 transition-colors hover:text-[var(--accent)] ${
-            interval ? "text-[var(--text-muted)]" : "text-[var(--accent)]"
+          className={`cursor-pointer flex max-w-full items-center justify-center gap-0.5 py-0.5 text-[11px] underline decoration-dotted underline-offset-2 transition-colors hover:text-[var(--accent-text)] ${
+            interval ? "text-[var(--text-muted)]" : "text-[var(--accent-text)]"
           }`}
         >
           <span className="truncate">
@@ -551,7 +555,7 @@ function BossTile({
         title={`記錄擊殺：${boss.name}`}
         aria-label={`記錄擊殺：${boss.name}`}
         className="cursor-pointer mt-1 flex w-full max-w-28 items-center justify-center gap-0.5 rounded-full py-1 text-[11px] font-medium"
-        style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+        style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
       >
         <Plus size={11} />
         擊殺
@@ -563,8 +567,8 @@ function BossTile({
         aria-label={pinned ? `取消釘選${boss.name}` : `釘選${boss.name}`}
         className={`cursor-pointer absolute right-0 top-0 flex h-6 w-6 items-center justify-center transition-colors md:h-7 md:w-7 ${
           pinned
-            ? "text-[var(--accent)]"
-            : "text-[var(--text-muted)] hover:text-[var(--accent)]"
+            ? "text-[var(--accent-text)]"
+            : "text-[var(--text-muted)] hover:text-[var(--accent-text)]"
         }`}
       >
         <Star size={15} fill={pinned ? "currentColor" : "none"} />
@@ -644,7 +648,7 @@ function TrackedRow({
           <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-[var(--text-muted)]">
             {/* 頻道是「要去哪一頻」的關鍵資訊，用強調色；底色固定用 surface，
                 這樣在「應該已重生」那張 accent-soft 底的卡片上也不會融進去 */}
-            <span className="shrink-0 whitespace-nowrap rounded-full border border-[var(--accent)] bg-[var(--surface)] px-2 py-0.5 text-xs font-semibold tabular-nums text-[var(--accent)]">
+            <span className="shrink-0 whitespace-nowrap rounded-full border border-[var(--accent)] bg-[var(--surface)] px-2 py-0.5 text-xs font-semibold tabular-nums text-[var(--accent-text)]">
               {record.channel} 頻
             </span>
             <span className="whitespace-nowrap">
@@ -657,7 +661,7 @@ function TrackedRow({
       <div className="mt-2.5 border-t border-[var(--border)] pt-2.5">
         <div
           className="flex flex-wrap items-baseline gap-x-1.5 text-sm font-semibold tabular-nums"
-          style={{ color: canRekill ? "var(--accent)" : undefined }}
+          style={{ color: canRekill ? "var(--accent-text)" : undefined }}
         >
           <span className="whitespace-nowrap">{statusLabel}</span>
           {countdown && (
@@ -687,7 +691,7 @@ function TrackedRow({
           style={
             passed
               ? { background: "var(--accent)", color: "var(--on-accent)" }
-              : { background: "var(--accent-soft)", color: "var(--accent)" }
+              : { background: "var(--accent-soft)", color: "var(--accent-text)" }
           }
         >
           <RotateCcw size={13} />
@@ -875,7 +879,7 @@ function KillFormModal({
                   <button
                     type="button"
                     onClick={onEditInterval}
-                    className="cursor-pointer flex items-center gap-1 text-[var(--accent)] hover:underline"
+                    className="cursor-pointer flex items-center gap-1 text-[var(--accent-text)] hover:underline"
                   >
                     <Pencil size={11} />
                     修改
@@ -1022,7 +1026,7 @@ function ShareModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 border-b border-[var(--border)] px-4 py-3">
-          <Share2 size={16} style={{ color: "var(--accent)" }} />
+          <Share2 size={16} style={{ color: "var(--accent-text)" }} />
           <span className="text-sm font-semibold">分享追蹤清單</span>
           <button
             onClick={onClose}
