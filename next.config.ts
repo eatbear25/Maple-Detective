@@ -17,7 +17,8 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/(icons|worldmap|wz-static|maps)/:path*",
+        // brand 是首頁的偵探企鵝：要換圖請換檔名，不要覆蓋同一個檔案
+        source: "/(icons|worldmap|wz-static|maps|brand)/:path*",
         headers: [
           {
             key: "Cache-Control",

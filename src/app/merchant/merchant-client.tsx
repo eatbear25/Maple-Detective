@@ -30,6 +30,7 @@ import {
 } from "@/data/merchant";
 import { PrizeTile } from "./prize-tile";
 import { CUSTOM_GOAL_ID, useMerchant, type MerchantCtx } from "./use-merchant";
+import { PageHeader } from "@/app/page-header";
 import {
   AutoCountInput,
   CustomPicker,
@@ -148,7 +149,7 @@ function Card({ title, children }: { title?: string; children: React.ReactNode }
   return (
     <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
       {title && (
-        <h2 className="mb-2 text-sm font-semibold" style={{ color: "var(--accent)" }}>
+        <h2 className="mb-2 text-sm font-semibold" style={{ color: "var(--accent-text)" }}>
           {title}
         </h2>
       )}
@@ -159,10 +160,10 @@ function Card({ title, children }: { title?: string; children: React.ReactNode }
 
 function Header({ ctx }: { ctx: MerchantCtx }) {
   return (
-    <header className="flex flex-wrap items-baseline justify-between gap-2">
-      <h1 className="text-3xl font-bold tracking-tight">神秘商人模擬</h1>
-      <p className="text-xs text-[var(--text-muted)]">活動期間 {poolPeriod(ctx.pool)}</p>
-    </header>
+    <PageHeader
+      title="神秘商人模擬"
+      description={`用官方公布的機率表模擬刷新貨架（活動期間 ${poolPeriod(ctx.pool)}）`}
+    />
   );
 }
 
@@ -171,7 +172,7 @@ function MerchantWindow({ ctx }: { ctx: MerchantCtx }) {
   return (
     <section className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
       <header className="flex items-baseline justify-between gap-2 border-b border-[var(--border)] px-3 py-2">
-        <span className="text-sm font-semibold" style={{ color: "var(--accent)" }}>
+        <span className="text-sm font-semibold" style={{ color: "var(--accent-text)" }}>
           神秘商人
         </span>
         <span className="text-[0.7rem] text-[var(--text-muted)]">每次刷新上架 {slots} 個商品</span>
@@ -225,7 +226,7 @@ function MerchantWindow({ ctx }: { ctx: MerchantCtx }) {
       <footer className="flex flex-col gap-2 border-t border-[var(--border)] px-3 py-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs font-bold">
-            已刷新 <span style={{ color: "var(--accent)" }}>{ctx.view.refreshes}</span> 次
+            已刷新 <span style={{ color: "var(--accent-text)" }}>{ctx.view.refreshes}</span> 次
             <span className="mx-1.5 opacity-30">・</span>
             <span className="text-rose-500 dark:text-rose-400">
               NT${ctx.view.spent.toLocaleString()}
@@ -297,7 +298,7 @@ function Buttons({ ctx }: { ctx: MerchantCtx }) {
         type="button"
         onClick={ctx.stopAuto}
         title="次數已經算完了，這顆鈕只是跳過播放動畫、直接看結果"
-        style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+        style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
         className={base}
       >
         跳過動畫
@@ -309,7 +310,7 @@ function Buttons({ ctx }: { ctx: MerchantCtx }) {
       <button
         type="button"
         onClick={ctx.handleRefresh}
-        style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+        style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
         className={base}
       >
         刷新 1 次
@@ -404,7 +405,7 @@ function OddsTable({ ctx }: { ctx: MerchantCtx }) {
   return (
     <div className="lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)]">
       <div className="flex h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
-        <span className="text-sm font-semibold" style={{ color: "var(--accent)" }}>
+        <span className="text-sm font-semibold" style={{ color: "var(--accent-text)" }}>
           官方機率表
           <span className="ml-2 text-xs font-normal text-[var(--text-muted)]">
             {ctx.pool.prizes.length} 筆

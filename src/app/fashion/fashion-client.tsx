@@ -72,6 +72,7 @@ import {
   PAGE_SIZE_KEY,
   useStored,
 } from "./storage";
+import { PageHeader } from "@/app/page-header";
 
 /** 每頁幾件的選項。都是 2、3、4 的倍數，清單不管排幾欄最後一列都是滿的 */
 const PAGE_SIZES = [24, 60, 120, 240];
@@ -345,8 +346,8 @@ function EntryCard({
         aria-pressed={favorite}
         className={`absolute right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-colors ${
           favorite
-            ? "text-[var(--accent)]"
-            : "text-[var(--border)] hover:text-[var(--accent)]"
+            ? "text-[var(--accent-text)]"
+            : "text-[var(--border)] hover:text-[var(--accent-text)]"
         }`}
       >
         <Star size={15} fill={favorite ? "currentColor" : "none"} />
@@ -805,7 +806,7 @@ export default function FashionPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight">時裝搭配</h1>
+      <PageHeader title="時裝搭配" />
 
       <div
         className={`grid grid-cols-1 gap-6 ${
@@ -990,7 +991,7 @@ export default function FashionPage() {
             <div className="flex gap-2 rounded-xl border border-[var(--border)] bg-[var(--accent-soft)] p-3 text-xs">
               <AlertTriangle
                 size={14}
-                className="mt-0.5 shrink-0 text-[var(--accent)]"
+                className="mt-0.5 shrink-0 text-[var(--accent-text)]"
               />
               <div>
                 <div className="font-medium">這幾件沒載入成功</div>
@@ -1194,7 +1195,7 @@ export default function FashionPage() {
             >
               <Star
                 size={11}
-                className="mr-1 text-[var(--accent)]"
+                className="mr-1 text-[var(--accent-text)]"
                 fill="currentColor"
               />
               最愛

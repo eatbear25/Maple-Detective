@@ -123,7 +123,7 @@ export default async function Page({
     <div className="space-y-6">
       <Link
         href="/monsters"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--accent)]"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--accent-text)]"
       >
         <ArrowLeft size={15} />
         怪物掉落查詢
@@ -247,7 +247,7 @@ function EquipSection({ id, eq }: { id: number; eq: EquipStats }) {
               key={label}
               className={
                 usable
-                  ? "rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[var(--accent)]"
+                  ? "rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[var(--accent-text)]"
                   : "rounded-full px-2 py-0.5 text-[var(--text-muted)] opacity-50"
               }
             >

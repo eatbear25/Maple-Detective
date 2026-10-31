@@ -31,6 +31,7 @@ import {
   type Skill,
 } from "@/data/skills";
 import { SkillIcon } from "../skill-icon";
+import { PageHeader } from "@/app/page-header";
 
 type Tab = "released" | "future";
 
@@ -121,12 +122,14 @@ export default function SkillsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">技能查詢</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          {tab === "released"
-            ? `${RELEASED_TIERS.join("、")} 轉技能一覽`
-            : `${FUTURE_TIERS.join("、")} 轉尚未開放`}
-        </p>
+        <PageHeader
+          title="技能查詢"
+          description={
+            tab === "released"
+              ? `${RELEASED_TIERS.join("、")} 轉技能一覽`
+              : `${FUTURE_TIERS.join("、")} 轉尚未開放`
+          }
+        />
 
         {/* 分頁樣式跟怪物掉落頁一致（同一組 現行/未來視 的概念，不該長得不一樣） */}
         <div className="mt-4 inline-flex rounded-full border border-[var(--border)] p-0.5 text-sm">
@@ -179,7 +182,7 @@ export default function SkillsPage() {
           </div>
           <Link
             href="/skill-build"
-            className="flex items-center gap-1.5 rounded-full border border-[var(--border)] px-3 py-1.5 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="flex items-center gap-1.5 rounded-full border border-[var(--border)] px-3 py-1.5 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
           >
             <Target size={13} /> 配點模擬
           </Link>
@@ -209,7 +212,7 @@ export default function SkillsPage() {
             <>
               <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] pb-3">
                 <h2 className="text-2xl font-bold">{job.name}</h2>
-                <span className="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--accent)]">
+                <span className="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--accent-text)]">
                   {job.tier} 轉
                 </span>
                 {!isReleased(jobId) && (
@@ -230,7 +233,7 @@ export default function SkillsPage() {
                         : Object.fromEntries(shown.map((s) => [s.id, true])),
                     )
                   }
-                  className="cursor-pointer ml-auto flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  className="cursor-pointer ml-auto flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
                 >
                   <Rows3 size={12} /> {allOpen ? "全部收合" : "全部展開"}
                 </button>
@@ -359,12 +362,12 @@ function JobRow({
         tone === "sub" ? "py-1 text-[13px]" : "py-1.5 text-sm"
       } ${
         active
-          ? "bg-[var(--accent-soft)] font-medium text-[var(--accent)]"
+          ? "bg-[var(--accent-soft)] font-medium text-[var(--accent-text)]"
           : "hover:bg-[var(--accent-soft)]/50"
       } ${dimmed ? "cursor-default opacity-35 dark:opacity-50" : "cursor-pointer"}`}
     >
       <span
-        className={`flex shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[9px] font-semibold text-[var(--accent)] ${
+        className={`flex shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[9px] font-semibold text-[var(--accent-text)] ${
           tone === "sub" ? "h-4 w-4" : "h-5 w-5"
         }`}
       >
@@ -440,7 +443,7 @@ function SkillRow({
                     key={rid}
                     onClick={() => r && onGoTo(rid)}
                     disabled={!r}
-                    className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-default disabled:opacity-50"
+                    className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-text)] disabled:cursor-default disabled:opacity-50"
                   >
                     <SkillIcon id={rid} size={14} />
                     {r ? r.name : `#${rid}`} {lv} 級

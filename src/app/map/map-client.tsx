@@ -25,6 +25,7 @@ import {
 } from "@/data/worldmap";
 import { GameIcon } from "../monsters/game-icon";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
+import { PageHeader } from "@/app/page-header";
 
 const monsterById = new Map<string, DropMonster>(
   monsters.map((m) => [m.id, m]),
@@ -170,12 +171,10 @@ export default function MapNavPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">地圖導覽</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          遊戲世界地圖，透過點擊地圖上黃點看哪裡有出沒哪些怪物，包含了未來視的地圖，僅供參考。
-        </p>
-      </div>
+      <PageHeader
+        title="地圖導覽"
+        description="遊戲世界地圖，透過點擊地圖上黃點看哪裡有出沒哪些怪物，包含了未來視的地圖，僅供參考。"
+      />
 
       <div ref={searchBoxRef} className="relative max-w-md">
         <div className="relative">

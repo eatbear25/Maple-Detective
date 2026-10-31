@@ -97,9 +97,9 @@ export function AnnouncementToggle({ state }: { state: AnnouncementsState }) {
       onClick={state.expand}
       aria-label="打開公告"
       title="打開公告"
-      className="cursor-pointer w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition-colors"
+      className="cursor-pointer size-11 rounded-lg flex items-center justify-center shrink-0 text-[var(--text-muted)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent-text)] transition-colors md:size-10"
     >
-      <Megaphone size={16} />
+      <Megaphone size={18} />
     </button>
   );
 }
@@ -118,7 +118,7 @@ export default function AnnouncementBar({
     >
       {/* 左右邊距跟 header 第一列一樣：「公告」標籤對齊 logo，× 對齊深色模式按鈕 */}
       <div className="max-w-6xl mx-auto h-full px-4 sm:px-6 flex items-center gap-2.5">
-        <span className="shrink-0 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--accent)]">
+        <span className="shrink-0 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--accent-text)]">
           公告
         </span>
         <Rotator items={state.items} />
@@ -278,7 +278,7 @@ function Item({ a }: { a: Announcement }) {
         <LinkIcon
           size={13}
           aria-hidden="true"
-          className="shrink-0 text-[var(--accent)]"
+          className="shrink-0 text-[var(--accent-text)]"
         />
       )}
     </>
@@ -286,7 +286,7 @@ function Item({ a }: { a: Announcement }) {
   const cls = "flex items-center gap-1.5 whitespace-nowrap";
   if (!a.href) return <span className={cls}>{body}</span>;
 
-  const linkCls = `${cls} rounded hover:text-[var(--accent)] hover:underline underline-offset-2`;
+  const linkCls = `${cls} rounded hover:text-[var(--accent-text)] hover:underline underline-offset-2`;
   if (!external) {
     return (
       <Link href={a.href} className={linkCls}>

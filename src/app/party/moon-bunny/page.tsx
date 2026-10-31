@@ -5,6 +5,7 @@ import {
   moonBunnySeeds,
   type MoonBunnySpot,
 } from "@/data/moon-bunny";
+import { PageHeader } from "@/app/page-header";
 
 export const metadata: Metadata = {
   title: "月妙的年糕 迎月花山丘種子圖",
@@ -192,13 +193,15 @@ function MapPanel({ view }: { view: MapView }) {
 export default function MoonBunnyPage() {
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">月妙的年糕</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          第一階段「{moonBunnyMap.mapName}」：打草撿種子，放到<b>同色</b>
-          的迎月花上
-        </p>
-      </div>
+      <PageHeader
+        title="月妙的年糕"
+        description={
+          <>
+            第一階段「{moonBunnyMap.mapName}」：打草撿種子，放到<b>同色</b>
+            的迎月花上
+          </>
+        }
+      />
 
       <div className="hidden md:block">
         <MapPanel view={WIDE} />

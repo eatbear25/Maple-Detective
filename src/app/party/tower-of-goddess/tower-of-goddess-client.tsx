@@ -17,6 +17,7 @@ import { loungeRecords } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
 import { goddessStatue, type StatueSpot } from "@/data/goddess-statue";
 import { GameIcon } from "../../monsters/game-icon";
+import { PageHeader } from "@/app/page-header";
 import {
   ATTEMPT_LIMIT,
   isAncestor,
@@ -55,9 +56,14 @@ const PANELS: Record<Tab, () => React.JSX.Element> = {
   statue: StatueTab,
 };
 
+const HEADER = (
+  <PageHeader title="女神之塔速查" description="組隊任務小工具，切換分頁使用" />
+);
+
 export default function TowerOfGoddessPage() {
+  // fallback 也要有標題：靜態輸出時這頁只會產出 fallback，見 PageHeader 的註解
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={HEADER}>
       <TowerOfGoddessApp />
     </Suspense>
   );
@@ -89,10 +95,7 @@ function TowerOfGoddessApp() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">女神之塔</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          組隊任務小工具，切換分頁使用
-        </p>
+        {HEADER}
 
         {/* 分頁樣式跟怪物掉落頁一致：選中的直接換底色，不做滑動 */}
         <div
@@ -279,7 +282,7 @@ function SealedStepper({
               <div className="mt-1 flex items-baseline justify-center gap-1">
                 <span
                   className={`text-4xl font-bold leading-none tabular-nums ${
-                    sure ? "text-[var(--accent)]" : ""
+                    sure ? "text-[var(--accent-text)]" : ""
                   }`}
                 >
                   {node.stand[i]}
@@ -293,7 +296,7 @@ function SealedStepper({
 
       <div className="border-t border-[var(--border)] px-4 pb-4 pt-3">
         {sure ? (
-          <p className="py-3 text-center text-sm font-semibold text-[var(--accent)]">
+          <p className="py-3 text-center text-sm font-semibold text-[var(--accent-text)]">
             結束
           </p>
         ) : (
@@ -337,7 +340,7 @@ function SealedStepper({
         <span
           className={
             sure
-              ? "font-medium text-[var(--accent)]"
+              ? "font-medium text-[var(--accent-text)]"
               : "text-[var(--text-muted)]"
           }
         >

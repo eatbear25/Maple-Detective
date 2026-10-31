@@ -128,7 +128,7 @@ const PARTY: NavGroup = {
     },
     {
       key: "tower-of-goddess",
-      label: "女神速查",
+      label: "女神之塔速查",
       icon: "🗼",
       path: "party/tower-of-goddess",
       enabled: true,

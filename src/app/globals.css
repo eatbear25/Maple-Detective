@@ -22,8 +22,50 @@
   transition: box-shadow 150ms ease;
 }
 
+/* 捲軸的位置永遠先留著：內容短、不出捲軸的頁面（BOSS 計時器、超綠題庫…）
+   原本整個版面會比其他頁往右偏幾 px，換頁時左右跳一下 */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   margin: 0;
+}
+
+/* 首頁主視覺的點點底紋，企鵝那一側淡出成底色（位置由 --hero-fade-at 指定，
+   手機版企鵝在右上、桌機版在右側中間）。點的顏色從 border 往 text 推一點，
+   深淺色主題都跟著變 */
+.home-hero {
+  --hero-fade-at: 78% 22%;
+  --hero-fade-size: 40% 34%;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(
+      ellipse var(--hero-fade-size) at var(--hero-fade-at),
+      transparent 0%,
+      var(--bg) 100%
+    ),
+    radial-gradient(
+      color-mix(in srgb, var(--border), var(--text) 10%) 1.2px,
+      transparent 1.6px
+    );
+  background-size:
+    100% 100%,
+    18px 18px;
+}
+@media (min-width: 1024px) {
+  .home-hero {
+    --hero-fade-at: 74% 52%;
+    --hero-fade-size: 34% 62%;
+    background-size:
+      100% 100%,
+      20px 20px;
+  }
+}
+
+/* 首頁的偵探企鵝：原圖 61×71 的像素圖，只能整數倍放大，不然像素會糊 */
+.pixel-art {
+  image-rendering: pixelated;
 }
 
 /* 楓探主題用的細捲軸（顏色吃 layout.tsx 設的 CSS var） */

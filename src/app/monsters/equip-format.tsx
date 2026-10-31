@@ -87,7 +87,7 @@ export function Desc({ text }: { text: string }) {
     <span className="whitespace-pre-line">
       {parts.map((p, i) =>
         i % 2 ? (
-          <span key={i} style={{ color: "var(--accent)" }}>
+          <span key={i} style={{ color: "var(--accent-text)" }}>
             {p}
           </span>
         ) : (

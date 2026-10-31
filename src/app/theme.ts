@@ -11,20 +11,30 @@ export interface ColorTokens {
   text: string;
   textMuted: string;
   border: string;
+  /** 比 border 深一階的框線：首頁搜尋框與常用 chip 這種要「看得出是個框」的地方 */
+  borderStrong: string;
+  /** 圖示、框線、實心底用的琥珀色 */
   accent: string;
+  /** 琥珀色的「字」。淺色版的 accent 對底色只有 3.5，小字讀起來吃力，字另外調深一階 */
+  accentText: string;
   accentSoft: string;
   /** 實心 accent 底上的字色（按鈕、選中的 chip、數字徽章）。淺色是白字；深色的
    *  accent 比較亮，白字只有 2 左右的對比，要換成深色字 */
   onAccent: string;
 }
 
+// 2026-10-31 調高文字對比（首頁改版時一起做）：textMuted 原本 #8A8272，對底色只有 3.6，
+// 11–13px 的說明字很吃力，改成 #6E6757（對 bg 5.4／對 accentSoft 4.8）；
+// 琥珀色的字另開 accentText #8F5C17（5.4／4.9），accent 本身留給圖示與框線
 export const LIGHT_TOKENS: ColorTokens = {
   bg: "#FCFAF6",
   surface: "#FFFFFF",
   text: "#211F1B",
-  textMuted: "#8A8272",
+  textMuted: "#6E6757",
   border: "#EDE6D6",
+  borderStrong: "#E3D9C4",
   accent: "#B8791F",
+  accentText: "#8F5C17",
   accentSoft: "#F6EDDC",
   onAccent: "#FFFFFF",
 };
@@ -38,7 +48,9 @@ export const DARK_TOKENS: ColorTokens = {
   text: "#F8F4EC",
   textMuted: "#C2B9A8",
   border: "#4F4940",
+  borderStrong: "#5E574C",
   accent: "#EDB86A",
+  accentText: "#EDB86A",
   accentSoft: "#46381F",
   onAccent: "#1A1408",
 };
@@ -91,7 +103,9 @@ export function themeVars(tokens: ColorTokens): React.CSSProperties {
     "--text": tokens.text,
     "--text-muted": tokens.textMuted,
     "--border": tokens.border,
+    "--border-strong": tokens.borderStrong,
     "--accent": tokens.accent,
+    "--accent-text": tokens.accentText,
     "--accent-soft": tokens.accentSoft,
     "--on-accent": tokens.onAccent,
   } as React.CSSProperties;

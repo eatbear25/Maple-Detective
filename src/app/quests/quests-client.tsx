@@ -37,6 +37,7 @@ import {
 import { itemIconSrc, mobIconSrc, worldMapSrc } from "@/data/drops";
 import { GameIcon } from "../monsters/game-icon";
 import { ItemTooltip, useItemTooltip } from "../monsters/item-tooltip";
+import { PageHeader } from "@/app/page-header";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
 import { QuestFlowCard } from "./quest-flow";
 
@@ -107,9 +108,24 @@ function QuestPageSkeleton() {
   );
 }
 
+const HEADER = (
+  <PageHeader
+    title="任務查詢"
+    description="任務的接取條件、要打的怪與要繳的道具、獎勵，附任務流程與 NPC 所在地圖"
+  />
+);
+
 export default function QuestPage() {
+  // fallback 也要有標題：靜態輸出時這頁只會產出 fallback，見 PageHeader 的註解
   return (
-    <Suspense fallback={<QuestPageSkeleton />}>
+    <Suspense
+      fallback={
+        <div className="space-y-6">
+          {HEADER}
+          <QuestPageSkeleton />
+        </div>
+      }
+    >
       <QuestExplorer />
     </Suspense>
   );
@@ -165,8 +181,8 @@ function QuestExplorer() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">任務查詢</h1>
-        <div className="relative mt-3 max-w-md">
+        {HEADER}
+        <div className="relative mt-4 max-w-md">
           <Search
             size={15}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
@@ -309,7 +325,7 @@ function RegionChip({
       onClick={onClick}
       className={`cursor-pointer inline-flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
         active
-          ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--accent)]"
+          ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--accent-text)]"
           : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
       }`}
     >
@@ -339,7 +355,7 @@ function QuestCard({
     >
       <span
         className="flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-full text-[10px] font-semibold leading-none"
-        style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+        style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
       >
         {q.lv > 0 ? (
           <>
@@ -471,7 +487,7 @@ function QuestDetail({
             {mapInfo?.wm ? (
               <button
                 onClick={onOpenMap}
-                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
               >
                 <MapPin size={12} />
                 {mapInfo.name}
@@ -564,7 +580,7 @@ function QuestDetail({
                     key={`${sk.id}-${i}`}
                     className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-sm"
                   >
-                    <Zap size={13} className="text-[var(--accent)]" />
+                    <Zap size={13} className="text-[var(--accent-text)]" />
                     {questSkillName(sk.id)}
                     {sk.job?.length ? (
                       <span className="text-xs text-[var(--text-muted)]">{sk.job.join("、")}</span>
@@ -611,7 +627,7 @@ function QuestLinks({
             {other ? (
               <button
                 onClick={() => onPick(other.id)}
-                className="cursor-pointer text-[var(--accent)] hover:underline"
+                className="cursor-pointer text-[var(--accent-text)] hover:underline"
               >
                 {other.name}
               </button>
@@ -642,7 +658,7 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <span
       className="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
-      style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+      style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
     >
       {icon}
       {label}
@@ -849,7 +865,7 @@ function MapModal({ q, onClose }: { q: Quest; onClose: () => void }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 border-b border-[var(--border)] px-4 py-3">
-          <MapPin size={16} className="shrink-0" style={{ color: "var(--accent)" }} />
+          <MapPin size={16} className="shrink-0" style={{ color: "var(--accent-text)" }} />
           <span className="shrink-0 text-sm font-semibold">{sheet.title}</span>
           <span className="min-w-0 truncate text-sm text-[var(--text-muted)]">
             {info.street ? `${info.street}・${info.name}` : info.name}

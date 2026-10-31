@@ -93,7 +93,7 @@ export default function QuestSamplePage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-dashed border-[var(--accent)] bg-[var(--accent-soft)]/40 px-4 py-2.5 text-xs font-semibold" style={{ color: "var(--accent)" }}>
+      <div className="rounded-xl border border-dashed border-[var(--accent)] bg-[var(--accent-soft)]/40 px-4 py-2.5 text-xs font-semibold" style={{ color: "var(--accent-text)" }}>
         樣式 SAMPLE ・ 假資料 19 筆 ・ 定案後這頁會刪掉
       </div>
 
@@ -215,7 +215,7 @@ function QuestCard({
     >
       <span
         className="flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-full text-[10px] font-semibold leading-none"
-        style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+        style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
       >
         {q.lv > 0 ? (
           <>
@@ -323,7 +323,7 @@ function QuestDetail({
             {q.npcMap ? (
               <button
                 onClick={onPickMap}
-                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
               >
                 <MapPin size={12} />
                 {q.npcMap}
@@ -383,7 +383,7 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <span
       className="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
-      style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
+      style={{ background: "var(--accent-soft)", color: "var(--accent-text)" }}
     >
       {icon}
       {label}
@@ -495,7 +495,7 @@ function QuestChainCard({
                     style={
                       isCur
                         ? { background: "var(--accent)", color: "var(--on-accent)" }
-                        : { background: "var(--accent-soft)", color: "var(--accent)" }
+                        : { background: "var(--accent-soft)", color: "var(--accent-text)" }
                     }
                   >
                     {i + 1}
