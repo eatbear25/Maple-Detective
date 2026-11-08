@@ -38,9 +38,7 @@ import {
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return sourcedItemIds
-    .filter(hasItemName)
-    .map((id) => ({ id: String(id) }));
+  return sourcedItemIds.filter(hasItemName).map((id) => ({ id: String(id) }));
 }
 
 const mobById = (id: string) => monsters.find((m) => m.id === id);
@@ -80,7 +78,9 @@ export async function generateMetadata({
   }
   const sale = saleOf(iid, itemInfo(iid));
   if (sale && "price" in sale) {
-    parts.push(`商店賣價 ${sale.price.toLocaleString()} 楓幣${sale.perUnit ? "（1 個）" : ""}。`);
+    parts.push(
+      `商店賣價 ${sale.price.toLocaleString()} 楓幣${sale.perUnit ? "（1 個）" : ""}。`,
+    );
   }
   if (isFutureItem(iid)) parts.push("（此道具目前版本尚未實裝）");
 
@@ -202,11 +202,6 @@ export default async function Page({
             ))}
           </ul>
         )}
-        {droppers.length > 0 && (
-          <p className="mt-2 text-xs text-[var(--text-muted)]">
-            掉落機率不在遊戲用戶端裡，這裡只列出「會掉」，沒有機率。
-          </p>
-        )}
       </section>
 
       <QuestSection title="哪些任務會給這件道具" quests={rewardQuests} />
@@ -310,13 +305,7 @@ function EquipSection({ id, eq }: { id: number; eq: EquipStats }) {
   );
 }
 
-function StatRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number;
-}) {
+function StatRow({ label, value }: { label: string; value: string | number }) {
   return (
     <li>
       <span className="text-[var(--text-muted)]">・{label}：</span>
