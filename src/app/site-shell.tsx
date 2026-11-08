@@ -92,6 +92,11 @@ function Logo({ size }: { size: number }) {
   );
 }
 
+/** 選單亮起來的條件：就是這頁，或是它底下的頁面（/monsters/100100 也算「怪物掉落」） */
+function isCurrent(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(href + "/");
+}
+
 function NavEntry({
   item,
   pathname,
@@ -108,7 +113,7 @@ function NavEntry({
 }) {
   const Icon = NAV_ICONS[item.key];
   const href = navHref(item.path);
-  const isActive = item.enabled && pathname === href;
+  const isActive = item.enabled && isCurrent(pathname, href);
   return (
     <Link
       href={item.enabled ? href : "#"}
@@ -217,7 +222,7 @@ function NavMenus({
         const group = node;
         const GroupIcon = NAV_ICONS[group.key];
         const groupActive = group.items.some(
-          (i) => i.enabled && pathname === navHref(i.path),
+          (i) => i.enabled && isCurrent(pathname, navHref(i.path)),
         );
         return (
           <div

@@ -11,18 +11,21 @@
 import type { Metadata } from "next";
 import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { notFound } from "next/navigation";
-import { Telescope, Crown, ArrowLeft, Search } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Search, Telescope } from "lucide-react";
 import {
   monsters,
   itemName,
+  hasItemName,
   mapInfo,
   futureMapInfo,
   mobIconSrc,
-  itemIconSrc,
   type DropMonster,
 } from "@/data/drops";
 import { GameIcon } from "../game-icon";
-import { StatsPanel, ElemPanel } from "../panels";
+import { MonsterHero, StatsPanel, ElemPanel, DetailSection, DropTileBody } from "../panels";
+import { CARD, DROP_GRID, MAP_CHIP, PILL } from "../styles";
+import { ShareButton } from "../share-button";
+import { ShowMore } from "../show-more";
 
 // 未列在 generateStaticParams 的 id 直接 404，不要在執行期現算一頁出來
 export const dynamicParams = false;
@@ -98,156 +101,166 @@ export default async function Page({
   if (!m) notFound();
 
   const namedMaps = m.maps
-    .map((mid) => ({ id: mid, name: mapName(mid) }))
-    .filter((x): x is { id: number; name: string } => !!x.name);
+    .map((mid) => ({ id: mid, info: mapInfo(mid) ?? futureMapInfo(mid) }))
+    .filter((x) => !!x.info)
+    .map(({ id: mid, info }) => ({
+      id: mid,
+      name: info!.name,
+      label: info!.street ? `${info!.street}・${info!.name}` : info!.name,
+    }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5">
+      <nav
+        aria-label="麵包屑"
+        className="hidden items-center gap-1.5 text-[13px] text-[var(--text-muted)] sm:flex"
+      >
+        <Link href="/" className="hover:text-[var(--accent-text)]">
+          首頁
+        </Link>
+        <ChevronRight size={14} className="opacity-60" />
+        <Link href="/monsters" className="hover:text-[var(--accent-text)]">
+          怪物掉落
+        </Link>
+        <ChevronRight size={14} className="opacity-60" />
+        <span aria-current="page" className="text-[var(--text)]">
+          {m.name}
+        </span>
+      </nav>
       <Link
         href="/monsters"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--accent-text)]"
+        className="-my-2 inline-flex min-h-11 items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--accent-text)] sm:hidden"
       >
-        <ArrowLeft size={15} />
-        怪物掉落查詢
+        <ChevronLeft size={18} />
+        怪物列表
       </Link>
 
-      <header className="flex items-start gap-4">
-        <GameIcon
-          src={mobIconSrc(m.id)}
-          alt={m.name}
-          fallback="👾"
-          className="h-16 w-16 shrink-0"
+      <article aria-labelledby="monster-name" className={CARD}>
+        <MonsterHero
+          monster={m}
+          heading="h1"
+          headingId="monster-name"
+          big
+          dropCount={m.drops.length + m.futureDrops.length}
+          actions={
+            <>
+              <ShareButton id={m.id} />
+              <Link href={`/monsters?id=${m.id}`} className={PILL}>
+                <Search size={13} />
+                在查詢工具中開啟
+              </Link>
+            </>
+          }
         />
-        <div className="min-w-0">
-          <h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight">
-            <span className="break-words">{m.name}</span>
-            {m.stats.boss ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--accent-text)]">
-                <Crown size={12} />
-                BOSS
-              </span>
-            ) : null}
-            {!m.released && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2 py-0.5 text-xs font-medium text-[var(--text-muted)]">
-                <Telescope size={12} />
-                未實裝
-              </span>
-            )}
-          </h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
-            {m.level != null ? `Lv.${m.level}` : "等級不明"} · 掉落{" "}
-            {m.drops.length + m.futureDrops.length} 種道具 · 出沒{" "}
-            {m.maps.length} 張地圖 · #{m.id}
-          </p>
+
+        <div className="px-4 pb-5 sm:px-6">
+          <StatsPanel stats={m.stats} />
+          <ElemPanel stats={m.stats} />
+          {Object.keys(m.stats).length === 0 && (
+            <p className="text-sm text-[var(--text-muted)]">
+              這隻怪不在客戶端的數值表裡，只有圖鑑記錄。
+            </p>
+          )}
         </div>
-      </header>
 
-      <section>
-        <h2 className="text-sm font-semibold">怪物數值</h2>
-        <StatsPanel stats={m.stats} />
-        <ElemPanel stats={m.stats} />
-        {Object.keys(m.stats).length === 0 && (
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            這隻怪不在客戶端的數值表裡，只有圖鑑記錄。
-          </p>
-        )}
-      </section>
-
-      <DropSection
-        title={`${m.name} 的掉落物`}
-        ids={m.drops}
-        empty={
-          m.futureDrops.length > 0
-            ? "圖鑑記錄的掉落物目前版本都還沒開放，見下方未實裝掉落。"
-            : "遊戲內圖鑑沒有記錄這隻怪的掉落物。"
-        }
-      />
-
-      {m.futureDrops.length > 0 && (
-        <DropSection
-          title="未實裝掉落（未來視）"
-          ids={m.futureDrops}
-          note="這些道具在客戶端資料裡掉，但目前版本還沒實裝。"
-        />
-      )}
-
-      <section>
-        <h2 className="text-sm font-semibold">出沒地圖</h2>
-        {namedMaps.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            查不到這隻怪的出沒地圖名稱。
-          </p>
-        ) : (
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {namedMaps.map((mp) => (
-              <li key={mp.id}>
-                <Link
-                  href={`/monsters?q=${encodeURIComponent(mp.name)}`}
-                  className="inline-block rounded-full border border-[var(--border)] px-3 py-1 text-xs hover:border-[var(--accent)] hover:text-[var(--accent-text)]"
-                >
-                  {mp.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <div className="border-t border-[var(--border)] pt-5">
-        <Link
-          href={`/monsters?id=${m.id}`}
-          className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-soft)] px-4 py-2 text-sm font-medium text-[var(--accent-text)] hover:brightness-95"
+        <DetailSection
+          id="drop-h"
+          heading="h2"
+          title="掉落物"
+          count={`${m.drops.length} 種`}
         >
-          <Search size={15} />
-          在查詢工具中開啟（看世界地圖位置、篩選其他怪物）
-        </Link>
-      </div>
+          {m.drops.length === 0 ? (
+            <p className="text-sm text-[var(--text-muted)]">
+              {m.futureDrops.length > 0
+                ? "圖鑑記錄的掉落物目前版本都還沒開放，見下方未實裝掉落。"
+                : "遊戲內圖鑑沒有記錄這隻怪的掉落物。"}
+            </p>
+          ) : (
+            <DropLinks ids={m.drops} />
+          )}
+        </DetailSection>
 
-      <RelatedMonsters monster={m} />
+        {m.futureDrops.length > 0 && (
+          <DetailSection
+            id="future-drop-h"
+            heading="h2"
+            title={
+              <>
+                <Telescope size={15} className="text-[var(--text-muted)]" />
+                未實裝掉落
+              </>
+            }
+            count={`${m.futureDrops.length} 種`}
+            note="這些道具在客戶端資料裡掉，但目前版本還沒實裝。"
+          >
+            <DropLinks ids={m.futureDrops} future />
+          </DetailSection>
+        )}
+
+        <DetailSection
+          id="map-h"
+          heading="h2"
+          title="出沒地圖"
+          count={`${namedMaps.length} 張`}
+        >
+          {namedMaps.length === 0 ? (
+            <p className="text-sm text-[var(--text-muted)]">
+              查不到這隻怪的出沒地圖名稱。
+            </p>
+          ) : (
+            <ShowMore
+              unit="張"
+              items={namedMaps.map((mp) => (
+                <Link
+                  key={mp.id}
+                  href={`/monsters?q=${encodeURIComponent(mp.name)}`}
+                  className={m.released ? MAP_CHIP.link : MAP_CHIP.future}
+                >
+                  {mp.label}
+                </Link>
+              ))}
+            />
+          )}
+        </DetailSection>
+
+        <RelatedMonsters monster={m} />
+      </article>
     </div>
   );
 }
 
-function DropSection({
-  title,
-  ids,
-  empty,
-  note,
-}: {
-  title: string;
-  ids: number[];
-  empty?: string;
-  note?: string;
-}) {
+/** 掉落物：完整頁面整張卡片就是連到道具頁，右邊的 ↗ 只是裝飾（樣式見 globals.css 的 .drop-arr） */
+function DropLinks({ ids, future = false }: { ids: number[]; future?: boolean }) {
   return (
-    <section>
-      <h2 className="text-sm font-semibold">{title}</h2>
-      {note && <p className="mt-1 text-xs text-[var(--text-muted)]">{note}</p>}
-      {ids.length === 0 ? (
-        <p className="mt-2 text-sm text-[var(--text-muted)]">{empty}</p>
-      ) : (
-        <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {ids.map((iid) => (
-            <li key={iid}>
+    <ul className={DROP_GRID}>
+      {ids.map((iid) => {
+        const body = (
+          <>
+            <DropTileBody id={iid} />
+            <ArrowUpRight size={18} strokeWidth={2.25} className="drop-arr" />
+          </>
+        );
+        const cls = `flex h-full min-h-12 items-center gap-2 rounded-[10px] border bg-[var(--surface)] py-1.5 pl-1.5 pr-2.5 sm:gap-2.5 sm:pl-2 ${
+          future ? "border-dashed border-[var(--border-strong)] opacity-80" : "border-[var(--border)]"
+        }`;
+        return (
+          <li key={iid}>
+            {hasItemName(iid) ? (
               <Link
                 href={`/items/${iid}`}
-                className="flex items-center gap-2.5 rounded-lg border border-[var(--border)] px-3 py-2 hover:border-[var(--accent)]"
+                className={`${cls} transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/50`}
               >
-                <GameIcon
-                  src={itemIconSrc(iid)}
-                  alt={itemName(iid)}
-                  fallback="📦"
-                  className="h-8 w-8 shrink-0"
-                />
-                <span className="min-w-0 break-words text-sm">
-                  {itemName(iid)}
-                </span>
+                {body}
               </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+            ) : (
+              <div className={cls}>
+                <DropTileBody id={iid} />
+              </div>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -269,29 +282,30 @@ function RelatedMonsters({ monster }: { monster: DropMonster }) {
 
   if (related.length === 0) return null;
   return (
-    <section>
-      <h2 className="text-sm font-semibold">同區域出沒的其他怪物</h2>
-      <ul className="mt-3 flex flex-wrap gap-2">
+    <DetailSection id="related-h" heading="h2" title="同區域出沒的其他怪物">
+      <ul className="flex flex-wrap gap-1.5 sm:gap-2">
         {related.map((o) => (
           <li key={o.id}>
             <Link
               href={`/monsters/${o.id}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] py-1 pl-1.5 pr-3 text-xs hover:border-[var(--accent)]"
+              className="inline-flex h-11 items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] pl-1.5 pr-3.5 text-[13px] transition-colors hover:border-[var(--accent)]"
             >
               <GameIcon
                 src={mobIconSrc(o.id)}
-                alt={o.name}
+                alt=""
                 fallback="👾"
-                className="h-5 w-5 shrink-0"
+                className="h-[34px] w-[34px] shrink-0"
               />
               {o.name}
               {o.level != null && (
-                <span className="text-[var(--text-muted)]">Lv.{o.level}</span>
+                <span className="text-xs tabular-nums text-[var(--text-muted)]">
+                  Lv.{o.level}
+                </span>
               )}
             </Link>
           </li>
         ))}
       </ul>
-    </section>
+    </DetailSection>
   );
 }

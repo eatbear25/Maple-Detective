@@ -6,7 +6,8 @@
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Search, X } from "lucide-react";
+import { ArrowUpRight, Search, X } from "lucide-react";
+import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
 import { itemName, itemInfo, itemIconSrc, type EquipStats, type ItemInfo } from "@/data/drops";
 import { GameIcon } from "./game-icon";
 import {
@@ -16,6 +17,7 @@ import {
   CLASSES,
   STAT_ROWS,
   Desc,
+  saleOf,
 } from "./equip-format";
 
 /**
@@ -161,6 +163,27 @@ function EquipBody({ id, eq }: { id: number; eq: EquipStats }) {
   );
 }
 
+/** 彈窗最底下一行「商店賣價 25 楓幣」。客戶端沒寫賣價就整行不出現 */
+function SaleRow({ id, info }: { id: number; info: ItemInfo | undefined }) {
+  const sale = saleOf(id, info);
+  if (!sale) return null;
+  const noSale = "noSale" in sale;
+  return (
+    <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-dashed border-[var(--border)] pt-2 text-[12px]">
+      <span className="text-[var(--text-muted)]">
+        商店賣價{!noSale && sale.perUnit && "（1 個）"}
+      </span>
+      {noSale ? (
+        <span className="text-[var(--text-muted)]">無法販售</span>
+      ) : (
+        <span className="font-semibold tabular-nums">
+          {sale.price.toLocaleString()} 楓幣
+        </span>
+      )}
+    </div>
+  );
+}
+
 /**
  * 浮動彈窗本體：由 useItemTooltip 定位。
  * hover 裝置(modal=false)：pointer-events 關閉避免搶滑鼠。
@@ -176,6 +199,7 @@ export function ItemTooltip({
   searchLabel = "查看誰掉這個道具",
   name: nameOverride,
   info: infoOverride,
+  pageHref,
 }: {
   id: number;
   panelRef: React.RefObject<HTMLDivElement | null>;
@@ -184,6 +208,8 @@ export function ItemTooltip({
   onSearch?: () => void;
   /** 觸控裝置彈窗底部按鈕的文字（任務頁用的是「哪些任務會給這個」） */
   searchLabel?: string;
+  /** 觸控裝置彈窗底部多一顆「道具頁」（沒有 hover，進道具頁的入口要放在這裡） */
+  pageHref?: string;
   /** 名稱／說明覆寫：任務道具不在怪物掉落資料裡，由呼叫端自帶 */
   name?: string;
   info?: ItemInfo;
@@ -241,14 +267,28 @@ export function ItemTooltip({
           <Desc text={info.desc} />
         </div>
       )}
-      {modal && onSearch && (
-        <button
-          onClick={onSearch}
-          className="cursor-pointer mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] py-1.5 text-[11px] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
-        >
-          <Search size={12} />
-          {searchLabel}
-        </button>
+      <SaleRow id={id} info={info} />
+      {modal && (onSearch || pageHref) && (
+        <div className="mt-3 flex gap-2">
+          {onSearch && (
+            <button
+              onClick={onSearch}
+              className="cursor-pointer flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] px-2 py-1.5 text-[11px] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
+            >
+              <Search size={12} />
+              {searchLabel}
+            </button>
+          )}
+          {pageHref && (
+            <Link
+              href={pageHref}
+              className="flex shrink-0 items-center justify-center gap-1 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] text-[var(--accent-text)] hover:border-[var(--accent)]"
+            >
+              <ArrowUpRight size={12} />
+              道具頁
+            </Link>
+          )}
+        </div>
       )}
       </div>
   );

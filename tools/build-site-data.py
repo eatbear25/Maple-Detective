@@ -3,7 +3,8 @@
 用法：python tools/build-site-data.py
 輸入：reference-data/monster-book.json、name-tables/*、mob-stats.json、
       worldmap.json（tools/extract-worldmap.py）、name-supplement.json、
-      map-supplement.json、drop-supplement.json、equip-info.json（後四者可選）
+      map-supplement.json、drop-supplement.json、equip-info.json、
+      item-price.json（後五者可選）
 輸出：src/data/generated/monster-drops.json
     {
       "items":       { itemId: 中文名 },               // 實裝道具（Item.json 有名字）
@@ -17,6 +18,7 @@
                          maps, drops, futureDrops, stats } ]   // 依等級排序
     }
 輸出：src/data/generated/item-info.json（道具 hover 彈窗用，只含實裝道具）
+    { itemId: { desc?, eq?, price?, noSale? } }   // 賣價規則見 tools/item_price.py
 輸出：src/data/generated/worldmap-nav.json（地圖導覽頁用：每張世界地圖的
     全部點位 + 每個點位地圖清單 + 各地圖出沒怪物反查）
     {
@@ -50,6 +52,7 @@ import json
 import os
 import re
 
+from item_price import sale_fields, strip_sale
 from worldmap_spots import build_wm_lookup
 
 PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -185,8 +188,9 @@ def main():
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
 
-    # 道具彈窗資料：desc（Item.json）+ 裝備數值（equip-info.json）
+    # 道具彈窗資料：desc（Item.json）+ 裝備數值（equip-info.json）+ 賣價（見 item_price.py）
     equips = load("equip-info.json").get("equips", {})
+    prices = load("item-price.json").get("items", {})
     item_info = {}
     for iid in sorted(used_items):
         entry = {}
@@ -195,7 +199,8 @@ def main():
             entry["desc"] = desc.replace("\\n", "\n").replace("\\r", "")
         eq = equips.get(str(iid))
         if eq:
-            entry["eq"] = eq
+            entry["eq"] = strip_sale(eq)
+        entry.update(sale_fields(iid, equips, prices))
         if entry:
             item_info[str(iid)] = entry
     with open(OUT_INFO, "w", encoding="utf-8") as f:
