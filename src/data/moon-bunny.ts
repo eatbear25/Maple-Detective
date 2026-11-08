@@ -3,6 +3,7 @@
 //   → generated/moon-bunny-map.json（怎麼從客戶端解出來的見腳本 docstring）
 // 這裡只補「給玩家看的東西」：簡稱與色票。色票是從種子圖示 PNG 取彩度最高
 // 那群像素的平均值（跟 party-quests.ts 的唱盤同一套做法）。
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 import raw from "./generated/moon-bunny-map.json";
 
 export interface MoonBunnySeed {
@@ -36,7 +37,7 @@ export interface MoonBunnyFlower extends MoonBunnySpot {
   row: number;
 }
 
-export const moonBunnyMap = raw as unknown as {
+const data = raw as unknown as {
   mapId: number;
   mapName: string;
   /** 底圖與座標原點：world (x, y) 畫在圖上的 (x + originX, y + originY) */
@@ -53,4 +54,10 @@ export const moonBunnyMap = raw as unknown as {
   ropes: { x: number; y1: number; y2: number }[];
   bushes: MoonBunnySpot[];
   flowers: MoonBunnyFlower[];
+};
+
+// 底圖走 ASSET_BASE_URL（jsDelivr），不吃 Vercel 的 CDN Request 配額
+export const moonBunnyMap = {
+  ...data,
+  image: { ...data.image, src: `${ASSET_BASE_URL}${data.image.src}` },
 };

@@ -104,10 +104,15 @@ const d = data as unknown as {
 /** 裝備 info 數值（舊 wz 欄位名：reqLevel/reqJob/attackSpeed/tuc/incPAD...） */
 export type EquipStats = Record<string, number>;
 
-/** 道具彈窗資料：desc = 遊戲內說明（#c...# 為橘色強調標記），eq = 裝備數值 */
+/**
+ * 道具彈窗資料：desc = 遊戲內說明（#c...# 為橘色強調標記），eq = 裝備數值，
+ * price = 賣給商店的楓幣、noSale = 不能賣給商店（兩者都沒有＝客戶端沒寫，見 tools/item_price.py）
+ */
 export interface ItemInfo {
   desc?: string;
   eq?: EquipStats;
+  price?: number;
+  noSale?: 1;
 }
 
 const infos = rawItemInfo as unknown as Record<string, ItemInfo>;

@@ -9,7 +9,7 @@
  * 沒有，那種薄頁對整站排名是扣分。
  */
 import type { Metadata } from "next";
-import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
+import { NoPrefetchLink as Link } from "@/app/no-prefetch-link";
 import { notFound } from "next/navigation";
 import { Telescope, ArrowLeft } from "lucide-react";
 import {
@@ -32,6 +32,7 @@ import {
   CLASSES,
   STAT_ROWS,
   Desc,
+  saleOf,
 } from "../../monsters/equip-format";
 
 export const dynamicParams = false;
@@ -77,6 +78,10 @@ export async function generateMetadata({
   if (!mobNames.length && !questNames.length) {
     parts.push("目前查不到掉落或任務來源。");
   }
+  const sale = saleOf(iid, itemInfo(iid));
+  if (sale && "price" in sale) {
+    parts.push(`商店賣價 ${sale.price.toLocaleString()} 楓幣${sale.perUnit ? "（1 個）" : ""}。`);
+  }
   if (isFutureItem(iid)) parts.push("（此道具目前版本尚未實裝）");
 
   const title = `${name} 掉落來源與取得方式`;
@@ -106,6 +111,7 @@ export default async function Page({
 
   const name = itemName(iid);
   const info = itemInfo(iid);
+  const sale = saleOf(iid, info);
   const src = itemSources(iid);
 
   const droppers = src.droppedBy
@@ -129,7 +135,7 @@ export default async function Page({
         怪物掉落查詢
       </Link>
 
-      <header className="flex items-start gap-4">
+      <header className="flex flex-wrap items-start gap-4">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-soft)] p-2">
           <GameIcon
             src={itemIconSrc(iid)}
@@ -138,7 +144,7 @@ export default async function Page({
             className="h-full w-full [image-rendering:pixelated]"
           />
         </div>
-        <div className="min-w-0">
+        <div className="min-w-[160px] flex-1">
           <h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight">
             <span className="break-words">{name}</span>
             {isFutureItem(iid) && (
@@ -153,6 +159,7 @@ export default async function Page({
             {iid}
           </p>
         </div>
+        {sale && <SaleBox sale={sale} />}
       </header>
 
       {info?.desc && (
@@ -204,6 +211,29 @@ export default async function Page({
 
       <QuestSection title="哪些任務會給這件道具" quests={rewardQuests} />
       <QuestSection title="哪些任務要繳交這件道具" quests={needQuests} />
+    </div>
+  );
+}
+
+/** 標頭右邊「商店賣價 25 楓幣」：玩家問最多的就是這個，放在最顯眼的位置 */
+function SaleBox({ sale }: { sale: NonNullable<ReturnType<typeof saleOf>> }) {
+  if ("noSale" in sale) {
+    return (
+      <div className="rounded-xl border border-[var(--border)] px-4 py-2.5">
+        <div className="text-xs text-[var(--text-muted)]">商店賣價</div>
+        <div className="text-sm text-[var(--text-muted)]">無法販售</div>
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-xl bg-[var(--accent-soft)] px-4 py-2.5">
+      <div className="text-xs text-[var(--text-muted)]">
+        商店賣價{sale.perUnit && "（1 個）"}
+      </div>
+      <div className="text-xl font-bold tabular-nums">
+        {sale.price.toLocaleString()}
+        <span className="ml-1 text-sm font-medium">楓幣</span>
+      </div>
     </div>
   );
 }

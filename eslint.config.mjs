@@ -6,9 +6,9 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   // 這兩個預設會從本站發一大堆請求、吃 Vercel Hobby 的 CDN Request 配額，
-  // 理由寫在 src/app/hover-prefetch-link.tsx 與 src/app/layout.tsx 的註解
+  // 理由寫在 src/app/no-prefetch-link.tsx 與 src/app/layout.tsx 的註解
   {
-    ignores: ["src/app/hover-prefetch-link.tsx"],
+    ignores: ["src/app/no-prefetch-link.tsx"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -17,7 +17,7 @@ const eslintConfig = defineConfig([
             {
               name: "next/link",
               message:
-                '改用 import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link"（預設的 prefetch 會吃 Vercel 配額）',
+                '改用 import { NoPrefetchLink as Link } from "@/app/no-prefetch-link"（預設的 prefetch 會吃 Vercel 配額）',
             },
             {
               name: "next/font/google",

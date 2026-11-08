@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Check,
   Copy,
@@ -91,7 +91,6 @@ function BossTimerApp() {
     clearIntervalOverride,
   } = useBossTimerState();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
 
   const [now, setNow] = useState(() => Date.now());
@@ -126,8 +125,9 @@ function BossTimerApp() {
     if (!loaded || !shareParam) return;
     const decoded = decodeShare(shareParam);
     if (decoded) setPendingImport(decoded);
-    // 不管解析成不成功，網址上的 ?share= 用完就清掉，避免重新整理又跳一次
-    router.replace(pathname);
+    // 不管解析成不成功，網址上的 ?share= 用完就清掉，避免重新整理又跳一次。
+    // 用原生 replaceState 不用 router.replace，後者會向伺服器多要一次整頁資料
+    window.history.replaceState(null, "", pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 只在 loaded/shareParam 首次就緒時跑一次
   }, [loaded, shareParam]);
 

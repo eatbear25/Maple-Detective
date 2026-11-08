@@ -6,7 +6,7 @@
 
 輸出 reference-data/equip-info.json，結構：
     { "meta": {...}, "equips": { "<itemId>": { reqLevel, reqSTR, reqDEX, reqINT,
-      reqLUK, reqPOP?, reqJob, attackSpeed?, tuc?, inc...（非零才留） } } }
+      reqLUK, reqPOP?, reqJob, attackSpeed?, tuc?, price?, notSale?, inc...（非零才留） } } }
 
 原理：Character/ 那包 bundle（掃描時 141MB、8044 物件）的 container path 是
     Assets/WzAssets/Json/Character/<子類>/<8碼補零ID>.wzjson
@@ -33,8 +33,10 @@ OUT_PATH = os.path.join(PROJECT, "reference-data", "equip-info.json")
 
 PATH_RE = re.compile(r"/Character/[^/]+/(\d{8})\.wzjson$")
 
-# info 節點裡對彈窗有用的欄位；inc* 另外用前綴撈（非零才留）
-KEEP = ("reqLevel", "reqSTR", "reqDEX", "reqINT", "reqLUK", "reqPOP", "reqJob", "attackSpeed", "tuc")
+# info 節點裡對彈窗有用的欄位；inc* 另外用前綴撈（非零才留）。
+# price = 賣給 NPC 商店的價錢、notSale = 不能賣給商店（消耗／其他類的在 extract-item-price.py）
+KEEP = ("reqLevel", "reqSTR", "reqDEX", "reqINT", "reqLUK", "reqPOP", "reqJob", "attackSpeed", "tuc",
+        "price", "notSale")
 
 
 def pick_fields(info: dict) -> dict:

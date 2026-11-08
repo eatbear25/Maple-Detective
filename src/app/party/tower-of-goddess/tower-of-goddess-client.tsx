@@ -1,7 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  Suspense,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Check,
   Copy,
@@ -17,6 +23,7 @@ import { loungeRecords } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
 import { goddessStatue, type StatueSpot } from "@/data/goddess-statue";
 import { GameIcon } from "../../monsters/game-icon";
+import { CARD, WELL_BG } from "../../monsters/styles";
 import { PageHeader } from "@/app/page-header";
 import {
   ATTEMPT_LIMIT,
@@ -38,11 +45,11 @@ import {
 
 type Tab = "lounge" | "sealed" | "storage" | "statue";
 
-const TABS: [Tab, string, typeof Disc3][] = [
-  ["lounge", "休息室", Disc3],
-  ["sealed", "封印房", Lock],
-  ["storage", "倉庫", Warehouse],
-  ["statue", "女神像", Puzzle],
+const TABS: [Tab, string][] = [
+  ["lounge", "休息室"],
+  ["sealed", "封印房"],
+  ["storage", "倉庫"],
+  ["statue", "女神像"],
 ];
 
 const DEFAULT_TAB: Tab = "lounge";
@@ -57,7 +64,10 @@ const PANELS: Record<Tab, () => React.JSX.Element> = {
 };
 
 const HEADER = (
-  <PageHeader title="女神之塔速查" description="組隊任務小工具，切換分頁使用" />
+  <PageHeader
+    title="女神之塔速查"
+    description="女神之塔各關的解答，打到哪一關就切到哪一頁"
+  />
 );
 
 export default function TowerOfGoddessPage() {
@@ -71,7 +81,6 @@ export default function TowerOfGoddessPage() {
 
 function TowerOfGoddessApp() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
 
   const urlTab = searchParams.get("tab");
@@ -87,7 +96,9 @@ function TowerOfGoddessApp() {
   const select = (key: Tab) => {
     if (key === tab) return;
     setTab(key);
-    router.replace(`${pathname}?tab=${key}`, { scroll: false });
+    // 不用 router.replace：那會被當成換頁，每點一次分頁就向伺服器要一次整頁資料
+    // （吃 Vercel CDN 配額）。原生 replaceState 只改網址，useSearchParams 照樣會跟上。
+    window.history.replaceState(null, "", `${pathname}?tab=${key}`);
   };
 
   const Panel = PANELS[tab];
@@ -97,26 +108,24 @@ function TowerOfGoddessApp() {
       <div>
         {HEADER}
 
-        {/* 分頁樣式跟怪物掉落頁一致：選中的直接換底色，不做滑動 */}
+        {/* 分頁樣式跟怪物掉落頁同一套。關卡圖示放在下面面板的標題上，分頁只放字，
+            320px 寬（玩家常把視窗縮在遊戲旁邊）四顆也放得下 */}
         <div
           role="tablist"
-          className="mt-4 inline-flex rounded-full border border-[var(--border)] p-0.5 text-sm"
+          className="mt-3.5 inline-flex gap-0.5 rounded-full border border-[var(--border)] bg-[var(--surface)] p-[3px] text-[13px]"
         >
-          {/* 窄螢幕（玩家常把視窗縮在遊戲旁邊）四顆帶圖示的按鈕會超出去，
-              所以 sm 以下只留文字、內距縮成 px-3，300px 寬也放得下 */}
-          {TABS.map(([key, label, Icon]) => (
+          {TABS.map(([key, label]) => (
             <button
               key={key}
               role="tab"
               aria-selected={tab === key}
               onClick={() => select(key)}
-              className={`cursor-pointer flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 transition-colors sm:px-4 ${
+              className={`cursor-pointer flex h-8 items-center whitespace-nowrap rounded-full px-3.5 transition-colors ${
                 tab === key
-                  ? "bg-[var(--accent-soft)] font-medium text-[var(--text)]"
+                  ? "bg-[var(--accent-soft)] font-bold text-[var(--text)]"
                   : "text-[var(--text-muted)] hover:text-[var(--text)]"
               }`}
             >
-              <Icon size={14} className="hidden sm:block" />
               {label}
             </button>
           ))}
@@ -128,11 +137,91 @@ function TowerOfGoddessApp() {
   );
 }
 
+/* ------------------------------ 關卡面板 ------------------------------ */
+
+/**
+ * 四個分頁共用的外框：頭（關卡圖示＋關卡名＋一句規則）→ 分隔線 → 內容。
+ * 規則寫在頭上，不要再放到卡片外面當小灰字。
+ */
+function StagePanel({
+  icon: Icon,
+  title,
+  rule,
+  className = "",
+  children,
+}: {
+  icon: typeof Disc3;
+  title: string;
+  rule: ReactNode;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section aria-label={title} className={`${CARD} ${className}`}>
+      <header className="flex items-center gap-3.5 p-5">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent-text)]">
+          <Icon size={20} />
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold">{title}</h2>
+          <p className="mt-0.5 text-[13px] leading-5 text-[var(--text-muted)]">
+            {rule}
+          </p>
+        </div>
+      </header>
+      <div className="border-t border-[var(--border)] px-5 py-6">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+// 面板內容的左右兩欄：左邊是打到這關時要看的答案，右邊是對照用的。
+// 不用斷點而用 flex-wrap：兩欄放不下（視窗縮在遊戲旁邊）就自動上下疊、答案在上面。
+// 左欄不吃剩下的寬度（grow 0），多出來的都給右欄。
+const TWO_COLS = "flex flex-wrap items-start gap-8";
+const ANSWER_COL = "min-w-0 flex-[0_1_380px]";
+const REFERENCE_COL = "min-w-0 flex-[999_1_420px]";
+
+/** 欄位標題，跟怪物詳情的區段標題同一套（標題＋旁邊一句灰字） */
+function ColTitle({
+  children,
+  note,
+}: {
+  children: ReactNode;
+  note?: ReactNode;
+}) {
+  return (
+    <h3 className="mb-3 flex items-center gap-1.5 text-base font-bold">
+      {children}
+      {note && (
+        <span className="text-sm font-medium text-[var(--text-muted)]">
+          {note}
+        </span>
+      )}
+    </h3>
+  );
+}
+
+// 狀態列右邊的小文字鈕（上一步／重設／複製）。沒得按的時候留在原位變淡，
+// 不要整顆消失——消失的話旁邊的鈕會跟著位移。
+const TEXT_BUTTON =
+  "flex min-h-8 shrink-0 cursor-pointer items-center gap-1 rounded-lg px-2 text-[13px] text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:pointer-events-none disabled:opacity-40";
+
 /* ------------------------------- 休息室 ------------------------------- */
 
 // 星期幾只有瀏覽器算得準（伺服器時區不一定一樣），所以走
 // useSyncExternalStore：伺服器端快照給 null（不標今天），水合後才拿到真值。
 const NO_SUBSCRIBE = () => () => {};
+
+function ColorDot({ color, className }: { color: string; className: string }) {
+  return (
+    <span
+      className={`shrink-0 rounded-full ring-1 ring-black/15 ${className}`}
+      style={{ backgroundColor: color }}
+    />
+  );
+}
 
 function LoungeTab() {
   const today = useSyncExternalStore(
@@ -144,73 +233,83 @@ function LoungeTab() {
   const todayRecord = loungeRecords.find((r) => r.day === today);
 
   return (
-    <div className="space-y-6">
-      {todayRecord && (
-        <div className="flex items-center gap-4 rounded-2xl border-2 border-[var(--accent)] bg-[var(--accent-soft)] px-5 py-4">
-          <span
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[var(--border)] bg-[var(--surface)]"
-            style={{ boxShadow: `inset 0 0 0 3px ${todayRecord.color}` }}
-          >
-            <GameIcon
-              src={itemIconSrc(todayRecord.itemId)}
-              alt={todayRecord.name}
-              fallback="💿"
-              className="h-8 w-8"
-            />
-          </span>
-          <div>
-            <div className="text-xs font-medium text-[var(--text-muted)]">
-              今天 · {todayRecord.dayLabel}
-            </div>
-            <div className="mt-0.5 text-2xl font-bold">
-              {todayRecord.colorLabel}
-              <span className="ml-2 text-base font-medium text-[var(--text-muted)]">
-                {todayRecord.name}
-              </span>
-            </div>
+    <StagePanel
+      icon={Disc3}
+      title="休息室"
+      rule="唱盤每天換一張，照今天星期幾找"
+    >
+      <div className={TWO_COLS}>
+        <div className={ANSWER_COL}>
+          <ColTitle note={todayRecord?.dayLabel}>今天</ColTitle>
+          {/* 伺服器端還不知道今天星期幾：先留同樣高度的空框，水合後才填內容，版面不會跳 */}
+          <div className="flex min-h-[124px] items-center gap-[18px] rounded-[14px] bg-[var(--accent-soft)] p-5">
+            {todayRecord && (
+              <>
+                {/* 唱盤圖是 30×28 的像素圖，只能整數倍放大，不然會糊、會變形 */}
+                <span className="grid size-[84px] shrink-0 place-items-center rounded-2xl bg-[var(--surface)]">
+                  <GameIcon
+                    src={itemIconSrc(todayRecord.itemId)}
+                    alt={todayRecord.name}
+                    fallback="💿"
+                    className="pixel-art h-14 w-[60px] [&_img]:size-full"
+                  />
+                </span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5 text-[40px] font-bold leading-[44px]">
+                    <ColorDot color={todayRecord.color} className="size-3.5" />
+                    {todayRecord.colorLabel}
+                  </div>
+                  <div className="mt-1 text-sm text-[var(--text-muted)]">
+                    {todayRecord.name}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
-      )}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-        {loungeRecords.map((r) => {
-          const isToday = r.day === today;
-          return (
-            <div
-              key={r.day}
-              className={`flex flex-col items-center gap-2 rounded-xl border bg-[var(--surface)] px-2 py-4 text-center transition-colors ${
-                isToday
-                  ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/25"
-                  : "border-[var(--border)]"
-              }`}
-            >
-              <div className="text-sm font-semibold">{r.dayLabel}</div>
-              <span
-                className="flex h-12 w-12 items-center justify-center rounded-full"
-                style={{ backgroundColor: `${r.color}1f` }}
-              >
-                <GameIcon
-                  src={itemIconSrc(r.itemId)}
-                  alt={r.name}
-                  fallback="💿"
-                  className="h-8 w-8"
-                />
-              </span>
-              <div className="flex items-center gap-1.5">
-                <span
-                  className="h-2.5 w-2.5 shrink-0 rounded-full ring-1 ring-black/15"
-                  style={{ backgroundColor: r.color }}
-                />
-                <span className="text-base font-bold">{r.colorLabel}</span>
-              </div>
-              <div className="text-[11px] leading-tight text-[var(--text-muted)]">
-                {r.name}
-              </div>
-            </div>
-          );
-        })}
+        <div className={REFERENCE_COL}>
+          <ColTitle>一週對照</ColTitle>
+          <ul className="flex max-w-[520px] flex-col gap-1.5">
+            {loungeRecords.map((r) => {
+              const isToday = r.day === today;
+              return (
+                <li
+                  key={r.day}
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 ${
+                    isToday ? "bg-[var(--accent-soft)]" : WELL_BG
+                  }`}
+                >
+                  <span className="w-[52px] shrink-0 text-sm font-medium">
+                    {r.dayLabel}
+                  </span>
+                  <GameIcon
+                    src={itemIconSrc(r.itemId)}
+                    alt=""
+                    fallback="💿"
+                    className="h-7 w-[30px] shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <ColorDot color={r.color} className="size-2.5" />
+                      <b className="text-[15px] font-bold">{r.colorLabel}</b>
+                    </div>
+                    <div className="text-xs text-[var(--text-muted)]">
+                      {r.name}
+                    </div>
+                  </div>
+                  {isToday && (
+                    <span className="shrink-0 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[11px] font-bold text-[var(--on-accent)]">
+                      今天
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
-    </div>
+    </StagePanel>
   );
 }
 
@@ -222,24 +321,27 @@ const REPLY_TEXT: Record<Reply, string> = {
   1: "1 個踏板正確",
 };
 
-// 同一個畫面兩種用法：上面的卡片可以按（易克說什麼就按什麼，直接告訴你下一次
-// 怎麼站），下面的解法樹不按也能整張看（給不想切回網頁點的人）。兩邊共用同一個
-// 「目前站法」，有按的話樹上會亮出走過的路、淡掉已經不可能的分支。
-// 寬螢幕左右並排；窄螢幕（玩家常把視窗縮在遊戲旁邊）上下疊，卡片在上。
+// 同一個畫面兩種用法：左欄可以按（易克說什麼就按什麼，直接告訴你下一次怎麼站），
+// 右欄的解法樹不按也能整張看（給不想切回網頁點的人）。兩邊共用同一個「目前站法」，
+// 有按的話樹上會亮出走過的路、淡掉已經不可能的分支。
 function SealedRoomTab() {
   const [current, setCurrent] = useState<PlanNode>(ROOT);
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-start">
-      <div className="w-full max-w-sm md:w-80 md:shrink-0">
-        <SealedStepper node={current} onMove={setCurrent} />
-        <p className="mt-2 px-1 text-xs leading-relaxed text-[var(--text-muted)]">
-          {PEOPLE} 人站踏板，隊長不站、負責跟易克講話。{ATTEMPT_LIMIT}{" "}
-          次內沒過會被趕出去、答案也會換。
-        </p>
+    <StagePanel
+      icon={Lock}
+      title="封印房"
+      rule={`${PEOPLE} 人站上左、中、右三個踏板，隊長不站、負責跟易克講話。${ATTEMPT_LIMIT} 次內沒過會被趕出去，答案也會換。`}
+    >
+      <div className={TWO_COLS}>
+        <div className={ANSWER_COL}>
+          <SealedStepper node={current} onMove={setCurrent} />
+        </div>
+        <div className={REFERENCE_COL}>
+          <SealedTree current={current} onPick={setCurrent} />
+        </div>
       </div>
-      <SealedTree current={current} onPick={setCurrent} />
-    </div>
+    </StagePanel>
   );
 }
 
@@ -253,98 +355,75 @@ function SealedStepper({
   const sure = node.candidates.length === 1;
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+    <div aria-live="polite">
+      <ColTitle>{sure ? "答案確定" : `第 ${node.step} 次，這樣站`}</ColTitle>
       <div
-        className="p-4"
-        aria-live="polite"
+        role="group"
         aria-label={`第 ${node.step} 次：${PLATFORMS.map((p, i) => `${p} ${node.stand[i]} 人`).join("、")}`}
+        className="grid grid-cols-3 gap-2"
       >
-        <div className="mb-2 text-xs text-[var(--text-muted)]">
-          <span>
-            第{" "}
-            <b className="text-base tabular-nums text-[var(--text)]">
-              {node.step}
-            </b>{" "}
-            次嘗試，這樣站
-          </span>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {PLATFORMS.map((label, i) => (
-            <div
-              key={label}
-              className={`rounded-xl border py-2.5 text-center transition-colors ${
-                sure
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                  : "border-[var(--border)] bg-[var(--bg)]"
-              }`}
-            >
-              <div className="text-xs text-[var(--text-muted)]">{label}</div>
-              <div className="mt-1 flex items-baseline justify-center gap-1">
-                <span
-                  className={`text-4xl font-bold leading-none tabular-nums ${
-                    sure ? "text-[var(--accent-text)]" : ""
-                  }`}
-                >
-                  {node.stand[i]}
+        {PLATFORMS.map((label, i) => (
+          <div
+            key={label}
+            className={`rounded-xl pb-3 pt-2.5 text-center transition-colors ${
+              sure ? "bg-[var(--accent-soft)]" : WELL_BG
+            }`}
+          >
+            <div className="text-xs text-[var(--text-muted)]">{label}</div>
+            <div className="mt-1 flex items-baseline justify-center gap-[3px]">
+              <span
+                className={`text-[40px] font-bold leading-[44px] tabular-nums ${
+                  sure ? "text-[var(--accent-text)]" : ""
+                }`}
+              >
+                {node.stand[i]}
+              </span>
+              <span className="text-xs text-[var(--text-muted)]">人</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {sure ? (
+        <p className="mt-3 rounded-xl bg-[var(--accent-soft)] py-3.5 text-center text-[15px] font-bold text-[var(--accent-text)]">
+          結束
+        </p>
+      ) : (
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {REPLIES.map((r) => {
+            const to = node.next[r];
+            return (
+              <button
+                key={r}
+                onClick={() => to && onMove(to)}
+                disabled={!to}
+                className="flex min-h-[68px] cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] py-2.5 transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] disabled:pointer-events-none disabled:opacity-40"
+              >
+                <span className="flex h-[30px] items-center text-[26px] font-bold tabular-nums">
+                  {r === 0 ? (
+                    <X
+                      size={24}
+                      strokeWidth={3}
+                      className="text-rose-600 dark:text-rose-400"
+                    />
+                  ) : (
+                    r
+                  )}
                 </span>
-                <span className="text-xs text-[var(--text-muted)]">人</span>
-              </div>
-            </div>
-          ))}
+                <span className="text-xs text-[var(--text-muted)]">
+                  {to ? REPLY_TEXT[r] : "這步不會出現"}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      </div>
+      )}
 
-      <div className="border-t border-[var(--border)] px-4 pb-4 pt-3">
-        {sure ? (
-          <p className="py-3 text-center text-sm font-semibold text-[var(--accent-text)]">
-            結束
-          </p>
-        ) : (
-          <>
-            {/* <div className="mb-2 text-xs text-[var(--text-muted)]">
-              易克說的是
-            </div> */}
-            <div className="grid grid-cols-2 gap-2">
-              {REPLIES.map((r) => {
-                const to = node.next[r];
-                return (
-                  <button
-                    key={r}
-                    onClick={() => to && onMove(to)}
-                    disabled={!to}
-                    className="flex cursor-pointer flex-col items-center gap-0.5 rounded-xl border border-[var(--border)] bg-[var(--bg)] py-2 transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] disabled:pointer-events-none disabled:opacity-40"
-                  >
-                    <span className="flex h-8 items-center text-2xl font-bold tabular-nums">
-                      {r === 0 ? (
-                        <X
-                          size={24}
-                          strokeWidth={3}
-                          className="text-rose-500 dark:text-rose-400"
-                        />
-                      ) : (
-                        r
-                      )}
-                    </span>
-                    <span className="text-[11px] text-[var(--text-muted)]">
-                      {to ? REPLY_TEXT[r] : "這步不會出現"}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </>
-        )}
-      </div>
-
-      <div className="flex min-h-10 items-center justify-between gap-2 border-t border-[var(--border)] py-1.5 pl-4 pr-2.5 text-xs">
-        <span
-          className={
-            sure
-              ? "font-medium text-[var(--accent-text)]"
-              : "text-[var(--text-muted)]"
-          }
-        >
-          {sure ? "答案確定了" : `還剩 ${node.candidates.length} 種可能`}
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <span className="text-[13px] text-[var(--text-muted)]">
+          {sure
+            ? `第 ${node.step} 次嘗試`
+            : `還剩 ${node.candidates.length} 種可能`}
         </span>
         <div className="flex items-center gap-0.5">
           <button
@@ -352,7 +431,7 @@ function SealedStepper({
             disabled={!node.parent}
             className={TEXT_BUTTON}
           >
-            <Undo2 size={12} />
+            <Undo2 size={14} />
             上一步
           </button>
           <button
@@ -360,7 +439,7 @@ function SealedStepper({
             disabled={node === ROOT}
             className={TEXT_BUTTON}
           >
-            <RotateCcw size={12} />
+            <RotateCcw size={14} />
             重設
           </button>
         </div>
@@ -385,7 +464,7 @@ const isLit = (s: NodeState) => s === "current" || s === "tried";
 
 // 解法樹由上往下畫：一列＝第幾次嘗試。
 // 只有「分岔」的地方要看易克回什麼，所以記號只標在分岔的橫線上——往左那條一律是
-// ✕（所有踏板的重量都不相同）、往右那條一律是 1，跟上面卡片的兩顆按鈕同一個左右順序；
+// ✕（所有踏板的重量都不相同）、往右那條一律是 1，跟左欄的兩顆按鈕同一個左右順序；
 // 一直線的地方沒得選，不標。
 // 橫向位置：每個終點佔一欄，其餘的格子放在第一個與最後一個子分支的正中間。
 const TREE_NODES: PlanNode[] = [];
@@ -419,7 +498,7 @@ interface TreeLayout {
   gutter: number;
 }
 
-// 座標是 SVG 單位，整張圖跟著卡片寬度縮放。窄視窗（玩家常把視窗縮在遊戲旁邊）
+// 座標是 SVG 單位，整張圖跟著欄寬縮放。窄視窗（玩家常把視窗縮在遊戲旁邊）
 // 把間距收到最緊、也不畫「第 N 次」，320px 寬的字才不會被縮到看不清。
 const NARROW: TreeLayout = {
   col: 36,
@@ -481,7 +560,7 @@ function TreeSvg({
   return (
     <svg
       viewBox={`-2 0 ${width + 4} ${height}`}
-      className={`mx-auto h-auto w-full select-none ${className}`}
+      className={`h-auto w-full select-none ${className}`}
       role="group"
       aria-label="封印房完整解法"
     >
@@ -563,7 +642,9 @@ function TreeSvg({
               }
             }}
             className={`cursor-pointer outline-none transition-opacity [&:focus-visible>rect]:stroke-[var(--accent)] [&:hover>rect]:stroke-[var(--accent)] ${
-              state === "gone" ? "opacity-25 hover:opacity-70 dark:opacity-40" : ""
+              state === "gone"
+                ? "opacity-25 hover:opacity-70 dark:opacity-40"
+                : ""
             }`}
           >
             <rect
@@ -613,7 +694,7 @@ function ForkMark({
           d={`M${cx - d} ${cy - d}L${cx + d} ${cy + d}M${cx + d} ${cy - d}L${cx - d} ${cy + d}`}
           strokeWidth={lit ? 2.2 : 1.8}
           strokeLinecap="round"
-          className="stroke-rose-500"
+          className="stroke-rose-600 dark:stroke-rose-400"
         />
       ) : (
         <text
@@ -637,6 +718,7 @@ function ForkMark({
 
 // 每一格都能點，點了就跳到那一步——按錯回應時直接點正確的那格就好，不用一直按上一步。
 // 有在按的話：走過的路亮起來、已經不可能的分支淡掉；完全不按就是一張完整的對照圖。
+// 寬度鎖在 440px：右欄很寬，整張圖跟著撐開的話格子會大到不像同一頁的字級。
 function SealedTree({
   current,
   onPick,
@@ -645,34 +727,35 @@ function SealedTree({
   onPick: (n: PlanNode) => void;
 }) {
   return (
-    <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-2 pb-3 pt-3 sm:max-w-md sm:px-4">
-      <div className="mb-3 flex items-baseline justify-between px-1 text-xs text-[var(--text-muted)] sm:px-0">
-        <span className="text-sm font-semibold text-[var(--text)]">
-          完整解法
-        </span>
-        <span>左/中/右 各站幾人</span>
+    <div>
+      <ColTitle note="左/中/右 各站幾人">完整解法</ColTitle>
+
+      <div className="max-w-[440px]">
+        <TreeSvg
+          layout={NARROW}
+          current={current}
+          onPick={onPick}
+          className="block sm:hidden"
+        />
+        <TreeSvg
+          layout={WIDE}
+          current={current}
+          onPick={onPick}
+          className="hidden sm:block"
+        />
       </div>
 
-      <TreeSvg
-        layout={NARROW}
-        current={current}
-        onPick={onPick}
-        className="block sm:hidden"
-      />
-      <TreeSvg
-        layout={WIDE}
-        current={current}
-        onPick={onPick}
-        className="hidden sm:block"
-      />
-
-      <div className="mx-1 mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-[var(--border)] pt-2.5 text-xs sm:mx-0 text-[var(--text-muted)]">
+      <div className="mt-4 flex flex-wrap gap-x-[18px] gap-y-1.5 border-t border-[var(--border)] pt-3 text-xs text-[var(--text-muted)]">
         <span className="flex items-center gap-1.5">
-          <X size={13} strokeWidth={3} className="shrink-0 text-rose-500 dark:text-rose-400" />
+          <X
+            size={13}
+            strokeWidth={3}
+            className="shrink-0 text-rose-600 dark:text-rose-400"
+          />
           重量都不相同
         </span>
         <span className="flex items-center gap-1.5">
-          <b className="w-[13px] text-center text-[var(--text-muted)]">1</b>
+          <b className="w-[13px] text-center text-[var(--text)]">1</b>
           一個踏板正確
         </span>
         <span>一直線＝沒過就往下</span>
@@ -681,18 +764,15 @@ function SealedTree({
   );
 }
 
-// 卡片底部的小文字鈕（重設／複製）。沒得按的時候留在原位變淡，
-// 不要整顆消失——消失的話旁邊的鈕會跟著位移。
-const TEXT_BUTTON =
-  "flex shrink-0 cursor-pointer items-center gap-1 rounded-md px-1.5 py-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:pointer-events-none disabled:opacity-40";
-
 /* -------------------------------- 倉庫 -------------------------------- */
 
-// 一樣鎖成窄卡片（玩家把視窗縮在遊戲旁邊看）。平台位置照參考圖畫成左右交錯
-// 兩排，最下面那格是第 1 隻——玩家是從底下往上爬（見 storage.ts 註解）。
-// 每格跨兩列、左右排差一列，疊起來像磚牆：同一排的格子上下相連，交錯關係
-// 還在但中間不會留一堆空洞。擊殺順序一律靠中線放（左排靠右、右排靠左），
-// 15 個數字集中在中間一條，眼睛不用左右掃。
+// 只有一張平台圖、沒有對照欄，所以面板跟著平台圖收窄（482px），不撐滿整頁留一大片白。
+// 平台位置照參考圖畫成左右交錯兩排，最下面那格是第 1 隻——玩家是從底下往上爬
+// （見 storage.ts 註解）。每格跨兩列、左右排差一列，疊起來像磚牆：同一排的格子
+// 上下相連，交錯關係還在但中間不會留一堆空洞。擊殺順序一律靠中線放（左排靠右、
+// 右排靠左），15 個數字集中在中間一條，眼睛不用左右掃。
+// 2026-11-08 拿掉「下一隻：左1」的大字與「接下來 右5 左5」（站長嫌「左1」這種寫法
+// 難看），下一隻改成直接在平台圖上用實心底標出來。
 function StorageTab() {
   const [done, setDone] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -710,118 +790,139 @@ function StorageTab() {
   };
 
   return (
-    <div className="w-full max-w-xs">
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
-        <div
-          className={`flex min-h-[4.25rem] items-center justify-between gap-3 rounded-t-[15px] px-4 py-3 transition-colors ${
-            next ? "" : "bg-[var(--accent-soft)]"
-          }`}
-        >
+    <StagePanel
+      icon={Warehouse}
+      title="倉庫"
+      rule={`照順序打倒 ${STORAGE_TOTAL} 隻獨角獅，從最下面那格開始往上爬`}
+      className="max-w-[482px]"
+    >
+      <div className="flex items-center gap-4">
+        <div className="min-w-0 flex-1" aria-live="polite">
           {next ? (
-            <>
-              <div>
-                <div className="text-xs text-[var(--text-muted)]">下一隻</div>
-                <div className="text-2xl font-bold leading-tight">
-                  {next.label}
-                </div>
-              </div>
-              <button
-                onClick={() => setDone((n) => n + 1)}
-                className="h-10 shrink-0 cursor-pointer rounded-lg bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--on-accent)] transition-opacity hover:opacity-90"
-              >
-                打掉了
-              </button>
-            </>
+            <div className="text-[13px] text-[var(--text-muted)]">
+              已打{" "}
+              <b className="text-xl tabular-nums text-[var(--text)]">{done}</b>{" "}
+              / {STORAGE_TOTAL}
+            </div>
           ) : (
-            <>
-              <span className="text-lg font-bold">15 隻清完了</span>
-              <button
-                onClick={() => setDone(0)}
-                className="h-10 shrink-0 cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface)] px-5 text-sm font-medium transition-colors hover:border-[var(--accent)]"
-              >
-                再一輪
-              </button>
-            </>
+            <div className="text-[15px] font-bold leading-7 text-[var(--accent-text)]">
+              {STORAGE_TOTAL} 隻清完了
+            </div>
           )}
-        </div>
-
-        <div
-          className="grid grid-cols-2 gap-x-1.5 gap-y-1 border-y border-[var(--border)] p-3"
-          style={{ gridAutoRows: "1rem" }}
-        >
-          {STORAGE_PLATFORMS.map((p) => {
-            const killed = p.order <= done;
-            const isNext = next?.order === p.order;
-            const left = p.col === "left";
-            return (
-              <button
-                key={p.index}
-                style={{
-                  gridColumn: left ? 1 : 2,
-                  gridRow: `${p.index + 1} / span 2`,
-                }}
-                onClick={() =>
-                  setDone(isNext ? p.order : killed ? p.order - 1 : done)
-                }
-                disabled={!killed && !isNext}
-                aria-label={`第 ${p.order} 隻，位置 ${p.label}`}
-                className={`flex items-center justify-between rounded-lg border px-2.5 transition-colors ${
-                  left ? "flex-row-reverse" : ""
-                } ${
-                  isNext
-                    ? "cursor-pointer border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
-                    : killed
-                      ? "cursor-pointer border-transparent text-[var(--text-muted)] opacity-45 hover:opacity-80"
-                      : "cursor-default border-[var(--border)] bg-[var(--bg)]"
+          <div aria-hidden className="mt-1.5 flex gap-[3px]">
+            {BY_ORDER.map((p, i) => (
+              <span
+                key={p.order}
+                className={`h-1.5 flex-1 rounded-full ${
+                  i < done
+                    ? "bg-[var(--accent)]"
+                    : i === done
+                      ? "bg-[color-mix(in_srgb,var(--accent)_40%,var(--surface))]"
+                      : "bg-[var(--border)]"
                 }`}
-              >
-                <span className="w-6 text-center text-lg font-bold leading-none tabular-nums">
-                  {p.order}
-                </span>
-                <span
-                  className={`text-xs leading-none ${
-                    isNext ? "opacity-80" : "text-[var(--text-muted)]"
-                  }`}
-                >
-                  {p.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="flex items-center justify-between py-1.5 pl-4 pr-2.5 text-xs text-[var(--text-muted)]">
-          <span>
-            已打 <b className="tabular-nums text-[var(--text)]">{done}</b> /{" "}
-            {STORAGE_TOTAL}
-          </span>
-          <div className="flex items-center gap-0.5">
-            <button onClick={copy} className={TEXT_BUTTON}>
-              {copied ? <Check size={12} /> : <Copy size={12} />}
-              {copied ? "已複製" : "複製順序"}
-            </button>
-            <button
-              onClick={() => setDone(0)}
-              disabled={done === 0}
-              className={TEXT_BUTTON}
-            >
-              <RotateCcw size={12} />
-              重設
-            </button>
+              />
+            ))}
           </div>
         </div>
+        {next ? (
+          <button
+            onClick={() => setDone((n) => n + 1)}
+            className="h-11 shrink-0 cursor-pointer rounded-xl bg-[var(--accent)] px-[22px] text-[15px] font-bold text-[var(--on-accent)] transition-opacity hover:opacity-90"
+          >
+            打掉了
+          </button>
+        ) : (
+          <button
+            onClick={() => setDone(0)}
+            className="h-11 shrink-0 cursor-pointer rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] px-[22px] text-[15px] font-bold transition-colors hover:border-[var(--accent)]"
+          >
+            再一輪
+          </button>
+        )}
       </div>
 
-      <p className="mt-2 px-1 text-xs leading-relaxed text-[var(--text-muted)]">
-        從最下面那格開始往上爬。點已經打掉的格子可以退回。
-      </p>
-    </div>
+      <div
+        className="mt-4 grid grid-cols-2 gap-x-2 gap-y-1.5"
+        style={{ gridAutoRows: "1.25rem" }}
+      >
+        {STORAGE_PLATFORMS.map((p) => {
+          const killed = p.order <= done;
+          const isNext = next?.order === p.order;
+          const left = p.col === "left";
+          return (
+            <button
+              key={p.index}
+              style={{
+                gridColumn: left ? 1 : 2,
+                gridRow: `${p.index + 1} / span 2`,
+              }}
+              onClick={() =>
+                setDone(isNext ? p.order : killed ? p.order - 1 : done)
+              }
+              disabled={!killed && !isNext}
+              aria-label={`第 ${p.order} 隻，位置 ${p.label}`}
+              className={`flex items-center justify-between rounded-[10px] px-3 transition-colors ${
+                left ? "flex-row-reverse" : ""
+              } ${
+                isNext
+                  ? "cursor-pointer bg-[var(--accent)] text-[var(--on-accent)]"
+                  : killed
+                    ? "cursor-pointer text-[var(--text-muted)] opacity-45 hover:opacity-80 dark:opacity-60"
+                    : `cursor-default ${WELL_BG}`
+              }`}
+            >
+              <span className="w-7 text-center text-xl font-bold leading-none tabular-nums">
+                {p.order}
+              </span>
+              <span
+                className={`text-xs leading-none ${
+                  isNext ? "opacity-80" : "text-[var(--text-muted)]"
+                }`}
+              >
+                {p.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <span className="text-xs text-[var(--text-muted)]">
+          數字＝第幾隻・點打掉的格子可以退回
+        </span>
+        {/* ml-auto：窄視窗換行時兩顆鈕留在右邊，跟封印房的狀態列同一側 */}
+        <div className="ml-auto flex items-center gap-0.5">
+          <button onClick={copy} className={TEXT_BUTTON}>
+            {copied ? <Check size={14} /> : <Copy size={14} />}
+            {copied ? "已複製" : "複製順序"}
+          </button>
+          <button
+            onClick={() => setDone(0)}
+            disabled={done === 0}
+            className={TEXT_BUTTON}
+          >
+            <RotateCcw size={14} />
+            重設
+          </button>
+        </div>
+      </div>
+    </StagePanel>
   );
 }
 
 /* ------------------------------- 女神像 ------------------------------- */
 
 const { image: STATUE_IMAGE, spots: STATUE_SPOTS } = goddessStatue;
+
+// 右欄清單的位置說明，照 goddess-statue.json 裡各平台在底圖上的座標寫的
+const SPOT_WHERE: Record<number, string> = {
+  1: "左下的平台",
+  2: "左邊中間的平台",
+  3: "左上的平台",
+  4: "右下的平台",
+  5: "正中間的平台",
+  6: "右邊中間的平台",
+};
 
 // 泡泡畫在平台正上方：平台的圖從地形線往上長約 20px，泡泡底部再留 4px 空隙。
 const BUBBLE_R = 21;
@@ -832,24 +933,30 @@ const BUBBLE_ICON = 30;
  * 一個放置點的泡泡：白底圓裡放道具圖示，右上角小圓標第幾個碎片；生命草是最後
  * 一步，改用綠框、不標數字。座標單位是底圖像素（SVG 疊在圖上、共用同一個
  * viewBox），顏色一律寫死不吃主題——它們貼在遊戲畫面上，跟著頁面明暗換色反而
- * 會看不清。
+ * 會看不清。lit = 右欄清單正指著這一片，放大加一圈亮框。
  */
-function StatueBubble({ spot }: { spot: StatueSpot }) {
+function StatueBubble({ spot, lit }: { spot: StatueSpot; lit: boolean }) {
   const cx = spot.x + STATUE_IMAGE.originX;
   const cy = spot.y + STATUE_IMAGE.originY - BUBBLE_LIFT;
   const grass = spot.order === null;
   const badge = BUBBLE_R * Math.SQRT1_2; // 圓周上 45° 那一點
   return (
-    <g>
+    <g
+      transform={
+        lit
+          ? `translate(${cx} ${cy}) scale(1.18) translate(${-cx} ${-cy})`
+          : undefined
+      }
+    >
       <title>{spot.name}</title>
       <circle
         cx={cx}
         cy={cy}
         r={BUBBLE_R}
         fill="#FFFFFF"
-        stroke={grass ? "#6DBE45" : "#11131F"}
-        strokeOpacity={grass ? 1 : 0.2}
-        strokeWidth={grass ? 3 : 1}
+        stroke={lit ? "#EDB86A" : grass ? "#6DBE45" : "#11131F"}
+        strokeOpacity={lit || grass ? 1 : 0.2}
+        strokeWidth={lit || grass ? 3 : 1}
         filter="url(#statue-bubble-shadow)"
       />
       <image
@@ -887,51 +994,109 @@ function StatueBubble({ spot }: { spot: StatueSpot }) {
 }
 
 // 底圖照原尺寸顯示（點陣美術，放大會糊），窄螢幕才等比縮小。
+// 右欄清單把碎片道具名對上編號（背包裡的碎片長得都差不多），滑過或點一列，
+// 圖上那一片就放大標出來。
 function StatueTab() {
-  return (
-    <div className="w-full" style={{ maxWidth: STATUE_IMAGE.width }}>
-      <div
-        className="relative overflow-hidden rounded-2xl border border-[var(--border)]"
-        style={{
-          aspectRatio: `${STATUE_IMAGE.width} / ${STATUE_IMAGE.height}`,
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element -- 拆包底圖，尺寸固定不需要 next/image */}
-        <img
-          src={STATUE_IMAGE.src}
-          alt="中央塔的女神像與六個放碎片的平台"
-          className="h-full w-full"
-        />
-        <svg
-          viewBox={`0 0 ${STATUE_IMAGE.width} ${STATUE_IMAGE.height}`}
-          className="absolute inset-0 h-full w-full"
-        >
-          <defs>
-            <filter
-              id="statue-bubble-shadow"
-              x="-40%"
-              y="-40%"
-              width="180%"
-              height="180%"
-            >
-              <feDropShadow
-                dx="0"
-                dy="2"
-                stdDeviation="2.5"
-                floodColor="#05070F"
-                floodOpacity="0.55"
-              />
-            </filter>
-          </defs>
-          {STATUE_SPOTS.map((s) => (
-            <StatueBubble key={s.reactorId} spot={s} />
-          ))}
-        </svg>
-      </div>
+  const [lit, setLit] = useState<number | null>(null);
 
-      <p className="mt-2 px-1 text-xs leading-relaxed text-[var(--text-muted)]">
-        站上平台把碎片丟下去，數字是「女神像的第幾個碎片」。
-      </p>
-    </div>
+  // 亮的泡泡最後畫，才不會被旁邊的蓋住
+  const spots = [...STATUE_SPOTS].sort(
+    (a, b) => Number(a.order === lit) - Number(b.order === lit),
+  );
+  const pieces = STATUE_SPOTS.filter((s) => s.order !== null);
+
+  return (
+    <StagePanel
+      icon={Puzzle}
+      title="女神像"
+      rule="站上平台把碎片丟下去，數字是第幾個碎片"
+    >
+      <div className={TWO_COLS}>
+        <div
+          className="min-w-0"
+          style={{ flex: `0 1 ${STATUE_IMAGE.width}px` }}
+        >
+          <div
+            className="relative overflow-hidden rounded-xl"
+            style={{
+              aspectRatio: `${STATUE_IMAGE.width} / ${STATUE_IMAGE.height}`,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- 拆包底圖，尺寸固定不需要 next/image */}
+            <img
+              src={STATUE_IMAGE.src}
+              alt="中央塔的女神像與六個放碎片的平台"
+              className="h-full w-full"
+            />
+            <svg
+              viewBox={`0 0 ${STATUE_IMAGE.width} ${STATUE_IMAGE.height}`}
+              className="absolute inset-0 h-full w-full"
+            >
+              <defs>
+                <filter
+                  id="statue-bubble-shadow"
+                  x="-40%"
+                  y="-40%"
+                  width="180%"
+                  height="180%"
+                >
+                  <feDropShadow
+                    dx="0"
+                    dy="2"
+                    stdDeviation="2.5"
+                    floodColor="#05070F"
+                    floodOpacity="0.55"
+                  />
+                </filter>
+              </defs>
+              {spots.map((s) => (
+                <StatueBubble
+                  key={s.reactorId}
+                  spot={s}
+                  lit={s.order !== null && s.order === lit}
+                />
+              ))}
+            </svg>
+          </div>
+        </div>
+
+        <div className={REFERENCE_COL}>
+          <ColTitle>碎片對照</ColTitle>
+          <ul className="flex max-w-[520px] flex-col gap-1.5">
+            {pieces.map((s) => (
+              <li key={s.reactorId}>
+                <button
+                  type="button"
+                  onMouseEnter={() => setLit(s.order)}
+                  onMouseLeave={() => setLit(null)}
+                  onFocus={() => setLit(s.order)}
+                  onBlur={() => setLit(null)}
+                  onClick={() => setLit(s.order)}
+                  className={`flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
+                    lit === s.order ? "bg-[var(--accent-soft)]" : WELL_BG
+                  }`}
+                >
+                  <span className="grid size-[22px] shrink-0 place-items-center rounded-full bg-[var(--text)] text-xs font-bold text-[var(--surface)]">
+                    {s.order}
+                  </span>
+                  <GameIcon
+                    src={itemIconSrc(s.itemId)}
+                    alt=""
+                    fallback=""
+                    className="h-7 w-8 shrink-0"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-sm font-medium">{s.name}</span>
+                    <span className="block text-xs text-[var(--text-muted)]">
+                      {SPOT_WHERE[s.order!]}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </StagePanel>
   );
 }

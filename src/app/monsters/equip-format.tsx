@@ -2,7 +2,7 @@
 // 刻意「不」標 "use client"：這裡全是純資料與純函式，所以 hover 彈窗（client）
 // 與 /items/[id] 詳情頁（server，內容要真的印進 HTML 給爬蟲看）能用同一份。
 // 要加 state 或事件處理請加在 item-tooltip.tsx，不要加在這裡。
-
+import type { EquipStats, ItemInfo } from "@/data/drops";
 
 export const WEAPON_CATS: Record<number, string> = {
   130: "單手劍",
@@ -96,4 +96,28 @@ export function Desc({ text }: { text: string }) {
       )}
     </span>
   );
+}
+
+/**
+ * 賣給商店的價錢。消耗／其他類賣的是「1 個」的價錢；飛鏢、子彈（207、233 開頭）
+ * 一整組賣同一個價，裝備一件一個價，這兩種不標「1 個」。
+ * 回傳 null = 客戶端沒寫賣價，畫面上整行不顯示（不要印 0）。
+ */
+export function saleOf(
+  id: number,
+  info: ItemInfo | undefined,
+): { noSale: true } | { price: number; perUnit: boolean } | null {
+  if (info?.noSale) return { noSale: true };
+  if (!info?.price) return null;
+  const prefix = Math.floor(id / 10000);
+  return { price: info.price, perUnit: id >= 2000000 && prefix !== 207 && prefix !== 233 };
+}
+
+/** 裝備的掉落卡片副標：「帽子・Lv.5」。不是裝備回傳 null */
+export function equipSubtitle(id: number, eq: EquipStats | undefined) {
+  if (!eq) return null;
+  const cat = Math.floor(id / 10000);
+  const label = WEAPON_CATS[cat] ?? ARMOR_CATS[cat];
+  const lv = eq.reqLevel ? `Lv.${eq.reqLevel}` : null;
+  return [label, lv].filter(Boolean).join("・") || null;
 }

@@ -190,3 +190,80 @@ body {
     scrollbar-width: none;
   }
 }
+
+/* 怪物掉落查詢的掉落物卡片：卡片本身是按鈕（彈道具資訊／篩選誰會掉），右邊的 ↗ 是另一個
+   連到道具頁的連結（兩個是兄弟，不能把連結塞進按鈕裡）。
+   觸控裝置沒有 hover：↗ 一直顯示，切出 44px 寬的獨立點擊區，左邊一條細線隔開。
+   有滑鼠的裝置：滑到卡片上才出現 34×34 的 ↗，滑到 ↗ 上再出現「開道具頁」小提示。
+   media 條件跟道具彈窗判斷「有沒有 hover」的那條一樣（item-tooltip.tsx） */
+.drop-go {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  width: 44px;
+  display: grid;
+  place-items: center;
+  border-left: 1px solid var(--border);
+  border-radius: 0 9px 9px 0;
+  color: var(--accent-text);
+}
+.drop-go-tip {
+  display: none;
+}
+/* 完整頁面的掉落物整張卡片就是連結，↗ 只是裝飾，觸控裝置上一直顯示當作提示 */
+.drop-arr {
+  flex: none;
+  margin-left: auto;
+  color: var(--accent-text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .drop-go {
+    top: 50%;
+    right: 6px;
+    bottom: auto;
+    width: 34px;
+    height: 34px;
+    margin-top: -17px;
+    border-left: 0;
+    border-radius: 8px;
+    opacity: 0;
+    transition:
+      opacity 0.12s,
+      background-color 0.12s;
+  }
+  .drop-card:hover .drop-go,
+  .drop-go:focus-visible {
+    opacity: 1;
+  }
+  .drop-go:hover {
+    background: var(--accent-soft);
+  }
+  .drop-go-tip {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 6px);
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--text);
+    color: var(--surface);
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .drop-go:hover .drop-go-tip,
+  .drop-go:focus-visible .drop-go-tip {
+    opacity: 1;
+  }
+  .drop-arr {
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+  a:hover > .drop-arr,
+  a:focus-visible > .drop-arr {
+    opacity: 1;
+  }
+}

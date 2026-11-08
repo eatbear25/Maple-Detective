@@ -23,7 +23,7 @@
                   // ev       = 活動期間 ["YYYY-MM-DDTHH:MM", ...]（有這欄的 region = 活動）
                   // 依 lv 排序；need/rewards = [{ id, n }]；f = flows 索引
       "flows":    [ [block...] ],   // 任務流程，格式見 build_flows()
-      "items":    { itemId: { name, desc?, eq? } },   // 任務用到的全部道具
+      "items":    { itemId: { name, desc?, eq?, price?, noSale? } },   // 任務用到的全部道具（賣價見 item_price.py）
       "mobs":     { mobId: 中文名 },   // 完成條件要打的怪
       "skills":   { skillId: 中文名 },  // 技能獎勵
       "maps":     { mapId: { street, name, wm? } },   // NPC 所在地
@@ -86,6 +86,7 @@ import json
 import os
 from collections import Counter, defaultdict
 
+from item_price import sale_fields, strip_sale
 from jobs import ALL_FAMILIES, job_labels, mask_families
 from worldmap_spots import build_wm_lookup
 
@@ -554,7 +555,8 @@ def main():
     mob_tbl = load("name-tables", "Mob.json")
     skill_tbl = load("name-tables", "Skill.json")
     equips = load("equip-info.json").get("equips", {})
-    supplement = {k: v for k, v in load("quest-supplement.json").items() if not k.startswith("_")}
+    prices = load("item-price.json").get("items", {})
+    supplement ={k: v for k, v in load("quest-supplement.json").items() if not k.startswith("_")}
     wm_sheets = load("worldmap.json").get("sheets", {})
     wm_of = build_wm_lookup(wm_sheets)
     region_of = build_region_lookup(wm_sheets, map_tbl)
@@ -781,7 +783,8 @@ def main():
             entry["desc"] = desc.replace("\\n", "\n").replace("\\r", "")
         eq = equips.get(str(iid))
         if eq:
-            entry["eq"] = eq
+            entry["eq"] = strip_sale(eq)
+        entry.update(sale_fields(iid, equips, prices))
         items[str(iid)] = entry
 
     mobs = {
