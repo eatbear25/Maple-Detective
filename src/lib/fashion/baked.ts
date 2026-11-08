@@ -29,9 +29,9 @@ const DIR = "/wz-static/fashion/v1";
 /**
  * 先問 CDN，不行就退回本站同一路徑（檔案本來就跟著站一起部署在 public/）。
  *
- * 需要這層是因為 jsDelivr 把 `@main` 解析成哪個 commit 會快取 12 小時：新烤的檔案
- * 推上去之後，CDN 可能半天都還回 404。沒有備援的話，每次補新時裝上線，試衣間
- * 就會壞到 CDN 更新為止。
+ * 需要這層是因為網站和 CDN 是分開發布的：push 之後 Vercel 部署與 GitHub Pages 的
+ * Actions 各跑各的，網站先上線的話新烤的檔案在 CDN 上還是 404（以前用 jsDelivr 時
+ * 更久，最多 12 小時）。沒有備援的話，每次補新時裝上線，試衣間就會壞到 CDN 更新為止。
  */
 const SOURCES = ASSET_BASE_URL ? [ASSET_BASE_URL, ""] : [""];
 

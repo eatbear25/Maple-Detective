@@ -187,7 +187,7 @@ export const itemImgPath = (item: FashionItem) =>
 /**
  * 清單用的縮圖（跟素材一起烤好的，見 tools/fetch-fashion-assets.py）。
  * 回傳候選清單：CDN 優先、本站同一路徑墊後——新烤的檔案推上去之後 CDN 可能
- * 半天都還沒有（理由同 src/lib/fashion/baked.ts 的 SOURCES）。
+ * 還沒發布完（理由同 src/lib/fashion/baked.ts 的 SOURCES）。
  */
 export const fashionIconSrcs = (id: number): string[] => {
   const path = `/icons/fashion/${id}.png`;

@@ -13,8 +13,9 @@ const PNG = "/brand/detective-penguin.png";
  *   改顯示第一格的靜止 PNG（<picture> 的 media 由瀏覽器自己挑，不用 JS）。
  * - 只能整數倍放大（2 倍 122px、3 倍 183px），寬度由呼叫端的 className 給，
  *   搭配 .pixel-art（image-rendering: pixelated）像素才不會糊。
- * - 圖走 ASSET_BASE_URL（jsDelivr），不吃 Vercel 的 CDN Request 配額。新檔剛推上去時
- *   jsDelivr 的 @main 最久要 12 小時才看得到，那段時間會 404，所以失敗時退回本站同一路徑。
+ * - 圖走 ASSET_BASE_URL（GitHub Pages），不吃 Vercel 的 CDN Request 配額。新檔剛推上去時
+ *   CDN 可能還沒發布完、會 404（理由同 src/lib/fashion/baked.ts 的 SOURCES），
+ *   所以失敗時退回本站同一路徑。
  */
 export function DetectivePenguin({ className }: { className?: string }) {
   const [base, setBase] = useState(ASSET_BASE_URL);

@@ -1,0 +1,68 @@
+# 把 public/ 發布到 GitHub Pages，給網站當圖片 CDN（NEXT_PUBLIC_ASSET_BASE_URL 指向這裡）。
+#
+# 為什麼不再用 jsDelivr：它對 GitHub 來源的實際上限是整個 repo 50MB（README 寫 150MB 但不準），
+# 2026-10-13 時裝預烤素材進來後 repo 就超過，圖片開始時好時壞。GitHub Pages 整站上限 1GB、
+# 不限請求次數，每月流量建議 100GB（2026-11 jsDelivr 統計一個月約 13～25GB）。
+#
+# 發布的是 main 與 dev 兩邊 public/ 的聯集，同路徑以 main 為準：
+# 素材都是「同一個 ID 永遠同一張圖」只增不改，所以聯集是安全的。
+# 只發其中一邊的話，最後推的那邊會蓋掉另一邊才有的圖（例如直接在 main 上補的圖，
+# 被之後推的 dev 蓋掉，正式站就破圖）。
+
+name: 發布圖片到 GitHub Pages
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - "public/**"
+      - ".github/workflows/assets-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 排隊依序跑、不取消進行中的發布（GitHub 官方範本的建議）
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 取出 main 的 public/
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+          sparse-checkout: public
+
+      - name: 取出 dev 的 public/
+        uses: actions/checkout@v4
+        continue-on-error: true # dev 分支哪天刪掉了也照樣發布 main
+        with:
+          ref: dev
+          path: dev
+          sparse-checkout: public
+
+      - name: 合併成一份（同路徑以 main 為準）
+        run: |
+          mkdir site
+          if [ -d dev/public ]; then cp -r dev/public/. site/; fi
+          cp -r main/public/. site/
+          echo "檔案數：$(find site -type f | wc -l)，大小：$(du -sh site | cut -f1)"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
