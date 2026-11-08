@@ -50,5 +50,4 @@ export const BY_ORDER: Platform[] = [...STORAGE_PLATFORMS].sort(
 );
 
 /** 貼到隊伍頻道用的一行文字 */
-export const orderText = () =>
-  `女神之塔 倉庫擊殺順序：${BY_ORDER.map((p) => p.label).join(" → ")}`;
+export const orderText = () => `${BY_ORDER.map((p) => p.label).join(" > ")}`;
