@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
+import { NoPrefetchLink as Link } from "@/app/no-prefetch-link";
 import {
   Search,
   ChevronDown,

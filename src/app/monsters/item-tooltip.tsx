@@ -7,7 +7,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowUpRight, Search, X } from "lucide-react";
-import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
+import { NoPrefetchLink as Link } from "@/app/no-prefetch-link";
 import { itemName, itemInfo, itemIconSrc, type EquipStats, type ItemInfo } from "@/data/drops";
 import { GameIcon } from "./game-icon";
 import {

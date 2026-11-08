@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
+import { NoPrefetchLink as Link } from "@/app/no-prefetch-link";
 import { useSearchParams } from "next/navigation";
 import { ArrowUpRight, Search, Filter, MapPin, Telescope, X } from "lucide-react";
 import {

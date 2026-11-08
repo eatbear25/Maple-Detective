@@ -1,6 +1,7 @@
 // 女神之塔．最後一關（中央塔）女神像碎片攻略圖資料。
 // 哪個平台收哪片碎片、底圖：tools/extract-goddess-statue.py
 //   → generated/goddess-statue.json（怎麼來的見腳本 docstring）
+import { ASSET_BASE_URL } from "@/lib/asset-base";
 import raw from "./generated/goddess-statue.json";
 
 /** 一個放置點：站上這塊平台把道具丟下去 */
@@ -16,7 +17,7 @@ export interface StatueSpot {
   y: number;
 }
 
-export const goddessStatue = raw as unknown as {
+const data = raw as unknown as {
   mapId: number;
   /** 底圖與座標原點：world (x, y) 畫在圖上的 (x + originX, y + originY) */
   image: {
@@ -28,4 +29,10 @@ export const goddessStatue = raw as unknown as {
   };
   /** 依碎片編號排好，生命草在最後 */
   spots: StatueSpot[];
+};
+
+// 底圖走 ASSET_BASE_URL（jsDelivr），不吃 Vercel 的 CDN Request 配額
+export const goddessStatue = {
+  ...data,
+  image: { ...data.image, src: `${ASSET_BASE_URL}${data.image.src}` },
 };

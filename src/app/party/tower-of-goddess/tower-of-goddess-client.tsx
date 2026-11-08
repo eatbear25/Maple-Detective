@@ -7,7 +7,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Check,
   Copy,
@@ -81,7 +81,6 @@ export default function TowerOfGoddessPage() {
 
 function TowerOfGoddessApp() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
 
   const urlTab = searchParams.get("tab");
@@ -97,7 +96,9 @@ function TowerOfGoddessApp() {
   const select = (key: Tab) => {
     if (key === tab) return;
     setTab(key);
-    router.replace(`${pathname}?tab=${key}`, { scroll: false });
+    // 不用 router.replace：那會被當成換頁，每點一次分頁就向伺服器要一次整頁資料
+    // （吃 Vercel CDN 配額）。原生 replaceState 只改網址，useSearchParams 照樣會跟上。
+    window.history.replaceState(null, "", `${pathname}?tab=${key}`);
   };
 
   const Panel = PANELS[tab];

@@ -1,6 +1,6 @@
 "use client";
 
-import { HoverPrefetchLink as Link } from "@/app/hover-prefetch-link";
+import { NoPrefetchLink as Link } from "@/app/no-prefetch-link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -297,11 +297,12 @@ function Item({ a }: { a: Announcement }) {
 
   const linkCls = `${cls} rounded hover:text-[var(--accent-text)] hover:underline underline-offset-2`;
   if (!external) {
-    // 完全不預先載入。輪播每 5 秒就重新掛載一次這個連結，網站一重新部署，
-    // 舊分頁預先載入回來的資料版本對不上會被丟掉、10 秒後又重抓，永遠停不下來：
-    // 2026-10-31 查到 10/30 以前開著沒關的分頁，12 小時把這兩則公告的頁面各打了 2.3 萬次。
+    // 這裡絕對不能預先載入（Link 已經全站關掉了，別為了這裡另開）。輪播每 5 秒就重新掛載
+    // 一次這個連結，網站一重新部署，舊分頁預先載入回來的資料版本對不上會被丟掉、10 秒後
+    // 又重抓，永遠停不下來：2026-10-31 查到 10/30 以前開著沒關的分頁，12 小時把這兩則
+    // 公告的頁面各打了 2.3 萬次。
     return (
-      <Link href={a.href} prefetch={false} className={linkCls}>
+      <Link href={a.href} className={linkCls}>
         {body}
       </Link>
     );
