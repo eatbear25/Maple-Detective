@@ -1,8 +1,9 @@
 "use client";
 
-// 任務查詢：搜尋（任務名 / 獎勵道具名）→ 列表（依需求等級排序、分頁）→ 右側詳情。
-// 詳情最上面是任務流程卡片（可收合，見 quest-flow.tsx），接著 NPC、接取／完成條件、獎勵。
-// 道具只放 icon + 前兩字標籤 + 數量，沒有敘述文字；hover 才出道具彈窗。
+// 任務查詢：兩排分類 chip ＋搜尋 → 列表（依需求等級排序、分頁）→ 右側詳情。
+// 詳情由上到下：任務說明（遊戲任務視窗那段字）、任務流程卡片（見 quest-flow.tsx）、
+// NPC、接取／完成條件、獎勵。
+// 要繳的道具一列一個（全名＋誰會掉）；獎勵是 icon + 前兩字標籤 + 數量的格子，hover 才出道具彈窗。
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -22,21 +23,23 @@ import {
   flowOf,
   npcIconSrc,
   questById,
+  questCats,
+  questItemInfo,
   questItemName,
   questMobName,
-  questRegion,
   questSkillName,
   questMapInfo,
   questWorldMapSheet,
-  questRegions,
   quests,
   type Quest,
   type QuestItem,
   type QuestMob,
 } from "@/data/quests";
-import { itemIconSrc, mobIconSrc, worldMapSrc } from "@/data/drops";
+import { itemIconSrc, mobIconSrc, monsters, worldMapSrc } from "@/data/drops";
+import { Desc } from "../monsters/equip-format";
 import { GameIcon } from "../monsters/game-icon";
 import { ItemTooltip, useItemTooltip } from "../monsters/item-tooltip";
+import { NoPrefetchLink } from "@/app/no-prefetch-link";
 import { PageHeader } from "@/app/page-header";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
 import { QuestFlowCard } from "./quest-flow";
@@ -45,11 +48,42 @@ const PAGE_SIZE = 50;
 
 type Tip = ReturnType<typeof useItemTooltip>;
 
-/** 搜尋維度：任務名 + 獎勵道具名（不吃 NPC 名與需求道具，定案如此） */
-function matches(q: Quest, kw: string) {
-  if (q.name.includes(kw) || q.id === kw) return true;
-  return q.rewards.some((r) => questItemName(r.id).includes(kw));
+/**
+ * 搜尋索引：每個任務可以被搜到的文字，連同「這是什麼」的標籤。
+ * 2026-11-16 以前只搜任務名與獎勵道具名，打 NPC、怪物、要繳的道具都找不到（站長回報不好查）。
+ * 範圍一放寬就一定要說明命中原因——不然搜「蝙蝠」跑出「伊卡路斯的滑翔翼」會看不懂為什麼，
+ * 所以命中的不是任務名時，列表第二行改印這裡的「標籤：文字」。
+ * 順序就是優先順序：同一個任務命中好幾項時顯示最前面的那項。
+ */
+const SEARCH_INDEX = new Map<string, [label: string, text: string, lower: string][]>(
+  quests.map((q) => {
+    const rows: [string, string][] = [];
+    const amount = (n: number) => (n > 1 ? ` ×${n}` : "");
+    for (const m of q.kill ?? []) rows.push(["要打", `${questMobName(m.id)} ×${m.n}`]);
+    for (const it of q.need) rows.push(["要繳", `${questItemName(it.id)}${amount(it.n)}`]);
+    for (const it of q.rewards) rows.push(["獎勵", `${questItemName(it.id)}${amount(it.n)}`]);
+    for (const sk of q.skills ?? []) rows.push(["獎勵", questSkillName(sk.id)]);
+    if (q.npc) rows.push(["NPC", q.npc]);
+    const map = q.npcMap != null ? questMapInfo(q.npcMap) : undefined;
+    if (map) rows.push(["地點", map.name]);
+    if (q.region) rows.push(["地點", q.region]);
+    if (q.series) rows.push(["系列", q.series]);
+    return [q.id, rows.map(([label, text]) => [label, text, text.toLowerCase()])];
+  }),
+);
+
+/** 回傳 true = 任務名（或編號）命中；字串 = 命中的是別的東西，印在列表上；null = 沒命中 */
+function searchHit(q: Quest, kw: string): true | string | null {
+  if (q.name.toLowerCase().includes(kw) || q.id === kw) return true;
+  const hit = SEARCH_INDEX.get(q.id)?.find(([, , lower]) => lower.includes(kw));
+  return hit ? `${hit[0]}：${hit[1]}` : null;
 }
+
+/** 有自己一頁的怪（/monsters/<id>）。任務專用的怪（受污染的猴子…）不在圖鑑裡，沒有頁面可連 */
+const MOB_PAGES = new Set(monsters.map((m) => m.id));
+
+/** 活動已經結束。now 由元件用 useState 取一次傳進來（render 裡不能直接讀時鐘） */
+const isEnded = (q: Quest, now: number) => !!q.ev?.[1] && new Date(q.ev[1]).getTime() < now;
 
 const lvLabel = (lv: number) => (lv > 0 ? `Lv.${lv}` : "無限制");
 
@@ -79,24 +113,27 @@ const evLabel = ([s, e]: [string | null, string | null]) => {
 /** 千分位：獎勵/花費動輒六七位數，不分隔根本讀不出來 */
 const num = (n: number) => n.toLocaleString("en-US");
 
+/** 活動任務的大分類名（build-quest-data.py 的 AREAS[50]），chip 上掛日曆圖示 */
+const EVENT_CAT = "活動";
 /**
- * 地區判不出來的任務歸這一類。判不出來 ⇔ 這個任務的 NPC 全都不在已實裝地圖上，
- * 所以這一類就等於未實裝任務（166 個），標題直接講白，不要留一個看不懂的「未知」。
+ * 系統直接發的任務（build-quest-data.py 的 SYSTEM_AREAS）。NPC 是達利額的稱號分身、
+ * 菇菇通行證的茱妮這種介面 NPC，查不到地圖是正常的，不要印「劇情中出現」。
  */
-const UNKNOWN_REGION = "未實裝";
-/** 活動任務的 chip（build-quest-data.py 的 EVENT_REGION） */
-const EVENT_REGION = "活動";
+const SYSTEM_CATS = new Set(["稱號", EVENT_CAT]);
 
-/** 地區 chips：順序由 build-quest-data.py 給（大致依遊戲地理動線），「未實裝」擺最後 */
-const REGIONS: [string, number][] = (() => {
+/**
+ * chip 上的任務數。鍵是「大分類」或「大分類/小地區」。
+ * 分類是兩層（2026-11-16 改）：第一排是遊戲內任務視窗的大分類，選了有小地區的
+ * （維多利亞島、冰原雪域山脈）才出現第二排。以前第一排直接放 13 個小地區，要橫向捲。
+ */
+const COUNT = (() => {
   const count = new Map<string, number>();
+  const add = (k: string) => count.set(k, (count.get(k) ?? 0) + 1);
   for (const q of quests) {
-    const r = questRegion(q) ?? UNKNOWN_REGION;
-    count.set(r, (count.get(r) ?? 0) + 1);
+    add(q.cat);
+    if (q.region) add(`${q.cat}/${q.region}`);
   }
-  return [...questRegions, UNKNOWN_REGION]
-    .filter((r) => count.has(r))
-    .map((r): [string, number] => [r, count.get(r)!]);
+  return count;
 })();
 
 function QuestPageSkeleton() {
@@ -140,18 +177,30 @@ function QuestExplorer() {
   const id0 = searchParams.get("id");
 
   const [kw, setKw] = useState(q0);
-  const [region, setRegion] = useState<string | null>(null);
+  const [cat, setCat] = useState<string | null>(null);
+  const [sub, setSub] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [selId, setSelId] = useState<string | null>(id0);
   const [rewardPop, setRewardPop] = useState<QuestItem | null>(null);
   const [mapOpen, setMapOpen] = useState(false);
+  const [now] = useState(() => Date.now());
   const tip = useItemTooltip();
 
-  const filtered = useMemo(() => {
-    let out = kw ? quests.filter((q) => matches(q, kw)) : quests;
-    if (region) out = out.filter((q) => (questRegion(q) ?? UNKNOWN_REGION) === region);
-    return out;
-  }, [kw, region]);
+  /** hits：命中的不是任務名時，列表第二行要印的原因（見 SEARCH_INDEX） */
+  const { filtered, hits } = useMemo(() => {
+    const word = kw.trim().toLowerCase();
+    const hits = new Map<string, string>();
+    const filtered = quests.filter((q) => {
+      if (cat && q.cat !== cat) return false;
+      if (sub && q.region !== sub) return false;
+      if (!word) return true;
+      const hit = searchHit(q, word);
+      if (typeof hit === "string") hits.set(q.id, hit);
+      return hit !== null;
+    });
+    return { filtered, hits };
+  }, [kw, cat, sub]);
+  const subs = questCats.find((c) => c.name === cat)?.subs;
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const p = Math.min(page, pageCount - 1);
   const rows = filtered.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE);
@@ -193,7 +242,7 @@ function QuestExplorer() {
               setKw(e.target.value);
               setPage(0);
             }}
-            placeholder="搜尋任務名稱或獎勵道具…"
+            placeholder="搜尋任務、NPC、怪物、道具…"
             className="w-full rounded-full border border-[var(--border)] bg-[var(--surface)] py-2 pl-9 pr-9 text-sm outline-none focus:border-[var(--accent)] placeholder:text-[var(--text-muted)]"
           />
           {kw && (
@@ -209,32 +258,53 @@ function QuestExplorer() {
             </button>
           )}
         </div>
-        <div className="themed-scroll mt-3 flex gap-1.5 overflow-x-auto pb-1">
-          <RegionChip label="全部" active={region === null} onClick={() => setRegion(null)} />
-          {REGIONS.map(([name, n]) => (
+        {/* 第一排：大分類。七個，用換行不用橫向捲（窄視窗也看得到全部） */}
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          <RegionChip
+            label="全部"
+            active={cat === null}
+            onClick={() => {
+              setCat(null);
+              setSub(null);
+              setPage(0);
+            }}
+          />
+          {questCats.map(({ name }) => (
             <RegionChip
               key={name}
-              label={`${name} ${n}`}
-              active={region === name}
-              icon={
-                name === UNKNOWN_REGION ? (
-                  <Telescope size={12} />
-                ) : name === EVENT_REGION ? (
-                  <CalendarDays size={12} />
-                ) : undefined
-              }
+              label={`${name} ${COUNT.get(name) ?? 0}`}
+              active={cat === name}
+              icon={name === EVENT_CAT ? <CalendarDays size={12} /> : undefined}
               onClick={() => {
-                setRegion(region === name ? null : name);
+                setCat(cat === name ? null : name);
+                setSub(null);
                 setPage(0);
               }}
             />
           ))}
         </div>
+        {/* 第二排：選了有小地區的大分類才出現，再點一次同一顆＝取消 */}
+        {cat && subs ? (
+          <div className="mt-1.5 flex flex-wrap gap-1.5 border-l-2 border-[var(--border-strong)] pl-2">
+            {subs.map((name) => (
+              <RegionChip
+                key={name}
+                small
+                label={`${name} ${COUNT.get(`${cat}/${name}`) ?? 0}`}
+                active={sub === name}
+                onClick={() => {
+                  setSub(sub === name ? null : name);
+                  setPage(0);
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
 
         <div className="mt-2 text-xs text-[var(--text-muted)]">
-          共 {filtered.length} 個任務{kw && `符合「${kw}」`}
-          {region && `・${region}`}・依需求等級排序
-          {region === UNKNOWN_REGION && "（這些任務的 NPC 目前都不在遊戲裡，查不到地點）"}
+          共 {filtered.length} 個任務{kw.trim() && `符合「${kw.trim()}」`}
+          {cat && `・${cat}`}
+          {sub && `・${sub}`}・依需求等級排序
         </div>
       </div>
 
@@ -250,6 +320,8 @@ function QuestExplorer() {
               <QuestCard
                 key={q.id}
                 q={q}
+                hit={hits.get(q.id)}
+                ended={isEnded(q, now)}
                 active={q.id === selId}
                 onClick={() => setSelId(q.id)}
               />
@@ -263,6 +335,7 @@ function QuestExplorer() {
         {selected ? (
           <QuestDetail
             q={selected}
+            ended={isEnded(selected, now)}
             tip={tip}
             onPickQuest={selectQuest}
             onPickReward={setRewardPop}
@@ -270,7 +343,7 @@ function QuestExplorer() {
           />
         ) : (
           <div className="hidden text-sm text-[var(--text-muted)] lg:block">
-            從左邊挑一個任務，這裡會顯示 NPC、需求道具、獎勵與前後的任務流程。
+            從左邊挑一個任務，這裡會顯示任務說明、要打的怪與要繳的道具、獎勵，還有前後的任務流程。
           </div>
         )}
       </div>
@@ -312,18 +385,24 @@ function RegionChip({
   label,
   active,
   icon,
+  small,
   onClick,
 }: {
   label: string;
   active: boolean;
-  /** 「未實裝」掛望遠鏡（跟任務卡片上的未實裝徽章同一個符號）、「活動」掛日曆 */
+  /** 「活動」掛日曆 */
   icon?: React.ReactNode;
+  /** 第二排的小地區：矮一點，跟第一排分得出層級 */
+  small?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`cursor-pointer inline-flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
+      aria-pressed={active}
+      className={`cursor-pointer inline-flex shrink-0 items-center gap-1 rounded-full border text-xs transition-colors ${
+        small ? "px-2.5 py-0.5" : "px-3 py-1"
+      } ${
         active
           ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--accent-text)]"
           : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
@@ -339,10 +418,16 @@ function RegionChip({
 
 function QuestCard({
   q,
+  hit,
+  ended,
   active,
   onClick,
 }: {
   q: Quest;
+  /** 搜尋命中的不是任務名時的原因（「要繳：蝙蝠翅膀 ×50」），取代第二行的 NPC */
+  hit?: string;
+  /** 活動已結束 */
+  ended: boolean;
   active: boolean;
   onClick: () => void;
 }) {
@@ -370,10 +455,26 @@ function QuestCard({
         <span className="flex items-center gap-1 text-sm font-medium">
           <span className="truncate">{q.name}</span>
           {!q.released && <Telescope size={12} className="shrink-0 text-[var(--text-muted)]" />}
+          {ended && <EndedBadge />}
         </span>
-        <span className="block truncate text-xs text-[var(--text-muted)]">{q.npc ?? "—"}</span>
+        {hit ? (
+          <span className="block truncate text-xs text-[var(--accent-text)]">{hit}</span>
+        ) : (
+          <span className="block truncate text-xs text-[var(--text-muted)]">
+            {[q.npc, q.region].filter(Boolean).join("・") || "—"}
+          </span>
+        )}
       </span>
     </button>
+  );
+}
+
+/** 活動期間已過。客戶端到下次更新前都還留著這些任務（萬聖節那 75 個） */
+function EndedBadge() {
+  return (
+    <span className="shrink-0 rounded-full border border-[var(--border)] px-1.5 text-[10px] font-normal text-[var(--text-muted)]">
+      已結束
+    </span>
   );
 }
 
@@ -422,12 +523,15 @@ function Pager({
 
 function QuestDetail({
   q,
+  ended,
   tip,
   onPickQuest,
   onPickReward,
   onOpenMap,
 }: {
   q: Quest;
+  /** 活動已結束 */
+  ended: boolean;
   tip: Tip;
   onPickQuest: (id: string) => void;
   onPickReward: (i: QuestItem) => void;
@@ -459,10 +563,21 @@ function QuestDetail({
             >
               <CalendarDays size={13} />
               {evLabel(q.ev)}
+              {ended && <EndedBadge />}
             </span>
           ) : null}
         </div>
       </div>
+
+      {/* 任務說明：遊戲任務視窗裡那段字。237 個任務沒有結構化的完成條件（條件在伺服器端腳本），
+          要做什麼只寫在這裡——以前沒顯示，還印成「跟 NPC 對話就完成」（2026-11-16 站長回報） */}
+      {q.desc ? (
+        <Section title="任務說明">
+          <p className="max-w-prose text-sm leading-relaxed">
+            <Desc text={q.desc} />
+          </p>
+        </Section>
+      ) : null}
 
       {flow && <QuestFlowCard flow={flow} q={q} onPick={onPickQuest} />}
 
@@ -497,7 +612,7 @@ function QuestDetail({
                 <MapPin size={12} />
                 {mapInfo.name}
               </span>
-            ) : (
+            ) : SYSTEM_CATS.has(q.cat) ? null : (
               <span className="text-xs text-[var(--text-muted)]">劇情中出現</span>
             )}
           </div>
@@ -534,20 +649,21 @@ function QuestDetail({
         </Section>
       ) : null}
 
-      {/* 完成條件 = 先做完的任務（母任務等子任務）＋ 打倒怪物 ＋ 繳交道具 */}
-      <Section title="完成條件">
-        {q.needQ?.length || q.kill?.length || q.need.length ? (
+      {/* 完成條件 = 先做完的任務（母任務等子任務）＋ 打倒怪物 ＋ 繳交道具。
+          三樣都沒有就整段不畫：以前印「不用打怪也不用繳道具，跟 NPC 對話就完成」，
+          但那多半是條件寫在伺服器端腳本、客戶端沒有結構化資料而已（捐獻王要捐錢、
+          精明的獵人要打十萬隻），是錯的。要做什麼看上面的任務說明 */}
+      {q.needQ?.length || q.kill?.length || q.need.length ? (
+        <Section title="完成條件">
           <div className="space-y-3">
             {q.needQ?.length ? (
               <QuestLinks label="要先完成" ids={q.needQ} onPick={onPickQuest} />
             ) : null}
             {q.kill?.length ? <MobRow mobs={q.kill} /> : null}
-            {q.need.length ? <ItemRow items={q.need} tip={tip} /> : null}
+            {q.need.length ? <NeedList q={q} tip={tip} onPickQuest={onPickQuest} /> : null}
           </div>
-        ) : (
-          <Empty>不用打怪也不用繳道具，跟 NPC 對話就完成</Empty>
-        )}
-      </Section>
+        </Section>
+      ) : null}
 
       {q.cost ? (
         <Section title="花費">
@@ -667,34 +783,151 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
 }
 
 /**
- * 道具格子：icon ＋ 下方名稱前兩字 ＋ 右上角數量。
- * 前兩字標籤是因為卷軸類 icon 幾乎長一樣（同一個任務要五張不同卷軸時完全分不出來），
- * 數量徽章也因此掛右上角，不然會壓到標籤。
- */
-/**
- * 完成條件的「打倒怪物」。點下去跳怪物掉落查詢——查任務的人下一步通常就是
- * 「這隻怪在哪打」，而那頁已經有出沒地圖了。
+ * 完成條件的「打倒怪物」。點下去到那隻怪自己的頁面——查任務的人下一步通常就是
+ * 「這隻怪在哪打」，而那頁有出沒地圖。任務專用的怪（受污染的猴子…）不在圖鑑裡，
+ * 沒有頁面可連，只印名字。
  */
 function MobRow({ mobs }: { mobs: QuestMob[] }) {
+  const box =
+    "flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] py-1 pl-1.5 pr-2.5 text-sm";
   return (
     <div className="flex flex-wrap gap-2">
       {mobs.map((m) => {
-        const name = questMobName(m.id);
-        return (
-          <a
-            key={m.id}
-            href={`/monsters?q=${encodeURIComponent(name)}`}
-            className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] py-1 pl-1.5 pr-2.5 text-sm transition-colors hover:border-[var(--accent)]"
-          >
+        const inner = (
+          <>
             <GameIcon src={mobIconSrc(String(m.id))} alt="" fallback="👾" className="h-8 w-8" />
-            <span>{name}</span>
+            <span>{questMobName(m.id)}</span>
             <span className="text-xs font-semibold tabular-nums text-[var(--text-muted)]">
               ×{m.n}
             </span>
-          </a>
+          </>
+        );
+        return MOB_PAGES.has(String(m.id)) ? (
+          <NoPrefetchLink
+            key={m.id}
+            href={`/monsters/${m.id}`}
+            className={`${box} transition-colors hover:border-[var(--accent)]`}
+          >
+            {inner}
+          </NoPrefetchLink>
+        ) : (
+          <span key={m.id} className={box}>
+            {inner}
+          </span>
         );
       })}
     </div>
+  );
+}
+
+/** 道具 → 會給它的任務（獎勵，或接任務時 NPC 先塞的）。要繳的道具標來源用 */
+const GIVERS = (() => {
+  const out = new Map<number, Quest[]>();
+  for (const q of quests) {
+    for (const it of [...q.rewards, ...(q.give ?? [])]) {
+      const list = out.get(it.id) ?? [];
+      if (!list.includes(q)) out.set(it.id, [...list, q]);
+    }
+  }
+  return out;
+})();
+
+/**
+ * 完成條件的「要繳的道具」：一列一個，完整名稱＋數量，下面一行寫哪裡來。
+ * 2026-11-16 以前是「圖示＋名稱前兩字」的格子（跟獎勵同款），站長回報不好查——
+ * 要繳的東西是玩家接下來要去弄的，名字要看得到全名，更想知道「打誰會掉」。
+ * 來源依序判斷：
+ *   1. 這個任務接下去時 NPC 就會給（give）→ 不用找
+ *   2. 同一條任務流程裡別的任務會給 → 連到那個任務（限同一條流程：
+ *      紅色藥水這種到處都在送的，列出不相干的任務只是雜訊）
+ *   3. 怪會掉（build 時算好的 from）→ 怪名連到怪物頁，超過 6 隻的連到道具頁看全部
+ * 三種都不是（NPC 賣的、地圖上撿的、腳本給的）就不寫，客戶端查不到。
+ */
+function NeedList({
+  q,
+  tip,
+  onPickQuest,
+}: {
+  q: Quest;
+  tip: Tip;
+  onPickQuest: (id: string) => void;
+}) {
+  return (
+    <ul className="space-y-1.5">
+      {q.need.map((it, idx) => {
+        const info = questItemInfo(it.id);
+        const name = info?.name ?? `#${it.id}`;
+        const given = q.give?.some((g) => g.id === it.id);
+        const givers =
+          q.f === undefined
+            ? []
+            : (GIVERS.get(it.id) ?? []).filter((o) => o.id !== q.id && o.f === q.f);
+        const from = info?.from ?? [];
+        return (
+          <li key={`${it.id}-${idx}`} className="flex items-start gap-2.5">
+            <button
+              {...tip.handlers(it.id)}
+              aria-label={`${name} 的道具說明`}
+              className="flex h-10 w-10 shrink-0 cursor-default items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)]"
+            >
+              <GameIcon src={itemIconSrc(it.id)} alt="" fallback="📦" className="h-8 w-8" />
+            </button>
+            <div className="min-w-0 flex-1 py-0.5 text-sm">
+              <div>
+                {name}
+                <span className="ml-1.5 text-xs font-semibold tabular-nums text-[var(--text-muted)]">
+                  ×{num(it.n)}
+                </span>
+              </div>
+              {given ? (
+                <div className="text-xs text-[var(--text-muted)]">接任務時 NPC 會給</div>
+              ) : givers.length ? (
+                <div className="text-xs text-[var(--text-muted)]">
+                  {givers.map((o, i) => (
+                    <span key={o.id}>
+                      {i > 0 && "、"}
+                      <button
+                        onClick={() => onPickQuest(o.id)}
+                        className="cursor-pointer text-[var(--accent-text)] hover:underline"
+                      >
+                        {o.name}
+                      </button>
+                    </span>
+                  ))}{" "}
+                  會給
+                </div>
+              ) : from.length ? (
+                <div className="text-xs text-[var(--text-muted)]">
+                  掉落：
+                  {from.map((mid, i) => (
+                    <span key={mid}>
+                      {i > 0 && "、"}
+                      <NoPrefetchLink
+                        href={`/monsters/${mid}`}
+                        className="text-[var(--accent-text)] hover:underline"
+                      >
+                        {questMobName(mid)}
+                      </NoPrefetchLink>
+                    </span>
+                  ))}
+                  {info?.fromN ? (
+                    <>
+                      {" "}
+                      <NoPrefetchLink
+                        href={`/items/${it.id}`}
+                        className="whitespace-nowrap hover:underline"
+                      >
+                        等 {info.fromN} 隻
+                      </NoPrefetchLink>
+                    </>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -737,6 +970,11 @@ function RewardItems({
   );
 }
 
+/**
+ * 道具格子（獎勵用）：icon ＋ 下方名稱前兩字 ＋ 右上角數量。
+ * 前兩字標籤是因為卷軸類 icon 幾乎長一樣（同一個任務給五張不同卷軸時完全分不出來），
+ * 數量徽章也因此掛右上角，不然會壓到標籤。
+ */
 function ItemRow({
   items,
   tip,

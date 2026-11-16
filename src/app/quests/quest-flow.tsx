@@ -5,12 +5,82 @@
 // 主線每一步一個編號圓圈，圓圈之間一條直線串起來；分岔用框：
 //   都要完成／擇一／各自獨立 → 框本身佔一個編號
 //   另外也要完成／支線       → 不編號，縮排掛在直線旁邊
+// 每個任務名底下有一行摘要（要打什麼、繳什麼 → 給什麼），整條流程不用一步一步點進去看
+// （2026-11-16 加，站長拿參考站比：它一個頁面就列完整條任務線每一步的條件與獎勵）。
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Telescope } from "lucide-react";
-import { questById, type FlowBlock, type FlowKind, type Quest } from "@/data/quests";
+import {
+  questById,
+  questItemName,
+  questMobName,
+  questSkillName,
+  type FlowBlock,
+  type FlowKind,
+  type Quest,
+} from "@/data/quests";
 
 const lvLabel = (lv: number) => (lv > 0 ? `Lv.${lv}` : "無限制");
+
+const num = (n: number) => n.toLocaleString("en-US");
+
+/** 清單接成「甲、乙、丙」，超過 max 樣就收成「等 N 樣」（獎勵有 16 張卷軸的任務會把整列撐爆） */
+function joinSome(names: string[], max: number) {
+  return names.length > max
+    ? `${names.slice(0, max).join("、")} 等 ${names.length} 樣`
+    : names.join("、");
+}
+
+/**
+ * 一步的摘要：「打 蝙蝠×40・繳 蝙蝠翅膀×50 → 經驗 2,500、紅色藥水×5」。
+ * 條件全列（那是玩家要準備的東西，不能省），獎勵道具最多列 3 樣。
+ * 沒有結構化資料的任務（條件與獎勵都在伺服器端腳本）回 null，那一列就只有任務名。
+ */
+function stepSummary(q: Quest): { todo: string; reward: string } | null {
+  const todo = [
+    q.kill?.length
+      ? `打 ${q.kill.map((m) => `${questMobName(m.id)}×${m.n}`).join("、")}`
+      : "",
+    q.need.length
+      ? `繳 ${q.need.map((i) => `${questItemName(i.id)}×${num(i.n)}`).join("、")}`
+      : "",
+    q.cost ? `付 ${num(q.cost)} 楓幣` : "",
+  ]
+    .filter(Boolean)
+    .join("・");
+  const reward = [
+    q.exp ? `經驗 ${num(q.exp)}` : "",
+    q.money ? `${num(q.money)} 楓幣` : "",
+    q.pop ? `名聲 +${q.pop}` : "",
+    // 同名的只留一個：男女版、各職業版的獎勵是不同 id 但名字一樣
+    // （#2084 轉達飛天藥水會印成三件「伊卡路斯披風」）
+    joinSome(
+      [
+        ...new Set([
+          ...(q.skills ?? []).map((s) => questSkillName(s.id)),
+          ...q.rewards.map((i) => `${questItemName(i.id)}${i.n > 1 ? `×${num(i.n)}` : ""}`),
+        ]),
+      ],
+      3,
+    ),
+  ]
+    .filter(Boolean)
+    .join("、");
+  return todo || reward ? { todo, reward } : null;
+}
+
+/** 任務名底下那行摘要。可以換行、不截斷：截掉的話又得點進去看，等於沒做 */
+function Summary({ q }: { q: Quest }) {
+  const s = stepSummary(q);
+  if (!s) return null;
+  return (
+    <span className="mt-0.5 block text-xs font-normal leading-snug text-[var(--text-muted)]">
+      {s.todo}
+      {s.todo && s.reward ? " → " : s.reward ? "→ " : ""}
+      {s.reward}
+    </span>
+  );
+}
 
 const KIND_LABEL: Record<FlowKind, (n: number) => string> = {
   all: () => "都要完成，順序不拘",
@@ -86,7 +156,7 @@ export function QuestFlowCard({
       {open && (
         <ol
           ref={boxRef}
-          className="themed-scroll max-h-[45vh] space-y-1.5 overflow-y-auto border-t border-[var(--border)] p-3"
+          className="themed-scroll max-h-[60vh] space-y-1.5 overflow-y-auto border-t border-[var(--border)] p-3"
         >
           {(() => {
             let n = 0;
@@ -178,14 +248,15 @@ function MainRow({
     <button
       onClick={() => onPick(q.id)}
       data-current={isCur || undefined}
-      className={`cursor-pointer relative flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
+      className={`cursor-pointer relative flex w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
         isCur
           ? "border-[var(--accent)] bg-[var(--accent-soft)]"
           : "border-[var(--border)] bg-[var(--bg)] hover:border-[var(--accent)]"
       }`}
     >
+      {/* -mt-0.5：列改成靠上對齊後，圓圈中心要留在離頂端 18px（主線直線算的就是這個位置） */}
       <span
-        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
+        className="-mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
         style={
           isCur
             ? { background: "var(--accent)", color: "var(--on-accent)" }
@@ -199,8 +270,9 @@ function MainRow({
           <span className="truncate">{q.name}</span>
           <Badges q={q} cur={cur} />
         </span>
+        <Summary q={q} />
       </span>
-      <span className="shrink-0 text-xs text-[var(--text-muted)]">{lvLabel(q.lv)}</span>
+      <span className="mt-0.5 shrink-0 text-xs text-[var(--text-muted)]">{lvLabel(q.lv)}</span>
     </button>
   );
 }
@@ -297,22 +369,26 @@ function SubRow({
     <button
       onClick={() => onPick(q.id)}
       data-current={isCur || undefined}
-      className={`cursor-pointer relative flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left transition-colors ${
+      className={`cursor-pointer relative flex w-full items-start gap-2 rounded-md px-1.5 py-1.5 text-left transition-colors ${
         isCur ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--accent-soft)]/40"
       }`}
     >
-      {/* 同一條線裡前後兩個任務之間的細直線 */}
-      {joinUp && <span className="absolute left-[9px] top-0 h-1/2 w-px bg-[var(--border)]" />}
-      {joinDown && <span className="absolute bottom-0 left-[9px] h-1/2 w-px bg-[var(--border)]" />}
+      {/* 同一條線裡前後兩個任務之間的細直線。列高會隨摘要變動，所以線以小圓點的中心
+          （上內距 6 + 第一行行高 20 的一半 = 16px）為界，不能再用 50% */}
+      {joinUp && <span className="absolute left-[9px] top-0 h-4 w-px bg-[var(--border)]" />}
+      {joinDown && <span className="absolute bottom-0 left-[9px] top-4 w-px bg-[var(--border)]" />}
       <span
-        className="relative h-2 w-2 shrink-0 rounded-full"
+        className="relative mt-1.5 h-2 w-2 shrink-0 rounded-full"
         style={{ background: isCur ? "var(--accent)" : "var(--text-muted)", opacity: isCur ? 1 : 0.45 }}
       />
-      <span className={`flex min-w-0 flex-1 items-center gap-1 text-sm ${isCur ? "font-semibold" : ""}`}>
-        <span className="truncate">{q.name}</span>
-        <Badges q={q} cur={cur} inChoice={inChoice} />
+      <span className="min-w-0 flex-1">
+        <span className={`flex items-center gap-1 text-sm ${isCur ? "font-semibold" : ""}`}>
+          <span className="truncate">{q.name}</span>
+          <Badges q={q} cur={cur} inChoice={inChoice} />
+        </span>
+        <Summary q={q} />
       </span>
-      <span className="shrink-0 text-xs text-[var(--text-muted)]">{lvLabel(q.lv)}</span>
+      <span className="mt-0.5 shrink-0 text-xs text-[var(--text-muted)]">{lvLabel(q.lv)}</span>
     </button>
   );
 }
