@@ -39,6 +39,7 @@ import { itemIconSrc, mobIconSrc, monsters, worldMapSrc } from "@/data/drops";
 import { Desc } from "../monsters/equip-format";
 import { GameIcon } from "../monsters/game-icon";
 import { ItemTooltip, useItemTooltip } from "../monsters/item-tooltip";
+import { FilterChip, FilterChipSubRow } from "@/app/filter-chip";
 import { NoPrefetchLink } from "@/app/no-prefetch-link";
 import { PageHeader } from "@/app/page-header";
 import { WorldMapView, type WorldMapDot } from "../worldmap-view";
@@ -260,7 +261,7 @@ function QuestExplorer() {
         </div>
         {/* 第一排：大分類。七個，用換行不用橫向捲（窄視窗也看得到全部） */}
         <div className="mt-3 flex flex-wrap gap-1.5">
-          <RegionChip
+          <FilterChip
             label="全部"
             active={cat === null}
             onClick={() => {
@@ -270,7 +271,7 @@ function QuestExplorer() {
             }}
           />
           {questCats.map(({ name }) => (
-            <RegionChip
+            <FilterChip
               key={name}
               label={`${name} ${COUNT.get(name) ?? 0}`}
               active={cat === name}
@@ -285,9 +286,9 @@ function QuestExplorer() {
         </div>
         {/* 第二排：選了有小地區的大分類才出現，再點一次同一顆＝取消 */}
         {cat && subs ? (
-          <div className="mt-1.5 flex flex-wrap gap-1.5 border-l-2 border-[var(--border-strong)] pl-2">
+          <FilterChipSubRow>
             {subs.map((name) => (
-              <RegionChip
+              <FilterChip
                 key={name}
                 small
                 label={`${name} ${COUNT.get(`${cat}/${name}`) ?? 0}`}
@@ -298,7 +299,7 @@ function QuestExplorer() {
                 }}
               />
             ))}
-          </div>
+          </FilterChipSubRow>
         ) : null}
 
         <div className="mt-2 text-xs text-[var(--text-muted)]">
@@ -378,39 +379,6 @@ function QuestExplorer() {
         <MapModal q={selected} onClose={() => setMapOpen(false)} />
       )}
     </div>
-  );
-}
-
-function RegionChip({
-  label,
-  active,
-  icon,
-  small,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  /** 「活動」掛日曆 */
-  icon?: React.ReactNode;
-  /** 第二排的小地區：矮一點，跟第一排分得出層級 */
-  small?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-pressed={active}
-      className={`cursor-pointer inline-flex shrink-0 items-center gap-1 rounded-full border text-xs transition-colors ${
-        small ? "px-2.5 py-0.5" : "px-3 py-1"
-      } ${
-        active
-          ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--accent-text)]"
-          : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-      }`}
-    >
-      {icon}
-      {label}
-    </button>
   );
 }
 
