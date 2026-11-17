@@ -9,6 +9,7 @@
  *   2. metadata 的 description 要塞真的掉落物名稱，那是被搜尋比對到的內容。
  */
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site-metadata";
 import { NoPrefetchLink as Link } from "@/app/no-prefetch-link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Search, Telescope } from "lucide-react";
@@ -43,7 +44,7 @@ const mapName = (id: number) =>
 /** 把清單接成「甲、乙、丙」，超過 max 筆就加「等 N 種」 */
 function joinNames(names: string[], max: number, unit: string) {
   const head = names.slice(0, max).join("、");
-  return names.length > max ? `${head} 等 ${names.length} ${unit}` : head;
+  return names.length > max ? `${head}等 ${names.length} ${unit}` : head;
 }
 
 export async function generateMetadata({
@@ -78,17 +79,12 @@ export async function generateMetadata({
   const title = `${m.name} 掉落物與出沒地圖`;
   const description = parts.join("").slice(0, 155);
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `/monsters/${m.id}` },
-    openGraph: {
-      title: `${title} | 楓探`,
-      description,
-      url: `/monsters/${m.id}`,
-      type: "article",
-    },
-  };
+    path: `/monsters/${m.id}`,
+    type: "article",
+  });
 }
 
 export default async function Page({

@@ -18,6 +18,7 @@ import {
 import type { Metadata } from "next";
 import { navTree, navItems, isNavGroup, navHref, type NavItem } from "@/nav";
 import { DetectivePenguin } from "./detective-penguin";
+import { SITE_URL } from "@/lib/site-metadata";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -31,14 +32,13 @@ const WEBSITE_JSONLD = {
   "@type": "WebSite",
   name: "楓探",
   alternateName: "楓探 | 新楓之谷：經典版工具箱",
-  url: "https://maple-detective.vercel.app",
+  url: SITE_URL,
   inLanguage: "zh-Hant-TW",
   potentialAction: {
     "@type": "SearchAction",
     target: {
       "@type": "EntryPoint",
-      urlTemplate:
-        "https://maple-detective.vercel.app/monsters?q={search_term_string}",
+      urlTemplate: `${SITE_URL}/monsters?q={search_term_string}`,
     },
     "query-input": "required name=search_term_string",
   },

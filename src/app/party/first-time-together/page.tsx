@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site-metadata";
 import { firstTimeTogetherQuiz } from "@/data/party-quests";
 import { itemIconSrc } from "@/data/drops";
 import { GameIcon } from "@/app/monsters/game-icon";
@@ -7,13 +8,13 @@ import { PageHeader } from "@/app/page-header";
 /** 超級綠水靈（9300003）掉的通行證，數字就是要交的張數 */
 const PASS_ITEM_ID = 4001008;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   // 標題帶上「第一次同行」：玩家搜的是任務全名，站內才叫它「超綠」
   title: "超綠題庫 第一次同行克魯特問答",
   description:
     "新楓之谷經典版組隊任務「第一次同行」（超級綠水靈）第一階段，克魯特出題的完整題庫與答案。",
-  alternates: { canonical: "/party/first-time-together" },
-};
+  path: "/party/first-time-together",
+});
 
 export default function FirstTimeTogetherPage() {
   return (

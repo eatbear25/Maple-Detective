@@ -9,6 +9,7 @@
  * 沒有，那種薄頁對整站排名是扣分。
  */
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site-metadata";
 import { NoPrefetchLink as Link } from "@/app/no-prefetch-link";
 import { notFound } from "next/navigation";
 import { Telescope, ArrowLeft } from "lucide-react";
@@ -45,7 +46,7 @@ const mobById = (id: string) => monsters.find((m) => m.id === id);
 
 function joinNames(names: string[], max: number, unit: string) {
   const head = names.slice(0, max).join("、");
-  return names.length > max ? `${head} 等 ${names.length} ${unit}` : head;
+  return names.length > max ? `${head}等 ${names.length} ${unit}` : head;
 }
 
 export async function generateMetadata({
@@ -68,10 +69,16 @@ export async function generateMetadata({
 
   const parts = [`新楓之谷經典版「${name}」的取得方式：`];
   if (mobNames.length) {
-    parts.push(`由 ${joinNames(mobNames, 8, "隻怪")} 掉落。`);
+    parts.push(`${joinNames(mobNames, 8, "隻怪")}會掉落。`);
   }
   if (questNames.length) {
-    parts.push(`任務「${joinNames(questNames, 3, "個任務")}」會給。`);
+    // 每個任務名各自加引號；超過 3 個時結尾的「等 N 個任務」已經說了是任務，前面不再加「任務」
+    const quoted = questNames.slice(0, 3).map((n) => `「${n}」`).join("、");
+    parts.push(
+      questNames.length > 3
+        ? `${quoted}等 ${questNames.length} 個任務會給。`
+        : `任務${quoted}會給。`,
+    );
   }
   if (!mobNames.length && !questNames.length) {
     parts.push("目前查不到掉落或任務來源。");
@@ -87,17 +94,12 @@ export async function generateMetadata({
   const title = `${name} 掉落來源與取得方式`;
   const description = parts.join("").slice(0, 155);
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `/items/${iid}` },
-    openGraph: {
-      title: `${title} | 楓探`,
-      description,
-      url: `/items/${iid}`,
-      type: "article",
-    },
-  };
+    path: `/items/${iid}`,
+    type: "article",
+  });
 }
 
 export default async function Page({

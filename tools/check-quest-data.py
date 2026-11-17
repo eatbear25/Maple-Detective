@@ -16,10 +16,16 @@
 
 import json
 import os
+import re
 
 PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(PROJECT, "reference-data")
 OUT = os.path.join(PROJECT, "src", "data", "generated", "quests.json")
+DROPS = os.path.join(PROJECT, "src", "data", "generated", "monster-drops.json")
+
+# QuestInfo.area → 大分類。跟 build-quest-data.py 的 AREAS 各寫一份，互相對照
+AREA_CAT = {10: "轉職", 20: "楓之島", 30: "維多利亞島", 33: "冰原雪域山脈",
+            47: "組隊任務", 50: "活動", 51: "稱號"}
 
 # 客戶端欄位 → 我們怎麼處理。改動 build-quest-data.py 的取用方式時，這裡要一起改。
 FIELD_USE = {
@@ -87,7 +93,7 @@ FIELD_USE = {
         "viewMedalItem": "用：稱號勳章獎勵（Act 裡沒有，只有這裡有）",
         "parent": "不用：值被掏空了，系列名改從 String/TW/QuestData.json 拿",
         "name": "不用：同上",
-        "area": "不用：遊戲內任務分頁的分區代碼（10/20/30/47/50/51），粒度對攻略沒用",
+        "area": "用：cat（大分類 chip）；50 活動／51 稱號是系統發的任務，實裝判斷不看 NPC",
         "order": "不用：系列內順序，任務鏈已用前後關聯排好",
         "sortkey": "不用：清單排序用",
         "rewardSummary": "不用：值被掏空了（只剩欄位名本身）",
@@ -115,9 +121,11 @@ FIELD_USE = {
         "demand": "不用：值被掏空了",
         "recommend": "不用：值被掏空了",
         "reward": "不用：只有 #505812，道具跟 Act 重複",
-        "0": "不用：對話文字（客戶端已掏空）",
-        "1": "不用：對話文字（客戶端已掏空）",
-        "2": "不用：對話文字（客戶端已掏空）",
+        # 任務視窗的說明文字。QuestInfo 這邊是空殼，字在 String/TW/QuestData.json 的 Info，
+        # build 腳本從那裡轉成 desc（quest_text）
+        "0": "不用：說明文字的殼（實際文字讀 strings[id].Info → desc）",
+        "1": "不用：同上",
+        "2": "不用：同上",
     },
     "act.1": {
         "exp": "用：exp",
@@ -150,17 +158,31 @@ def out_items(rows):
     return sorted((r["id"], r["n"]) for r in rows or [])
 
 
-def system_quest(qid, raw):
+def npc_on_map(qid, raw, npc_map, map_tbl):
+    """這個任務有沒有任何一個 NPC 站在客戶端有名字的地圖上"""
+    return any(
+        (map_tbl.get(str(mp)) or {}).get("mapName")
+        for b in raw["check"][qid].values()
+        if isinstance(b, dict) and isinstance(b.get("npc"), int)
+        for mp in npc_map.get(str(b["npc"]), [])
+    )
+
+
+def system_quest(qid, raw, on_map):
     """遊戲內看不到的系統任務（build 腳本的 is_hidden，這裡獨立再寫一次當斷言）"""
     info = raw["info"].get(qid) or {}
     name = ((raw["strings"].get(qid) or {}).get("name") or "").strip()
-    lv = (raw["check"][qid].get("0") or {}).get("lvmin") or 0
+    start = raw["check"][qid].get("0") or {}
+    lv = start.get("lvmin") or 0
+    end = start.get("end")
     return (
         qid == "9999"
         or not name
         or lv >= 9999
         or bool(info.get("disableAtNPC"))
         or bool(info.get("disableAtStartTab") and info.get("disableAtPerformTab"))
+        # 舊版活動的殘骸：結束日早於 2020、NPC 也不在地圖上（#1054 皇家騎士團）
+        or (not on_map and isinstance(end, str) and end < "2020")
     )
 
 
@@ -227,6 +249,10 @@ def main():
         site = json.load(f)
     quests = {q["id"]: q for q in site["quests"]}
     supplement = {k for k in load("quest-supplement.json") if not k.startswith("_")}
+    npc_map = load("npc-map.json")
+    map_tbl = load("name-tables", "Map.json")
+    with open(DROPS, encoding="utf-8") as f:
+        drops_of = {int(m["id"]): set(m.get("drops") or ()) for m in json.load(f)["monsters"] if m.get("released")}
 
     problems = []
 
@@ -237,14 +263,21 @@ def main():
     hidden = 0
     for qid, check in raw["check"].items():
         q = quests.get(qid)
+        on_map = npc_on_map(qid, raw, npc_map, map_tbl)
         if q is None:
-            if system_quest(qid, raw):
+            if system_quest(qid, raw, on_map):
                 hidden += 1
             else:
                 problems.append(f"#{qid} 客戶端有這個任務，網站沒有輸出")
             continue
-        if system_quest(qid, raw):
+        if system_quest(qid, raw, on_map):
             problems.append(f"#{qid} {q['name']}｜系統任務不該出現在網站上")
+        # 大分類 = QuestInfo.area；實裝 = NPC 在地圖上，或是系統發的稱號／活動任務
+        area = (raw["info"].get(qid) or {}).get("area")
+        if q.get("cat") != AREA_CAT.get(area):
+            bad(qid, "大分類", f"area {area} → {AREA_CAT.get(area)}", q.get("cat"))
+        if q["released"] != (on_map or area in (50, 51)):
+            bad(qid, "實裝判斷", on_map or area in (50, 51), q["released"])
         act = raw["act"].get(qid, {})
         start = check.get("0") or {}
         end = check.get("1") or {}
@@ -322,10 +355,33 @@ def main():
                 problems.append(f"#{q['id']} {q['name']}｜技能 {row['id']} 不在名稱表")
         if q.get("npcMap") is not None and str(q["npcMap"]) not in site["maps"]:
             problems.append(f"#{q['id']} {q['name']}｜地圖 {q['npcMap']} 不在名稱表")
-        if q.get("region") and q["region"] not in site["regions"]:
-            problems.append(f"#{q['id']} {q['name']}｜地區 {q['region']} 不在 chips 清單")
-        if bool(q.get("region")) != bool(q["released"]):
-            problems.append(f"#{q['id']} {q['name']}｜region 與 released 不一致")
+        # 說明文字：標記都要轉乾淨（殘留的 # 會打壞前端的強調解析，反斜線是沒轉到的換行）
+        desc = q.get("desc") or ""
+        if "#" in re.sub(r"#c[^#]+#", "", desc) or "\\" in desc:
+            problems.append(f"#{q['id']} {q['name']}｜說明文字有殘留標記：{desc[:60]!r}")
+
+    # 兩排 chips：大分類都在清單裡、第二排的小地區在那個分類底下真的有任務
+    cat_names = [c["name"] for c in site["cats"]]
+    for q in site["quests"]:
+        if q["cat"] not in cat_names:
+            problems.append(f"#{q['id']} {q['name']}｜大分類 {q['cat']} 不在 chips 清單")
+    for c in site["cats"]:
+        for sub in c.get("subs") or []:
+            if not any(q["cat"] == c["name"] and q.get("region") == sub for q in site["quests"]):
+                problems.append(f"chips：{c['name']} 底下的 {sub} 沒有任何任務")
+
+    # 誰會掉：只標在要繳的道具上，而且那隻怪（現行版本）真的掉這個
+    needed = {str(row["id"]) for q in site["quests"] for row in q["need"]}
+    for iid, item in site["items"].items():
+        if "from" not in item:
+            continue
+        if iid not in needed:
+            problems.append(f"道具 {iid} {item['name']}｜不是要繳的道具卻標了來源")
+        for mid in item["from"]:
+            if int(iid) not in drops_of.get(mid, ()):
+                problems.append(f"道具 {iid} {item['name']}｜怪物 {mid} 其實不掉這個")
+            if str(mid) not in site["mobs"]:
+                problems.append(f"道具 {iid} {item['name']}｜怪物 {mid} 不在名稱表")
 
     # 欄位涵蓋率：出現沒登記的欄位 = 遊戲更新加了東西
     unknown = []

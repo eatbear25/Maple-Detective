@@ -28,23 +28,31 @@ export interface QuestItemInfo {
   name: string;
   desc?: string;
   eq?: EquipStats;
+  /** 會掉這個道具的怪（只有「要繳的道具」有；現行版本、依等級排、最多 6 隻） */
+  from?: number[];
+  /** 會掉的怪總共幾隻（超過 6 隻才有這欄） */
+  fromN?: number;
 }
 
 export interface Quest {
   id: string;
   name: string;
+  /** 大分類：遊戲內任務視窗的分類（楓之島／維多利亞島／轉職／稱號／活動…） */
+  cat: string;
   /** 系列名（遊戲的 QuestInfo.parent），沒有的任務就沒有這個欄位 */
   series?: string;
+  /** 任務視窗的說明文字（#c...# 為強調）。沒有結構化條件的任務，要做什麼只寫在這裡 */
+  desc?: string;
   /** 需求等級，0 = 無限制 */
   lv: number;
-  /** false = 這個任務的 NPC 都不在已實裝地圖上（目前版本玩不到） */
+  /** false = 目前版本玩不到（現在一個都沒有，規則見 tools/build-quest-data.py「實裝判斷」） */
   released: boolean;
   npc?: string;
   npcId?: number;
   /** NPC 所在地圖 id；查不到的是腳本動態生成的劇情 NPC */
   npcMap?: number;
-  /** 地區篩選用的大地區名（規則見 tools/build-quest-data.py）；
-   *  沒有這個欄位 = 這個任務的 NPC 全都不在已實裝地圖上（＝未實裝任務） */
+  /** 小地區（弓箭手村、墮落城市…，規則見 tools/build-quest-data.py 的 TOWNS）；
+   *  NPC 不站在地圖上的任務（稱號、通行證）沒有這個欄位 */
   region?: string;
   /** 完成條件：要繳交的道具 */
   need: QuestItem[];
@@ -95,6 +103,12 @@ export interface Quest {
 export type FlowKind = "all" | "one" | "split" | "also" | "side";
 export type FlowBlock = string | { k: FlowKind; lines: FlowBlock[][] };
 
+/** 大分類 chip；subs = 選了它之後第二排可以再縮小的小地區（沒有就不出現第二排） */
+export interface QuestCat {
+  name: string;
+  subs?: string[];
+}
+
 const d = data as unknown as {
   quests: Quest[];
   /** 每條任務流程 */
@@ -103,7 +117,7 @@ const d = data as unknown as {
   mobs: Record<string, string>;
   skills: Record<string, string>;
   maps: Record<string, QuestMapInfo>;
-  regions: string[];
+  cats: QuestCat[];
   worldmap: Record<string, WorldMapSheet>;
 };
 
@@ -125,10 +139,8 @@ export const questItemInfo = (id: number): QuestItemInfo | undefined => d.items[
 export const questItemName = (id: number) => d.items[String(id)]?.name ?? `#${id}`;
 export const questMapInfo = (id: number): QuestMapInfo | undefined => d.maps[String(id)];
 
-/** 該任務的大地區名；NPC 沒有已實裝地圖的任務回 undefined */
-export const questRegion = (q: Quest) => q.region;
-/** 地區 chips 的順序：大致依遊戲地理動線（見 tools/build-quest-data.py 的 TOWNS） */
-export const questRegions: string[] = d.regions;
+/** 兩排 chips 的順序（見 tools/build-quest-data.py 的 AREAS／CAT_SUBS） */
+export const questCats: QuestCat[] = d.cats;
 /** 任務 NPC 站立圖（tools/download-icons.py 抓的；少數 NPC maplestory.io 沒有圖） */
 export const npcIconSrc = (id: number) => `${ASSET_BASE_URL}/icons/npc/${id}.gif`;
 

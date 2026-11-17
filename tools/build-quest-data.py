@@ -2,13 +2,17 @@
 
 用法：python tools/build-quest-data.py
 輸入：reference-data/quest.json（tools/extract-quest.py）、npc-map.json（同上）、
-      name-tables/{Item,Npc,Map}.json、equip-info.json、worldmap.json
+      name-tables/{Item,Npc,Map}.json、equip-info.json、worldmap.json、
+      src/data/generated/monster-drops.json（tools/build-site-data.py，查「誰會掉」用）
 輸出：src/data/generated/quests.json
     {
-      "quests":   [ { id, name, series?, lv, npc?, npcId?, npcMap?, released,
+      "quests":   [ { id, name, cat, series?, desc?, lv, npc?, npcId?, npcMap?, released,
                       region?, lvMax?, repeat?, need, kill?, have?, jobs?,
                       rewards, give?, exp?, money?, cost?, pop?, skill?,
                       scripted?, sup?, prereq, needQ?, ev?, f? } ],
+                  // cat      = 大分類（遊戲內任務視窗的分類，見 AREAS）
+                  // region   = 小地區（弓箭手村、墮落城市…，見 TOWNS）；NPC 不在地圖上的沒有
+                  // desc     = 任務視窗的說明文字（#c…# 是強調），見 quest_text()
                   // kill     = 完成條件要打倒的怪 [{id,n}]（79 個任務）
                   // have     = 接任務時身上要先有的道具（87 個）
                   // jobs     = 職業限制（全職業都能接的就不寫）
@@ -20,24 +24,32 @@
                   // scripted = 完成處理交給伺服器端腳本（獎勵客戶端查不到）
                   // sup      = 有吃到 quest-supplement.json 的人工補充
                   // needQ    = 交任務前要先完成的任務（母任務等子任務做完）
-                  // ev       = 活動期間 ["YYYY-MM-DDTHH:MM", ...]（有這欄的 region = 活動）
+                  // ev       = 活動期間 ["YYYY-MM-DDTHH:MM", ...]
                   // 依 lv 排序；need/rewards = [{ id, n }]；f = flows 索引
       "flows":    [ [block...] ],   // 任務流程，格式見 build_flows()
-      "items":    { itemId: { name, desc?, eq?, price?, noSale? } },   // 任務用到的全部道具（賣價見 item_price.py）
-      "mobs":     { mobId: 中文名 },   // 完成條件要打的怪
+      "items":    { itemId: { name, desc?, eq?, price?, noSale?, from?, fromN? } },
+                  // 任務用到的全部道具（賣價見 item_price.py）
+                  // from = 會掉這個的怪（只有要繳的道具有；現行版本、依等級、最多 6 隻），
+                  // fromN = 總共幾隻（超過 6 隻才有）
+      "mobs":     { mobId: 中文名 },   // 完成條件要打的怪 ＋ items.from 裡的怪
       "skills":   { skillId: 中文名 },  // 技能獎勵
       "maps":     { mapId: { street, name, wm? } },   // NPC 所在地
-      "regions":  [ 地區名... ],   // 地區 chips 的順序（TOWNS 宣告順序）
+      "cats":     [ { name, subs?: [小地區...] } ],   // 兩排 chips 的順序（AREAS／CAT_SUBS）
       "worldmap": { sheet: { title, w, h, spots: [[x,y]...] } }
     }
 
 ## 實裝判斷
 
-任務的 NPC 有沒有站在「客戶端 Map.json 有名字」的地圖上。
-released = 至少一個 NPC 查得到具名地圖。2026-08 的實測分佈：全部實裝 296、部分 28、
-完全沒有 166 —— 定案是「296+28 算現行版本，只有 166 掛未實裝徽章」，
-所以這裡用 any() 而不是 all()。2026-10-17 重抽後變成 493／4／16：
+released = 至少一個 NPC 站在「客戶端 Map.json 有名字」的地圖上，**或是稱號／活動任務**。
+2026-08 的實測分佈：NPC 全部實裝 296、部分 28、完全沒有 166 —— 定案是「296+28 算現行版本，
+只有 166 掛未實裝徽章」，所以用 any() 而不是 all()。2026-10-17 重抽後變成 493／4／16：
 客戶端把還沒開放的 197 個任務（4 轉、菇菇王國、瑪加提亞…）整批拿掉了。
+
+**剩下那 16 個不是未實裝**（2026-11-16 站長回報「弓箭手村捐獻王明明有，卻標未實裝」）：
+9 個稱號任務的 NPC 是達利額的系統分身 9000066、6 個活動任務是菇菇通行證的茱妮這種介面 NPC，
+本來就不站在地圖上。所以 area 是稱號（51）或活動（50）的一律算實裝；
+唯一真的不存在的 #1054 皇家騎士團改由 is_hidden() 濾掉。現在未實裝 0 個，
+前端的望遠鏡徽章還留著：哪天客戶端又塞進還沒開放的任務時用得到。
 
 ## 任務流程
 
@@ -84,6 +96,7 @@ ScriptString 的 quest0/quest1，客戶端都沒有腳本內容——跟掉落�
 
 import json
 import os
+import re
 from collections import Counter, defaultdict
 
 from item_price import sale_fields, strip_sale
@@ -93,6 +106,8 @@ from worldmap_spots import build_wm_lookup
 PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(PROJECT, "reference-data")
 OUT = os.path.join(PROJECT, "src", "data", "generated", "quests.json")
+DROPS = os.path.join(PROJECT, "src", "data", "generated", "monster-drops.json")
+MAX_FROM = 6  # 「誰會掉」最多列幾隻怪
 
 
 def load(*parts):
@@ -385,7 +400,33 @@ def flow_ids(blocks):
                 yield from flow_ids(line)
 
 
-# 地區分類：給任務頁的地區篩選用。粒度要「弓箭手村 / 墮落城市 / 奇幻村」這種
+# 大分類（任務頁第一排 chip）＝客戶端 QuestInfo 的 area，也就是遊戲內任務視窗的分類。
+# 2026-11-16 改：原本第一排直接放下面 TOWNS 的 13 個小地區，站長嫌太碎
+# （要橫向捲、弓箭手村跟墮落城市明明都是維多利亞島），參考站也是大地區一層。
+# 宣告順序 = chip 的順序。**出現沒登記的 area 會直接擋下來**：遊戲開新大陸時要人來補名字。
+AREAS = {
+    20: "楓之島",
+    30: "維多利亞島",
+    33: "冰原雪域山脈",
+    10: "轉職",
+    47: "組隊任務",
+    51: "稱號",
+    50: "活動",
+}
+
+# 系統直接發的任務：NPC（稱號的達利額、菇菇通行證的茱妮…）本來就不站在地圖上，
+# 不能拿「NPC 在不在地圖上」判斷實裝。見 docstring「實裝判斷」
+SYSTEM_AREAS = {50, 51}
+
+# 第二排 chip：選了大分類之後可以再縮小到哪幾個小地區（小地區怎麼判見下面 TOWNS）。
+# 只列「地理上屬於這個大分類」的：冰原雪域山脈有 9 個任務的 NPC 站在維多利亞
+# （上古魔書那條線要回去找四賢者），那些只在「全部」底下看得到，不另外開 chip。
+CAT_SUBS = {
+    "維多利亞島": ["弓箭手村", "魔法森林", "勇士之村", "墮落城市", "維多利亞港", "奇幻村", "黃金海岸", "鯨魚號"],
+    "冰原雪域山脈": ["天空之城", "冰原雪域"],
+}
+
+# 小地區：任務頁第二排 chip 與列表上的地點。粒度要「弓箭手村 / 墮落城市 / 奇幻村」這種
 # 玩家講得出口的大地區，一張小地圖不該自己變成一個 chip。
 #
 # 走過的路（都不行，別再回頭試）：
@@ -405,7 +446,7 @@ def flow_ids(blocks):
 #      底圖優先取**大陸圖**（depth 1）而不是最深的子圖：子圖（例如奇幻村那張）
 #      只畫得下一個主城，任何點都會被判給它——迷宮入口就是這樣被吸去奇幻村的。
 #      地圖不在任何底圖上時，退回 worldmap_spots 借鄰居的約略點位。
-# 判不出來的（NPC 完全不在已實裝地圖上）留 None，前端歸「未實裝」。
+# 判不出來的（NPC 完全不在已實裝地圖上）留 None，列表上就不寫地點。
 TOWNS = {
     # 楓之島兩個村子（菇菇村 / 楓葉村）合成一塊：整座島才 52 個任務，拆開沒有意義
     10000: "楓之島",
@@ -424,11 +465,6 @@ TOWNS = {
     211000000: "冰原雪域",
 }
 
-# 活動任務（客戶端 Check["0"] 帶 start/end 日期的）不照地理分，獨立一個 chip：
-# 萬聖節那串 75 個任務的 NPC 散在冰原雪域、天空之城跟活動專用地圖上，
-# 照地理分會把冰原雪域的 chip 灌成三分之二都是活動任務
-EVENT_REGION = "活動"
-
 MAP_REGION_OVERRIDE = {
     # 詛咒之林：惡靈森林任務鏈的其他五步都在魔法森林（潘喜/艾溫/漢斯），
     # 但這張是隱藏地圖、世界地圖上沒有點，ID 前綴 910 又會被推去自由市場入口
@@ -446,20 +482,131 @@ MAP_REGION_OVERRIDE = {
 HIDDEN_IDS = {"9999"}  # 開發測試用
 
 
-def is_hidden(qid, name, start, info):
+def is_hidden(qid, name, start, info, located):
     """遊戲內看不到的系統任務（2026-10-17 的客戶端多了 60 個）：
     - 沒有中文名：#9250~9254、#506441 這種，客戶端 QuestData 沒登記
     - 等級 9999：「萬聖節台詞顯示用任務」，給 NPC 換台詞用的旗標
     - info.disableAtNPC：NPC 不會給（「菇菇通行證參與確認用」「楓葉商會硬幣(隱藏任務)」）
     - info.disableAtStartTab 加 disableAtPerformTab：任務視窗的「可接」「進行中」都不顯示
+    - 結束日早於 2020 而且 NPC 全都不在地圖上（located 是空的）：舊版活動的殘骸，
+      目前只有 #1054 皇家騎士團（2009 年截止、那因哈特不在經典版）。
+      NPC 還在地圖上的舊日期任務（#2147、#2208）是真的能接的，不算
     """
+    end = start.get("end")
     return (
         qid in HIDDEN_IDS
         or not name
         or (start.get("lvmin") or 0) >= 9999
         or bool(info.get("disableAtNPC"))
         or bool(info.get("disableAtStartTab") and info.get("disableAtPerformTab"))
+        or (not located and isinstance(end, str) and end < "2020")
     )
+
+
+# 任務說明文字（遊戲任務視窗裡那段）的標記，規則見 quest_text()
+_NL = re.compile(r"\\r\\n|\\n|\\r|\r\n|\r")
+_RUNTIME = re.compile(r"#(?:c\s*\d+:?|[auRx]\d+|[jQD][A-Za-z]+)#")
+_PANEL = re.compile(r"#[jQD][A-Za-z]+#")
+_REF = re.compile(r"#([ptzomyi])\s*(\d+):?#")
+_STYLE = re.compile(r"(#[brdgken]|\n)")
+# 數值那行丟掉之後落單的小標題
+_STRAY = re.compile(r"執行記錄|成績|●\s*進行(?:狀況|情況|進度)")
+
+
+def quest_text(info, names, unresolved):
+    """QuestData 的 Info（任務視窗的說明文字）→ 網站顯示用的純文字，沒有就回 None。
+
+    為什麼要這段：237 個任務沒有結構化的完成條件（打怪／繳道具），條件寫在伺服器端腳本裡，
+    以前畫面上印「不用打怪也不用繳道具，跟 NPC 對話就完成」——錯的（2026-11-16 站長回報）。
+    例：#29922 精明的獵人其實要「30 天內狩獵比自己等級高的怪物 100000 隻」，
+    這句話只存在說明文字裡。
+
+    Info 有三段：0 = 還沒接、1 = 進行中、2 = 已完成。**取 1**（講的是「現在要做什麼」），
+    沒有才退 0 再退 2（稱號任務只有 2）。值等於鍵本身（"1"、"2"）或轉完不到 4 個字的
+    （#2147 寫著「dd」）是掏空的殼，跳過。
+    **例外：1 是「進度面板」（帶 `#j…`／`#Q…`／`#D…`）時先取 0**——稱號挑戰與組隊任務的 1
+    整段都是剩餘時間、最短紀錄，數值行丟掉後只剩標題；條件寫在 0
+    （#29002 人氣王：「30 天內名聲提升至 1000」）。
+
+    轉換規則：
+    - 換行有四種寫法：字面的 `\\n`（316 個任務）、`\\r\\n`、真的 CRLF、真的 LF
+    - **含執行期數值的那一行整行丟掉**：`#c<道具>#`（身上有幾個，「0 / 50」那種進度）、
+      `#a`（打了幾隻）、`#u`（子任務狀態）、`#R`、`#x`、`#j…`／`#Q…`／`#D…`。
+      這些數字只有遊戲裡才有，留著會印成一堆空格與斜線。丟完落單的小標題
+      （「● 進行狀況」「執行記錄」）也一起拿掉
+    - `#M<任務>#`（玩家自己選的那隻怪，只有 #1047 怪物圖鑑有）→「指定的怪物」
+    - `#p`／`#t`、`#z`／`#o`／`#m`／`#y` + id → NPC／道具／怪物／地圖／任務的中文名
+      （id 可能補零「04001101」、帶冒號「4031162:」、前面有空白「#o 1210100#」），`#i`（圖示）拿掉
+    - `#b`／`#r`／`#d`／`#g`（上色）到 `#k`、`#e`（粗體）到 `#n` → 轉成 `#c…#`，
+      就是道具說明用的那個強調標記，前端共用 equip-format.tsx 的 Desc
+    查不到名字的 id 記進 unresolved，執行時會印出來。
+    """
+
+    def convert(raw):
+        lines = []
+        for line in _NL.split(re.sub(r"#M\d+#", "指定的怪物", raw)):
+            if _RUNTIME.search(line):
+                continue
+            if _STRAY.fullmatch(_STYLE.sub("", line).strip()):
+                continue
+            lines.append(line.rstrip())
+
+        def ref(m):
+            kind, num = m.group(1), int(m.group(2))
+            if kind == "i":
+                return ""
+            name = names[kind](num)
+            if not name:
+                unresolved.append(m.group(0))
+                return ""
+            return name
+
+        text = _REF.sub(ref, "\n".join(lines))
+
+        out, color, bold, opened = [], False, False, False
+        for tok in _STYLE.split(text):
+            if tok == "\n":
+                if opened:
+                    out.append("#")
+                    opened = False
+                out.append(tok)
+            elif _STYLE.fullmatch(tok):
+                code = tok[1]
+                if code == "k":
+                    color = False
+                elif code == "n":
+                    bold = False
+                elif code == "e":
+                    bold = True
+                else:
+                    color = True
+                if opened and not (color or bold):
+                    out.append("#")
+                    opened = False
+            elif tok:
+                if "#" in tok:  # 沒登記過的標記：拿掉 # 免得打壞前端的強調解析，同時回報
+                    unresolved.append(tok.strip()[:40])
+                    tok = tok.replace("#", "")
+                if (color or bold) and not opened and tok.strip():
+                    out.append("#c")
+                    opened = True
+                out.append(tok)
+        if opened:
+            out.append("#")
+        text = "".join(out)
+        text = re.sub(r"[ \t]+\n", "\n", text)
+        return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+    first = info.get("1")
+    panel = isinstance(first, str) and _PANEL.search(first)
+    for key in ("0", "1", "2") if panel else ("1", "0", "2"):
+        raw = info.get(key)
+        if not isinstance(raw, str) or raw.strip() in ("", key):
+            continue
+        text = convert(raw)
+        if len(re.sub(r"#c|#", "", text)) >= 4:
+            return text
+    return None
 
 
 def event_period(start):
@@ -561,6 +708,30 @@ def main():
     wm_of = build_wm_lookup(wm_sheets)
     region_of = build_region_lookup(wm_sheets, map_tbl)
 
+    # 要繳的道具「誰會掉」：只收現行版本的怪與現行版本的掉落（含人工補充），
+    # 直接吃 build-site-data.py 的輸出，實裝判斷才會跟怪物頁一致
+    if not os.path.exists(DROPS):
+        raise SystemExit("找不到 src/data/generated/monster-drops.json，請先跑 tools/build-site-data.py")
+    with open(DROPS, encoding="utf-8") as f:
+        drop_mobs = [m for m in json.load(f)["monsters"] if m.get("released")]
+    droppers = defaultdict(list)  # itemId → [(等級, mobId)]
+    for m in drop_mobs:
+        for iid in m.get("drops") or ():
+            droppers[iid].append((m.get("level") or 0, int(m["id"])))
+
+    def name_in(tbl, key="name"):
+        return lambda n: ((tbl.get(str(n)) or {}).get(key) or "").strip()
+
+    text_names = {
+        "p": name_in(npc_tbl),
+        "t": name_in(item_tbl),
+        "z": name_in(item_tbl),
+        "o": name_in(mob_tbl),
+        "m": name_in(map_tbl, "mapName"),
+        "y": name_in(strings),
+    }
+    unresolved = []  # 說明文字裡查不到名字的標記
+
     def named_map_of(npc_id):
         """該 NPC 第一張在客戶端有中文名的出沒地圖 id（沒有就 None）。"""
         for mp in npc_map.get(str(npc_id), []):
@@ -569,8 +740,10 @@ def main():
         return None
 
     quests = []
+    unknown_areas = []  # QuestInfo.area 不在 AREAS 裡的任務
     end_req = {}  # Check["1"].quest：交任務前要先完成的任務（建流程用）
     used_items, used_maps, used_mobs, used_skills = set(), set(), set(), set()
+    need_items = set()  # 要繳的道具（只有這些要查「誰會掉」）
     full = partial = none = 0
     hidden = []
 
@@ -580,9 +753,7 @@ def main():
         meta = strings.get(qid, {})
         start = check.get("0") or {}
         end = check.get("1") or {}
-        if is_hidden(qid, (meta.get("name") or "").strip(), start, info_tbl.get(qid) or {}):
-            hidden.append(qid)
-            continue
+        qinfo = info_tbl.get(qid) or {}
 
         npc_ids = [
             b["npc"]
@@ -590,7 +761,16 @@ def main():
             if isinstance(b, dict) and isinstance(b.get("npc"), int)
         ]
         located = [n for n in npc_ids if named_map_of(n) is not None]
-        released = bool(located)
+        if is_hidden(qid, (meta.get("name") or "").strip(), start, qinfo, located):
+            hidden.append(qid)
+            continue
+
+        area = qinfo.get("area")
+        if area not in AREAS:
+            unknown_areas.append((qid, (meta.get("name") or "").strip(), area))
+            continue
+        # 稱號與活動是系統直接發的，NPC 不站地圖是正常的（見 docstring「實裝判斷」）
+        released = bool(located) or area in SYSTEM_AREAS
         if npc_ids and len(located) == len(npc_ids):
             full += 1
         elif located:
@@ -690,6 +870,7 @@ def main():
         need_q = [x for x in done_first if x not in prereq]
 
         used_items.update(i["id"] for i in need + rewards + give + have)
+        need_items.update(i["id"] for i in need)
         used_mobs.update(m["id"] for m in kill)
         if npc_map_id is not None:
             used_maps.add(npc_map_id)
@@ -697,6 +878,7 @@ def main():
         entry = {
             "id": qid,
             "name": (meta.get("name") or f"#{qid}").strip(),
+            "cat": AREAS[area],
             "lv": start.get("lvmin") or 0,
             # lvmax：96 個任務有等級上限（例：#1034 只有 Lv.10 以下接得到）
             **({"lvMax": start["lvmax"]} if isinstance(start.get("lvmax"), int) else {}),
@@ -722,22 +904,24 @@ def main():
         series = (meta.get("Info") or {}).get("parent")
         if series:
             entry["series"] = series.strip()
+        desc = quest_text(meta.get("Info") or {}, text_names, unresolved)
+        if desc:
+            entry["desc"] = desc
         if npc_id is not None:
             entry["npcId"] = npc_id
             entry["npc"] = ((npc_tbl.get(str(npc_id)) or {}).get("name") or f"#{npc_id}").strip()
         if npc_map_id is not None:
             entry["npcMap"] = npc_map_id
-        # 地區：優先看顯示用 NPC 站在哪，他查不到地圖時退而找這個任務的其他 NPC
+        # 小地區：優先看顯示用 NPC 站在哪，他查不到地圖時退而找這個任務的其他 NPC
         # （例：#6101 老舊的書，接任務的懷玆不在已實裝地圖上，但交任務的那位在）。
-        # 兩邊都查不到 = 這個任務的 NPC 全都沒實裝，region 留空。
+        # 兩邊都查不到 = 這個任務的 NPC 全都不在地圖上（稱號、通行證那種），region 留空。
+        # 活動任務也照地理標（以前會被蓋成「活動」，現在活動是大分類 cat，兩件事分開）。
         region = region_of(npc_map_id) if npc_map_id is not None else None
         if region is None:
             for other in located:
                 region = region_of(named_map_of(other))
                 if region:
                     break
-        if released and period:
-            region = EVENT_REGION
         if region:
             entry["region"] = region
         # 人工補充（quest-supplement.json）覆蓋客戶端資料
@@ -763,6 +947,12 @@ def main():
             entry["sup"] = 1
         quests.append(entry)
 
+    if unknown_areas:
+        raise SystemExit(
+            "QuestInfo.area 出現沒登記的值，請到 AREAS 補上分類名稱（遊戲內任務視窗的分頁名）：\n"
+            + "\n".join(f"  area={a}  #{qid} {name}" for qid, name, a in unknown_areas)
+        )
+
     excludes = {q["id"]: set(q.get("exclude") or ()) for q in quests}
     flows = build_flows(quests, flow_edges(quests, end_req), excludes, end_req)
     flow_of = {qid: idx for idx, flow in enumerate(flows) for qid in flow_ids(flow)}
@@ -785,6 +975,14 @@ def main():
         if eq:
             entry["eq"] = strip_sale(eq)
         entry.update(sale_fields(iid, equips, prices))
+        # 誰會掉（只標要繳的道具）：依怪物等級由低到高，最多列 MAX_FROM 隻，
+        # 超過的只記總數 fromN，前端寫「等 N 隻」連去道具頁
+        if iid in need_items and droppers.get(iid):
+            ranked = [mid for _, mid in sorted(droppers[iid])]
+            entry["from"] = ranked[:MAX_FROM]
+            if len(ranked) > MAX_FROM:
+                entry["fromN"] = len(ranked)
+            used_mobs.update(entry["from"])
         items[str(iid)] = entry
 
     mobs = {
@@ -819,11 +1017,17 @@ def main():
         for sname in sorted(used_sheets)
     }
 
-    # chips 的排列順序：TOWNS 的宣告順序（大致就是遊戲的地理／練功動線），
-    # 不是任務數多寡——照數量排的話每次更新資料 chip 都會換位置，很難記
-    # 「活動」排在地理地區後面（前端再把「未實裝」接在最後）
-    used_regions = {q.get("region") for q in quests}
-    regions = [r for r in [*dict.fromkeys(TOWNS.values()), EVENT_REGION] if r in used_regions]
+    # chips 的排列順序：AREAS／CAT_SUBS 的宣告順序，不是任務數多寡——
+    # 照數量排的話每次更新資料 chip 都會換位置，很難記
+    in_cat = defaultdict(set)
+    for q in quests:
+        in_cat[q["cat"]].add(q.get("region"))
+    cats = []
+    for name in AREAS.values():
+        if name not in in_cat:
+            continue
+        subs = [s for s in CAT_SUBS.get(name, ()) if s in in_cat[name]]
+        cats.append({"name": name, **({"subs": subs} if len(subs) > 1 else {})})
 
     out = {
         "quests": quests,
@@ -832,7 +1036,7 @@ def main():
         "mobs": mobs,
         "skills": skill_names,
         "maps": maps,
-        "regions": regions,
+        "cats": cats,
         "worldmap": worldmap,
     }
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
@@ -842,13 +1046,19 @@ def main():
     named_items = sum(1 for v in items.values() if not v["name"].startswith("#"))
     print(f"任務 {len(quests)}：NPC 全實裝 {full}、部分 {partial}、無 {none}")
     print(f"  → released {sum(1 for q in quests if q['released'])} / 未實裝 {sum(1 for q in quests if not q['released'])}")
-    print(f"隱藏 {len(hidden)} 個系統任務（沒有中文名／等級 9999／NPC 不給／任務視窗不顯示）")
+    print(f"隱藏 {len(hidden)} 個系統任務（沒有中文名／等級 9999／NPC 不給／任務視窗不顯示／舊版活動殘骸）")
+    by_cat = Counter(q["cat"] for q in quests)
+    print("大分類：" + "、".join(f"{c['name']} {by_cat[c['name']]}" for c in cats))
+    print(f"任務說明 {sum(1 for q in quests if 'desc' in q)} / {len(quests)} 個有"
+          f"；要繳的道具 {len(need_items)} 種、查得到誰會掉的 {sum(1 for v in items.values() if 'from' in v)} 種")
+    if unresolved:
+        print(f"  ！說明文字有 {len(unresolved)} 處標記解不出來（已拿掉，請檢查）：{sorted(set(unresolved))[:20]}")
     shapes = Counter(b["k"] for f in flows for b in walk_blocks(f) if not isinstance(b, str))
     print(f"任務流程 {len(flows)} 條（最大 {max((len(list(flow_ids(f))) for f in flows), default=0)} 個任務）、"
           f"入流程任務 {len(flow_of)}；分岔框 {dict(shapes)}")
     print(f"道具 {len(items)} 種（有中文名 {named_items}、有說明 {sum(1 for v in items.values() if 'desc' in v)}）")
-    regions = Counter(q.get("region") or "（未實裝）" for q in quests)
-    print(f"NPC 所在地圖 {len(maps)} 張、世界地圖 {len(worldmap)} 張、地區 {len(regions)} 個")
+    regions = Counter(q.get("region") or "（沒有地點）" for q in quests)
+    print(f"NPC 所在地圖 {len(maps)} 張、世界地圖 {len(worldmap)} 張、小地區 {len(regions)} 個")
     print("  " + "、".join(f"{r} {n}" for r, n in regions.most_common()))
     print(f"已寫入 {OUT}（{os.path.getsize(OUT) // 1024} KB）")
 

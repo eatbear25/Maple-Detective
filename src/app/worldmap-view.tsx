@@ -17,6 +17,8 @@ export interface WorldMapDot {
   approx?: boolean;
   /** 背景點：不是本次查詢的目標，只補齊地圖點位，畫淡且不可點 */
   dim?: boolean;
+  /** 還沒開放的地點（地圖導覽用）：畫淡但照樣可以點。跟 dim 的差別就是可不可以點 */
+  muted?: boolean;
   title?: string;
 }
 
@@ -85,7 +87,9 @@ export function WorldMapView({
             </span>
           ) : (
             <span
-              className="block h-3.5 w-3.5 rounded-full border-2 transition-transform group-hover:scale-125"
+              className={`block h-3.5 w-3.5 rounded-full border-2 transition-[transform,opacity,filter] group-hover:scale-125 group-hover:opacity-100 group-hover:saturate-100 ${
+                dot.muted ? "opacity-60 saturate-[.35]" : ""
+              }`}
               style={
                 dot.approx
                   ? {

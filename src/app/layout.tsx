@@ -3,6 +3,13 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import SiteShell from "./site-shell";
 import { ASSET_BASE_URL } from "@/lib/asset-base";
+import {
+  BASE_OPEN_GRAPH,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+  SITE_URL,
+  TITLE_TEMPLATE,
+} from "@/lib/site-metadata";
 
 // Noto Sans TC 直接向 Google Fonts 要，不用 next/font：next/font 會把字型檔放到本站
 // /_next/static/media 自己發，中文字型又被切成上百片，一個新訪客要抓三四十片，
@@ -11,22 +18,18 @@ import { ASSET_BASE_URL } from "@/lib/asset-base";
 const NOTO_SANS_TC_CSS =
   "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap";
 
-const SITE_URL = "https://maple-detective.vercel.app";
-const SITE_TITLE = "楓探 | 新楓之谷：經典版工具箱";
-const SITE_DESCRIPTION =
-  "新楓之谷經典版攻略工具箱：怪物掉落查詢、地圖導覽、技能查詢與配點模擬、任務查詢、BOSS 計時器、神秘商人模擬、時裝搭配，資料取自遊戲用戶端拆包整理。";
-
+// 這裡的 openGraph／twitter 只給首頁用。其他頁面一定要走 pageMetadata()，
+// 只寫 title 的話分享預覽會整包繼承這份（標題永遠是首頁的），見 site-metadata.ts。
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_TITLE,
-    template: "%s | 楓探",
+    template: TITLE_TEMPLATE,
   },
   description: SITE_DESCRIPTION,
   openGraph: {
+    ...BASE_OPEN_GRAPH,
     type: "website",
-    locale: "zh_TW",
-    siteName: "楓探",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
