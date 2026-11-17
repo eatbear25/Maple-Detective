@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 
-export const SITE_URL = "https://maple-detective.vercel.app";
+/**
+ * 正式網址，全站只有這一份（sitemap、robots、首頁結構化資料都吃這裡）。
+ * 2026-11-17 起改用自己的網域；舊的 maple-detective.vercel.app 仍然打得開，
+ * 但 canonical／分享卡片／sitemap 一律指向這個。
+ */
+export const SITE_URL = "https://maple-detective.com";
 export const SITE_NAME = "楓探";
 export const SITE_TITLE = "楓探 | 新楓之谷：經典版工具箱";
 export const SITE_DESCRIPTION =
