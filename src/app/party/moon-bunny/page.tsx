@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site-metadata";
 import { itemIconSrc } from "@/data/drops";
 import {
   moonBunnyMap,
@@ -7,12 +8,12 @@ import {
 } from "@/data/moon-bunny";
 import { PageHeader } from "@/app/page-header";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "月妙的年糕 迎月花山丘種子圖",
   description:
     "新楓之谷經典版組隊任務「月妙的年糕」第一階段：哪叢草掉哪色種子、六朵迎月花各收哪一色，一張圖看完。",
-  alternates: { canonical: "/party/moon-bunny" },
-};
+  path: "/party/moon-bunny",
+});
 
 const { image, bushes, flowers } = moonBunnyMap;
 
