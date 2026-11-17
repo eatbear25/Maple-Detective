@@ -12,7 +12,18 @@ const nextConfig: NextConfig = {
   // 同一個訪客第二次來就完全不吃 Vercel 流量，也不用每次跟伺服器確認有沒有更新。
   // 轉蛋模擬 2026-10-29 改成神秘商人模擬（遊戲把轉蛋活動換掉了），舊網址導過去
   async redirects() {
-    return [{ source: "/gacha", destination: "/merchant", permanent: true }];
+    return [
+      { source: "/gacha", destination: "/merchant", permanent: true },
+      // 2026-11-17 起正式網址是 maple-detective.com。舊網址的書籤與 Google 搜尋結果
+      // 一律永久轉到新網域的同一頁（路徑與 ?query 都保留），排名才會集中到新網域。
+      // 只比對正式站這一個 host：預覽部署是另一串 *.vercel.app，不受影響。
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "maple-detective.vercel.app" }],
+        destination: "https://maple-detective.com/:path*",
+        permanent: true,
+      },
+    ];
   },
   // iOS、一些 App 的連結預覽與爬蟲不看頁面上的 <link>，直接去要這兩個固定網址。
   // 以前沒有檔案，每次都回 30KB 的 404 頁、而且不會被快取，每次都算一次 Vercel CDN Request。
