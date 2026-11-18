@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
+  ArrowUpToLine,
   BookmarkPlus,
   Check,
   ChevronDown,
+  ChevronUp,
   Download,
+  Eraser,
   FlipHorizontal2,
   Link2,
   Play,
@@ -68,6 +71,7 @@ import {
 } from "./outfits";
 import {
   FAVORITES_KEY,
+  MINI_PREVIEW_KEY,
   OUTFITS_KEY,
   PAGE_SIZE_KEY,
   useStored,
@@ -87,6 +91,9 @@ const parseFavorites = (v: unknown) =>
     ? v.filter((id): id is number => Number.isInteger(id))
     : null;
 
+const parseBoolean = (v: unknown) => (typeof v === "boolean" ? v : null);
+
+
 /** 右欄分頁：「全部」＋ 12 個部位＋「最愛」，外加不佔部位的「特效」 */
 type Tab = FashionSlot | "all" | "favorites" | "effect";
 
@@ -104,21 +111,6 @@ for (const item of fashionItems) {
   if (list) list.push(item);
   else BY_SLOT.set(item.slot, [item]);
 }
-
-/** 部位分頁 chip 上的數字：髮型／臉型算「造型組數」（顏色已合併），其他算件數 */
-const SLOT_COUNTS = new Map<FashionSlot, number>(
-  SLOT_LABELS.map(({ slot }) => [
-    slot,
-    slot === "hair"
-      ? hairGroups.length
-      : slot === "face"
-        ? faceGroups.length
-        : (BY_SLOT.get(slot) ?? []).length,
-  ]),
-);
-
-/** 「全部」chip 上的數字＝各部位 chip 的加總（髮型／臉型一樣算造型組數） */
-const TOTAL_COUNT = [...SLOT_COUNTS.values()].reduce((a, b) => a + b, 0);
 
 const SLOT_NAMES = new Map(SLOT_LABELS.map(({ slot, label }) => [slot, label]));
 
@@ -220,16 +212,9 @@ function pageNumbers(current: number, count: number): (number | "…")[] {
   return result;
 }
 
-function ItemIcon({
-  srcs,
-  alt,
-  size = "h-8 w-8",
-}: {
-  srcs: string[];
-  alt: string;
-  /** 尺寸的 Tailwind class（清單 32px；「目前穿著」那欄列數多，用小一號的） */
-  size?: string;
-}) {
+/** 道具縮圖，32px＝原圖大小（像素圖縮放會糊，所以清單與「目前穿著」都用這個尺寸） */
+function ItemIcon({ srcs, alt }: { srcs: string[]; alt: string }) {
+  const size = "h-8 w-8";
   // 依序試候選網址，全部失敗（或根本沒有縮圖）才顯示空位；呼叫端用 key 讓換色時重置
   const [index, setIndex] = useState(0);
   if (index >= srcs.length) {
@@ -279,6 +264,43 @@ function Select({
   );
 }
 
+/** 「目前穿著」卡片上的膠囊按鈕（儲存、分享、清空…）：32px 高，手指點得到 */
+const CARD_BUTTON =
+  "flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-xs transition-colors";
+/** 一列一顆的 ✕：32px 的圓，滑過去有底色，看得出點擊範圍 */
+const REMOVE_BUTTON =
+  "flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)]";
+
+/** 「目前穿著」的一列：縮圖、部位、名稱、✕ */
+function WornRow({
+  icon,
+  label,
+  name,
+  removeLabel,
+  onRemove,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  name: string;
+  removeLabel: string;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="flex min-h-9 items-center gap-2.5 rounded-lg pl-0.5 transition-colors hover:bg-[var(--accent-soft)]/50">
+      {icon}
+      <span className="w-7 shrink-0 text-xs text-[var(--text-muted)]">
+        {label}
+      </span>
+      <span className="min-w-0 flex-1 truncate text-[13px]" title={name}>
+        {name}
+      </span>
+      <button onClick={onRemove} aria-label={removeLabel} title={removeLabel} className={REMOVE_BUTTON}>
+        <X size={16} />
+      </button>
+    </div>
+  );
+}
+
 /** 清單上的一格：點卡片試穿，右邊的星星收進最愛 */
 function EntryCard({
   entry,
@@ -296,6 +318,8 @@ function EntryCard({
   onEquip: () => void;
   onToggleFavorite: () => void;
 }) {
+  // 圖示放在淺色方框裡，跟怪物掉落頁的掉落物卡片同一套：名稱的起點對得齊，一眼掃得過去
+  // 圖示不另外包淺色方框：卡片只有 48px 高，再包一層四周只剩幾 px，兩層圓角疊在一起很擠
   const icon = (
     <ItemIcon
       key={entry.item.id}
@@ -304,20 +328,23 @@ function EntryCard({
     />
   );
   const text = (
-    <span className="min-w-0 flex-1">
-      <span className="block truncate text-xs">{entry.name}</span>
+    <span className="min-w-0 flex-1 leading-snug">
+      <span className="block truncate text-xs sm:text-[13px]">
+        {entry.name}
+      </span>
       {notes.length > 0 && (
-        <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
+        <span className="block truncate text-[10px] text-[var(--text-muted)] sm:text-[11px]">
           {notes.join("・")}
         </span>
       )}
     </span>
   );
   if (entry.unavailable) {
+    // 不能點的不給白底：白底卡片＝點得下去，虛線透明的＝畫不出來
     return (
       <div
         title={`${entry.name}（素材庫沒有這件的圖，無法預覽）`}
-        className="flex items-center gap-2 rounded-lg border border-dashed border-[var(--border)] p-2 opacity-45"
+        className="flex h-full min-h-[50px] items-center gap-2 rounded-[10px] border border-dashed border-[var(--border-strong)] p-2 opacity-50 dark:opacity-60"
       >
         {icon}
         {text}
@@ -325,15 +352,20 @@ function EntryCard({
     );
   }
   return (
-    // 星星不能包在卡片的 button 裡（button 不能巢狀），所以兩顆並排、星星疊在右邊
-    <div className="relative">
+    // 星星不能包在卡片的 button 裡（button 不能巢狀），所以兩顆並排、星星疊在右邊。
+    // hover 掛在外層 group 上：滑到星星上卡片一樣會亮
+    <div className="group relative">
       <button
         onClick={onEquip}
-        title={entry.name}
-        className={`flex w-full cursor-pointer items-center gap-2 rounded-lg border p-2 pr-8 text-left transition-colors ${
+        title={
+          entry.colorMissing
+            ? `${entry.name}（沒有選的顏色，點了會穿上圖上這個顏色）`
+            : entry.name
+        }
+        className={`flex h-full min-h-[50px] w-full cursor-pointer items-center gap-2 rounded-[10px] border py-2 pl-2 pr-8 text-left transition-colors ${
           active
             ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-            : "border-[var(--border)] hover:border-[var(--accent)]"
+            : "border-[var(--border)] bg-[var(--surface)] group-hover:border-[var(--accent)] group-hover:bg-[var(--accent-soft)]/50"
         }`}
       >
         {icon}
@@ -344,14 +376,124 @@ function EntryCard({
         title={favorite ? "從最愛移除" : "加入最愛"}
         aria-label={`${favorite ? "從最愛移除" : "加入最愛"}：${entry.name}`}
         aria-pressed={favorite}
-        className={`absolute right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-colors ${
+        className={`absolute right-0.5 top-1/2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-colors ${
           favorite
             ? "text-[var(--accent-text)]"
-            : "text-[var(--border)] hover:text-[var(--accent-text)]"
+            : "text-[var(--text-muted)]/45 hover:text-[var(--accent-text)]"
         }`}
       >
-        <Star size={15} fill={favorite ? "currentColor" : "none"} />
+        <Star size={16} fill={favorite ? "currentColor" : "none"} />
       </button>
+    </div>
+  );
+}
+
+/**
+ * 右欄的部位分頁：一顆一顆分開的白底膠囊，放不下的換到第二排（站長給的設計稿，2026-11-18；
+ * 中間試過「外面一個白框、裡面不帶框線」、8 欄格子、單列左右捲，都被打槍）。
+ * 選中的實心填滿。設計稿是黑色，改用深琥珀（--accent-text）：黑色是整頁最重的顏色、
+ * 站上其他地方選中也不是黑的。配 --on-accent 字，淺色對比 5.4，深色模式也夠。
+ * count 不給就不顯示數字；dim＝搜尋時這個分頁沒有符合的（照樣能點，只是淡掉）
+ */
+function TabChip({
+  label,
+  count,
+  active,
+  dim,
+  icon,
+  onClick,
+}: {
+  label: string;
+  count?: number;
+  active: boolean;
+  dim?: boolean;
+  icon?: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex h-8 shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-full border px-3 text-[13px] transition-colors ${
+        active
+          ? "border-[var(--accent-text)] bg-[var(--accent-text)] font-medium text-[var(--on-accent)]"
+          : "border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)]"
+      } ${dim && !active ? "opacity-45 dark:opacity-55" : ""}`}
+    >
+      {icon}
+      {label}
+      {count !== undefined && (
+        <span className="text-[11px] font-normal tabular-nums opacity-70">
+          {count}
+        </span>
+      )}
+    </button>
+  );
+}
+
+/**
+ * 「清空穿搭」的確認彈窗（站長要的：按鈕就在 ✕ 那排正下方，怕誤觸）。
+ * 樣式同 BOSS 計時器匯入分享連結的確認彈窗。預設停在「取消」：手滑按 Enter 也不會清掉
+ */
+function ClearConfirmDialog({
+  count,
+  onCancel,
+  onConfirm,
+}: {
+  count: number;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const headingId = useId();
+  const onCancelRef = useRef(onCancel);
+  useEffect(() => {
+    onCancelRef.current = onCancel;
+  });
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancelRef.current();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={onCancel}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headingId}
+        className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-4">
+          <div id={headingId} className="text-sm font-semibold">
+            清空穿搭？
+          </div>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
+            身上的 <b className="text-[var(--text)]">{count}</b>{" "}
+            件會全部脫掉，連髮型、臉型也是。
+          </p>
+        </div>
+        <div className="flex justify-end gap-2 border-t border-[var(--border)] px-4 py-3">
+          <button
+            autoFocus
+            onClick={onCancel}
+            className="h-10 cursor-pointer rounded-full px-4 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+          >
+            取消
+          </button>
+          <button
+            onClick={onConfirm}
+            className="h-10 cursor-pointer rounded-full px-4 text-sm font-medium text-[var(--on-accent)]"
+            style={{ background: "var(--accent)" }}
+          >
+            全部脫掉
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -470,6 +612,79 @@ export default function FashionPage() {
   const [updated, setUpdated] = useState(false);
   /** 右欄最上面，換頁之後捲回這裡 */
   const listTopRef = useRef<HTMLDivElement>(null);
+  /** 「清空穿搭」的確認彈窗開著沒 */
+  const [confirmingClear, setConfirmingClear] = useState(false);
+
+  /**
+   * 桌機左欄是 sticky 的，比視窗高的話底下捲不到：把「目前穿著」的清單限制在視窗剩下的高度、
+   * 讓它自己捲。剩下的空間連兩列半都放不下（放大試衣間＋矮螢幕）就不限制——左欄比視窗高，
+   * 捲到頁面最底一樣看得到全部。試過整個左欄設 max-height 自己捲：捲軸又粗又灰，
+   * 藏起捲軸又像卡片被切掉一半，站長都嫌。
+   */
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const wornListRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const col = leftColRef.current;
+    if (!col) return;
+    const lg = window.matchMedia("(min-width: 64rem)");
+    const fit = () => {
+      const list = wornListRef.current;
+      if (!list) return;
+      if (!lg.matches) {
+        list.style.maxHeight = "";
+        return;
+      }
+      // 清單以外的高度跟清單限制多高無關，所以這樣算不會來回抖
+      const others = col.offsetHeight - list.offsetHeight;
+      // 上下各留 24px（sticky 的 top-6）
+      const room = window.innerHeight - 48 - others;
+      // 96px 約兩列半：露出半列剛好看得出還能捲
+      list.style.maxHeight = room >= 96 ? `${room}px` : "";
+    };
+    // 左欄任何東西變高變矮（多穿一件、放大試衣間、出現警告）都會改到左欄大小
+    const ro = new ResizeObserver(fit);
+    ro.observe(col);
+    window.addEventListener("resize", fit);
+    lg.addEventListener("change", fit);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", fit);
+      lg.removeEventListener("change", fit);
+    };
+  }, []);
+
+  // 手機版（單欄）往下捲到看不見大預覽時，畫面頂端跟著一個小預覽，不用滑回最上面看試穿結果
+  const stageWrapRef = useRef<HTMLDivElement>(null);
+  const [stageOut, setStageOut] = useState(false);
+  const [miniCollapsed, setMiniCollapsed] = useStored(
+    MINI_PREVIEW_KEY,
+    false,
+    parseBoolean,
+  );
+  useEffect(() => {
+    const el = stageWrapRef.current;
+    if (!el) return;
+    // 大預覽捲到只剩不到四分之一露在上面就換小的上場（往下還沒捲到的時候不算）
+    const io = new IntersectionObserver(
+      ([entry]) =>
+        setStageOut(
+          entry.intersectionRatio < 0.25 && entry.boundingClientRect.top < 0,
+        ),
+      { threshold: [0, 0.25] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  /** 回到大預覽 */
+  const scrollToStage = () => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    stageWrapRef.current?.scrollIntoView({
+      block: "start",
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  };
 
   const [action, setAction] = useState(DEFAULT_ACTION);
   const [expression, setExpression] = useState(DEFAULT_EXPRESSION);
@@ -612,6 +827,29 @@ export default function FashionPage() {
     [q],
   );
 
+  /**
+   * 搜尋時分頁 chip 上的數字＝這個部位符合幾件（髮型／臉型算造型組數，顏色已合併），
+   * 0 件的淡掉——不然在髮型分頁搜「天使」只看到「沒有符合的道具」，得一頁一頁點去找在哪
+   */
+  const matchCounts = useMemo(
+    () =>
+      q
+        ? new Map(
+            SLOT_LABELS.map(({ slot: s }) => [s, slotEntries(s, q, 0).length]),
+          )
+        : null,
+    [q],
+  );
+  const slotCount = (s: FashionSlot) => matchCounts?.get(s) ?? 0;
+  const allCount = [...(matchCounts?.values() ?? [])].reduce(
+    (a, b) => a + b,
+    0,
+  );
+  const favoriteTabCount = q
+    ? shownOutfits.length +
+      shownFavoriteSections.reduce((n, sec) => n + sec.entries.length, 0)
+    : favoriteCount + outfits.length;
+
   const pageCount = Math.max(1, Math.ceil(list.length / pageSize));
   const safePage = Math.min(page, pageCount - 1);
   const shown = list.slice(safePage * pageSize, (safePage + 1) * pageSize);
@@ -692,6 +930,20 @@ export default function FashionPage() {
       return { ...prev, equips };
     });
 
+  /** 「清空穿搭」會脫掉的件數（髮型、臉型也算，特效算一件） */
+  const clearableCount =
+    SLOT_LABELS.filter(({ slot: s }) => look.equips[s]).length +
+    (look.effect ? 1 : 0);
+
+  /**
+   * 全部脫掉，連髮型、臉型也是（站長要的：只剩髮型臉型時也要能一次清掉，不用一件一件點）。
+   * 按下去先跳確認彈窗，確定了才清
+   */
+  const clearOutfit = () => {
+    setLook((prev) => ({ skinId: prev.skinId, equips: {} }));
+    setConfirmingClear(false);
+  };
+
   const download = async () => {
     const blob = await canvasRef.current?.toBlob();
     if (!blob) return;
@@ -771,7 +1023,9 @@ export default function FashionPage() {
       // 透明帽、技能效果這類：遊戲裡它本來就什麼都不畫，
       // 不先講的話點了沒反應會以為壞掉
       entry.item.preview === "blank" && "穿上不會顯示",
-      entry.colorMissing && "無此色，以現有色代替",
+      // 卡片上的縮圖已經是替代的那個顏色，點下去就穿那個色（滑鼠提示有完整說明）；
+      // 字寫短一點：「全部」分頁前面還會多一個部位，手機兩欄的卡片放不下長的
+      entry.colorMissing && "無此色",
       entry.unavailable && "無法預覽",
     ].filter((note): note is string => Boolean(note));
   };
@@ -797,6 +1051,13 @@ export default function FashionPage() {
       : tab === "effect"
         ? effectList.length === 0 && "沒有符合的特效"
         : list.length === 0 && "沒有符合的道具";
+  // 這個分頁搜不到、別的部位有：直接給一顆按鈕跳去「全部」
+  const jumpToAll =
+    Boolean(q) &&
+    Boolean(emptyMessage) &&
+    tab !== "all" &&
+    tab !== "effect" &&
+    allCount > 0;
 
   const customBackground = !BACKGROUNDS.some((b) => b.value === background);
   // 放大模式左欄吃掉 160px，清單少排一欄，卡片才不會窄到名稱只剩三個字
@@ -805,596 +1066,663 @@ export default function FashionPage() {
     : "grid-cols-2 sm:grid-cols-3 xl:grid-cols-4";
 
   return (
-    <div className="space-y-8">
-      <PageHeader title="時裝搭配" />
+    <>
+      <div className="space-y-8">
+        <PageHeader title="時裝搭配" />
 
-      <div
-        className={`grid grid-cols-1 gap-6 ${
-          expanded ? "lg:grid-cols-[480px_1fr]" : "lg:grid-cols-[320px_1fr]"
-        }`}
-      >
-        {/* ===== 左：角色預覽 ===== */}
-        <div className="lg:sticky lg:top-6 lg:self-start space-y-3">
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <PreviewStage
-              background={background}
-              expanded={expanded}
-              onToggleExpanded={() => setExpanded((v) => !v)}
-              overlay={
-                <>
-                  {status === "loading" &&
-                    (hasDrawn ? (
-                      // 換裝：舊的那隻留著，角落亮個小點就好（素材是靜態檔，通常一閃就過）
-                      <div
-                        className="fashion-busy absolute right-2 top-2"
-                        role="status"
-                        aria-label="載入中"
-                      >
-                        <div className="maple-loader" style={{ width: 30 }} />
-                      </div>
-                    ) : (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                        <div className="maple-loader" />
-                        <span className="text-sm text-[var(--text-muted)]">
-                          載入中…
-                        </span>
-                      </div>
-                    ))}
-                  {status === "error" && (
-                    <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-sm text-[var(--text-muted)]">
-                      {error instanceof Error
-                        ? error.message
-                        : "這個組合畫不出來"}
-                    </div>
-                  )}
-                </>
-              }
-            >
-              <CharacterCanvas
-                ref={canvasRef}
-                look={look}
-                action={action}
-                expression={expression}
-                animated={animated}
-                flipX={flipX}
-                scale={2}
-                onStatusChange={onStatusChange}
-                onMissing={onMissing}
-              />
-            </PreviewStage>
-
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              <button
-                onClick={() => setAnimated((v) => !v)}
-                className={`cursor-pointer flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
-                  animated
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
-                    : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                }`}
-              >
-                {animated ? <Square size={12} /> : <Play size={12} />}
-                {animated ? "停止" : "播放"}
-              </button>
-              <button
-                onClick={() => setFlipX((v) => !v)}
-                className={`cursor-pointer flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
-                  flipX
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
-                    : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                }`}
-              >
-                <FlipHorizontal2 size={12} />
-                翻轉
-              </button>
-              <button
-                onClick={download}
-                disabled={status !== "ready"}
-                className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] disabled:opacity-40"
-              >
-                <Download size={12} />
-                下載 PNG
-              </button>
-            </div>
-
-            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-              <label className="space-y-1">
-                <span className="text-[var(--text-muted)]">動作</span>
-                <Select
-                  value={action}
-                  onChange={(e) => setAction(e.target.value)}
-                  className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
-                >
-                  {ACTIONS.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.label}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-              <label className="space-y-1">
-                <span className="text-[var(--text-muted)]">表情</span>
-                <Select
-                  value={expression}
-                  onChange={(e) => setExpression(e.target.value)}
-                  className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
-                >
-                  {EXPRESSIONS.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.label}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-              <label className="col-span-2 space-y-1">
-                <span className="text-[var(--text-muted)]">膚色</span>
-                <Select
-                  value={look.skinId}
-                  onChange={(e) =>
-                    setLook((p) => ({ ...p, skinId: Number(e.target.value) }))
+        <div
+          className={`grid grid-cols-1 gap-6 ${
+            expanded ? "lg:grid-cols-[480px_1fr]" : "lg:grid-cols-[320px_1fr]"
+          }`}
+        >
+          {/* ===== 左：角色預覽 ===== */}
+          {/* 左欄黏在畫面上。穿的件數一多會比視窗還高，超出的部分捲不到——所以「目前穿著」的清單
+              高度限制在視窗剩下的空間裡、自己捲（見 wornListRef 那段），預覽與卡片頭尾一直完整 */}
+          <div
+            ref={leftColRef}
+            className="space-y-3 lg:sticky lg:top-6 lg:self-start"
+          >
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <div ref={stageWrapRef} className="scroll-mt-4">
+                <PreviewStage
+                  background={background}
+                  expanded={expanded}
+                  onToggleExpanded={() => setExpanded((v) => !v)}
+                  overlay={
+                    <>
+                      {status === "loading" &&
+                        (hasDrawn ? (
+                          // 換裝：舊的那隻留著，角落亮個小點就好（素材是靜態檔，通常一閃就過）
+                          <div
+                            className="fashion-busy absolute right-2 top-2"
+                            role="status"
+                            aria-label="載入中"
+                          >
+                            <div className="maple-loader" style={{ width: 30 }} />
+                          </div>
+                        ) : (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                            <div className="maple-loader" />
+                            <span className="text-sm text-[var(--text-muted)]">
+                              載入中…
+                            </span>
+                          </div>
+                        ))}
+                      {status === "error" && (
+                        <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-sm text-[var(--text-muted)]">
+                          {error instanceof Error
+                            ? error.message
+                            : "這個組合畫不出來"}
+                        </div>
+                      )}
+                    </>
                   }
-                  className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
                 >
-                  {SKINS.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-              <div className="col-span-2">
-                <span className="text-[var(--text-muted)]">背景</span>
-                {/* 選中的色票會放大再加一圈外框，四周要留位置才不會壓到上面的字 */}
-                <div className="mt-2 flex flex-wrap items-center gap-2 px-1 pb-1">
-                  {BACKGROUNDS.map((b) => (
-                    <button
-                      key={b.id}
-                      onClick={() => setBackground(b.value)}
-                      title={b.label}
-                      aria-label={b.label}
-                      aria-pressed={background === b.value}
-                      className={`h-6 w-6 cursor-pointer rounded-full transition-transform ${
-                        background === b.value
+                  <CharacterCanvas
+                    ref={canvasRef}
+                    look={look}
+                    action={action}
+                    expression={expression}
+                    animated={animated}
+                    flipX={flipX}
+                    scale={2}
+                    onStatusChange={onStatusChange}
+                    onMissing={onMissing}
+                  />
+                </PreviewStage>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                <button
+                  onClick={() => setAnimated((v) => !v)}
+                  className={`cursor-pointer flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
+                    animated
+                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                      : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+                  }`}
+                >
+                  {animated ? <Square size={12} /> : <Play size={12} />}
+                  {animated ? "停止" : "播放"}
+                </button>
+                <button
+                  onClick={() => setFlipX((v) => !v)}
+                  className={`cursor-pointer flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors ${
+                    flipX
+                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                      : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
+                  }`}
+                >
+                  <FlipHorizontal2 size={12} />
+                  翻轉
+                </button>
+                <button
+                  onClick={download}
+                  disabled={status !== "ready"}
+                  className="cursor-pointer flex items-center gap-1 rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] disabled:opacity-40"
+                >
+                  <Download size={12} />
+                  下載 PNG
+                </button>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                <label className="space-y-1">
+                  <span className="text-[var(--text-muted)]">動作</span>
+                  <Select
+                    value={action}
+                    onChange={(e) => setAction(e.target.value)}
+                    className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
+                  >
+                    {ACTIONS.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.label}
+                      </option>
+                    ))}
+                  </Select>
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[var(--text-muted)]">表情</span>
+                  <Select
+                    value={expression}
+                    onChange={(e) => setExpression(e.target.value)}
+                    className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
+                  >
+                    {EXPRESSIONS.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.label}
+                      </option>
+                    ))}
+                  </Select>
+                </label>
+                <label className="col-span-2 space-y-1">
+                  <span className="text-[var(--text-muted)]">膚色</span>
+                  <Select
+                    value={look.skinId}
+                    onChange={(e) =>
+                      setLook((p) => ({ ...p, skinId: Number(e.target.value) }))
+                    }
+                    className="rounded-lg bg-[var(--bg)] py-1.5 pl-2"
+                  >
+                    {SKINS.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </Select>
+                </label>
+                <div className="col-span-2">
+                  <span className="text-[var(--text-muted)]">背景</span>
+                  {/* 選中的色票會放大再加一圈外框，四周要留位置才不會壓到上面的字 */}
+                  <div className="mt-2 flex flex-wrap items-center gap-2 px-1 pb-1">
+                    {BACKGROUNDS.map((b) => (
+                      <button
+                        key={b.id}
+                        onClick={() => setBackground(b.value)}
+                        title={b.label}
+                        aria-label={b.label}
+                        aria-pressed={background === b.value}
+                        className={`h-6 w-6 cursor-pointer rounded-full transition-transform ${
+                          background === b.value
+                            ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--surface)]"
+                            : "ring-1 ring-[var(--border)] hover:scale-110"
+                        }`}
+                        style={{ background: b.value }}
+                      />
+                    ))}
+                    {/* 色票以外的顏色：整顆圓就是原生選色器，選了之後圓會變成那個顏色 */}
+                    <label
+                      title="自訂顏色"
+                      className={`relative h-6 w-6 cursor-pointer overflow-hidden rounded-full transition-transform ${
+                        customBackground
                           ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--surface)]"
                           : "ring-1 ring-[var(--border)] hover:scale-110"
                       }`}
-                      style={{ background: b.value }}
-                    />
-                  ))}
-                  {/* 色票以外的顏色：整顆圓就是原生選色器，選了之後圓會變成那個顏色 */}
-                  <label
-                    title="自訂顏色"
-                    className={`relative h-6 w-6 cursor-pointer overflow-hidden rounded-full transition-transform ${
-                      customBackground
-                        ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--surface)]"
-                        : "ring-1 ring-[var(--border)] hover:scale-110"
-                    }`}
-                    style={{
-                      background: customBackground
-                        ? background
-                        : "conic-gradient(#f87171, #fbbf24, #a3e635, #22d3ee, #818cf8, #e879f9, #f87171)",
-                    }}
-                  >
-                    <input
-                      type="color"
-                      aria-label="自訂背景顏色"
-                      value={customBackground ? background : "#ffffff"}
-                      onChange={(e) => setBackground(e.target.value)}
-                      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                    />
-                  </label>
+                      style={{
+                        background: customBackground
+                          ? background
+                          : "conic-gradient(#f87171, #fbbf24, #a3e635, #22d3ee, #818cf8, #e879f9, #f87171)",
+                      }}
+                    >
+                      <input
+                        type="color"
+                        aria-label="自訂背景顏色"
+                        value={customBackground ? background : "#ffffff"}
+                        onChange={(e) => setBackground(e.target.value)}
+                        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {missing.length > 0 && (
-            <div className="flex gap-2 rounded-xl border border-[var(--border)] bg-[var(--accent-soft)] p-3 text-xs">
-              <AlertTriangle
-                size={14}
-                className="mt-0.5 shrink-0 text-[var(--accent-text)]"
-              />
-              <div>
-                <div className="font-medium">這幾件沒載入成功</div>
-                <div className="mt-0.5 text-[var(--text-muted)]">
-                  {missing
-                    .map(
-                      (id) =>
-                        fashionItem(id)?.name ??
-                        fashionEffect(id)?.name ??
-                        `#${id}`,
-                    )
-                    .join("、")}
-                  —— 多半是網路不穩，重新整理再試一次。
+            {missing.length > 0 && (
+              <div className="flex gap-2 rounded-xl border border-[var(--border)] bg-[var(--accent-soft)] p-3 text-xs">
+                <AlertTriangle
+                  size={14}
+                  className="mt-0.5 shrink-0 text-[var(--accent-text)]"
+                />
+                <div>
+                  <div className="font-medium">這幾件沒載入成功</div>
+                  <div className="mt-0.5 text-[var(--text-muted)]">
+                    {missing
+                      .map(
+                        (id) =>
+                          fashionItem(id)?.name ??
+                          fashionEffect(id)?.name ??
+                          `#${id}`,
+                      )
+                      .join("、")}
+                    —— 多半是網路不穩，重新整理再試一次。
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
-
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            {/* 窄螢幕塞不下一列時，兩顆按鈕一起換到下一列、靠右 */}
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-[var(--text-muted)]">
-                目前穿著
-              </span>
-              <div className="ml-auto flex gap-1.5">
-                <button
-                  onClick={saveOutfit}
-                  disabled={equippedRows.length === 0}
-                  title={
-                    editingOutfit
-                      ? `存成新的一套，「${editingOutfit.name}」不會變`
-                      : "把這身存進「最愛」分頁，之後點一下就能整身穿回來"
-                  }
-                  className={`flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors disabled:cursor-default disabled:opacity-40 ${
-                    saved
-                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
-                      : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                  }`}
-                >
-                  {saved ? <Check size={12} /> : <BookmarkPlus size={12} />}
-                  {saved
-                    ? "已存到最愛"
-                    : editingOutfit
-                      ? "另存新搭配"
-                      : "儲存搭配"}
-                </button>
-                <button
-                  onClick={share}
-                  title="把這身造型編進網址，複製後貼給朋友或自己留著"
-                  className={`flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors ${
-                    copied
-                      ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
-                      : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                  }`}
-                >
-                  {copied ? <Check size={12} /> : <Link2 size={12} />}
-                  {copied ? "已複製連結" : "分享造型"}
-                </button>
-              </div>
-            </div>
-            {/* 改了東西才出現「更新這套」；✕ 只是不再跟那套連動，已存的不會變 */}
-            {editingOutfit && (
-              <div className="mb-2 flex items-center gap-2 text-xs">
-                <span className="min-w-0 flex-1 truncate text-[var(--text-muted)]">
-                  編輯中：
-                  <span className="text-[var(--text)]">
-                    {editingOutfit.name}
-                  </span>
-                  {dirty && "・有改動"}
-                </span>
-                {(dirty || updated) && (
-                  <button
-                    onClick={updateOutfit}
-                    disabled={updated}
-                    title={`把目前這身寫回「${editingOutfit.name}」`}
-                    className="flex shrink-0 cursor-pointer items-center gap-1 rounded-full border border-[var(--accent)] bg-[var(--accent-soft)] px-2.5 py-0.5 text-[var(--text)] disabled:cursor-default"
-                  >
-                    {updated ? <Check size={12} /> : <Save size={12} />}
-                    {updated ? "已更新" : "更新這套"}
-                  </button>
-                )}
-                <button
-                  onClick={() => setEditingId(null)}
-                  title="不編輯這套了（已存的不會變）"
-                  aria-label={`不編輯「${editingOutfit.name}」了`}
-                  className="shrink-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
-                >
-                  <X size={12} />
-                </button>
               </div>
             )}
-            {equippedRows.length === 0 && !look.effect ? (
-              <div className="text-xs text-[var(--text-muted)]">
-                還沒穿任何東西
+
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              {/* 窄螢幕塞不下一列時，兩顆按鈕一起換到下一列、靠右 */}
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="text-[13px] font-semibold text-[var(--text-muted)]">
+                  目前穿著
+                </span>
+                <div className="ml-auto flex gap-1.5">
+                  <button
+                    onClick={saveOutfit}
+                    disabled={equippedRows.length === 0}
+                    title={
+                      editingOutfit
+                        ? `存成新的一套，「${editingOutfit.name}」不會變`
+                        : "把這身存進「最愛」分頁，之後點一下就能整身穿回來"
+                    }
+                    className={`${CARD_BUTTON} disabled:cursor-default disabled:opacity-40 ${
+                      saved
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                        : "border-[var(--border-strong)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
+                    }`}
+                  >
+                    {saved ? <Check size={14} /> : <BookmarkPlus size={14} />}
+                    {saved
+                      ? "已存到最愛"
+                      : editingOutfit
+                        ? "另存新搭配"
+                        : "儲存搭配"}
+                  </button>
+                  <button
+                    onClick={share}
+                    title="把這身造型編進網址，複製後貼給朋友或自己留著"
+                    className={`${CARD_BUTTON} ${
+                      copied
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]"
+                        : "border-[var(--border-strong)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
+                    }`}
+                  >
+                    {copied ? <Check size={14} /> : <Link2 size={14} />}
+                    {copied ? "已複製連結" : "分享造型"}
+                  </button>
+                </div>
               </div>
-            ) : (
-              // 縮圖排在最左邊對成一直欄——用圖認比讀名字快；名字靠右的話縮圖會跟著參差
-              <div className="space-y-1">
-                {look.effect && (
-                  <div className="flex items-center gap-2 text-xs">
-                    <ItemIcon
-                      key={look.effect.id}
-                      srcs={[effectIconUrl(look.effect.id)]}
-                      alt=""
-                      size="h-7 w-7"
-                    />
-                    <span className="shrink-0 text-[var(--text-muted)]">
-                      特效
+              {/* 改了東西才出現「更新這套」（它出現就代表有改動，不另外寫字）；
+                  ✕ 只是不再跟那套連動，已存的不會變。名稱太長就換行，不截成「…」 */}
+              {editingOutfit && (
+                <div className="mb-2 flex items-center gap-2 rounded-lg bg-[var(--bg)] py-1 pl-3 pr-1 text-xs">
+                  <span className="min-w-0 flex-1 break-words leading-snug text-[var(--text-muted)]">
+                    編輯中：
+                    <span className="text-[var(--text)]">
+                      {editingOutfit.name}
                     </span>
-                    <span
-                      className="min-w-0 flex-1 truncate"
-                      title={look.effect.name}
-                    >
-                      {look.effect.name}
-                    </span>
+                  </span>
+                  {(dirty || updated) && (
                     <button
-                      onClick={() =>
+                      onClick={updateOutfit}
+                      disabled={updated}
+                      title={`把目前這身寫回「${editingOutfit.name}」`}
+                      className={`${CARD_BUTTON} border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)] disabled:cursor-default`}
+                    >
+                      {updated ? <Check size={14} /> : <Save size={14} />}
+                      {updated ? "已更新" : "更新這套"}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setEditingId(null)}
+                    title="不編輯這套了（已存的不會變）"
+                    aria-label={`不編輯「${editingOutfit.name}」了`}
+                    className={REMOVE_BUTTON}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              )}
+              {equippedRows.length === 0 && !look.effect ? (
+                <div className="py-1 text-xs text-[var(--text-muted)]">
+                  還沒穿任何東西
+                </div>
+              ) : (
+                // 縮圖排在最左邊對成一直欄——用圖認比讀名字快；名字靠右的話縮圖會跟著參差。
+                // 每列右邊的 ✕ 是 32px 的圓，手指也點得準
+                // 放不下時只有這串自己捲；捲軸用細的淡色，不要 Windows 預設那條粗灰的
+                <div
+                  ref={wornListRef}
+                  className="space-y-0.5 overflow-y-auto [scrollbar-color:var(--border-strong)_transparent] [scrollbar-width:thin]"
+                >
+                  {look.effect && (
+                    <WornRow
+                      icon={
+                        <ItemIcon
+                          key={look.effect.id}
+                          srcs={[effectIconUrl(look.effect.id)]}
+                          alt=""
+                        />
+                      }
+                      label="特效"
+                      name={look.effect.name}
+                      removeLabel="關掉特效"
+                      onRemove={() =>
                         setLook((p) => ({ ...p, effect: undefined }))
                       }
-                      aria-label="關掉特效"
-                      className="shrink-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                )}
-                {equippedRows.map(({ slot: s, label }) => {
-                  const worn = look.equips[s]!;
-                  return (
-                    <div key={s} className="flex items-center gap-2 text-xs">
-                      <ItemIcon
-                        key={worn.id}
-                        srcs={
-                          fashionItem(worn.id)?.hasIcon
-                            ? fashionIconSrcs(worn.id)
-                            : []
+                    />
+                  )}
+                  {equippedRows.map(({ slot: s, label }) => {
+                    const worn = look.equips[s]!;
+                    return (
+                      <WornRow
+                        key={s}
+                        icon={
+                          <ItemIcon
+                            key={worn.id}
+                            srcs={
+                              fashionItem(worn.id)?.hasIcon
+                                ? fashionIconSrcs(worn.id)
+                                : []
+                            }
+                            alt=""
+                          />
                         }
-                        alt=""
-                        size="h-7 w-7"
+                        label={label}
+                        name={worn.name}
+                        removeLabel={`脫掉${label}`}
+                        onRemove={() => unequip(s)}
                       />
-                      <span className="shrink-0 text-[var(--text-muted)]">
-                        {label}
-                      </span>
-                      <span
-                        className="min-w-0 flex-1 truncate"
-                        title={worn.name}
-                      >
-                        {worn.name}
-                      </span>
-                      <button
-                        onClick={() => unequip(s)}
-                        aria-label={`脫掉${label}`}
-                        className="shrink-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
-                      >
-                        <X size={12} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ===== 右：道具選擇 ===== */}
-        {/* scroll-mt：換頁捲回這裡時上面留一點空，不要貼齊視窗邊緣 */}
-        <div ref={listTopRef} className="scroll-mt-4 space-y-3">
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              onClick={() => changeTab("all")}
-              className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
-                tab === "all"
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
-                  : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-              }`}
-            >
-              全部
-              <span className="ml-1 opacity-60">{TOTAL_COUNT}</span>
-            </button>
-            {SLOT_LABELS.map(({ slot: s, label }) => (
-              <button
-                key={s}
-                onClick={() => changeTab(s)}
-                className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
-                  tab === s
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
-                    : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                }`}
-              >
-                {label}
-                <span className="ml-1 opacity-60">{SLOT_COUNTS.get(s)}</span>
-              </button>
-            ))}
-            <button
-              onClick={() => changeTab("favorites")}
-              className={`flex cursor-pointer items-center rounded-full border px-3 py-1 text-xs transition-colors ${
-                tab === "favorites"
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
-                  : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-              }`}
-            >
-              <Star
-                size={11}
-                className="mr-1 text-[var(--accent-text)]"
-                fill="currentColor"
-              />
-              最愛
-              <span className="ml-1 opacity-60">
-                {favoriteCount + outfits.length}
-              </span>
-            </button>
-            {/* <button
-              onClick={() => changeTab("effect")}
-              className={`cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors ${
-                tab === "effect"
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)] font-medium text-[var(--text)]"
-                  : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-              }`}
-            >
-              特效
-              <span className="ml-1 opacity-60">{fashionEffects.length}</span>
-            </button> */}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search
-                size={16}
-                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
-              />
-              <input
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setPage(0);
-                }}
-                placeholder={tab === "effect" ? "搜尋特效名稱" : "搜尋道具名稱"}
-                className="w-full rounded-full border border-[var(--border)] bg-[var(--surface)] py-2 pl-10 pr-9 text-sm outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
-              />
-              {query && (
-                <button
-                  onClick={() => setQuery("")}
-                  aria-label="清除搜尋"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
-                >
-                  <X size={15} />
-                </button>
+                    );
+                  })}
+                </div>
+              )}
+              {/* 一次脫光：放在清單底下、對齊右邊那排 ✕（「一件一件脫」的下面就是「全部脫」），
+                  跟上面的儲存／分享分開，免得要存的時候按錯 */}
+              {clearableCount > 0 && (
+                <div className="mt-2 flex justify-end border-t border-[var(--border)] pt-3">
+                  <button
+                    onClick={() => setConfirmingClear(true)}
+                    title="全部脫掉，連髮型、臉型也是（會先問一次）"
+                    className={`${CARD_BUTTON} border-[var(--border-strong)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]`}
+                  >
+                    <Eraser size={14} />
+                    清空穿搭
+                  </button>
+                </div>
               )}
             </div>
-            {tab !== "favorites" && tab !== "effect" && (
-              <label className="flex shrink-0 items-center gap-1.5 text-xs text-[var(--text-muted)]">
-                每頁
-                <Select
-                  value={pageSize}
+          </div>
+
+          {/* ===== 右：道具選擇 ===== */}
+          {/* scroll-mt：換頁捲回這裡時上面留一點空。單欄版畫面頂端有跟著的小預覽，要讓出它的高度 */}
+          <div
+            ref={listTopRef}
+            className={`${miniCollapsed ? "scroll-mt-14" : "scroll-mt-40"} min-w-0 space-y-3 lg:scroll-mt-4`}
+          >
+            {/* 數字只在搜尋時出現（＝這個部位符合幾件，看得出該點哪個分頁）；
+                平常的總數沒什麼用、只會讓整排變吵。「最愛」是自己存的，一直顯示 */}
+            {/* 一顆一顆分開的膠囊（站長的設計稿），放不下的換到第二排 */}
+            <div role="group" aria-label="部位" className="flex flex-wrap gap-1.5">
+              <TabChip
+                label="全部"
+                count={q ? allCount : undefined}
+                active={tab === "all"}
+                dim={Boolean(q) && allCount === 0}
+                onClick={() => changeTab("all")}
+              />
+              {SLOT_LABELS.map(({ slot: s, label }) => (
+                <TabChip
+                  key={s}
+                  label={label}
+                  count={q ? slotCount(s) : undefined}
+                  active={tab === s}
+                  dim={Boolean(q) && slotCount(s) === 0}
+                  onClick={() => changeTab(s)}
+                />
+              ))}
+              <TabChip
+                label="最愛"
+                count={favoriteTabCount}
+                active={tab === "favorites"}
+                dim={Boolean(q) && favoriteTabCount === 0}
+                icon={
+                  <Star
+                    size={12}
+                    // 選中時是實心底，星星跟著字色走，不然琥珀色疊在琥珀底上看不見
+                    className={`shrink-0 ${tab === "favorites" ? "" : "text-[var(--accent-text)]"}`}
+                    fill="currentColor"
+                  />
+                }
+                onClick={() => changeTab("favorites")}
+              />
+              {/* <TabChip
+                label="特效"
+                count={fashionEffects.length}
+                active={tab === "effect"}
+                onClick={() => changeTab("effect")}
+              /> */}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search
+                  size={16}
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+                />
+                <input
+                  value={query}
                   onChange={(e) => {
-                    setPageSize(Number(e.target.value));
+                    setQuery(e.target.value);
                     setPage(0);
                   }}
-                  className="rounded-full bg-[var(--surface)] py-2 pl-3.5 text-[var(--text)]"
-                >
-                  {PAGE_SIZES.map((n) => (
-                    <option key={n} value={n}>
-                      {n} 件
-                    </option>
-                  ))}
-                </Select>
-              </label>
-            )}
-          </div>
-
-          {grouped && (
-            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
-              <span className="text-xs text-[var(--text-muted)]">
-                {slot === "hair" ? "髮色" : "瞳色"}
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {palette.map((c) => (
+                  placeholder={tab === "effect" ? "搜尋特效名稱" : "搜尋道具名稱"}
+                  className="w-full rounded-full border border-[var(--border)] bg-[var(--surface)] py-2 pl-10 pr-9 text-sm outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
+                />
+                {query && (
                   <button
-                    key={c.digit}
-                    onClick={() => changeColor(c.digit)}
-                    title={c.label}
-                    aria-label={c.label}
-                    aria-pressed={selectedColor === c.digit}
-                    className={`h-6 w-6 cursor-pointer rounded-full transition-transform ${
-                      selectedColor === c.digit
-                        ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--surface)]"
-                        : "ring-1 ring-[var(--border)] hover:scale-110"
+                    onClick={() => setQuery("")}
+                    aria-label="清除搜尋"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text)]"
+                  >
+                    <X size={15} />
+                  </button>
+                )}
+              </div>
+              {tab !== "favorites" && tab !== "effect" && (
+                <label className="flex shrink-0 items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                  每頁
+                  <Select
+                    value={pageSize}
+                    onChange={(e) => {
+                      setPageSize(Number(e.target.value));
+                      setPage(0);
+                    }}
+                    className="rounded-full bg-[var(--surface)] py-2 pl-3.5 text-[var(--text)]"
+                  >
+                    {PAGE_SIZES.map((n) => (
+                      <option key={n} value={n}>
+                        {n} 件
+                      </option>
+                    ))}
+                  </Select>
+                </label>
+              )}
+            </div>
+
+            {grouped && (
+              <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
+                <span className="text-xs text-[var(--text-muted)]">
+                  {slot === "hair" ? "髮色" : "瞳色"}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {palette.map((c) => (
+                    <button
+                      key={c.digit}
+                      onClick={() => changeColor(c.digit)}
+                      title={c.label}
+                      aria-label={c.label}
+                      aria-pressed={selectedColor === c.digit}
+                      className={`h-6 w-6 cursor-pointer rounded-full transition-transform ${
+                        selectedColor === c.digit
+                          ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--surface)]"
+                          : "ring-1 ring-[var(--border)] hover:scale-110"
+                      }`}
+                      style={{ backgroundColor: c.hex }}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-[var(--text-muted)]">
+                  {palette.find((c) => c.digit === selectedColor)?.label}
+                  ・點清單直接以此色試穿
+                </span>
+              </div>
+            )}
+
+            {/* <div className="text-xs text-[var(--text-muted)]">
+              {list.length} {grouped ? "款造型" : "件"}
+            </div> */}
+
+            {tab !== "effect" && tab !== "favorites" && (
+              <div className={`grid gap-2 ${gridCols}`}>
+                {shown.map(renderCard)}
+              </div>
+            )}
+
+            {tab === "favorites" && (
+              <>
+                {/* 純文字一行、不包框：上面是搜尋框、下面是清單或空狀態，再多一個框就三層疊在一起 */}
+                <p className="text-xs leading-relaxed text-[var(--text-muted)]">
+                  最愛只存在這個瀏覽器，換瀏覽器或裝置、清除瀏覽資料、太久沒來都可能不見。
+                </p>
+                {shownOutfits.length > 0 && (
+                  <section className="space-y-2">
+                    <h2 className="text-xs font-semibold text-[var(--text-muted)]">
+                      整身搭配
+                      <span className="ml-1 font-normal opacity-60">
+                        {shownOutfits.length}
+                      </span>
+                    </h2>
+                    <div className={`grid gap-2 ${gridCols}`}>
+                      {shownOutfits.map((o) => (
+                        <OutfitCard
+                          key={o.id}
+                          outfit={o}
+                          look={outfitLooks.get(o.id)!}
+                          // 亮的是正在編輯的那套（同一身可以存好幾份，照樣子比會一起亮）
+                          active={o.id === editingId}
+                          onWear={() => {
+                            wear(o);
+                            setEditingId(o.id);
+                          }}
+                          onRename={(name) => renameOutfit(o.id, name)}
+                          onDelete={() => deleteOutfit(o.id)}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+                {shownFavoriteSections.map((section) => (
+                  <section key={section.slot} className="space-y-2">
+                    <h2 className="text-xs font-semibold text-[var(--text-muted)]">
+                      {section.label}
+                      <span className="ml-1 font-normal opacity-60">
+                        {section.entries.length}
+                      </span>
+                    </h2>
+                    <div className={`grid gap-2 ${gridCols}`}>
+                      {section.entries.map(renderCard)}
+                    </div>
+                  </section>
+                ))}
+              </>
+            )}
+
+            {tab === "effect" && (
+              <div className={`grid gap-2 ${gridCols}`}>
+                {effectList.map((effect) => (
+                  <button
+                    key={effect.id}
+                    onClick={() => toggleEffect(effect)}
+                    title={effect.name}
+                    className={`cursor-pointer flex min-h-[50px] items-center gap-2 rounded-[10px] border p-2 text-left transition-colors ${
+                      look.effect?.id === effect.id
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                        : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/50"
                     }`}
-                    style={{ backgroundColor: c.hex }}
-                  />
+                  >
+                    <ItemIcon
+                      srcs={[effectIconUrl(effect.id)]}
+                      alt={effect.name}
+                    />
+                    <span className="min-w-0 flex-1 leading-snug">
+                      <span className="block truncate text-[13px]">
+                        {effect.name}
+                      </span>
+                      <span className="block text-[11px] text-[var(--text-muted)]">
+                        {EFFECT_KIND_LABELS[effect.kind]}
+                      </span>
+                    </span>
+                  </button>
                 ))}
               </div>
-              <span className="text-xs text-[var(--text-muted)]">
-                {palette.find((c) => c.digit === selectedColor)?.label}
-                ・點清單直接以此色試穿
-              </span>
-            </div>
-          )}
+            )}
 
-          {/* <div className="text-xs text-[var(--text-muted)]">
-            {list.length} {grouped ? "款造型" : "件"}
-          </div> */}
+            {emptyMessage && (
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center text-sm text-[var(--text-muted)]">
+                {emptyMessage}
+                {jumpToAll && (
+                  <button
+                    onClick={() => changeTab("all")}
+                    className={`${CARD_BUTTON} mx-auto mt-3 border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]`}
+                  >
+                    看全部部位符合的 {allCount} 件
+                  </button>
+                )}
+              </div>
+            )}
 
-          {tab !== "effect" && tab !== "favorites" && (
-            <div className={`grid gap-2 ${gridCols}`}>
-              {shown.map(renderCard)}
-            </div>
-          )}
-
-          {tab === "favorites" && (
-            <>
-              {/* 純文字一行、不包框：上面是搜尋框、下面是清單或空狀態，再多一個框就三層疊在一起 */}
-              <p className="text-xs leading-relaxed text-[var(--text-muted)]">
-                最愛只存在這個瀏覽器，換瀏覽器或裝置、清除瀏覽資料、太久沒來都可能不見。
-              </p>
-              {shownOutfits.length > 0 && (
-                <section className="space-y-2">
-                  <h2 className="text-xs font-semibold text-[var(--text-muted)]">
-                    整身搭配
-                    <span className="ml-1 font-normal opacity-60">
-                      {shownOutfits.length}
-                    </span>
-                  </h2>
-                  <div className={`grid gap-2 ${gridCols}`}>
-                    {shownOutfits.map((o) => (
-                      <OutfitCard
-                        key={o.id}
-                        outfit={o}
-                        look={outfitLooks.get(o.id)!}
-                        // 亮的是正在編輯的那套（同一身可以存好幾份，照樣子比會一起亮）
-                        active={o.id === editingId}
-                        onWear={() => {
-                          wear(o);
-                          setEditingId(o.id);
-                        }}
-                        onRename={(name) => renameOutfit(o.id, name)}
-                        onDelete={() => deleteOutfit(o.id)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              )}
-              {shownFavoriteSections.map((section) => (
-                <section key={section.slot} className="space-y-2">
-                  <h2 className="text-xs font-semibold text-[var(--text-muted)]">
-                    {section.label}
-                    <span className="ml-1 font-normal opacity-60">
-                      {section.entries.length}
-                    </span>
-                  </h2>
-                  <div className={`grid gap-2 ${gridCols}`}>
-                    {section.entries.map(renderCard)}
-                  </div>
-                </section>
-              ))}
-            </>
-          )}
-
-          {tab === "effect" && (
-            <div className={`grid gap-2 ${gridCols}`}>
-              {effectList.map((effect) => (
-                <button
-                  key={effect.id}
-                  onClick={() => toggleEffect(effect)}
-                  title={effect.name}
-                  className={`cursor-pointer flex items-center gap-2 rounded-lg border p-2 text-left transition-colors ${
-                    look.effect?.id === effect.id
-                      ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                      : "border-[var(--border)] hover:border-[var(--accent)]"
-                  }`}
-                >
-                  <ItemIcon
-                    srcs={[effectIconUrl(effect.id)]}
-                    alt={effect.name}
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs">
-                      {effect.name}
-                    </span>
-                    <span className="mt-0.5 block text-[10px] text-[var(--text-muted)]">
-                      {EFFECT_KIND_LABELS[effect.kind]}
-                    </span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {emptyMessage && (
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center text-sm text-[var(--text-muted)]">
-              {emptyMessage}
-            </div>
-          )}
-
-          {pageCount > 1 && (
-            <Pagination
-              page={safePage}
-              pageCount={pageCount}
-              onChange={goToPage}
-            />
-          )}
+            {pageCount > 1 && (
+              <Pagination
+                page={safePage}
+                pageCount={pageCount}
+                onChange={goToPage}
+              />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* 以下是 fixed 的東西，放在 space-y 容器外面，不然會被加上 margin 往下偏 */}
+
+      {/* 單欄版（lg 以下）往下捲的小預覽。桌機版左欄本來就 sticky，用不到 */}
+      {stageOut && (
+        <div className="pointer-events-none fixed inset-x-0 top-0 z-30 flex justify-end px-4 lg:hidden">
+          {miniCollapsed ? (
+            <button
+              onClick={() => setMiniCollapsed(false)}
+              className="fashion-mini pointer-events-auto flex h-10 cursor-pointer items-center gap-1.5 rounded-b-xl border border-t-0 border-[var(--border-strong)] bg-[var(--surface)] px-3.5 text-xs text-[var(--text-muted)] shadow-md transition-colors hover:text-[var(--text)]"
+            >
+              <ChevronDown size={15} />
+              顯示預覽
+            </button>
+          ) : (
+            <div className="fashion-mini pointer-events-auto mx-auto flex w-full max-w-md gap-2 rounded-b-xl border border-t-0 border-[var(--border-strong)] bg-[var(--surface)] p-2 shadow-lg">
+              <button
+                onClick={scrollToStage}
+                aria-label="回到完整預覽"
+                title="回到完整預覽"
+                className="flex h-28 min-w-0 flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-lg"
+                style={{ background }}
+              >
+                <CharacterCanvas
+                  look={look}
+                  action={action}
+                  expression={expression}
+                  animated={animated}
+                  flipX={flipX}
+                  scale={2}
+                  maxHeight={104}
+                />
+              </button>
+              <div className="flex shrink-0 flex-col justify-between">
+                <button
+                  onClick={() => setMiniCollapsed(true)}
+                  title="收起小預覽（會記住，之後點右上角「顯示預覽」再打開）"
+                  className={`${CARD_BUTTON} border-[var(--border-strong)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]`}
+                >
+                  <ChevronUp size={14} />
+                  收起
+                </button>
+                <button
+                  onClick={scrollToStage}
+                  className={`${CARD_BUTTON} border-[var(--border-strong)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text)]`}
+                >
+                  <ArrowUpToLine size={14} />
+                  回頂端
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {confirmingClear && (
+        <ClearConfirmDialog
+          count={clearableCount}
+          onCancel={() => setConfirmingClear(false)}
+          onConfirm={clearOutfit}
+        />
+      )}
+    </>
   );
 }

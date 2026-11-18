@@ -121,6 +121,15 @@ body {
     opacity: 0;
   }
 }
+/* 時裝搭配（/fashion）手機版往下捲時，從畫面頂端滑下來的小預覽 */
+.fashion-mini {
+  animation: fashion-mini-in 0.18s ease-out;
+}
+@keyframes fashion-mini-in {
+  from {
+    transform: translateY(-100%);
+  }
+}
 
 /* 神秘商人模擬（/merchant）：刷 1 次時 6 格依序翻開（每格的 animation-delay 由程式給，
    間隔 70ms，整批 0.5 秒內翻完）；刷 N 次後那行摘要停一下再淡出（長度對上 use-merchant.ts 的 FLASH_MS） */
@@ -180,6 +189,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .merchant-flip,
+  .fashion-mini,
   .announcement-bar,
   .announcement-swap {
     animation: none;

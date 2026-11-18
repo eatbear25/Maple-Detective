@@ -5,6 +5,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import type { CharacterLook } from "@/lib/fashion/config";
 import { normalizeLook, type SharedLook } from "@/lib/fashion/share";
 import CharacterCanvas from "./character-canvas";
+import { WELL_BG } from "@/app/monsters/styles";
 
 /**
  * 存在瀏覽器裡的整身搭配（「目前穿著」的「儲存搭配」）。
@@ -94,10 +95,11 @@ export function OutfitCard({
   return (
     <div
       onMouseLeave={() => setConfirming(false)}
-      className={`relative rounded-lg border transition-colors ${
+      // 白底卡片、縮圖放在淺色方框裡：跟單件的卡片同一套
+      className={`relative rounded-[10px] border transition-colors ${
         active
           ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-          : "border-[var(--border)] hover:border-[var(--accent)]"
+          : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/50"
       }`}
     >
       {/* 按鈕不能巢狀，改名與刪除兩顆疊在卡片上 */}
@@ -106,7 +108,9 @@ export function OutfitCard({
         title={`穿上「${outfit.name}」`}
         className="block w-full cursor-pointer p-2 text-left"
       >
-        <span className="flex h-32 items-center justify-center overflow-hidden rounded-md bg-[var(--surface)]">
+        <span
+          className={`flex h-32 items-center justify-center overflow-hidden rounded-lg ${WELL_BG}`}
+        >
           <CharacterCanvas
             look={look}
             action={outfit.action}
