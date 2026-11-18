@@ -27,6 +27,14 @@ interface View {
 
 const HOME: View = { x: 0, y: 0, zoom: 1 };
 
+/**
+ * 正在進行的手勢。from＝開始時的視角、last＝最近一次算出來的視角
+ * （雙指放掉一根改成單指拖時，從 last 接著拖才不會跳）
+ */
+type Gesture =
+  | { kind: "drag"; id: number; startX: number; startY: number; from: View; last: View }
+  | { kind: "pinch"; dist: number; mid: { x: number; y: number }; from: View; last: View };
+
 const clamp = (v: number, lo: number, hi: number) =>
   Math.min(hi, Math.max(lo, v));
 
@@ -78,7 +86,8 @@ const TOOL_BUTTON =
   "flex h-7 w-7 cursor-pointer items-center justify-center text-[var(--text-muted)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--text)] disabled:cursor-default disabled:opacity-35 dark:disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-[var(--text-muted)]";
 
 /**
- * 試衣間的角色舞台：滾輪或右下角的放大鏡縮放（滾輪以游標所在位置為中心）、按住拖曳移動。
+ * 試衣間的角色舞台：滾輪或右下角的放大鏡縮放（滾輪以游標所在位置為中心）、按住拖曳移動；
+ * 觸控是雙指縮放＋移動，放大之後單指也能拖。
  * 只動 CSS transform，不重畫 canvas，所以不影響「下載 PNG」的輸出。
  */
 export default function PreviewStage({
@@ -91,13 +100,9 @@ export default function PreviewStage({
   const stageRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<View>(HOME);
   const [dragging, setDragging] = useState(false);
-  const drag = useRef<{
-    pointerId: number;
-    startX: number;
-    startY: number;
-    x: number;
-    y: number;
-  } | null>(null);
+  /** 按在舞台上的每一根手指／滑鼠（雙指縮放要知道兩根各在哪） */
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const gesture = useRef<Gesture | null>(null);
 
   // React 的 onWheel 是 passive 的，preventDefault 擋不住頁面捲動，所以自己掛
   useEffect(() => {
@@ -116,8 +121,52 @@ export default function PreviewStage({
     return () => stage.removeEventListener("wheel", onWheel);
   }, []);
 
-  const endDrag = () => {
-    drag.current = null;
+  const moved = view.x !== 0 || view.y !== 0 || view.zoom !== 1;
+  const scale = view.zoom * (expanded ? EXPANDED_SCALE : 1);
+
+  /** 從某一根手指（或滑鼠）目前的位置開始拖 */
+  const startDrag = (id: number, from: View) => {
+    const p = pointers.current.get(id)!;
+    gesture.current = { kind: "drag", id, startX: p.x, startY: p.y, from, last: from };
+  };
+
+  /** 兩根手指的距離與中點（中點相對舞台中心） */
+  const pinchPoints = (stage: HTMLElement) => {
+    const [a, b] = [...pointers.current.values()];
+    const rect = stage.getBoundingClientRect();
+    return {
+      dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+      mid: {
+        x: (a.x + b.x) / 2 - rect.left - rect.width / 2,
+        y: (a.y + b.y) / 2 - rect.top - rect.height / 2,
+      },
+    };
+  };
+
+  const apply = (next: View) => {
+    if (gesture.current) gesture.current.last = next;
+    setView(next);
+  };
+
+  const release = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!pointers.current.delete(e.pointerId)) return;
+    const g = gesture.current;
+    if (pointers.current.size === 1 && g) {
+      // 雙指放掉一根：剩下那根接著拖，畫面不會跳
+      startDrag([...pointers.current.keys()][0], g.last);
+      return;
+    }
+    if (pointers.current.size > 0) return;
+    // 手指縮回差不多原樣就直接歸位，不然「重設」會一直掛著、單指也一直被拿去拖角色
+    if (
+      g &&
+      Math.abs(g.last.zoom - 1) < 0.05 &&
+      Math.abs(g.last.x) < 8 &&
+      Math.abs(g.last.y) < 8
+    ) {
+      setView(HOME);
+    }
+    gesture.current = null;
     setDragging(false);
   };
 
@@ -127,41 +176,76 @@ export default function PreviewStage({
     if (stage) setView((v) => zoomAt(v, stage, 0, 0, factor));
   };
 
-  const moved = view.x !== 0 || view.y !== 0 || view.zoom !== 1;
-  const scale = view.zoom * (expanded ? EXPANDED_SCALE : 1);
-
   return (
     <div
       ref={stageRef}
       onPointerDown={(e) => {
-        // 觸控留給頁面捲動：手機版舞台就在頁面最上面，攔下來整頁會滑不動
-        if (e.pointerType === "touch" || e.button !== 0) return;
+        if (e.pointerType !== "touch" && e.button !== 0) return;
         if ((e.target as HTMLElement).closest("button")) return;
+        pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pointers.current.size === 2) {
+          const { dist, mid } = pinchPoints(e.currentTarget);
+          gesture.current = { kind: "pinch", dist, mid, from: view, last: view };
+        } else if (pointers.current.size === 1) {
+          // 手機版舞台就在頁面最上面：沒動過視角時單指留給頁面捲動（雙指才是縮放），
+          // 放大或移過之後單指改成拖角色，要捲頁面就按「重設」或滑舞台外面
+          if (e.pointerType === "touch" && !moved) return;
+          startDrag(e.pointerId, view);
+          if (e.pointerType !== "touch") setDragging(true);
+        } else {
+          return;
+        }
         e.currentTarget.setPointerCapture(e.pointerId);
-        drag.current = {
-          pointerId: e.pointerId,
-          startX: e.clientX,
-          startY: e.clientY,
-          x: view.x,
-          y: view.y,
-        };
-        setDragging(true);
       }}
       onPointerMove={(e) => {
-        const d = drag.current;
-        if (!d || d.pointerId !== e.pointerId) return;
+        const p = pointers.current.get(e.pointerId);
+        const g = gesture.current;
+        if (!p || !g) return;
+        p.x = e.clientX;
+        p.y = e.clientY;
         const stage = e.currentTarget;
-        const x = d.x + e.clientX - d.startX;
-        const y = d.y + e.clientY - d.startY;
-        setView((v) => clampView({ zoom: v.zoom, x, y }, stage));
+        if (g.kind === "drag") {
+          if (g.id !== e.pointerId) return;
+          apply(
+            clampView(
+              {
+                zoom: g.from.zoom,
+                x: g.from.x + p.x - g.startX,
+                y: g.from.y + p.y - g.startY,
+              },
+              stage,
+            ),
+          );
+          return;
+        }
+        if (pointers.current.size < 2) return;
+        // 縮放跟著兩指距離走，按下時兩指中點底下的那一點跟著中點移動（同時能縮放與平移）
+        const { dist, mid } = pinchPoints(stage);
+        const zoom = clamp((g.from.zoom * dist) / g.dist, MIN_ZOOM, MAX_ZOOM);
+        const k = zoom / g.from.zoom;
+        apply(
+          clampView(
+            {
+              zoom,
+              x: mid.x - (g.mid.x - g.from.x) * k,
+              y: mid.y - (g.mid.y - g.from.y) * k,
+            },
+            stage,
+          ),
+        );
       }}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
+      onPointerUp={release}
+      onPointerCancel={release}
       className={`relative flex select-none items-center justify-center overflow-hidden rounded-lg ${
         // 放大模式的高度跟著視窗走：左欄是 sticky 的，比視窗還高的話底下的控制項會捲不到
         expanded ? "min-h-[min(480px,55vh)]" : "min-h-[220px]"
       } ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
-      style={{ background }}
+      style={{
+        background,
+        // 沒動過視角：直向滑動交給瀏覽器捲頁面，雙指縮放交給我們（瀏覽器不會整頁放大）。
+        // 動過之後整個舞台的手勢都歸我們，單指才拖得動角色
+        touchAction: moved ? "none" : "pan-y",
+      }}
     >
       <div
         className="flex w-full items-center justify-center"

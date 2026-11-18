@@ -10,17 +10,20 @@ import {
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   Check,
+  ChevronDown,
   Copy,
   Disc3,
   Lock,
   Puzzle,
   RotateCcw,
+  ScrollText,
+  Timer,
   Undo2,
   Warehouse,
   X,
 } from "lucide-react";
-import { loungeRecords } from "@/data/party-quests";
-import { itemIconSrc } from "@/data/drops";
+import { loungeRecords, wonkyMissions } from "@/data/party-quests";
+import { itemIconSrc, mobIconSrc } from "@/data/drops";
 import { goddessStatue, type StatueSpot } from "@/data/goddess-statue";
 import { GameIcon } from "../../monsters/game-icon";
 import { CARD, WELL_BG } from "../../monsters/styles";
@@ -85,6 +88,7 @@ function TowerOfGoddessApp() {
 
   const urlTab = searchParams.get("tab");
   const [tab, setTab] = useState<Tab>(isTab(urlTab) ? urlTab : DEFAULT_TAB);
+  const [missionsOpen, setMissionsOpen] = useState(false);
 
   // 網址上的 ?tab= 是分享連結用的來源之一：直接改網址列（含瀏覽器上一頁）
   // 也要能切分頁，所以跟著同步過來。
@@ -108,32 +112,109 @@ function TowerOfGoddessApp() {
       <div>
         {HEADER}
 
-        {/* 分頁樣式跟怪物掉落頁同一套。關卡圖示放在下面面板的標題上，分頁只放字，
+        <div className="mt-3.5 flex flex-wrap items-center gap-2">
+          {/* 分頁樣式跟怪物掉落頁同一套。關卡圖示放在下面面板的標題上，分頁只放字，
             320px 寬（玩家常把視窗縮在遊戲旁邊）四顆也放得下 */}
-        <div
-          role="tablist"
-          className="mt-3.5 inline-flex gap-0.5 rounded-full border border-[var(--border)] bg-[var(--surface)] p-[3px] text-[13px]"
-        >
-          {TABS.map(([key, label]) => (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={tab === key}
-              onClick={() => select(key)}
-              className={`cursor-pointer flex h-8 items-center whitespace-nowrap rounded-full px-3.5 transition-colors ${
-                tab === key
-                  ? "bg-[var(--accent-soft)] font-bold text-[var(--text)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text)]"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+          <div
+            role="tablist"
+            className="inline-flex gap-0.5 rounded-full border border-[var(--border)] bg-[var(--surface)] p-[3px] text-[13px]"
+          >
+            {TABS.map(([key, label]) => (
+              <button
+                key={key}
+                role="tab"
+                aria-selected={tab === key}
+                onClick={() => select(key)}
+                className={`cursor-pointer flex h-8 items-center whitespace-nowrap rounded-full px-3.5 transition-colors ${
+                  tab === key
+                    ? "bg-[var(--accent-soft)] font-bold text-[var(--text)]"
+                    : "text-[var(--text-muted)] hover:text-[var(--text)]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* 溫莉的委託不是每場都有、也不屬於哪一關，所以不做成第五個分頁：
+            平常收在這顆按鈕裡，接到了才打開。高度跟分頁列一樣（40px），窄視窗換到下一行 */}
+          <button
+            type="button"
+            aria-expanded={missionsOpen}
+            aria-controls="wonky-missions"
+            onClick={() => setMissionsOpen((v) => !v)}
+            className={`flex h-10 cursor-pointer items-center gap-1.5 rounded-full border bg-[var(--surface)] px-3.5 text-[13px] transition-colors hover:text-[var(--text)] ${
+              missionsOpen
+                ? "border-[var(--border-strong)] text-[var(--text)]"
+                : "border-[var(--border)] text-[var(--text-muted)]"
+            }`}
+          >
+            <ScrollText size={15} />
+            溫莉委託
+            <ChevronDown
+              size={14}
+              className={`transition-transform ${missionsOpen ? "rotate-180" : ""}`}
+            />
+          </button>
         </div>
+
+        {missionsOpen && <WonkyMissions />}
       </div>
 
       <Panel />
     </div>
+  );
+}
+
+/* ----------------------------- 溫莉的委託 ----------------------------- */
+
+// 一個委託一格：寬螢幕五格排成一排，窄了自動換行，視窗縮在遊戲旁邊時一格一行。
+// 文字刻意壓在一行內（桌機一格約 140px 寬），第二行小字只寫要注意的事或在哪個房間。
+function WonkyMissions() {
+  return (
+    <section
+      id="wonky-missions"
+      aria-label="溫莉的額外委託"
+      className={`${CARD} mt-3 p-4`}
+    >
+      <h2 className="text-base font-bold">溫莉的額外委託</h2>
+      <p className="mt-0.5 text-[13px] leading-5 text-[var(--text-muted)]">
+        入場前溫莉有時會拜託一件事，做到有額外經驗
+      </p>
+      <ul className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-1.5">
+        {wonkyMissions.map((m) => (
+          <li
+            key={m.title}
+            className={`flex items-center gap-3 rounded-xl px-3 py-2 ${WELL_BG}`}
+          >
+            <span className="grid h-8 w-9 shrink-0 place-items-center text-[var(--text-muted)]">
+              {(m.mobId ?? m.itemId) ? (
+                <GameIcon
+                  src={
+                    m.mobId
+                      ? mobIconSrc(String(m.mobId))
+                      : itemIconSrc(m.itemId!)
+                  }
+                  alt=""
+                  fallback=""
+                  className="h-8 w-9"
+                />
+              ) : (
+                <Timer size={22} />
+              )}
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-medium">{m.title}</span>
+              {m.note && (
+                <span className="block text-xs text-[var(--text-muted)]">
+                  {m.note}
+                </span>
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -238,8 +319,10 @@ function LoungeTab() {
       title="休息室"
       rule="唱盤每天換一張，照今天星期幾找"
     >
+      {/* 這頁兩欄一起分剩下的寬度（不像封印房只給右欄）：右欄的清單只有短短幾個字，
+          全給它會拉得太長 */}
       <div className={TWO_COLS}>
-        <div className={ANSWER_COL}>
+        <div className="min-w-0 flex-[1_1_380px]">
           <ColTitle note={todayRecord?.dayLabel}>今天</ColTitle>
           {/* 伺服器端還不知道今天星期幾：先留同樣高度的空框，水合後才填內容，版面不會跳 */}
           <div className="flex min-h-[124px] items-center gap-[18px] rounded-[14px] bg-[var(--accent-soft)] p-5">
@@ -268,9 +351,9 @@ function LoungeTab() {
           </div>
         </div>
 
-        <div className={REFERENCE_COL}>
+        <div className="min-w-0 flex-[1_1_420px]">
           <ColTitle>一週對照</ColTitle>
-          <ul className="flex max-w-[520px] flex-col gap-1.5">
+          <ul className="flex flex-col gap-1.5">
             {loungeRecords.map((r) => {
               const isToday = r.day === today;
               return (
@@ -913,6 +996,7 @@ function StorageTab() {
 /* ------------------------------- 女神像 ------------------------------- */
 
 const { image: STATUE_IMAGE, spots: STATUE_SPOTS } = goddessStatue;
+const STATUE_MAX_SCALE = 1.15;
 
 // 右欄清單的位置說明，照 goddess-statue.json 裡各平台在底圖上的座標寫的
 const SPOT_WHERE: Record<number, string> = {
@@ -1011,10 +1095,15 @@ function StatueTab() {
       title="女神像"
       rule="站上平台把碎片丟下去，數字是第幾個碎片"
     >
+      {/* 兩欄一起分剩下的寬度（跟休息室一樣），但底圖最多放大 STATUE_MAX_SCALE 倍：
+          它是 440px 的拆包圖，放大一點點還好，再大就糊了，多的寬度都給右邊清單 */}
       <div className={TWO_COLS}>
         <div
           className="min-w-0"
-          style={{ flex: `0 1 ${STATUE_IMAGE.width}px` }}
+          style={{
+            flex: `1 1 ${STATUE_IMAGE.width}px`,
+            maxWidth: Math.round(STATUE_IMAGE.width * STATUE_MAX_SCALE),
+          }}
         >
           <div
             className="relative overflow-hidden rounded-xl"
@@ -1060,9 +1149,11 @@ function StatueTab() {
           </div>
         </div>
 
-        <div className={REFERENCE_COL}>
+        <div className="min-w-0 flex-[1_1_420px]">
           <ColTitle>碎片對照</ColTitle>
-          <ul className="flex max-w-[520px] flex-col gap-1.5">
+          {/* 不設寬度上限：左邊底圖固定 440px（像素圖不能放大），清單要撐滿剩下的寬度，
+              不然卡片右邊會空一塊 */}
+          <ul className="flex flex-col gap-1.5">
             {pieces.map((s) => (
               <li key={s.reactorId}>
                 <button

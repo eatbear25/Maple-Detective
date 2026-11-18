@@ -13,6 +13,8 @@ import { useCallback, useSyncExternalStore } from "react";
 export const PAGE_SIZE_KEY = "fashion-page-size";
 export const FAVORITES_KEY = "fashion-favorites";
 export const OUTFITS_KEY = "fashion-outfits";
+/** 手機版往下捲時跟著的小預覽：使用者按過「收起」就記住（true＝收起） */
+export const MINI_PREVIEW_KEY = "fashion-mini-collapsed";
 
 const listeners = new Set<() => void>();
 /** localStorage 不能用（被瀏覽器設定擋掉、容量滿了）時退而存在記憶體，至少這次瀏覽期間還能用 */
