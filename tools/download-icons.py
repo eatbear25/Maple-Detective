@@ -31,10 +31,16 @@ def fetch(url):
 # 掉落表以外、頁面自己要用的道具圖示（掉落資料裡不會出現，得手動列）。
 # 4001095–4001100：月妙的年糕第一階段的六色迎月花種子。
 # 4001044–4001049、4001055：女神之塔最後一關的六片女神像碎片與生命草。
+# 4001053：女神之塔溫莉委託要收集的奇怪的種子。
 EXTRA_ITEMS = [
     4001095, 4001096, 4001097, 4001098, 4001099, 4001100,
     4001044, 4001045, 4001046, 4001047, 4001048, 4001049, 4001055,
+    4001053,
 ]
+
+# 同上，怪物版。女神之塔溫莉委託要打倒的組隊任務專用怪：
+# 9300044 女神的黑格里芬（罪人之室）、9300051 女神的小紅獨角獅（黑暗之室，三色只畫紅的）。
+EXTRA_MOBS = [9300044, 9300051]
 
 MOB_STANCES = ["stand", "fly", "move"]  # 部分怪物（如純飛行怪）沒有 stand 動畫，依序退回
 
@@ -103,7 +109,7 @@ def main():
     os.makedirs(os.path.join(PUB, "npc"), exist_ok=True)
 
     jobs = []
-    for mob_id in sorted(set(mobs) | q_mobs):
+    for mob_id in sorted(set(mobs) | q_mobs | {str(m) for m in EXTRA_MOBS}):
         jobs.append(("mob", mob_id, "mob/{id}/render/{stance}", os.path.join(PUB, "mob", f"{mob_id}.gif")))
     items = {i for v in mobs.values() for i in v["rewards"]} | sup_items | merchant_items | set(EXTRA_ITEMS)
     for item_id in sorted(items):
